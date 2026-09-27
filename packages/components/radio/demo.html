@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radio group</title>
+<link rel="stylesheet" href="./radio.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 44rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .lede { margin: 0 0 var(--sg-space-5); color: var(--sg-text-soft); max-width: var(--sg-measure); }
+  .card { background: var(--sg-surface-raised); border: var(--sg-hairline) solid var(--sg-rule); border-radius: var(--sg-radius-3); padding: var(--sg-space-4); margin: 0 0 var(--sg-space-4); }
+  .hint { font-size: var(--sg-step--1); color: var(--sg-text-soft); }
+  output { display: block; margin-top: var(--sg-space-3); font: var(--sg-step--1) / 1.5 var(--sg-font-mono); color: var(--sg-text-soft); overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Radio group</h1>
+  <p class="lede">A real fieldset of native radios. The arrow keys move and choose, as they always have; the register only changes how the circles are drawn.</p>
+
+  <form id="form" action="" method="get">
+    <input type="hidden" name="sent" value="1">
+    <div class="card">
+      <sg-radio-group orientation="row">
+        <fieldset>
+          <legend>Guests</legend>
+          <label><input type="radio" name="guests" value="2" checked> 2</label>
+          <label><input type="radio" name="guests" value="4"> 4</label>
+          <label><input type="radio" name="guests" value="5"> 5</label>
+          <label><input type="radio" name="guests" value="6"> 6, the whole house</label>
+        </fieldset>
+      </sg-radio-group>
+    </div>
+
+    <div class="card">
+      <sg-radio-group>
+        <fieldset>
+          <legend>Arriving by</legend>
+          <label><input type="radio" name="arrive" value="car" required> Car. There is covered parking for two cars under the arches.</label>
+          <label><input type="radio" name="arrive" value="train" required> Train to Thivim, 20 minutes away</label>
+          <label><input type="radio" name="arrive" value="air" required> Air to Mopa (GOX), 35 minutes away</label>
+          <label><input type="radio" name="arrive" value="boat" required disabled> Boat (the river landing is closed in the monsoon)</label>
+        </fieldset>
+      </sg-radio-group>
+      <p class="hint">Required. With JavaScript off, the browser asks for it on Send.</p>
+    </div>
+
+    <div class="card">
+      <sg-radio-group>
+        <fieldset>
+          <legend>Language for your confirmation</legend>
+          <!-- These Indian-language strings are drafts awaiting a native speaker's check. -->
+          <label><input type="radio" name="lang" value="en" checked> English</label>
+          <label lang="mr"><input type="radio" name="lang" value="mr"> मराठी</label>
+          <label lang="kn"><input type="radio" name="lang" value="kn"> ಕನ್ನಡ</label>
+          <label lang="kok"><input type="radio" name="lang" value="kok-deva"> कोंकणी (देवनागरी)</label>
+          <label lang="kok-Latn"><input type="radio" name="lang" value="kok-latn"> Konknni (Romi)</label>
+        </fieldset>
+      </sg-radio-group>
+    </div>
+
+    <button type="submit" class="demo-button">Send</button>
+    <output id="sent" aria-live="polite"></output>
+  </form>
+</main>
+<script type="module">
+  import './radio.js';
+  const q = new URLSearchParams(location.search);
+  if (q.has('sent')) document.getElementById('sent').textContent = `Sent: ${[...q].filter(([k]) => !['register', 'theme', 'palette', 'sent'].includes(k)).map(([k, v]) => `${k}=${v}`).join(', ')}`;
+</script>
+</body>
+</html>

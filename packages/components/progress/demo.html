@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Progress</title>
+<link rel="stylesheet" href="./progress.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem)/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 40rem; margin: 0 auto; padding: 2rem 1rem 3rem; display: grid; gap: 1.75rem; }
+  h1 { margin: 0; font: 600 1.6rem/1.2 var(--sg-font-display, inherit); }
+  h2 { margin: 0 0 0.75rem; font-size: 1rem; color: var(--sg-text-soft, inherit); font-weight: 600; }
+  section { display: grid; gap: 1rem; }
+  button { font: inherit; padding: 0.4rem 0.9rem; border-radius: var(--sg-radius-2, 6px); border: 1px solid currentColor; background: none; color: inherit; cursor: pointer; justify-self: start; }
+  :focus-visible { outline: 2px solid var(--sg-focus, Highlight); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Progress</h1>
+  <section aria-labelledby="h-values">
+    <h2 id="h-values">Values</h2>
+    <sg-progress label="Checking your details"><progress value="0" max="1">0%</progress></sg-progress>
+    <sg-progress label="Uploading photos"><progress value="0.4" max="1">40%</progress></sg-progress>
+    <sg-progress label="Sending your booking"><progress value="0.8" max="1">80%</progress></sg-progress>
+    <sg-progress label="Invoice saved"><progress value="1" max="1">100%</progress></sg-progress>
+  </section>
+  <section aria-labelledby="h-unknown">
+    <h2 id="h-unknown">When the amount is not known</h2>
+    <sg-progress label="Waiting for the bank to confirm"><progress max="1">Waiting</progress></sg-progress>
+  </section>
+  <section aria-labelledby="h-live">
+    <h2 id="h-live">Moves only when the value moves</h2>
+    <sg-progress id="live" label="Importing guests"><progress value="0.1" max="1">10%</progress></sg-progress>
+    <button type="button" id="step">Import the next 10%</button>
+  </section>
+  <section aria-labelledby="h-other">
+    <h2 id="h-other">No visible label</h2>
+    <sg-progress><progress value="60" max="100" aria-label="Storage used">60%</progress></sg-progress>
+  </section>
+</main>
+<script type="module">
+  import './progress.js';
+  const live = document.getElementById('live');
+  document.getElementById('step').addEventListener('click', () => {
+    const p = live.querySelector('progress');
+    p.value = Math.min(1, Math.round((p.value + 0.1) * 10) / 10);
+  });
+</script>
+</body>
+</html>

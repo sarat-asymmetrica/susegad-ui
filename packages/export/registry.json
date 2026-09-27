@@ -1,0 +1,12 @@
+{
+  "name": "export",
+  "type": "package",
+  "title": "Export",
+  "description": "A scene (or any canvas) to PNG, WebM and animated GIF. PNG uses canvas.toBlob; WebM records one requested frame at a time from canvas.captureStream(0), so a seeded run is reproducible however busy the machine is; GIF uses a small, dependency-free encoder (median-cut palette, an LZW core), tested against a reference decoder in Node.",
+  "version": "0.1.0",
+  "files": ["index.js", "png.js", "webm.js", "gif.js", "gif.core.js", "README.md"],
+  "dependencies": [],
+  "registers": [],
+  "budget": { "jsBytes": 21000, "reason": "Not a component (no registers, no skins): the whole package's behaviour, at roughly the component figure (0009) since export code runs the same way, a little over it once the real GCE/LZW fix and the pacing fix (webm.js) landed. index.js 0.5 KB, png.js 2.1 KB, webm.js 5.3 KB, gif.js 3.5 KB (the browser edges) plus gif.core.js 8.4 KB (the tested palette/LZW core, its own concern, like a component's *.core.js under 0010): 19.8 KB measured, budgeted with a little headroom." },
+  "docs": "README.md"
+}

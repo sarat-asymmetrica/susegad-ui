@@ -1,0 +1,34 @@
+{
+  "name": "badge",
+  "type": "component",
+  "title": "Badge",
+  "description": "A word or two of status. The text is the meaning, a distinct shape per tone backs it up, colour comes last. Quiet is text with a hairline rule; warm is a hand-inked outline in the tone's ink; playful is a chip of colour with a kolam flower on the corner. Busy badges breathe or turn, never in quiet or under reduced motion.",
+  "version": "0.1.0",
+  "files": [
+    "badge.js",
+    "badge.core.js",
+    "badge.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "badge.prompt.md",
+    "badge.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "badge.prompt.md",
+  "docs": "badge.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 11014 bytes: behaviour (badge.js + badge.core.js) 7.4 KB, skins quiet 0.2 KB, warm 2.1 KB, playful 1.3 KB."
+  }
+}

@@ -1,0 +1,76 @@
+/* <sg-progress>. Without JavaScript, and in the quiet register, this is the
+   native <progress> drawn as a pencil hairline. Warm and playful skins hide the
+   native bar visually (it stays for assistive technology) and draw beside the words. */
+
+sg-progress[hidden] { display: none; } /* own display rules would otherwise beat the browser's [hidden] */
+
+sg-progress {
+  display: grid;
+  gap: var(--sg-space-2, 0.5rem);
+  font: var(--sg-step-0, 1rem) / 1.4 var(--sg-font-body, system-ui, sans-serif);
+  color: var(--sg-text, CanvasText);
+  max-width: 100%;
+}
+
+.sg-progress__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--sg-space-3, 1rem);
+  min-width: 0;
+}
+.sg-progress__label { overflow-wrap: anywhere; }
+.sg-progress__value {
+  font-variant-numeric: tabular-nums;
+  color: var(--sg-text-soft, inherit);
+  white-space: nowrap;
+  margin-inline-start: auto;
+}
+
+/* the hairline: quiet, and the no-JS fallback */
+sg-progress progress {
+  appearance: none;
+  display: block;
+  inline-size: 100%;
+  block-size: 3px;
+  border: 0;
+  border-radius: 0;
+  background: var(--sg-rule, color-mix(in oklab, CanvasText 18%, Canvas));
+  color: var(--sg-ink, CanvasText);
+}
+sg-progress progress::-webkit-progress-bar { background: var(--sg-rule, color-mix(in oklab, CanvasText 18%, Canvas)); }
+sg-progress progress::-webkit-progress-value { background: var(--sg-ink, CanvasText); }
+sg-progress progress::-moz-progress-bar { background: var(--sg-ink, CanvasText); }
+/* indeterminate: no fake motion, a still dotted pencil line; the words say what is happening */
+sg-progress progress:indeterminate {
+  background: repeating-linear-gradient(90deg, var(--sg-ink-soft, GrayText) 0 3px, transparent 3px 9px);
+}
+sg-progress progress:indeterminate::-webkit-progress-bar { background: transparent; }
+
+/* warm and playful: the drawing sits beside the words */
+sg-progress[data-skin='warm'],
+sg-progress[data-skin='playful'] {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--sg-space-3, 1rem);
+}
+sg-progress[data-skin='warm'] .sg-progress__head,
+sg-progress[data-skin='playful'] .sg-progress__head { grid-column: 2; grid-row: 1; }
+sg-progress[data-skin='warm'] .sg-progress__art,
+sg-progress[data-skin='playful'] .sg-progress__art { grid-column: 1; grid-row: 1; }
+sg-progress[data-skin='warm'] .sg-progress__native,
+sg-progress[data-skin='playful'] .sg-progress__native {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+sg-progress[data-skin='warm'],
+sg-progress[data-skin='playful'] { position: relative; }
+
+.sg-progress__art { display: block; overflow: visible; }
+sg-progress[data-skin='warm'] .sg-progress__art { inline-size: 4rem; block-size: 4rem; }
+sg-progress[data-skin='playful'] .sg-progress__art { inline-size: 3.5rem; block-size: 5.15rem; }
+sg-progress[data-skin='playful'] .sg-progress__label { font-family: var(--sg-font-hand, inherit); }

@@ -1,0 +1,65 @@
+/* The booking recipe's own styles: the two-column layout and the quote card.
+   The components bring their own stylesheets. */
+
+.booking { display: grid; gap: var(--sg-space-5, 24px); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 60rem) { .booking { grid-template-columns: minmax(0, 1fr) 20rem; } }
+.booking__fields { display: grid; gap: var(--sg-space-4, 16px); }
+.booking__who { display: grid; gap: var(--sg-space-4, 16px); grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); }
+.booking__actions { display: grid; gap: var(--sg-space-2, 8px); justify-items: start; }
+.booking__hold {
+  font: inherit; font-weight: var(--sg-weight-medium, 500); padding: 10px 20px; cursor: pointer;
+  color: var(--sg-on-accent, Canvas); background: var(--sg-accent, CanvasText); border: 0; border-radius: var(--sg-radius-1, 4px);
+}
+.booking__prototype { margin: 0; font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); max-width: var(--sg-measure, 60ch); }
+
+.booking-quote {
+  display: grid; gap: var(--sg-space-3, 12px); padding: var(--sg-space-4, 16px) var(--sg-space-4, 18px);
+  background: var(--sg-surface-raised, Canvas); border: var(--sg-rule-width, 1px) solid var(--sg-rule, currentColor); border-radius: var(--sg-radius-2, 8px);
+}
+@media (min-width: 60rem) { .booking-quote { position: sticky; top: var(--sg-space-4, 16px); } }
+.booking-quote h2 { margin: 0; font: 600 var(--sg-step-1, 1.15rem)/1.3 var(--sg-font-display, inherit); }
+.booking-quote p { margin: 0; }
+.booking-quote__body { display: grid; gap: var(--sg-space-3, 12px); }
+.booking-quote__empty, .booking-quote__note, .booking-quote__provisional { font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); }
+.booking-quote__provisional { border-inline-start: 2px solid var(--sg-warning, currentColor); padding-inline-start: 8px; }
+.booking-quote__stay { font-weight: var(--sg-weight-medium, 500); }
+.booking-quote__lines { margin: 0; display: grid; }
+.booking-quote__row { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; border-bottom: 1px solid var(--sg-rule, currentColor); }
+.booking-quote__row dt { color: var(--sg-text, inherit); }
+.booking-quote__row dd { margin: 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* the rate detail ("4 × ₹28,000") is one unit on its own line under the season, never split */
+.booking-quote__row dt { min-width: 0; }
+.booking-quote__detail { display: block; white-space: nowrap; color: var(--sg-text-soft, inherit); font-size: var(--sg-step--1, 0.9rem); font-variant-numeric: tabular-nums; }
+.booking-quote__guests { white-space: nowrap; }
+.booking-quote__row.is-sub { border-top: 1px solid var(--sg-rule-strong, currentColor); }
+.booking-quote__row.is-total { font-weight: var(--sg-weight-bold, 700); border-bottom: 2px solid var(--sg-rule-strong, currentColor); }
+.booking-quote__row.is-deposit { color: var(--sg-text-soft, inherit); border-bottom: 0; }
+.booking-quote__reasons { margin: 0; padding-inline-start: 1.2em; color: var(--sg-danger, inherit); font-size: var(--sg-step--1, 0.9rem); }
+
+/* the flow's own pieces */
+.booking__dates { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: var(--sg-space-3, 12px) var(--sg-space-5, 24px); margin-bottom: var(--sg-space-3, 12px); align-items: start; }
+/* each date and its note in one cell: the note wraps inside the cell and never widens the input */
+.booking__date { display: grid; gap: var(--sg-space-1, 4px); min-width: 0; max-width: 20rem; }
+.booking__date input { width: 100%; max-width: 12rem; box-sizing: border-box; }
+.booking__grid { display: grid; gap: var(--sg-space-4, 16px); grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); margin-bottom: var(--sg-space-4, 16px); }
+.booking__needs { border: 0; padding: 0; margin: var(--sg-space-4, 16px) 0 0; display: grid; gap: var(--sg-space-2, 8px); }
+.booking__needs > legend { padding: 0; margin-bottom: var(--sg-space-2, 8px); font-weight: var(--sg-weight-medium, 500); }
+.booking__send {
+  font: inherit; padding: 7px 14px; border-radius: var(--sg-radius-1, 4px); cursor: pointer;
+  border: 1px solid var(--sg-rule-strong, currentColor); background: var(--sg-surface, Canvas); color: inherit;
+}
+.booking__verify { display: grid; gap: var(--sg-space-2, 8px); margin-top: var(--sg-space-3, 12px); }
+.booking__verify[hidden] { display: none; }
+.booking__code { margin: 0; font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); border-inline-start: 2px solid var(--sg-info, currentColor); padding-inline-start: 8px; }
+.booking__note { font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); }
+sg-stepper > fieldset > sg-check, sg-stepper > fieldset > sg-toggle { display: block; margin-bottom: var(--sg-space-4, 16px); }
+/* the signature keeps its own grid (pad, tools, then the typed name, each with room) */
+sg-stepper > fieldset > sg-signature { margin-bottom: var(--sg-space-4, 16px); }
+/* the stepper's Back and Next, and any plain button in the flow */
+.booking sg-stepper button:not(.booking__hold) {
+  font: inherit; padding: 7px 14px; border-radius: var(--sg-radius-1, 4px); cursor: pointer;
+  border: 1px solid var(--sg-rule-strong, currentColor); background: var(--sg-surface, Canvas); color: inherit;
+}
+/* a refused stay: why comes first, and the card shows nights only, no total */
+.booking-quote__refused { display: grid; gap: var(--sg-space-1, 4px); padding: var(--sg-space-2, 8px) var(--sg-space-3, 12px); border-inline-start: 2px solid var(--sg-danger, currentColor); background: var(--sg-surface-sunk, transparent); }
+.booking-quote__refused-title { font-weight: var(--sg-weight-medium, 500); color: var(--sg-danger, inherit); }

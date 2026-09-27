@@ -1,0 +1,44 @@
+/* Folio print: a clean page from any Folio document. The page size, the running
+   header (the document's title) and the page numbers come from an @page rule the
+   builder writes, so A4 or Letter is a build option. */
+
+@media print {
+  :root { color-scheme: light !important; }
+  html, body { background: #fff !important; color: #111 !important; }
+  body { margin: 0 !important; font-size: 10.5pt; line-height: 1.45; }
+
+  /* no interactive chrome on paper */
+  button, input, select, textarea, [data-folio-chrome], .folio-screen-only { display: none !important; }
+  sg-scene::part(toggle) { display: none !important; }
+
+  /* scenes print as their finished still (folio-print.js), whole, never split */
+  sg-scene { break-inside: avoid; page-break-inside: avoid; max-inline-size: 100%; }
+
+  /* say where links go */
+  a[href^="http"]::after, a[href^="mailto:"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #444;
+    overflow-wrap: anywhere;
+  }
+  a { color: inherit; text-decoration: underline; text-decoration-thickness: 0.5pt; }
+
+  h1, h2, h3, h4 { break-after: avoid; page-break-after: avoid; }
+  p, li { orphans: 3; widows: 3; }
+  /* a short list stays on one page, and a paragraph that introduces a table travels with it */
+  :is(ul, ol):not(:has(> li:nth-child(9))) { break-inside: avoid; }
+  p:has(+ :is(table, figure)) { break-inside: avoid; break-after: avoid; }
+  figure, img, svg, pre, blockquote, .folio-keep { break-inside: avoid; }
+  table { border-collapse: collapse; }
+  tr { break-inside: avoid; }
+  thead { display: table-header-group; }
+
+  .folio-seal { break-inside: avoid; margin-block-start: 12mm; font-size: 8pt; color: #333; }
+  .folio-seal__check { display: none; }
+  .folio-seal__print { display: block !important; }
+}
+
+@media print {
+  /* a scene is a picture on paper: a sensible size, centred, never a whole page */
+  sg-scene { inline-size: min(100%, 130mm); margin-inline: auto !important; }
+}

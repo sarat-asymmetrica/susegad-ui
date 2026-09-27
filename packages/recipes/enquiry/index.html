@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en" data-palette="casa">
+<head>
+<script>
+  // ?register=quiet|warm|playful, ?theme=light|dark and ?palette=… set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute(`data-${k}`, v);
+  window.__ready = false;
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask the house</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="../../components/field/field.css">
+<link rel="stylesheet" href="../../components/field-note/field-note.css">
+<link rel="stylesheet" href="../../components/form/form.css">
+<link rel="stylesheet" href="../../components/select/select.css">
+<link rel="stylesheet" href="../../components/combobox/combobox.css">
+<link rel="stylesheet" href="../../components/loader/loader.css">
+<link rel="stylesheet" href="../../components/stamp/stamp.css">
+<link rel="stylesheet" href="../../components/toast/toast.css">
+<link rel="stylesheet" href="./recipe.css">
+</head>
+<body>
+<main class="enquiry" id="enquire">
+  <header class="enquiry__head">
+    <p class="enquiry__note">Ask the house</p>
+    <h1>A question, or dates we can't show yet?</h1>
+    <p class="enquiry__sub">Messages go straight to the house, not through a booking platform. We ask about the group and the occasion because it's a house in a village: it helps us say yes to the right stays.</p>
+    <!-- The house's front elevation, a still line drawing (facade.svg, from the Casa redesign's elevation). Warm and playful only; decoration, so hidden from assistive technology. -->
+    <div class="enquiry__facade" aria-hidden="true"></div>
+  </header>
+
+  <sg-form class="enquiry__form">
+    <!-- Without JavaScript the browser checks the fields and posts them to sent.html, which keeps nothing. In your project, point action at your own endpoint. -->
+    <form id="enquire-form" action="./sent.html" method="post">
+      <sg-field>
+        <label for="f-name">Your name</label>
+        <input id="f-name" name="name" autocomplete="name" required>
+      </sg-field>
+      <sg-field>
+        <label for="f-contact">Phone or email</label>
+        <p class="enquiry__hint" id="f-contact-hint">The house replies on WhatsApp if you give a phone number.</p>
+        <input id="f-contact" name="contact" autocomplete="email" required
+          pattern="[^@\s]+@[^@\s]+\.[^@\s]+|\+?\p{Nd}[\p{Nd} \-]{7,15}"
+          title="A phone number like 98220 12345 or 98220-12345, or an email address like name@example.com"
+          aria-describedby="f-contact-hint">
+        <sg-field-note for="f-contact" validate
+          data-value-missing="Enter a phone number or an email address, so the house can reply."
+          data-pattern-mismatch="Enter a phone number like 98220 12345, or an email address like name@example.com."></sg-field-note>
+      </sg-field>
+      <sg-combobox>
+        <label for="f-from">Where are you travelling from?</label>
+        <input id="f-from" name="from" list="f-from-places" autocomplete="off">
+        <datalist id="f-from-places">
+          <option value="Mumbai" data-aliases="Bombay, मुंबई">Maharashtra</option>
+          <option value="Pune" data-aliases="Poona, पुणे">Maharashtra</option>
+          <option value="Bengaluru" data-aliases="Bangalore, ಬೆಂಗಳೂರು">Karnataka</option>
+          <option value="Belagavi" data-aliases="Belgaum, ಬೆಳಗಾವಿ">Karnataka</option>
+          <option value="Mangaluru" data-aliases="Mangalore, ಮಂಗಳೂರು">Karnataka</option>
+          <option value="Panaji" data-aliases="Panjim, पणजी">Goa</option>
+          <option value="Margao" data-aliases="Madgaon, मडगांव">Goa</option>
+          <option value="Hyderabad" data-aliases="హైదరాబాద్">Telangana</option>
+          <option value="Chennai" data-aliases="Madras">Tamil Nadu</option>
+          <option value="Kochi" data-aliases="Cochin">Kerala</option>
+          <option value="Delhi" data-aliases="New Delhi, दिल्ली">Delhi</option>
+          <option value="Kolkata" data-aliases="Calcutta">West Bengal</option>
+          <option value="Ahmedabad" data-aliases="अमदावाद">Gujarat</option>
+          <option value="Dubai">United Arab Emirates</option>
+          <option value="London">United Kingdom</option>
+        </datalist>
+      </sg-combobox>
+      <div class="enquiry__row">
+        <sg-field>
+          <label for="f-dates">Rough dates</label>
+          <input id="f-dates" name="dates" placeholder="e.g. a week in November">
+        </sg-field>
+        <sg-select>
+          <label for="f-group">People</label>
+          <select id="f-group" name="group">
+            <option value="">Choose</option>
+            <option>1</option><option>2</option><option>3</option>
+            <option>4</option><option>5</option><option>6</option>
+            <option value="7+">More than 6</option>
+          </select>
+          <sg-field-note id="f-group-note" for="f-group" tone="hint"></sg-field-note>
+        </sg-select>
+      </div>
+      <sg-field>
+        <label for="f-occasion">What's the occasion?</label>
+        <input id="f-occasion" name="occasion" placeholder="Family holiday, a birthday, a writing week…">
+      </sg-field>
+      <sg-field>
+        <label for="f-msg">Anything else</label>
+        <textarea id="f-msg" name="message" rows="4"></textarea>
+      </sg-field>
+      <p class="enquiry__prototype">This is a prototype. Nothing you type here is sent to the house.</p>
+      <div class="enquiry__actions">
+        <button class="enquiry__send" type="submit">Send</button>
+      </div>
+    </form>
+  </sg-form>
+</main>
+
+<script type="module" src="./demo.js"></script>
+</body>
+</html>

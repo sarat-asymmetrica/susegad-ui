@@ -1,0 +1,36 @@
+{
+  "name": "combobox",
+  "type": "component",
+  "title": "Combobox",
+  "description": "An input with suggestions. Without JavaScript it is the browser's own input list and datalist; with it, the ARIA APG editable combobox with a listbox popover, full keyboard support, and matching that finds places however people type them: without accents, by an older name, in another script, or spelled as heard. Warm writes it on the paper over the field's pencil rule, with a list ruled in pencil; playful is a stamped box with stamped chips.",
+  "version": "0.1.0",
+  "files": [
+    "combobox.js",
+    "combobox.core.js",
+    "combobox.css",
+    "skins/caret.js",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "combobox.prompt.md",
+    "combobox.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "tokens",
+    "field"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "combobox.prompt.md",
+  "docs": "combobox.docs.md",
+  "budget": {
+    "jsBytes": 20480,
+    "frameMs": 16.7,
+    "reason": "Behaviour 13.2 KB (0009 allows up to 16 KB with a reason): the APG editable-combobox keyboard model plus matching that folds Latin accents without touching Indic vowel signs, aliases across scripts and loose romanisation. Skins share a 1.2 KB caret and add 0.3 KB (quiet), 1.5 KB (warm) and 0.7 KB (playful); warm draws with field/rule.js, counted in field. Raised from 17 KB to 20 KB for the warm pencil rule (S5), well inside decision 0005's 12 KB plus 8 KB a skin, with about 15% headroom."
+  }
+}

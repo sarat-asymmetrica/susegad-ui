@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Date range</title>
+<link rel="stylesheet" href="./date-range.css">
+<style>
+  body { margin: 0; background: var(--sg-paper, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem)/var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 46rem; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font: 600 var(--sg-step-3, 1.6rem)/1.15 var(--sg-font-display, inherit); margin: 0 0 6px; }
+  h2 { font: 600 var(--sg-step-1, 1.15rem)/1.3 var(--sg-font-display, inherit); margin: 40px 0 10px; }
+  p { margin: 0 0 14px; max-width: var(--sg-measure, 62ch); }
+  .lede, .note { color: var(--sg-text-soft, inherit); }
+  .card { padding: 18px; background: var(--sg-surface-raised, Canvas); border: var(--sg-rule-width, 1px) solid var(--sg-rule, currentColor); border-radius: var(--sg-radius-2, 8px); }
+  .demo-button { margin-top: 14px; }
+  output { display: block; margin-top: 10px; font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Date range</h1>
+  <p class="lede">Arrival and departure for a stay. Two native date inputs do the work, with or without JavaScript. With it, a calendar under them knows which nights are taken, where you can leave on the morning others arrive, and what each night costs.</p>
+
+  <h2>A stay at the house</h2>
+  <form class="card" id="stay" action="#" method="get">
+    <sg-date-range prices today="2026-10-20" blocks='[{"arrival":"2026-10-23","departure":"2026-10-27","kind":"booking"},{"arrival":"2026-11-13","departure":"2026-11-16","kind":"booking"},{"arrival":"2026-12-26","departure":"2027-01-01","kind":"booking"},{"arrival":"2027-01-15","departure":"2027-01-18","kind":"hold"}]'>
+      <fieldset>
+        <legend>Your stay</legend>
+        <label>Arrival <input type="date" name="arrival" required min="2026-10-22" max="2027-06-30"></label>
+        <label>Departure <input type="date" name="departure" required min="2026-10-23" max="2027-07-01"></label>
+      </fieldset>
+    </sg-date-range>
+    <button class="demo-button" type="submit">Check these dates</button>
+    <output id="sent" for="stay" aria-live="polite"></output>
+  </form>
+
+  <h2>Already chosen</h2>
+  <p class="note">The inputs' values set the stay, so a server can render a chosen range and it shows the same with or without JavaScript.</p>
+  <div class="card">
+    <sg-date-range prices today="2026-10-20" blocks='[{"arrival":"2026-11-13","departure":"2026-11-16","kind":"booking"}]'>
+      <fieldset>
+        <legend>Your stay</legend>
+        <label>Arrival <input type="date" name="arrival" value="2026-11-09" min="2026-10-22" max="2027-06-30"></label>
+        <label>Departure <input type="date" name="departure" value="2026-11-13" min="2026-10-23" max="2027-07-01"></label>
+      </fieldset>
+    </sg-date-range>
+  </div>
+
+  <h2>Dates only</h2>
+  <p class="note">Without the <code>prices</code> attribute: no rates, no ribbon, the same rules for taken nights and turnover days.</p>
+  <div class="card">
+    <sg-date-range today="2026-10-20" blocks='[{"arrival":"2026-10-28","departure":"2026-11-02","kind":"owner"}]'>
+      <fieldset>
+        <legend>Dates for the studio</legend>
+        <label>From <input type="date" name="from" min="2026-10-22" max="2027-06-30"></label>
+        <label>Until <input type="date" name="until" min="2026-10-23" max="2027-07-01"></label>
+      </fieldset>
+    </sg-date-range>
+  </div>
+</main>
+<script type="module">
+  import './date-range.js';
+  const form = document.getElementById('stay'), out = document.getElementById('sent');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    out.textContent = `The form would send: ${new URLSearchParams(new FormData(form)).toString()}`;
+  });
+</script>
+</body>
+</html>

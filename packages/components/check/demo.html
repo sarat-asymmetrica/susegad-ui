@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkbox</title>
+<link rel="stylesheet" href="./check.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 44rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .lede { margin: 0 0 var(--sg-space-5); color: var(--sg-text-soft); max-width: var(--sg-measure); }
+  fieldset { border: var(--sg-hairline) solid var(--sg-rule); border-radius: var(--sg-radius-3); background: var(--sg-surface-raised); padding: var(--sg-space-3) var(--sg-space-4) var(--sg-space-4); margin: 0 0 var(--sg-space-4); display: grid; gap: var(--sg-space-2); }
+  /* inside the card, not across its border, so it sits on one background */
+  legend { float: left; width: 100%; font-weight: var(--sg-weight-medium); padding: 0; margin-bottom: var(--sg-space-1); }
+  .indent { margin-inline-start: 1.75em; display: grid; gap: var(--sg-space-2); }
+  .hint { font-size: var(--sg-step--1); color: var(--sg-text-soft); margin: 0; }
+  output { display: block; margin-top: var(--sg-space-3); font: var(--sg-step--1) / 1.5 var(--sg-font-mono); color: var(--sg-text-soft); overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Checkbox</h1>
+  <p class="lede">A native checkbox that submits with the form on its own. The register only changes how the box and the tick are drawn.</p>
+
+  <form id="form" action="" method="get">
+    <input type="hidden" name="sent" value="1">
+    <fieldset>
+      <legend>Extras for your stay</legend>
+      <sg-check controls="x-breakfast x-pickup x-late">
+        <label><input type="checkbox" id="x-all"> All extras</label>
+      </sg-check>
+      <div class="indent">
+        <sg-check><label><input type="checkbox" id="x-breakfast" name="extras" value="breakfast" checked> Breakfast on the balcão, ₹450 a person</label></sg-check>
+        <sg-check><label><input type="checkbox" id="x-pickup" name="extras" value="pickup"> Pickup from Thivim station</label></sg-check>
+        <sg-check><label><input type="checkbox" id="x-late" name="extras" value="late"> Late checkout, until 2 pm</label></sg-check>
+      </div>
+      <p class="hint">All extras shows a dash when some are chosen.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>In Marathi, Kannada and Konkani</legend>
+      <!-- These Indian-language strings are drafts awaiting a native speaker's check. -->
+      <sg-check lang="mr"><label><input type="checkbox" name="lang" value="mr"> मला मराठीत पुष्टीकरण पाठवा</label></sg-check>
+      <sg-check lang="kn"><label><input type="checkbox" name="lang" value="kn"> ಕನ್ನಡದಲ್ಲಿ ದೃಢೀಕರಣ ಕಳುಹಿಸಿ</label></sg-check>
+      <sg-check lang="kok-Latn"><label><input type="checkbox" name="lang" value="kok"> Konknnint khatri dhadd</label></sg-check>
+    </fieldset>
+
+    <fieldset>
+      <legend>Before you book</legend>
+      <sg-check><label><input type="checkbox" name="rules" value="agreed" required> I have read the house rules: quiet after 10 pm, no parties, and please switch off the geyser when you leave the room.</label></sg-check>
+      <sg-check><label><input type="checkbox" name="pets" disabled> Bring a pet (not at this house)</label></sg-check>
+    </fieldset>
+
+    <button type="submit" class="demo-button">Send</button>
+    <output id="sent" aria-live="polite"></output>
+  </form>
+</main>
+<script type="module">
+  import './check.js';
+  // With JavaScript on, show what the form sent (the no-JS check reads the URL).
+  const q = new URLSearchParams(location.search);
+  if (q.has('sent')) document.getElementById('sent').textContent = `Sent: ${[...q].filter(([k]) => !['register', 'theme', 'palette', 'sent'].includes(k)).map(([k, v]) => `${k}=${v}`).join(', ') || 'nothing ticked'}`;
+</script>
+</body>
+</html>

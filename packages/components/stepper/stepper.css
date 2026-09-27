@@ -1,0 +1,46 @@
+/* <sg-stepper>: without JavaScript every step shows in order; with it, one at a time.
+   Tokens only. */
+
+sg-stepper { display: block; counter-reset: sg-step; }
+sg-stepper[hidden] { display: none !important; }
+
+/* every step, numbered: the no-JavaScript and quiet look */
+sg-stepper > fieldset {
+  counter-increment: sg-step;
+  margin: 0 0 var(--sg-space-5, 24px); padding: var(--sg-space-4, 16px) var(--sg-space-4, 16px) var(--sg-space-5, 20px);
+  border: var(--sg-hairline, 1px) solid var(--sg-rule, color-mix(in oklab, currentColor 25%, transparent)); border-radius: var(--sg-radius-2, 4px);
+}
+sg-stepper > fieldset > legend {
+  padding: 0 var(--sg-space-2, 6px); font: var(--sg-weight-bold, 600) var(--sg-step-1, 1.15rem)/1.3 var(--sg-font-display, inherit);
+}
+sg-stepper:not([data-stepped]) > fieldset > legend::before { content: counter(sg-step) '. '; color: var(--sg-text-soft, inherit); }
+sg-stepper > fieldset[hidden] { display: none; }
+sg-stepper > fieldset > legend:focus { outline: none; }
+sg-stepper > fieldset > legend:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: 2px; }
+
+/* where you are, in words */
+.sg-stepper-progress { margin: 0 0 var(--sg-space-2, 8px); color: var(--sg-text-soft, inherit); font-size: var(--sg-step--1, 0.9rem); }
+
+/* Back and Next, with the form's own submit on the last step */
+.sg-stepper-nav { display: flex; flex-wrap: wrap; gap: var(--sg-space-3, 12px); align-items: center; }
+.sg-stepper-nav > [hidden] { display: none !important; }
+.sg-stepper-next { margin-inline-start: auto; }
+.sg-stepper-nav > :is(button[type=submit], button:not([type]), input[type=submit]) { margin-inline-start: auto; }
+
+/* the map (warm, playful) and the station line (quiet) */
+.sg-stepper-map { display: block; width: 100%; height: auto; margin: 0 0 var(--sg-space-3, 12px); overflow: visible; }
+.sg-stepper-map circle { fill: var(--sg-surface, var(--sg-paper)); stroke: var(--sg-ink-soft); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.sg-stepper-map text { font: var(--sg-weight-medium, 500) 11px var(--sg-font-body, sans-serif); fill: var(--sg-ink-soft); }
+.sg-stepper-map .here circle { stroke: var(--sg-ink); stroke-width: 2.4; }
+.sg-stepper-map .here text { fill: var(--sg-ink); font-weight: var(--sg-weight-bold, 600); }
+.sg-stepper-map .done circle { fill: var(--sg-ink); stroke: var(--sg-ink); }
+.sg-stepper-map .done text { fill: var(--sg-paper); }
+.sg-stepper-rule { stroke: var(--sg-rule-strong, var(--sg-ink-soft)); stroke-width: 1; vector-effect: non-scaling-stroke; }
+
+.sg-stepper-hills path { fill: none; stroke: var(--sg-ink-soft); stroke-width: 0.8; opacity: 0.28; vector-effect: non-scaling-stroke; }
+.sg-stepper-hills path[data-level='2'] { opacity: 0.4; }
+.sg-stepper-guide path { fill: none; stroke: var(--sg-ink-soft); stroke-width: 1.4; stroke-dasharray: 5 4; stroke-linecap: round; opacity: 0.65; }
+.sg-stepper-road path { fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+[data-skin='playful'] .sg-stepper-map .here circle { stroke: var(--sg-accent); }
+[data-skin='playful'] .sg-stepper-map .done circle { fill: var(--sg-accent); stroke: var(--sg-accent); }
+[data-skin='playful'] .sg-stepper-map .done text { fill: var(--sg-on-accent, #fff); }

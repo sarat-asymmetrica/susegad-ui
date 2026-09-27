@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="/tools/harness/demo.js"></script>
+  <link rel="stylesheet" href="/packages/tokens/fonts.css">
+  <link rel="stylesheet" href="/packages/tokens/tokens.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Toast</title>
+  <link rel="stylesheet" href="./toast.css">
+  <style>
+    body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: 400 1rem/1.6 var(--sg-font-body); }
+    main { max-width: 60rem; margin: 0 auto; padding: var(--sg-space-5) var(--sg-space-3) 14rem; }
+    h1 { font: 400 2.25rem/1.1 var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+    h2 { font: 400 1.375rem/1.2 var(--sg-font-display); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+    p.lede { color: var(--sg-text-soft); max-width: 42rem; margin: 0; }
+    .tones { display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: var(--sg-space-3); align-items: start; }
+    .controls { display: flex; flex-wrap: wrap; gap: var(--sg-space-2); }
+    .controls button, .field button {
+      font: 500 0.9375rem/1 var(--sg-font-body); color: var(--sg-text); background: var(--sg-surface-raised);
+      border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-pill); padding: 0.6em 1em; cursor: pointer;
+    }
+    .controls button:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+    .note { color: var(--sg-text-soft); font-size: 0.9375rem; max-width: 42rem; }
+    kbd { font: 500 0.85em/1 var(--sg-font-mono); border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-1); padding: 0.15em 0.35em; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Toast</h1>
+    <p class="lede">A short message that never takes focus. Errors and messages with an action stay until you dismiss them; the others stay long enough to read, and wait while you point at them or move into them.</p>
+
+    <h2>Every tone</h2>
+    <div class="tones">
+      <sg-toast tone="info"><strong class="sg-toast-title">New prices</strong> The price list was updated this morning.</sg-toast>
+      <sg-toast tone="success"><strong class="sg-toast-title">Saved</strong> Your booking for 12 to 15 October is saved.</sg-toast>
+      <sg-toast tone="warning"><strong class="sg-toast-title">Almost full</strong> Only one room is left for those dates.</sg-toast>
+      <sg-toast tone="error"><strong class="sg-toast-title">Couldn't send</strong> Check your connection and try again. <button type="button" class="sg-toast-action" data-keep>Try again</button></sg-toast>
+    </div>
+
+    <h2>Try it</h2>
+    <div class="controls">
+      <button type="button" data-show="success">Save</button>
+      <button type="button" data-show="info">Show a note</button>
+      <button type="button" data-show="warning">Warn</button>
+      <button type="button" data-show="error">Fail</button>
+      <button type="button" data-show="undo">Delete, with undo</button>
+    </div>
+    <p class="note">Press <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd> to move to the newest message, <kbd>Escape</kbd> to dismiss it. Focus comes back to where you were.</p>
+  </main>
+
+  <sg-toast-region max="3"></sg-toast-region>
+
+  <script type="module">
+    import { toast } from './toast.js';
+    const region = document.querySelector('sg-toast-region');
+    const SAMPLES = {
+      success: { tone: 'success', title: 'Saved', message: 'Your changes are saved.' },
+      info: { tone: 'info', message: 'Checkout is at 11 in the morning.' },
+      warning: { tone: 'warning', title: 'Almost full', message: 'Only one room is left for those dates.' },
+      error: { tone: 'error', title: "Couldn't save", message: 'Check your connection and try again.' },
+      undo: { tone: 'info', message: 'The photo was deleted.', action: { label: 'Undo', onAction: () => toast('The photo is back.', { tone: 'success' }) } },
+    };
+    document.querySelector('.controls').addEventListener('click', e => {
+      const k = e.target.closest('button')?.dataset.show;
+      if (k) region.show(SAMPLES[k]);
+    });
+    // the stack in its busiest state: three shown, one waiting
+    region.show(SAMPLES.error);
+    region.show(SAMPLES.success);
+    region.show(SAMPLES.undo);
+    region.show(SAMPLES.info);
+    // perf: ?loop=1 keeps letters arriving so there is motion to measure
+    if (new URLSearchParams(location.search).has('loop')) {
+      const keys = ['success', 'info', 'warning'];
+      let i = 0;
+      setInterval(() => { region.show({ ...SAMPLES[keys[i++ % 3]], duration: 5000 }); }, 900);
+    }
+    await customElements.whenDefined('sg-toast');
+    window.__demoReady?.();
+  </script>
+</body>
+</html>

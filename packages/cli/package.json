@@ -1,0 +1,10 @@
+{
+  "name": "@susegad/cli",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Copy Susegad UI pieces into your project, shadcn-style.",
+  "license": "MIT",
+  "type": "module",
+  "bin": { "susegad": "bin/susegad.mjs" },
+  "engines": { "node": ">=22" }
+}

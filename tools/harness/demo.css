@@ -1,0 +1,29 @@
+/* The demos' own primary buttons (a page's, never a component's), so every demo
+   shows the same thing: in quiet an outline, as Wave 1 settled; in warm and
+   playful the accent as a fill. Linked by demo.js; mark a button with
+   class="demo-button" (a stepper demo marks its <sg-stepper data-demo>). */
+
+.demo-button,
+sg-stepper[data-demo] .sg-stepper-next {
+  justify-self: start;
+  min-block-size: 2.75rem;
+  padding: 0 1.25em;
+  font: var(--sg-weight-medium, 500) var(--sg-step-0, 1rem) / 1 var(--sg-font-body, sans-serif);
+  color: var(--sg-on-accent);
+  background: var(--sg-accent);
+  border: var(--sg-hairline, 1px) solid transparent;
+  border-radius: var(--sg-radius-2, 4px);
+  cursor: pointer;
+}
+:is([data-register="quiet"], [register="quiet"]) :is(.demo-button, sg-stepper[data-demo] .sg-stepper-next) {
+  color: var(--sg-text);
+  background: transparent;
+  border-color: var(--sg-rule-strong);
+}
+:is(.demo-button, sg-stepper[data-demo] .sg-stepper-next):focus-visible {
+  outline: var(--sg-focus-width, 2px) solid var(--sg-focus);
+  outline-offset: var(--sg-focus-offset, 2px);
+}
+@media (forced-colors: active) {
+  :is(.demo-button, sg-stepper[data-demo] .sg-stepper-next) { border-color: ButtonText; }
+}

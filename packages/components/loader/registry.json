@@ -1,0 +1,35 @@
+{
+  "name": "loader",
+  "type": "component",
+  "title": "Loader",
+  "description": "A polite status region that says in words what is loading, with a small drawing beside it: three pulsing dots in quiet, a light travelling round a kolam and lighting each dot in warm, a spinning bambaram in playful. It never claims how far along the work is.",
+  "version": "0.1.0",
+  "files": [
+    "loader.js",
+    "loader.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "loader.prompt.md",
+    "loader.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "scene-kolam",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "loader.prompt.md",
+  "docs": "loader.docs.md",
+  "budget": {
+    "jsBytes": 11264,
+    "frameMs": 16.7,
+    "reason": "The contract's 12 KB behaviour plus 8 KB per skin, declared as the sum used: behaviour (loader.js) about 3.2 KB, including the status line that announces a newly added loader once; skins about 0.9 KB (quiet), 2.9 KB (warm) and 3.3 KB (playful). The warm skin reuses the Kolam scene's geometry."
+  }
+}

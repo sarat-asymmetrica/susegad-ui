@@ -1,0 +1,12 @@
+{
+  "name": "scene-paus",
+  "type": "scene",
+  "title": "Paus",
+  "version": "0.1.0",
+  "description": "The monsoon through a Goan window: rain beads, merges and runs down fogged glass. Hosts text in calm zones, clears from the sill up with progress, and wipes under a finger or the arrow keys.",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "paus.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "paus.prompt.md",
+  "budget": { "jsBytes": 61440, "reason": "The heavy baseline scene: drop simulation, fog mask, dusk palette, three registers." }
+}

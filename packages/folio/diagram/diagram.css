@@ -1,0 +1,125 @@
+/* <sg-diagram>: a figure with an SVG diagram and its text alternative. The
+   SVG is drawn at build time for one register; colours come from tokens, so
+   light and dark need no redraw. Without JavaScript everything here still
+   holds: the picture, the caption and every step in words. */
+
+sg-diagram {
+  --sg-d-ink: var(--sg-ink, #1d2742);
+  --sg-d-soft: var(--sg-ink-soft, #4a5373);
+  --sg-d-rule: var(--sg-rule-strong, #8a8f9e);
+  --sg-d-paper: var(--sg-surface-raised, #fff);
+  --sg-d-sunk: var(--sg-surface-sunk, #eee);
+  --sg-d-accent: var(--sg-accent-text, #9a3b1e);
+  display: block;
+  margin-block: var(--sg-space-5, 2rem);
+  color: var(--sg-text);
+}
+sg-diagram[hidden] { display: none; }
+
+sg-diagram .sg-diagram { margin: 0; display: grid; gap: var(--sg-space-3, 0.75rem); }
+sg-diagram figcaption { font: var(--sg-weight-medium, 500) var(--sg-step-0, 1rem) / var(--sg-leading-snug, 1.3) var(--sg-font-body, sans-serif); }
+
+sg-diagram .sg-diagram-svg {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+  font-family: var(--sg-font-body, sans-serif);
+}
+/* The picture shrinks to fit, but never so far that its words drop below about
+   12 px: the element sets --sg-d-min from the drawing's width, and past that the
+   picture scrolls sideways inside its figure instead. */
+sg-diagram .sg-diagram-scroll { overflow-x: auto; overscroll-behavior-x: contain; }
+sg-diagram .sg-diagram-scroll .sg-diagram-svg { min-inline-size: var(--sg-d-min, 0px); }
+sg-diagram .sg-diagram-scroll:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus); outline-offset: var(--sg-focus-offset, 2px); }
+@media print { sg-diagram .sg-diagram-scroll { overflow: visible; } sg-diagram .sg-diagram-scroll .sg-diagram-svg { min-inline-size: 0; } }
+
+/* ── boxes, words, lines ───────────────────────────────────────────────── */
+
+sg-diagram .sg-d-text { font-size: 14px; fill: var(--sg-text, #1d2742); }
+sg-diagram .sg-d-box { fill: var(--sg-d-paper); stroke: var(--sg-d-rule); stroke-width: 1; }
+sg-diagram .sg-d-fill { fill: var(--sg-d-paper); }
+sg-diagram .sg-d-ink { fill: var(--sg-d-ink); }
+sg-diagram .sg-d-path { fill: none; stroke: var(--sg-d-ink); stroke-width: 1.25; }
+sg-diagram .sg-d-head { fill: none; stroke: var(--sg-d-ink); stroke-width: 1.25; stroke-linejoin: round; stroke-linecap: round; }
+sg-diagram .sg-d-line .sg-d-path { stroke: var(--sg-d-rule); }
+sg-diagram .sg-d-dots circle, sg-diagram .sg-d-particle { fill: var(--sg-d-accent); }
+
+sg-diagram .sg-d-group-frame { fill: color-mix(in oklch, var(--sg-d-sunk) 55%, transparent); stroke: var(--sg-d-rule); stroke-width: 1; stroke-dasharray: 4 3; }
+sg-diagram .sg-d-group-fill { fill: color-mix(in oklch, var(--sg-d-sunk) 60%, transparent); }
+sg-diagram .sg-d-group-ink { fill: var(--sg-d-soft); }
+sg-diagram .sg-d-group-name { font-size: 12px; font-weight: 500; fill: var(--sg-text-soft, #4a5373); }
+
+/* a connection's number, where its words would not sit clear: a small disc on the line */
+sg-diagram .sg-d-badge circle { fill: var(--sg-d-paper); stroke: var(--sg-d-ink); stroke-width: 1.25; }
+sg-diagram .sg-d-badge text { font-size: 12px; font-weight: 600; fill: var(--sg-text, #1d2742); font-variant-numeric: lining-nums; }
+sg-diagram .sg-d-badge.is-now circle { fill: var(--sg-d-accent); stroke: var(--sg-d-accent); }
+sg-diagram .sg-d-badge.is-now text { fill: var(--sg-surface, #fff); }
+sg-diagram .sg-d-label-text { font-size: 12.5px; fill: var(--sg-text-soft, #4a5373); stroke: var(--sg-surface, #fff); stroke-width: 4px; stroke-linejoin: round; paint-order: stroke; }
+
+/* warm and playful: the line is inked, so the plain path is only a guide */
+sg-diagram .sg-diagram-svg:not([data-register="quiet"]) .sg-d-path { stroke: none; }
+sg-diagram .sg-diagram-svg:not([data-register="quiet"]) .sg-d-head { fill: var(--sg-d-ink); stroke: none; }
+sg-diagram .sg-diagram-svg:not([data-register="quiet"]) .sg-d-group-name { font-family: var(--sg-font-hand, cursive); font-size: 14px; font-weight: 300; }
+sg-diagram .sg-diagram-svg:not([data-register="quiet"]) .sg-d-label-text { font-family: var(--sg-font-hand, cursive); font-size: 14px; }
+
+/* playful: groups take a colour from the palette, flows run in the accent */
+sg-diagram [data-register="playful"] .sg-d-edge:is(.sg-d-flow, .sg-d-both) :is(.sg-d-ink, .sg-d-head) { fill: var(--sg-d-accent); }
+sg-diagram [data-register="playful"] [data-hue="0"] { --sg-d-hue: var(--sg-mango, #d9a21b); }
+sg-diagram [data-register="playful"] [data-hue="1"] { --sg-d-hue: var(--sg-paddy, #5f8a3a); }
+sg-diagram [data-register="playful"] [data-hue="2"] { --sg-d-hue: var(--sg-sea, #2f7f8f); }
+sg-diagram [data-register="playful"] [data-hue="3"] { --sg-d-hue: var(--sg-kokum, #8a2f5a); }
+sg-diagram [data-register="playful"] [data-hue="4"] { --sg-d-hue: var(--sg-laterite, #a4452a); }
+sg-diagram [data-register="playful"] [data-hue] .sg-d-fill { fill: color-mix(in oklch, var(--sg-d-hue) 16%, var(--sg-d-paper)); }
+sg-diagram [data-register="playful"] [data-hue] .sg-d-group-fill { fill: color-mix(in oklch, var(--sg-d-hue) 10%, var(--sg-d-paper)); }
+sg-diagram [data-register="playful"] [data-hue] .sg-d-group-ink { fill: color-mix(in oklch, var(--sg-d-hue) 70%, var(--sg-d-ink)); }
+
+/* ── the text alternative ──────────────────────────────────────────────── */
+
+sg-diagram .sg-diagram-text,
+sg-diagram .sg-diagram-steps {
+  font: var(--sg-step--1, 0.875rem) / var(--sg-leading-snug, 1.4) var(--sg-font-body, sans-serif);
+  color: var(--sg-text-soft);
+  max-inline-size: var(--sg-measure, 40rem);
+}
+sg-diagram .sg-diagram-text summary { cursor: pointer; color: var(--sg-accent-text); inline-size: fit-content; }
+sg-diagram .sg-diagram-text summary:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus); outline-offset: 2px; }
+sg-diagram .sg-diagram-text p, sg-diagram .sg-diagram-text ul { margin: var(--sg-space-2, 0.5rem) 0 0; }
+sg-diagram .sg-diagram-steps { margin: 0; padding-inline-start: 1.4em; display: grid; gap: 0.25em; }
+sg-diagram .sg-diagram-steps li[aria-current="step"] { color: var(--sg-text); font-weight: var(--sg-weight-medium, 500); }
+sg-diagram .sg-diagram-steps li[aria-current="step"]::marker { color: var(--sg-d-accent); }
+
+/* ── step-through (with JavaScript) ────────────────────────────────────── */
+
+sg-diagram .sg-diagram-stepper { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sg-space-2, 0.5rem) var(--sg-space-3, 0.75rem); }
+sg-diagram .sg-diagram-stepper button {
+  font: var(--sg-weight-medium, 500) var(--sg-step--1, 0.875rem) / 1 var(--sg-font-body, sans-serif);
+  min-block-size: 2.75rem;
+  padding: 0 1em;
+  color: var(--sg-accent-text);
+  background: transparent;
+  border: 0;
+  border-radius: var(--sg-radius-2, 4px);
+  box-shadow: inset 0 0 0 var(--sg-hairline, 1px) var(--sg-rule-strong);
+  cursor: pointer;
+}
+sg-diagram .sg-diagram-stepper button[aria-disabled="true"] { color: var(--sg-text-soft); cursor: default; box-shadow: inset 0 0 0 var(--sg-hairline, 1px) var(--sg-rule); }
+sg-diagram .sg-diagram-stepper button:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus); outline-offset: var(--sg-focus-offset, 2px); }
+sg-diagram .sg-diagram-now { margin: 0; flex: 1 1 100%; order: -1; font: var(--sg-step--1, 0.875rem) / 1.4 var(--sg-font-body, sans-serif); color: var(--sg-text); }
+
+sg-diagram :is(.sg-d-edge, .sg-d-ink, .sg-d-box, .sg-d-fill) { transition: opacity var(--sg-dur-quick, 160ms) ease-out; }
+/* stepping: the lines and boxes not in this step fade back, but their words stay readable
+   (the soft text colour, which meets 4.5:1), because dimmed is not the same as gone */
+sg-diagram[data-at]:not([data-at="0"]) .sg-d-edge:not(.is-now) { opacity: 0.25; }
+sg-diagram[data-at]:not([data-at="0"]) .sg-d-node:not(.is-lit) :is(.sg-d-ink, .sg-d-box, .sg-d-fill) { opacity: 0.35; }
+sg-diagram[data-at]:not([data-at="0"]) .sg-d-node:not(.is-lit) .sg-d-text { fill: var(--sg-text-soft, #4a5373); }
+sg-diagram[data-at]:not([data-at="0"]) .sg-d-label.is-now .sg-d-label-text { fill: var(--sg-text, #1d2742); }
+@media (prefers-reduced-motion: reduce) { sg-diagram :is(.sg-d-edge, .sg-d-ink, .sg-d-box, .sg-d-fill) { transition: none; } }
+
+@media print {
+  sg-diagram .sg-diagram-stepper { display: none; }
+  sg-diagram :is(.sg-d-edge, .sg-d-ink, .sg-d-box, .sg-d-fill) { opacity: 1 !important; }
+  sg-diagram .sg-diagram-svg { break-inside: avoid; }
+}
+
+/* once things are moving along the flows, the still dots step aside */
+sg-diagram[data-moving] .sg-d-dots { display: none; }

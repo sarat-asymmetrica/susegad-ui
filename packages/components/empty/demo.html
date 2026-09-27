@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Empty state</title>
+<link rel="stylesheet" href="./empty.css">
+<style>
+  body { margin: 0; background: var(--sg-paper); color: var(--sg-ink); font: var(--sg-step-0, 1rem)/var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui); }
+  main { max-width: 62rem; margin: 0 auto; padding: var(--sg-space-5, 24px) var(--sg-space-4, 16px) var(--sg-space-7, 64px); }
+  h1 { font: var(--sg-weight-bold, 600) var(--sg-step-3, 1.8rem)/1.2 var(--sg-font-display, inherit); margin: 0 0 var(--sg-space-2, 8px); }
+  .lede { color: var(--sg-text-soft, var(--sg-ink-soft)); max-width: var(--sg-measure, 62ch); margin: 0 0 var(--sg-space-5, 24px); }
+  .label { font-size: var(--sg-step--1, .9rem); color: var(--sg-text-soft, var(--sg-ink-soft)); margin: var(--sg-space-6, 40px) 0 var(--sg-space-2, 8px); }
+  .side { display: grid; gap: var(--sg-space-5, 24px); grid-template-columns: minmax(0, 22rem) minmax(0, 1fr); align-items: start; }
+  @media (max-width: 40rem) { .side { grid-template-columns: 1fr; } }
+  .side aside p { color: var(--sg-text-soft, var(--sg-ink-soft)); margin: 0; }
+  .action {
+    display: inline-block; font: inherit; font-weight: var(--sg-weight-medium, 500); text-decoration: none; cursor: pointer;
+    padding: 8px 16px; border-radius: var(--sg-radius-2, 4px); border: 0;
+    background: var(--sg-accent); color: var(--sg-on-accent, #fff);
+  }
+  .action:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+  .actions { display: flex; gap: var(--sg-space-3, 12px); align-items: center; flex-wrap: wrap; }
+  .actions a:not(.action) { color: var(--sg-ink); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Empty state</h1>
+  <p class="lede">What a place shows before there is anything in it: a heading, a sentence about what will appear there, and the one thing to do next. The words are yours. The register brings the picture: quiet draws a small window in pencil, warm lets it rain beside the words, and playful lets you wipe the glass.</p>
+
+  <p class="label">A full-width empty state</p>
+  <sg-empty scene="paus" scene-intensity="0.55">
+    <h2>No bookings yet</h2>
+    <p>When a guest books a room, their stay shows up here with the dates and what they asked for.</p>
+    <div class="actions">
+      <a class="action" href="#share">Share your listing</a>
+      <a href="#rates">Check your rates</a>
+    </div>
+  </sg-empty>
+
+  <p class="label">In a narrow column, the words move below the picture</p>
+  <div class="side">
+    <sg-empty scene="paus" scene-seed="4" scene-fog="0.9">
+      <h2>No messages</h2>
+      <p>Guests can write to you from their booking. Their messages arrive here.</p>
+      <button class="action" type="button">Write a welcome note</button>
+    </sg-empty>
+    <aside><p>The scene is the same element as anywhere else, so it pauses off screen, has a pause button, and shows a still for reduced motion.</p></aside>
+  </div>
+</main>
+<script type="module">
+  // ?single=1 keeps only the first empty state, so perf measures one scene against Paus
+  if (new URLSearchParams(location.search).get('single')) document.querySelectorAll('.label ~ :is(.label, .side)').forEach(n => n.remove());
+  await import('./empty.js');
+</script>
+</body>
+</html>

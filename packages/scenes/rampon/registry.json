@@ -1,0 +1,12 @@
+{
+  "name": "scene-rampon",
+  "type": "scene",
+  "title": "Rampon",
+  "description": "Dusk on the Goan shore: a ballpoint sea of short hatching strokes that boils like hand-drawn animation, a sun sinking into haze, palms swaying in seeded wind, a ramponkar's canoe with its net heaped inside, and a few distant birds. Quiet is a single still; warm boils gently; playful boils in full, a click draws a new evening, and a koel calls.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "rampon.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "rampon.prompt.md",
+  "budget": { "jsBytes": 40960 }
+}

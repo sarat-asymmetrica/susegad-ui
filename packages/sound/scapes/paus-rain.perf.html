@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Paus, with the rain soundscape on</title>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<style>body { margin: 0; background: var(--sg-surface); } sg-scene { display: block; width: min(1100px, 100%); margin: 0 auto; }</style>
+</head>
+<body>
+<!-- For tools/perf.mjs --url, compared against --baseline paus (the same scene, without this
+     page's addition): the cost this page adds is the rain soundscape's own event listener and,
+     once the switch is on, its oscillators -- not Paus itself, which is unchanged. -->
+<script type="module">
+  await import('/packages/core/index.js');
+  await import('/packages/scenes/paus/index.js');
+  const { attachPausRain } = await import('/packages/sound/scapes/paus-rain.js');
+  const { setSoundOn } = await import('/packages/sound/index.js');
+
+  const el = document.createElement('sg-scene');
+  el.setAttribute('name', 'paus');
+  el.setAttribute('register', 'playful');
+  el.setAttribute('intensity', '1');
+  document.body.append(el);
+  await new Promise(r => el.addEventListener('sg-ready', r, { once: true }));
+
+  attachPausRain(el);
+  setSoundOn(true); // the perf run's own "gesture": measures the real running cost, switch on
+
+  window.__ready = true;
+</script>
+</body>
+</html>

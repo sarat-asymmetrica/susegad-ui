@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="/tools/harness/demo.js"></script>
+  <link rel="stylesheet" href="/packages/tokens/fonts.css">
+  <link rel="stylesheet" href="/packages/tokens/tokens.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Field note</title>
+  <link rel="stylesheet" href="./field-note.css">
+  <style>
+    body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: 400 1rem/1.6 var(--sg-font-body); }
+    main { max-width: 44rem; margin: 0 auto; padding: var(--sg-space-5) var(--sg-space-3) var(--sg-space-6); }
+    h1 { font: 400 2.25rem/1.1 var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+    p.lede { color: var(--sg-text-soft); margin: 0 0 var(--sg-space-5); }
+    form { display: grid; gap: var(--sg-space-4); }
+    .field { display: grid; gap: var(--sg-space-1); }
+    label, legend { font-weight: 500; }
+    .optional { font-weight: 400; color: var(--sg-text-soft); }
+    input:not([type="checkbox"]), select {
+      font: 400 1rem/1.4 var(--sg-font-body); color: var(--sg-text); background: var(--sg-surface-raised);
+      border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-2); padding: 0.55em 0.7em; max-inline-size: 22rem;
+    }
+    /* the page styles its own fields; the note sets aria-invalid, which this reads */
+    input[aria-invalid="true"] { border-color: var(--sg-danger); box-shadow: inset 3px 0 0 var(--sg-danger); }
+    input:focus-visible, select:focus-visible, button:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+    .check { display: flex; gap: var(--sg-space-2); align-items: center; }
+    .check input { inline-size: 1.15rem; block-size: 1.15rem; accent-color: var(--sg-accent); }
+    button {
+      justify-self: start; font: 500 1rem/1 var(--sg-font-body); color: var(--sg-on-accent); background: var(--sg-accent);
+      border: 0; border-radius: var(--sg-radius-pill); padding: 0.75em 1.3em; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Field note</h1>
+    <p class="lede">A note under a field that says what is wrong and how to fix it. It waits until you leave a field you changed, then follows your typing and goes the moment the value is right.</p>
+
+    <form id="enquiry" action="#" novalidate>
+      <div class="field">
+        <label for="name">Your name</label>
+        <input id="name" name="name" required autocomplete="name">
+        <sg-field-note for="name" validate></sg-field-note>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required autocomplete="email" value="sarat@">
+        <sg-field-note for="email" validate></sg-field-note>
+      </div>
+      <div class="field">
+        <label for="phone">Phone <span class="optional">(optional)</span></label>
+        <sg-field-note id="phone-hint" for="phone" tone="hint">We only call about this booking.</sg-field-note>
+        <input id="phone" name="phone" inputmode="tel" pattern="[0-9 ]{10,12}" value="98220">
+        <sg-field-note for="phone" validate data-pattern-mismatch="Use 10 digits, like 98220 12345."></sg-field-note>
+      </div>
+      <div class="field">
+        <label for="guests">Guests</label>
+        <input id="guests" name="guests" type="number" min="1" max="6" step="1" value="9">
+        <sg-field-note for="guests" validate></sg-field-note>
+      </div>
+      <div class="field">
+        <label for="dates">Dates</label>
+        <input id="dates" name="dates" value="12 to 15 October">
+        <!-- rendered by the server after it checked the calendar -->
+        <sg-field-note for="dates">Those dates are booked. The next free nights start on 16 October.</sg-field-note>
+      </div>
+      <div class="field">
+        <div class="check">
+          <input id="terms" name="terms" type="checkbox" required>
+          <label for="terms">I have read the house rules</label>
+        </div>
+        <sg-field-note for="terms" validate></sg-field-note>
+      </div>
+      <button type="submit">Send enquiry</button>
+    </form>
+  </main>
+
+  <script type="module">
+    import './field-note.js';
+    await customElements.whenDefined('sg-field-note');
+    // show the notes as they look after a first try at sending
+    const notes = [...document.querySelectorAll('sg-field-note[validate]')];
+    notes.forEach(n => n.check());
+    document.getElementById('enquiry').addEventListener('submit', e => { e.preventDefault(); notes.forEach(n => n.check()); });
+    document.activeElement?.blur?.();
+    // perf: ?loop=1 makes the guests note appear and go, so there is ink to measure
+    if (new URLSearchParams(location.search).has('loop')) {
+      const g = document.getElementById('guests'), note = document.querySelector('sg-field-note[for="guests"]');
+      let bad = true;
+      setInterval(() => { bad = !bad; g.value = bad ? '9' : '4'; note.check(); }, 700);
+    }
+    window.__demoReady?.();
+  </script>
+</body>
+</html>

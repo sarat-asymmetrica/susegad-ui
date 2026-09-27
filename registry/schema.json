@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://susegad-ui.local/registry/schema.json",
+  "title": "Susegad UI registry item manifest",
+  "description": "One registry.json per package, scene, component, recipe or adapter folder; a folder that holds a second item names it <name>.registry.json. It tells the CLI which files to copy into a builder's project. Paths in files, docs and prompt are relative to the folder the manifest sits in. Repo-rooted paths that start with packages/ are still accepted while older manifests move over, and the build prints a note when it sees one. The index the build writes (registry/registry.json) is described by $defs.index.",
+  "$ref": "#/$defs/manifest",
+  "$defs": {
+    "name": {
+      "description": "Lowercase kebab-case. Scenes are scene-<name>, for example scene-kolam.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "x-hint": "should be lowercase kebab-case, like scene-kolam"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["package", "scene", "component", "recipe", "adapter"]
+    },
+    "register": {
+      "type": "string",
+      "enum": ["quiet", "warm", "playful"]
+    },
+    "relPath": {
+      "description": "A forward-slash path inside the repo. No leading slash, no backslashes, no .. segments.",
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\\\)(?!.*(^|/)\\.\\.(/|$)).+$",
+      "x-hint": "should be a forward-slash path inside the repo, with no leading slash, no drive letter and no .."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?$",
+      "x-hint": "should be a version like 0.1.0"
+    },
+    "hash": {
+      "description": "sha256 of the content in hex, with CRLF line endings read as LF so a checkout on Windows hashes the same.",
+      "type": "string",
+      "pattern": "^sha256-[0-9a-f]{64}$"
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "jsBytes": { "description": "Unminified source bytes of this item's own .js and .mjs files.", "type": "integer", "minimum": 0 },
+        "frameMs": { "description": "Milliseconds per frame when animated.", "type": "number", "exclusiveMinimum": 0 },
+        "reason": { "description": "Why this item's budget differs from the default for its type (see docs/decisions/0001-architecture.md, Budgets).", "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "manifest": {
+      "type": "object",
+      "required": ["name", "type", "files"],
+      "properties": {
+        "$schema": { "type": "string" },
+        "name": { "$ref": "#/$defs/name" },
+        "type": { "$ref": "#/$defs/type" },
+        "title": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "version": { "$ref": "#/$defs/version" },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/relPath" }
+        },
+        "dependencies": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/name" }
+        },
+        "registers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/register" }
+        },
+        "budget": { "$ref": "#/$defs/budget" },
+        "docs": { "$ref": "#/$defs/relPath" },
+        "prompt": { "$ref": "#/$defs/relPath" }
+      },
+      "additionalProperties": false
+    },
+    "indexFile": {
+      "type": "object",
+      "required": ["path", "bytes", "hash"],
+      "properties": {
+        "path": { "description": "Repo-rooted, always under packages/.", "$ref": "#/$defs/relPath" },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "hash": { "$ref": "#/$defs/hash" }
+      },
+      "additionalProperties": false
+    },
+    "indexItem": {
+      "type": "object",
+      "required": ["name", "type", "title", "description", "version", "manifest", "files", "dependencies", "registers", "bytes", "jsBytes", "codeBytes", "hash"],
+      "properties": {
+        "name": { "$ref": "#/$defs/name" },
+        "type": { "$ref": "#/$defs/type" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "version": { "$ref": "#/$defs/version" },
+        "manifest": { "$ref": "#/$defs/relPath" },
+        "files": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/indexFile" } },
+        "dependencies": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/name" } },
+        "registers": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/register" } },
+        "budget": { "$ref": "#/$defs/budget" },
+        "docs": { "$ref": "#/$defs/relPath" },
+        "prompt": { "$ref": "#/$defs/relPath" },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "jsBytes": { "type": "integer", "minimum": 0 },
+        "codeBytes": { "description": "jsBytes with comments and blank lines taken out (decision 0002).", "type": "integer", "minimum": 0 },
+        "hash": { "$ref": "#/$defs/hash" }
+      },
+      "additionalProperties": false
+    },
+    "index": {
+      "description": "registry/registry.json, written by registry/build.mjs. Sorted and free of timestamps, so the same sources always give the same bytes.",
+      "type": "object",
+      "required": ["name", "format", "base", "items"],
+      "properties": {
+        "name": { "type": "string" },
+        "format": { "const": 1 },
+        "base": { "description": "Where file paths are rooted, relative to the index file's folder.", "type": "string" },
+        "items": { "type": "array", "items": { "$ref": "#/$defs/indexItem" } }
+      },
+      "additionalProperties": false
+    }
+  }
+}

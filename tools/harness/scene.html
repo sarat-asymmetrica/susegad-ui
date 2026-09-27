@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene harness</title>
+<script>
+  // Runs before any module so the scene only ever sees this clock.
+  // ?freeze=<seconds> installs a stepped virtual clock: performance.now, Date.now and
+  // the rAF timestamp advance exactly 1/60 s per frame from the moment the scene is
+  // mounted, and stop at <seconds>. Math.random is seeded too. Same seed + same
+  // freeze = the same pixels, whatever the machine's frame rate.
+  (() => {
+    const q = new URLSearchParams(location.search);
+    if (!q.has('freeze')) return;
+    const cap = Math.max(0, Number(q.get('freeze')) || 0) * 1000;
+    const step = 1000 / 60, t0 = 1000, date0 = Date.UTC(2026, 0, 1);
+    const realRAF = window.requestAnimationFrame.bind(window);
+    let vt = 0, running = false, lastReal = -1;
+    const clock = window.__clock = {
+      frozen: false, frames: 0,
+      get time() { return vt / 1000; },
+      start() { running = true; },
+    };
+    performance.now = () => t0 + vt;
+    Date.now = () => date0 + vt;
+    window.requestAnimationFrame = cb => realRAF(ts => {
+      if (ts !== lastReal) {
+        lastReal = ts;
+        if (running && vt < cap) { vt = Math.min(cap, vt + step); clock.frames++; }
+        if (running && vt >= cap) clock.frozen = true;
+      }
+      cb(t0 + vt);
+    });
+    // mulberry32, seeded from ?seed so any stray Math.random is repeatable too.
+    let s = (Number(q.get('seed')) || 1) >>> 0;
+    Math.random = () => {
+      s = (s + 0x6D2B79F5) >>> 0;
+      let t = s;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+    const tick = () => requestAnimationFrame(tick);
+    requestAnimationFrame(tick);
+  })();
+</script>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0; padding: 16px;
+    background: var(--sg-paper, Canvas); color: var(--sg-ink, CanvasText);
+    font: 15px/1.5 var(--sg-font-body, system-ui, sans-serif);
+  }
+  #box { width: min(1100px, 100%); margin: 0 auto; }
+  #status { width: min(1100px, 100%); margin: 8px auto 0; font-size: 13px; opacity: .72; }
+  #error {
+    width: min(1100px, 100%); margin: 16px auto; padding: 12px 16px; box-sizing: border-box;
+    border-left: 3px solid #c0392b; background: #fbeae8; color: #5a1a12; white-space: pre-wrap;
+    font: 13px/1.5 ui-monospace, monospace;
+  }
+  #error:empty { display: none; }
+</style>
+</head>
+<body>
+  <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">Scene harness</h1>
+<main>
+  <div id="box"></div>
+  <p id="status" aria-live="polite"></p>
+  <div id="error" role="alert"></div>
+</main>
+<script type="module">
+  const q = new URLSearchParams(location.search);
+  const RESERVED = new Set(['name', 'register', 'theme', 'palette', 'seed', 'content', 'freeze', 'module', 'element']);
+  const name = q.get('name');
+  const element = q.get('element') || 'sg-scene';
+  const status = document.getElementById('status');
+
+  function fail(msg, err) {
+    const text = err ? `${msg}\n${err.stack || err.message || err}` : msg;
+    document.getElementById('error').textContent = text;
+    console.error(`[harness] ${text}`);
+    window.__error = msg;
+  }
+
+  // serve.mjs answers /__exists without a 404; any other static server gets a HEAD request.
+  async function exists(path) {
+    try {
+      const r = await fetch(`/__exists?path=${encodeURIComponent(path)}`);
+      if (r.ok) return !!(await r.json()).exists;
+    } catch {}
+    return (await fetch(path, { method: 'HEAD' })).ok;
+  }
+
+  async function main() {
+    if (!name) return fail('No scene given. Use scene.html?name=<scene>.');
+    const root = document.documentElement;
+    if (q.get('theme')) root.dataset.theme = q.get('theme');
+    if (q.get('register')) root.dataset.register = q.get('register');
+    if (q.get('palette')) root.dataset.palette = q.get('palette');
+
+    for (const href of ['/packages/tokens/fonts.css', '/packages/tokens/tokens.css']) {
+      if (!(await exists(href))) continue;
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      await new Promise(r => { link.onload = link.onerror = r; document.head.append(link); });
+    }
+
+    if (element === 'sg-scene') {
+      try { await import('/packages/core/index.js'); }
+      catch (e) { return fail('Could not load /packages/core/index.js.', e); }
+    }
+    const modulePath = q.get('module') || `/packages/scenes/${name}/index.js`;
+    try { await import(modulePath); }
+    catch (e) { return fail(`Could not load the scene module ${modulePath}.`, e); }
+
+    const el = document.createElement(element);
+    if (element === 'sg-scene') el.setAttribute('name', name);
+    if (q.get('register')) el.setAttribute('register', q.get('register'));
+    if (q.get('seed')) el.setAttribute('seed', q.get('seed'));
+    for (const [k, v] of q) if (!RESERVED.has(k)) el.setAttribute(k, v);
+    if (q.get('content') === '1') {
+      el.innerHTML = '<h2>Come for the rain</h2><p>Our lowest rate, June to September. The veranda stays dry and the paddy turns green.</p>';
+    }
+
+    const ready = new Promise((resolve, reject) => {
+      el.addEventListener('sg-ready', resolve, { once: true });
+      setTimeout(() => reject(new Error('no sg-ready within 10 s')), 10000);
+    });
+    window.__clock?.start();
+    document.getElementById('box').append(el);
+    try { await ready; }
+    catch (e) { return fail(`The ${name} scene never became ready.`, e); }
+
+    window.__piece = el;
+    window.__ready = true;
+    status.textContent = `${name} · ${q.get('register') || 'warm'} · ${q.get('theme') || 'system'} theme · seed ${q.get('seed') ?? 'default'}`;
+
+    if (window.__clock) {
+      while (!window.__clock.frozen) await new Promise(r => requestAnimationFrame(r));
+      // Animations the virtual clock cannot reach (Web Animations, CSS) are paused where they are.
+      for (const a of document.getAnimations?.() ?? []) a.pause();
+      if (typeof el.seek === 'function') el.seek(window.__clock.time);
+      // Two more frames so the last render reaches the screen.
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      window.__frozen = true;
+    }
+  }
+  main().catch(e => fail('The harness failed.', e));
+</script>
+</body>
+</html>

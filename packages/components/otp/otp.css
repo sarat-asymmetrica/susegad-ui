@@ -1,0 +1,139 @@
+/* <sg-otp>. Without JavaScript, or until a skin loads, this is one plain
+   input with its digits spaced out. With a skin, the same input lies
+   transparently over a row of boxes that show the digits; it is still the
+   only control, so typing, paste and SMS autofill work as usual. */
+
+sg-otp {
+  --sg-otp-ink-color: var(--sg-text);
+  --sg-otp-frame: var(--sg-rule-strong);
+  display: inline-grid;
+  gap: var(--sg-space-2, 0.5rem);
+  max-width: 100%;
+  color: var(--sg-text);
+}
+sg-otp[hidden] { display: none; }
+
+sg-otp > label {
+  font: var(--sg-weight-medium, 500) var(--sg-step-0, 1rem) / var(--sg-leading-snug, 1.3) var(--sg-font-body, sans-serif);
+  max-width: var(--sg-measure, 36rem);
+}
+
+/* the native input on its own */
+sg-otp > input {
+  box-sizing: border-box;
+  inline-size: calc(var(--sg-otp-length, 6) * 1.5ch + 1.6em);
+  max-inline-size: 100%;
+  min-block-size: 3rem;
+  padding: 0.4em 0.6em;
+  border: var(--sg-hairline, 1px) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-2, 4px);
+  background: var(--sg-surface-raised);
+  color: var(--sg-text);
+  font: var(--sg-weight-medium, 500) var(--sg-step-2, 1.45rem) / 1 var(--sg-font-mono, monospace);
+  letter-spacing: 0.5ch;
+  font-variant-numeric: tabular-nums;
+}
+sg-otp > input:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus); outline-offset: var(--sg-focus-offset, 2px); }
+sg-otp > input[aria-invalid="true"] { border-color: var(--sg-danger); }
+sg-otp > input:disabled { opacity: 0.6; }
+
+/* ── the boxes ─────────────────────────────────────────────────────────── */
+
+sg-otp:not([data-skin]) > .sg-otp-boxes,
+sg-otp .sg-otp-defs { display: none; }
+
+sg-otp[data-skin] { grid-template-areas: "label" "field"; }
+sg-otp[data-skin] > label { grid-area: label; }
+sg-otp[data-skin] > .sg-otp-boxes,
+sg-otp[data-skin] > input { grid-area: field; }
+
+/* the input stays the control, laid over the boxes, its own text and caret invisible */
+sg-otp[data-skin] > input {
+  position: relative;
+  z-index: 1;
+  inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  caret-color: transparent;
+  font-size: max(16px, 1rem); /* 16px or more: no zoom on focus on iOS */
+  letter-spacing: 0;
+  cursor: text;
+}
+sg-otp[data-skin] > input::selection { background: transparent; }
+sg-otp[data-skin] > input:-webkit-autofill { transition: background-color 9999s 9999s; }
+
+sg-otp .sg-otp-boxes {
+  display: flex;
+  gap: var(--sg-space-2, 0.5rem);
+}
+sg-otp .sg-otp-box {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 0 1 3rem;
+  min-inline-size: 2.25rem;
+  block-size: 3.5rem;
+  border: var(--sg-hairline, 1px) solid var(--sg-otp-frame);
+  border-radius: var(--sg-radius-2, 4px);
+  background: var(--sg-surface-raised);
+  color: var(--sg-otp-ink-color);
+  font: var(--sg-weight-medium, 500) var(--sg-step-3, 1.75rem) / 1 var(--sg-font-body, sans-serif);
+  font-variant-numeric: tabular-nums;
+}
+sg-otp .sg-otp-box > *,
+sg-otp .sg-otp-box::after { grid-area: 1 / 1; }
+sg-otp .sg-otp-box[data-group-end] { margin-inline-end: var(--sg-space-3, 0.75rem); }
+
+/* the current box: the focus ring, and a caret while it is empty */
+sg-otp .sg-otp-box[data-active] { outline: var(--sg-focus-width, 2px) solid var(--sg-focus); outline-offset: 2px; }
+sg-otp .sg-otp-box[data-active]:not([data-filled])::after {
+  content: "";
+  inline-size: 2px;
+  block-size: 1.6rem;
+  background: var(--sg-otp-ink-color);
+  animation: sg-otp-caret 1.1s steps(1) infinite;
+}
+@keyframes sg-otp-caret { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { sg-otp .sg-otp-box::after { animation: none; } }
+
+
+sg-otp:has(> input:disabled) .sg-otp-boxes { opacity: 0.6; }
+
+/* ── warm and playful: stamp boxes ─────────────────────────────────────── */
+
+sg-otp:is([data-skin="warm"], [data-skin="playful"]) {
+  --sg-otp-ink-color: var(--sg-accent-text);
+  --sg-otp-frame: color-mix(in oklch, var(--sg-accent-text) 45%, transparent);
+}
+sg-otp:is([data-skin="warm"], [data-skin="playful"]) .sg-otp-box {
+  border: 2px solid var(--sg-otp-frame);
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 3px var(--sg-surface-raised), inset 0 0 0 4.2px var(--sg-otp-frame);
+  font: 400 var(--sg-step-3, 1.75rem) / 1 var(--sg-font-display, serif);
+  transition: border-color var(--sg-dur-quick, 160ms) ease-out, box-shadow var(--sg-dur-quick, 160ms) ease-out;
+}
+/* a stamped box: the frame inks with the digit */
+sg-otp:is([data-skin="warm"], [data-skin="playful"]) .sg-otp-box[data-filled] {
+  --sg-otp-frame: var(--sg-otp-ink-color);
+}
+
+/* a code that was not accepted: the frames and digits turn to the danger ink, in every register */
+sg-otp:has(> input[aria-invalid="true"]) { --sg-otp-frame: var(--sg-danger); --sg-otp-ink-color: var(--sg-danger); }
+/* the ink texture sits on the digit only, so the focus ring stays whole */
+sg-otp:is([data-skin="warm"], [data-skin="playful"]) .sg-otp-digit { filter: var(--sg-otp-ink, none); }
+
+sg-otp[data-skin="playful"] .sg-otp-box { border-width: 2.5px; }
+sg-otp .sg-otp-spread {
+  position: absolute;
+  inset: -30%;
+  pointer-events: none;
+  border-radius: 45%;
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--sg-accent-text) 30%, transparent), transparent);
+  opacity: 0;
+}

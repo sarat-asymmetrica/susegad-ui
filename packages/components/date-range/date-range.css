@@ -1,0 +1,90 @@
+/* <sg-date-range>: two native date inputs, and with JavaScript a two-month
+   calendar under them. This is the quiet look; warm and playful skins ink over it. */
+
+sg-date-range { display: block; color: var(--sg-text, CanvasText); }
+sg-date-range fieldset { border: 0; padding: 0; margin: 0 0 var(--sg-space-3, 12px); display: flex; flex-wrap: wrap; gap: var(--sg-space-3, 12px) var(--sg-space-5, 24px); }
+sg-date-range legend { font-weight: var(--sg-weight-medium, 500); padding: 0; margin-bottom: var(--sg-space-2, 8px); }
+sg-date-range label { display: grid; gap: 4px; font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); }
+sg-date-range input[type="date"] {
+  font: inherit; font-size: var(--sg-step-0, 1rem); color: var(--sg-text, CanvasText);
+  background: var(--sg-surface, Canvas); border: 1px solid var(--sg-rule-strong, currentColor);
+  border-radius: var(--sg-radius-1, 4px); padding: 6px 8px; min-height: 2.5rem;
+}
+sg-date-range input[type="date"]:user-invalid { border-color: var(--sg-danger, currentColor); }
+
+.sg-dr { position: relative; display: grid; gap: var(--sg-space-3, 12px); }
+.sg-dr-head { display: flex; align-items: center; gap: var(--sg-space-3, 12px); }
+.sg-dr-hint { flex: 1; margin: 0; text-align: center; font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); }
+.sg-dr-nav {
+  inline-size: 2.5rem; block-size: 2.5rem; font: inherit; font-size: 1.25rem; line-height: 1; color: inherit;
+  background: none; border: 1px solid var(--sg-rule, currentColor); border-radius: var(--sg-radius-1, 4px); cursor: pointer;
+}
+.sg-dr-nav:disabled { opacity: 0.35; cursor: default; }
+
+.sg-dr-months { position: relative; }
+.sg-dr-pages { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: var(--sg-space-4, 16px) var(--sg-space-6, 32px); }
+.sg-dr-name { margin: 0 0 6px; text-align: center; font-weight: var(--sg-weight-medium, 500); }
+.sg-dr-grid { inline-size: 100%; border-collapse: separate; border-spacing: 2px; table-layout: fixed; }
+.sg-dr-grid th { font-size: var(--sg-step--1, 0.85rem); font-weight: var(--sg-weight-regular, 400); color: var(--sg-text-soft, inherit); padding: 2px 0; }
+.sg-dr-grid td { padding: 0; }
+
+.sg-dr-day {
+  position: relative; inline-size: 100%; aspect-ratio: 1 / 1; min-block-size: 2.5rem; padding: 2px 0 0;
+  display: grid; grid-template-rows: 1fr auto; place-items: center; font: inherit; color: inherit;
+  background: none; border: 1px solid transparent; border-radius: var(--sg-radius-1, 4px); cursor: pointer;
+}
+.sg-dr-n { font-size: var(--sg-step-0, 1rem); line-height: 1; }
+.sg-dr-p { font-size: 0.68rem; line-height: 1.2; color: var(--sg-text-soft, inherit); min-block-size: 0.8rem; }
+.sg-dr-day:hover:not([aria-disabled="true"]) { border-color: var(--sg-rule-strong, currentColor); }
+.sg-dr-day:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: 1px; z-index: 1; }
+
+/* nights: each state has its own mark, not only a colour */
+.sg-dr-day.is-peak .sg-dr-p { color: var(--sg-danger, inherit); }
+.sg-dr-day.is-peak { box-shadow: inset 0 -2px 0 color-mix(in oklab, var(--sg-laterite, currentColor) 55%, transparent); }
+.sg-dr-day:is(.is-taken, .is-hold, .is-owner) { color: var(--sg-text-soft, GrayText); cursor: default; }
+/* a short stroke through the number: taken */
+.sg-dr-day:is(.is-taken, .is-hold, .is-owner)::before {
+  content: ""; position: absolute; inset-inline: 26%; inset-block-start: 38%; block-size: 1.5px;
+  background: var(--sg-text-soft, currentColor); transform: rotate(-28deg); border-radius: 1px;
+}
+.sg-dr-day.is-hold { background-color: color-mix(in oklab, var(--sg-rule, currentColor) 18%, transparent); }
+.sg-dr-day:is(.is-past, .is-closed) { color: var(--sg-text-faint, GrayText); cursor: default; }
+.sg-dr-day.is-depart-only { cursor: pointer; }
+.sg-dr-day.is-depart-only::after {
+  content: ""; position: absolute; inset-inline-start: 0; inset-block-start: 0; inline-size: 0.6rem; block-size: 0.6rem;
+  background: linear-gradient(135deg, var(--sg-text-soft, currentColor) 50%, transparent 50%); border-start-start-radius: inherit;
+}
+.sg-dr-day.is-today .sg-dr-n { text-decoration: underline; text-underline-offset: 3px; }
+
+/* your stay */
+.sg-dr-day:is(.in-range, .in-preview) { background-color: var(--sg-selection, Highlight); border-radius: 0; }
+.sg-dr-day.in-preview { background-color: color-mix(in oklab, var(--sg-selection, Highlight) 55%, transparent); }
+.sg-dr-day:is(.is-arr, .is-dep) { border: 2px solid var(--sg-text, CanvasText); font-weight: var(--sg-weight-bold, 700); background-color: var(--sg-selection, Highlight); }
+
+.sg-dr-reasons { margin: 0; padding-inline-start: 1.2em; color: var(--sg-danger, inherit); font-size: var(--sg-step--1, 0.9rem); }
+.sg-dr-reasons:empty { display: none; }
+.sg-dr-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0; padding: 0; list-style: none; font-size: var(--sg-step--1, 0.85rem); color: var(--sg-text-soft, inherit); }
+.sg-dr-legend li { display: flex; align-items: center; gap: 6px; }
+.sg-dr-key { inline-size: 1rem; block-size: 1rem; border: 1px solid var(--sg-rule-strong, currentColor); border-radius: 3px; position: relative; }
+.sg-dr-key.is-peak { box-shadow: inset 0 -2px 0 var(--sg-laterite, currentColor); }
+.sg-dr-key.is-taken::before { content: ""; position: absolute; inset-inline: 18%; inset-block-start: 45%; block-size: 1.5px; background: var(--sg-text-soft, currentColor); transform: rotate(-28deg); }
+.sg-dr-key.is-dep { background: linear-gradient(135deg, var(--sg-text-soft, currentColor) 32%, transparent 32%); }
+
+.sg-dr-seasons summary { cursor: pointer; font-size: var(--sg-step--1, 0.9rem); }
+.sg-dr-seasons table { border-collapse: collapse; margin-top: 8px; font-size: var(--sg-step--1, 0.9rem); inline-size: 100%; }
+.sg-dr-seasons :is(th, td) { text-align: start; padding: 4px 12px 4px 0; border-bottom: 1px solid var(--sg-rule, currentColor); vertical-align: top; }
+.sg-dr-seasons thead th { color: var(--sg-text-soft, inherit); font-weight: var(--sg-weight-regular, 400); }
+
+/* skins draw over the grid; their canvases never take a click */
+.sg-dr canvas { pointer-events: none; }
+
+@media (forced-colors: active) {
+  .sg-dr-day:is(.is-arr, .is-dep) { border-color: Highlight; }
+  .sg-dr-day:is(.in-range, .in-preview) { background: Highlight; color: HighlightText; }
+}
+
+/* warm and playful: ink replaces the outline; the tint stays, for the stay */
+sg-date-range:is([data-skin="warm"], [data-skin="playful"]) .sg-dr-day:is(.is-arr, .is-dep) { border-color: transparent; }
+.sg-dr-ink { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; }
+.sg-dr-ribbon { position: relative; block-size: 76px; }
+.sg-dr-ribbon-art { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; }

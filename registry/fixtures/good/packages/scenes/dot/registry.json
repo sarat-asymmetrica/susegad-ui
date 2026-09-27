@@ -1,0 +1,12 @@
+{
+  "name": "scene-dot",
+  "type": "scene",
+  "title": "Dot",
+  "description": "Fixture scene: a kumkum dot on paper. One path is repo-rooted on purpose.",
+  "version": "0.1.0",
+  "files": ["index.js", "packages/scenes/dot/model.js", "dot.prompt.md"],
+  "dependencies": ["core", "engine"],
+  "registers": ["quiet", "warm", "playful"],
+  "budget": { "jsBytes": 4000, "frameMs": 16.7 },
+  "prompt": "dot.prompt.md"
+}

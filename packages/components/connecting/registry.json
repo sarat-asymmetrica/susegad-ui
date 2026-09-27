@@ -1,0 +1,17 @@
+{
+  "name": "connecting",
+  "type": "component",
+  "title": "Connecting (FireflySync)",
+  "description": "A connection's state in words, read out as it changes. Quiet shows a static dot; warm and playful show fireflies that blink on their own while connecting and fall into step (Kuramoto coupling) only once connected. Offline, they dim.",
+  "version": "0.1.0",
+  "files": ["connecting.js", "connecting.core.js", "connecting.css", "skins/quiet.js", "skins/warm.js", "skins/playful.js", "skins/fireflies.js", "connecting.prompt.md", "connecting.docs.md"],
+  "dependencies": ["core-component", "core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "connecting.prompt.md",
+  "docs": "connecting.docs.md",
+  "budget": {
+    "jsBytes": 14336,
+    "frameMs": 16.7,
+    "reason": "The contract's 12 KB behaviour plus 8 KB per skin, declared as the sum used: behaviour (connecting.js and connecting.core.js) about 6.6 KB, the warm and playful skins about 5.7 KB each including the shared fireflies.js, quiet under 0.4 KB."
+  }
+}

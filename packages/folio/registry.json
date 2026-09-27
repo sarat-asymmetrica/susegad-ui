@@ -1,0 +1,25 @@
+{
+  "name": "folio",
+  "type": "package",
+  "title": "Folio",
+  "description": "The document layer's pieces that travel with a document: Markdown with directives (scene, diagram, price-table, timeline, signature, note), rendered to HTML by a pure parser with line-numbered errors; the print sheet and the script that makes scenes print their still; the seal (the policy, the hash and verify) and the in-page check that lets a reader hash their own copy. The builder that inlines, subsets, seals and prints (build/, bin/) is a Node dev tool with npm dependencies (esbuild, subset-font, Playwright), so it stays in the repo and is not copied.",
+  "version": "0.1.0",
+  "files": [
+    "md/index.js",
+    "md/parse.js",
+    "md/folio-doc.css",
+    "folio-print.css",
+    "folio-print.js",
+    "folio-check.js",
+    "build/seal.mjs",
+    "README.md"
+  ],
+  "dependencies": [
+    "folio-diagram"
+  ],
+  "budget": {
+    "jsBytes": 45056,
+    "reason": "Decision 0010 in spirit: the Markdown parser and directive renderer (md/index.js 22.9 KB, which checks a diagram's lines with folio-diagram's grammar,, md/parse.js 14.7 KB) are a pure core that runs in Node at build time and is fully tested; they never ship inside a sealed document. What a document carries is folio-print.js and folio-check.js, 1.9 KB together, and build/seal.mjs (3.6 KB) runs only in Node for folio verify. Declared at 44 KB: today 42.4 KB."
+  },
+  "docs": "README.md"
+}

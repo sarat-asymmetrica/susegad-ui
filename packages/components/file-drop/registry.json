@@ -1,0 +1,17 @@
+{
+  "name": "file-drop",
+  "type": "component",
+  "title": "File drop",
+  "description": "A native file input you can also drop files onto. Without JavaScript it is the browser's own input; with it, the real input covers a drop zone, and the element checks accept, size and count, lists each file with a Remove button, and says every change in words. Quiet is a ruled zone; warm posts a letter into a pillar box; playful drops it in with a thunk.",
+  "version": "0.1.0",
+  "files": ["file-drop.js", "file-drop.core.js", "file-drop.css", "skins/post.js", "skins/quiet.js", "skins/warm.js", "skins/playful.js", "file-drop.prompt.md", "file-drop.docs.md"],
+  "dependencies": ["core-component", "core", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "file-drop.prompt.md",
+  "docs": "file-drop.docs.md",
+  "budget": {
+    "jsBytes": 18432,
+    "frameMs": 16.7,
+    "reason": "Behaviour about 10.2 KB (file-drop.js 6.1 KB, file-drop.core.js 4.1 KB); skins 0.2 KB (quiet), 4.5 KB of post box shared by warm and playful (skins/post.js), 0.3 KB each for warm and playful."
+  }
+}

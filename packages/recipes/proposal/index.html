@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en-IN" data-register="warm">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A booking site for the house at Aldona</title>
+<meta name="description" content="A short sample proposal, written in Markdown and built with the proposal recipe.">
+<script>for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) { document.documentElement.setAttribute(`data-${k}`, v); if (k === 'register') addEventListener('DOMContentLoaded', () => document.querySelectorAll('sg-scene').forEach(s => s.setAttribute('register', v))); }</script>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="./price-table.css">
+<link rel="stylesheet" href="./timeline.css">
+<link rel="stylesheet" href="../../components/signature/signature.css">
+<link rel="stylesheet" href="../../components/stamp/stamp.css">
+<link rel="stylesheet" href="./proposal.css">
+</head>
+<body class="proposal-page">
+<main class="folio-doc proposal">
+<header class="proposal-cover">
+<div class="proposal-cover__art">
+<sg-scene interactive="false" name="paus" register="warm">
+<h1 id="a-booking-site-for-the-house-at-aldona">A booking site for the house at Aldona</h1>
+<p>For the owners of Casa Aldona, from the studio. November 2026.</p></sg-scene>
+<sg-stamp class="proposal-status" tone="warning" seed="status"><p role="status"><strong>Sample</strong> <span>not a real offer</span></p></sg-stamp>
+</div>
+<dl class="proposal-meta">
+<div><dt>For</dt><dd>The owners, Casa Aldona</dd></div>
+<div><dt>From</dt><dd>The studio</dd></div>
+<div><dt>Date</dt><dd>November 2026</dd></div>
+<div><dt>Holds until</dt><dd><time datetime="2026-12-15">15 December 2026</time></dd></div>
+</dl>
+</header>
+<div class="proposal-lede">
+<p>A sample proposal, to show what the recipe holds. The rates below come from the booking kernels' sample rate card, and every price is before GST.</p>
+</div>
+<section class="proposal-section" aria-labelledby="where-things-stand" data-section="where-things-stand">
+<h2 id="where-things-stand">Where things stand</h2>
+<p><strong>The house is ready before its pages are.</strong> The rooms are finished and the first guests have asked for dates, but there is nowhere to send them except a phone number.</p>
+<p><strong>Direct bookings cost least.</strong> A booking taken on your own site costs you the payment fee and nothing else.</p>
+</section>
+<section class="proposal-section" aria-labelledby="your-rate-card" data-section="your-rate-card">
+<h2 id="your-rate-card">Your rate card</h2>
+<sg-price-table from="kernels-booking" view="bands">
+<table class="price-table" data-view="bands">
+<caption>The rate card: whole house, a night, before GST</caption>
+<thead><tr><th scope="col">Season</th><th scope="col">When</th><th scope="col" class="num">Sunday to Thursday</th><th scope="col" class="num">Friday and Saturday</th><th scope="col">Shortest stay</th></tr></thead>
+<tbody>
+<tr data-band="launch"><th scope="row">Launch &amp; monsoon <span class="price-table__provisional">provisional</span></th><td data-label="When">1 April to 30 September</td><td class="num" data-label="Sunday to Thursday">₹12,000</td><td class="num" data-label="Friday and Saturday">₹16,000</td><td data-label="Shortest stay">3 nights</td></tr>
+<tr data-band="shoulder"><th scope="row">Shoulder <span class="price-table__provisional">provisional</span></th><td data-label="When">1 October to 19 December, 6 January to 31 January</td><td class="num" data-label="Sunday to Thursday">₹20,000</td><td class="num" data-label="Friday and Saturday">₹26,000</td><td data-label="Shortest stay">3 nights</td></tr>
+<tr data-band="peak" data-peak><th scope="row">Christmas week <span class="price-table__provisional">provisional</span></th><td data-label="When">20 December to 5 January</td><td class="num" data-label="Sunday to Thursday">₹40,000</td><td class="num" data-label="Friday and Saturday">₹48,000</td><td data-label="Shortest stay">4 nights</td></tr>
+<tr data-band="late"><th scope="row">Late season <span class="price-table__provisional">provisional</span></th><td data-label="When">1 February to 31 March</td><td class="num" data-label="Sunday to Thursday">₹20,000</td><td class="num" data-label="Friday and Saturday">₹26,000</td><td data-label="Shortest stay">3 nights</td></tr>
+</tbody>
+</table>
+<p class="price-table__note">Prices are before GST; GST is added on its own line. Every rate marked provisional is a first figure the house has not confirmed yet.</p>
+</sg-price-table>
+<p>What a stay costs, worked out by the same code the booking engine will use:</p>
+<sg-price-table from="kernels-booking" arrival="2026-11-16" departure="2026-11-20" guests="2">
+<table class="price-table" data-view="stay">
+<caption>Mon 16 Nov 2026 to Fri 20 Nov 2026: 4 nights, 2 guests</caption>
+<thead><tr><th scope="col">Night</th><th scope="col">Season</th><th scope="col" class="num">Rate</th></tr></thead>
+<tbody>
+<tr><th scope="row">Mon 16 Nov 2026</th><td>Shoulder <span class="price-table__provisional">provisional</span></td><td class="num">₹20,000</td></tr>
+<tr><th scope="row">Tue 17 Nov 2026</th><td>Shoulder</td><td class="num">₹20,000</td></tr>
+<tr><th scope="row">Wed 18 Nov 2026</th><td>Shoulder</td><td class="num">₹20,000</td></tr>
+<tr><th scope="row">Thu 19 Nov 2026</th><td>Shoulder</td><td class="num">₹20,000</td></tr>
+</tbody>
+<tfoot>
+<tr class="is-before"><th scope="row" colspan="2">Before GST</th><td class="num">₹80,000</td></tr>
+<tr class="is-gst"><th scope="row" colspan="2">GST at 18%</th><td class="num">₹14,400</td></tr>
+<tr class="is-total"><th scope="row" colspan="2">Total with GST</th><td class="num">₹94,400</td></tr>
+<tr class="is-deposit"><th scope="row" colspan="2">Refundable deposit <span class="price-table__provisional">provisional</span></th><td class="num">₹15,000</td></tr>
+</tfoot>
+</table>
+<p class="price-table__note">Prices are before GST; GST is added on its own line. Figures marked provisional may change when the house confirms its rate card.</p>
+</sg-price-table>
+<aside class="folio-note" data-tone="info" role="note">
+<p class="folio-note__label">Note</p>
+<p><strong>GST.</strong> Every night at this rate carries GST, shown on its own line in each table.</p>
+</aside>
+</section>
+<section class="proposal-section" aria-labelledby="what-it-costs" data-section="what-it-costs">
+<h2 id="what-it-costs">What it costs</h2>
+<div class="proposal-table"><table data-cols="2">
+<thead><tr><th>What you get</th><th>Price</th></tr></thead>
+<tbody>
+<tr><td data-label="What you get"><strong>Website.</strong> Your own domain, the rooms, the rate card and an enquiry form.</td><td data-label="Price">₹40,000</td></tr>
+<tr><td data-label="What you get"><strong>Booking engine.</strong> Live availability, payment and a confirmation that sends itself.</td><td data-label="Price">₹55,000</td></tr>
+</tbody>
+</table></div>
+<p><strong>Option 1, the website.</strong> The site and the enquiry form. ₹40,000.</p>
+<p><strong>Option 2, the website with the booking engine.</strong> Everything in Option 1, and bookings taken on your own site. ₹95,000.</p>
+</section>
+<section class="proposal-section" aria-labelledby="the-plan" data-section="the-plan">
+<h2 id="the-plan">The plan</h2>
+<sg-timeline>
+<ol class="timeline">
+<li class="timeline__step" data-step="1"><strong class="timeline__title">You choose an option.</strong> <span class="timeline__text">Sign below, or reply with a message.</span></li>
+<li class="timeline__step" data-step="2"><strong class="timeline__title">The site goes live.</strong> <span class="timeline__text">Rooms, rates and enquiries, on your own domain.</span></li>
+<li class="timeline__step" data-step="3"><strong class="timeline__title">The booking engine.</strong> <span class="timeline__text">Availability and payment on your own site.</span></li>
+</ol>
+</sg-timeline>
+</section>
+<section class="proposal-section" aria-labelledby="who-does-what" data-section="who-does-what">
+<h2 id="who-does-what">Who does what</h2>
+<div class="proposal-table"><table data-cols="3" data-row-heads>
+<thead><tr><th></th><th>You</th><th>Us</th></tr></thead>
+<tbody>
+<tr><td data-label="">Photographs</td><td data-label="You">Choosing them.</td><td data-label="Us">The shot list.</td></tr>
+<tr><td data-label="">Replies to guests</td><td data-label="You">Approving every reply.</td><td data-label="Us">Writing the first drafts.</td></tr>
+</tbody>
+</table></div>
+</section>
+<section class="proposal-section" aria-labelledby="terms" data-section="terms">
+<h2 id="terms">Terms</h2>
+<ul>
+<li>Everything lives in your accounts from the start.</li>
+<li>You pay when a piece is working, not before.</li>
+<li>Either of us can stop after any piece, with nothing more owed.</li>
+</ul>
+</section>
+<section class="proposal-section" aria-labelledby="saying-yes" data-section="saying-yes">
+<h2 id="saying-yes">Saying yes</h2>
+<p>Choose an option and sign. Nothing is sent from this page: print it or save it to keep a copy.</p>
+<div class="folio-signature">
+<fieldset class="folio-signature__options">
+<legend>The option you choose</legend>
+<div class="folio-signature__choice"><input type="radio" id="folio-signature-1-option-1" name="option" value="1"><label for="folio-signature-1-option-1">Option 1, the website</label></div>
+<div class="folio-signature__choice"><input type="radio" id="folio-signature-1-option-2" name="option" value="2"><label for="folio-signature-1-option-2">Option 2, the website with the booking engine</label></div>
+</fieldset>
+<sg-signature>
+<label for="folio-signature-1">Type your full name to sign</label>
+<input id="folio-signature-1" name="signature" autocomplete="name" aria-describedby="folio-signature-1-for">
+<p class="folio-signature__for" id="folio-signature-1-for">The owners, for Casa Aldona</p>
+</sg-signature>
+</div>
+
+<div class="proposal-keep" data-folio-chrome hidden>
+<p class="proposal-keep__said" role="status">Not signed yet.</p>
+<button type="button" class="proposal-keep__print">Print or save a signed copy</button>
+</div>
+</section>
+</main>
+<script type="module">
+import '../../scenes/paus/index.js';
+import './price-table.js';
+import './timeline.js';
+import '../../components/signature/signature.js';
+import '../../components/stamp/stamp.js';
+import './proposal.js';
+</script>
+</body>
+</html>

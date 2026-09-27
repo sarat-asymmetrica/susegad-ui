@@ -1,0 +1,1 @@
+{ "name": "loop-a", "type": "package", "files": ["a.js"], "dependencies": ["loop-b"] }

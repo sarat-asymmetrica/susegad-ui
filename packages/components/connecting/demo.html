@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connecting</title>
+<link rel="stylesheet" href="./connecting.css">
+<style>
+  body { margin: 0; background: var(--sg-paper, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem)/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 42rem; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font: 600 var(--sg-step-2, 1.4rem)/1.2 var(--sg-font-display, inherit); margin: 0 0 4px; }
+  h2 { font-size: var(--sg-step-0, 1rem); margin: 28px 0 10px; }
+  p { margin: 0 0 12px; color: var(--sg-text-soft, inherit); max-width: var(--sg-measure, 60ch); }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .live { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px 16px; border: var(--sg-rule-width, 1px) solid var(--sg-rule, currentColor); border-radius: var(--sg-radius-2, 8px); }
+  button { font: inherit; padding: 6px 14px; border-radius: var(--sg-radius-1, 6px); border: 1px solid currentColor; background: none; color: inherit; cursor: pointer; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Connecting</h1>
+  <p>Shows whether a live connection is up. The words always say the state. In warm and playful, fireflies blink on their own while it connects and fall into step only once it has connected.</p>
+
+  <h2>Every state</h2>
+  <ul>
+    <li><sg-connecting state="connecting"><span role="status">Connecting</span></sg-connecting></li>
+    <li><sg-connecting state="connected"><span role="status">Connected</span></sg-connecting></li>
+    <li><sg-connecting state="offline"><span role="status">Offline</span></sg-connecting></li>
+    <li><sg-connecting state="connected" label="Live updates"></sg-connecting></li>
+  </ul>
+
+  <h2>Try it</h2>
+  <p>These buttons stand in for a real connection, so you can watch the swarm follow it.</p>
+  <div class="live">
+    <sg-connecting id="live" state="connecting" label="Booking calendar"></sg-connecting>
+    <button type="button" data-to="connected">Connect</button>
+    <button type="button" data-to="offline">Drop the connection</button>
+    <button type="button" data-to="connecting">Try again</button>
+  </div>
+</main>
+<script type="module">
+  import './connecting.js';
+  const live = document.getElementById('live');
+  for (const b of document.querySelectorAll('[data-to]')) b.addEventListener('click', () => { live.connection = b.dataset.to; });
+</script>
+</body>
+</html>

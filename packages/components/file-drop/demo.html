@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>File drop</title>
+<!-- linked here too, so the page is styled with JavaScript off -->
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<link rel="stylesheet" href="./file-drop.css">
+<style>
+  body { margin: 0; background: var(--sg-paper); color: var(--sg-ink); font: var(--sg-step-0, 1rem)/var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui); }
+  main { max-width: 40rem; margin: 0 auto; padding: var(--sg-space-5, 24px) var(--sg-space-4, 16px) var(--sg-space-7, 64px); }
+  h1 { font: var(--sg-weight-bold, 600) var(--sg-step-3, 1.8rem)/1.2 var(--sg-font-display, inherit); margin: 0 0 var(--sg-space-2, 8px); }
+  .lede, .hint { color: var(--sg-text-soft, var(--sg-ink-soft)); }
+  .lede { margin: 0 0 var(--sg-space-5, 24px); }
+  .hint { display: block; font-weight: var(--sg-weight-regular, 400); font-size: var(--sg-step--1, .9rem); }
+  form > * + * { margin-top: var(--sg-space-5, 24px); }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+</style>
+</head>
+<body>
+<main>
+  <h1>File drop</h1>
+  <p class="lede">Send the house your floor plans and a photo of your ID. Drop the files on a box, or press it to choose them. Without JavaScript it is the browser's own file picker, and the form sends the files just the same.</p>
+
+  <form action="./demo.html" method="post" enctype="multipart/form-data">
+    <sg-file-drop max-size="10 MB">
+      <label for="plans">Floor plans <span class="hint">PDF or JPG, up to 10 MB each. You can send several.</span></label>
+      <input type="file" id="plans" name="plans" accept=".pdf,image/jpeg" multiple>
+    </sg-file-drop>
+
+    <sg-file-drop max-size="5 MB">
+      <label for="id">Photo ID <span class="hint">One photo, JPG or PNG, up to 5 MB</span></label>
+      <input type="file" id="id" name="id" accept="image/jpeg,image/png" required>
+    </sg-file-drop>
+
+    <button class="demo-button" type="submit">Send the files</button>
+  </form>
+</main>
+<script type="module">
+  import './file-drop.js';
+</script>
+</body>
+</html>

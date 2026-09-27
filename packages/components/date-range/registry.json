@@ -1,0 +1,37 @@
+{
+  "name": "date-range",
+  "type": "component",
+  "title": "Date range",
+  "description": "Arrival and departure over two native date inputs that submit without JavaScript. With it, a two-month calendar that knows taken nights and turnover mornings from the booking kernels, moves like the APG date grid, feeds the kernels' reasons into native validation, and in warm and playful inks your stay under a season ribbon.",
+  "version": "0.1.0",
+  "files": [
+    "date-range.js",
+    "date-range.core.js",
+    "date-range.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "skins/drawing.js",
+    "date-range.prompt.md",
+    "date-range.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "kernels-booking",
+    "tokens",
+    "sound"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "date-range.prompt.md",
+  "docs": "date-range.docs.md",
+  "budget": {
+    "jsBytes": 40960,
+    "reason": "Parts per decision 0010: element date-range.js 15,050 bytes (over 12 KB, under 16 KB: the APG keyboard grid, turnover rules, native validation, the season table, the rates setter and open-from run in every register); pure core date-range.core.js 9,949 bytes (under its own 12 KB); shared skin helper skins/drawing.js 13,604 bytes, counted as one skin, over the 8 KB skin allowance because it holds the ink loops, the season ribbon and its phone-width key; skin files quiet 199, warm 312 and playful 309 bytes."
+  }
+}

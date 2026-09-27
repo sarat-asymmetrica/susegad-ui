@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Combobox</title>
+<link rel="stylesheet" href="./combobox.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem)/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 36rem; margin: 0 auto; padding: 2rem 1rem 3rem; }
+  h1 { margin: 0 0 0.25rem; font: 600 1.6rem/1.2 var(--sg-font-display, inherit); }
+  .lede { margin: 0 0 1.5rem; color: var(--sg-text-soft, inherit); }
+  form { display: grid; gap: 1.5rem; }
+  .hint { margin: 0; font-size: 0.875rem; color: var(--sg-text-soft, inherit); }
+  :focus-visible { outline: 2px solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  .error { margin: 0; font-size: 0.875rem; color: var(--sg-danger, CanvasText); }
+  h2 { margin: 2.5rem 0 1rem; font: 600 1.15rem/1.3 var(--sg-font-display, inherit); }
+  .states { display: grid; gap: 1.5rem; }
+  output { display: block; font-size: 0.875rem; color: var(--sg-text-soft, inherit); min-block-size: 1.3em; overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Combobox</h1>
+  <p class="lede">Type to see suggestions. "mum" finds Mumbai, "Balcao" finds Balcão, and "Bombay" or मुंबई find it too. You can always type a place that is not listed.</p>
+  <form id="trip" action="#" method="get">
+    <sg-combobox>
+      <label for="from">Travelling from</label>
+      <input id="from" name="from" list="cities" autocomplete="off" required aria-describedby="from-hint">
+      <p class="hint" id="from-hint">Your city, by any name you use for it.</p>
+      <datalist id="cities">
+        <option value="Mumbai" data-aliases="Bombay, मुंबई">Maharashtra</option>
+        <option value="Navi Mumbai">Maharashtra</option>
+        <option value="Pune" data-aliases="Poona, पुणे">Maharashtra</option>
+        <option value="Bengaluru" data-aliases="Bangalore, ಬೆಂಗಳೂರು">Karnataka</option>
+        <option value="Mangaluru" data-aliases="Mangalore, ಮಂಗಳೂರು">Karnataka</option>
+        <option value="Belagavi" data-aliases="Belgaum, ಬೆಳಗಾವಿ">Karnataka</option>
+        <option value="Thiruvananthapuram" data-aliases="Trivandrum">Kerala</option>
+        <option value="Kochi" data-aliases="Cochin">Kerala</option>
+        <option value="Chennai" data-aliases="Madras">Tamil Nadu</option>
+        <option value="Kolkata" data-aliases="Calcutta">West Bengal</option>
+        <option value="Delhi" data-aliases="दिल्ली">Delhi</option>
+        <option value="Hyderabad">Telangana</option>
+      </datalist>
+    </sg-combobox>
+    <sg-combobox>
+      <label for="stay">Where in Goa</label>
+      <input id="stay" name="stay" list="goa" autocomplete="off">
+      <datalist id="goa">
+        <option value="Balcão, Siolim"></option>
+        <option value="Panaji" data-aliases="Panjim, पणजी"></option>
+        <option value="Margao" data-aliases="Madgaon, मडगांव"></option>
+        <option value="Mapusa" data-aliases="म्हापसा"></option>
+        <option value="Old Goa" data-aliases="Velha Goa"></option>
+        <option value="Assagão"></option>
+        <option value="São Jacinto"></option>
+        <option value="Candolim"></option>
+      </datalist>
+    </sg-combobox>
+    <button type="submit" class="demo-button">Plan the trip</button>
+    <output id="sent" for="from stay" aria-live="polite"></output>
+  </form>
+
+  <h2>Filled in, and wrong</h2>
+  <div class="states">
+    <sg-combobox>
+      <label for="village">Staying in</label>
+      <input id="village" name="village" list="villages" autocomplete="off" value="Siolim">
+      <datalist id="villages">
+        <option value="Siolim"></option>
+        <option value="Colvale"></option>
+        <option value="Assagão"></option>
+      </datalist>
+    </sg-combobox>
+    <sg-combobox>
+      <label for="airport">Your nearest airport</label>
+      <input id="airport" name="airport" list="airports" autocomplete="off" value="Gova" aria-invalid="true" aria-describedby="airport-error">
+      <p class="error" id="airport-error">There is no airport called "Gova". Choose one from the list: Mopa (GOX) or Dabolim (GOI).</p>
+      <datalist id="airports">
+        <option value="Mopa (GOX)" data-aliases="Manohar International">North Goa</option>
+        <option value="Dabolim (GOI)" data-aliases="Goa International">South Goa</option>
+      </datalist>
+    </sg-combobox>
+  </div>
+</main>
+<script type="module">
+  import './combobox.js';
+  const form = document.getElementById('trip'), sent = document.getElementById('sent');
+  form.addEventListener('submit', e => { e.preventDefault(); sent.textContent = `Would send: ${new URLSearchParams(new FormData(form))}`; });
+</script>
+</body>
+</html>

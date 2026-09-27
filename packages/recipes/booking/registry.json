@@ -1,0 +1,45 @@
+{
+  "name": "booking",
+  "type": "recipe",
+  "title": "Booking",
+  "description": "Book the whole house, or a room, in four steps built from every Wave 2 part: dates with the season ribbon, guests and room, your details with the phone confirmed by a code, and a signature to confirm and hold, with breakfast as a switch. A live quote from the booking kernels shows every band's nights, GST on its own line and the deposit, calls provisional figures provisional, and shows no figure for a single room the card does not price. The hold is stamped Held. A prototype that sends, holds and charges nothing, and says so; without JavaScript every step shows and the form validates and submits.",
+  "version": "0.1.0",
+  "files": [
+    "recipe.js",
+    "booking.core.js",
+    "recipe.css",
+    "index.html",
+    "held.html",
+    "README.md",
+    "recipe.prompt.md"
+  ],
+  "dependencies": [
+    "form",
+    "stepper",
+    "date-range",
+    "select",
+    "combobox",
+    "radio",
+    "check",
+    "field",
+    "field-note",
+    "otp",
+    "toggle",
+    "signature",
+    "loader",
+    "stamp",
+    "toast",
+    "kernels-booking",
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "recipe.prompt.md",
+  "docs": "README.md"
+}

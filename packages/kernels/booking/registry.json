@@ -1,0 +1,10 @@
+{
+  "name": "kernels-booking",
+  "type": "package",
+  "title": "Kernels: booking",
+  "description": "Pure booking kernels from the Casa Exemplo redesign: ISO day arithmetic with no timezone drift, a rate card that keeps its provisional flags, quotes with every night, GST on its own line and the deposit, and availability with same-day turnover. No dependencies; runs in Node.",
+  "version": "0.1.0",
+  "files": ["index.js", "dates.js", "rates.js", "pricing.js", "availability.js", "drift.test.js", "drift.fixture.json"],
+  "dependencies": [],
+  "budget": { "jsBytes": 18432, "reason": "The five kernel files are 14,595 bytes; drift.test.js (2,389 bytes) ships with them so a consumer with its own copy can check it for drift, and it never loads in a page." }
+}

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 290" fill="none" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+  <!-- For Rafe: his Activa parked under a tree, a fishing rod leaning on the handlebar.
+       Drawn once, by hand in path data; used as a CSS mask so it takes the page's ink. -->
+
+  <!-- ground and grass -->
+  <path d="M8 264 C90 259 170 267 250 262 S400 259 472 263"/>
+  <path d="M30 262 l-3 -9 M34 262 l1 -11 M38 262 l5 -8" stroke-width="1.8"/>
+  <path d="M196 263 l-2 -8 M200 263 l2 -10 M204 263 l5 -7" stroke-width="1.8"/>
+  <path d="M446 262 l-4 -9 M450 262 l0 -11 M455 262 l4 -8" stroke-width="1.8"/>
+
+  <!-- the tree -->
+  <path d="M98 263 C104 226 104 180 110 132"/>
+  <path d="M132 263 C126 228 126 182 132 132"/>
+  <path d="M92 263 C98 258 104 258 110 262 M122 262 C128 257 134 257 140 263" stroke-width="2"/>
+  <path d="M110 150 C100 138 84 132 72 126 M132 146 C146 136 162 132 176 124 M120 132 L118 104" stroke-width="2.2"/>
+  <path d="M112 196 c3 6 3 12 0 18 M124 224 c-2 5 -2 10 0 14" stroke-width="1.6"/>
+  <path d="M22 118 C10 92 36 68 64 76 C70 46 116 36 136 58 C158 30 210 42 208 74 C238 74 252 106 228 124 C224 144 190 148 176 134 C160 152 128 148 118 134 C100 150 62 148 56 132 C32 142 12 130 22 118"/>
+  <path d="M60 104 c8 -8 18 -8 24 0 M142 88 c8 -10 22 -10 28 0 M178 114 c6 -6 14 -6 20 0 M100 76 c6 -6 14 -6 18 2" stroke-width="1.6"/>
+
+  <!-- shade under the tree -->
+  <path d="M60 270 C120 274 200 275 250 271 M150 277 C190 279 226 278 256 276" stroke-width="1.4"/>
+
+  <!-- the Activa: wheels -->
+  <circle cx="254" cy="243" r="19"/>
+  <circle cx="254" cy="243" r="5" stroke-width="2"/>
+  <circle cx="382" cy="243" r="19"/>
+  <circle cx="382" cy="243" r="5" stroke-width="2"/>
+
+  <!-- body, floorboard and apron -->
+  <path d="M230 240 C222 216 238 196 266 194 L318 192 C330 192 334 202 330 212 L324 228 C322 232 316 233 310 233 L346 233"/>
+  <path d="M346 233 C352 214 356 182 362 152"/>
+  <path d="M366 152 C374 180 374 208 366 226" stroke-width="2.2"/>
+  <path d="M234 226 C240 216 262 214 272 224" stroke-width="1.8"/>
+  <path d="M362 229 C366 214 394 212 402 229"/>
+  <path d="M358 196 L378 238" stroke-width="2.2"/>
+
+  <!-- seat, handlebar, headlamp, mirror -->
+  <path d="M246 192 C248 181 262 178 280 178 L312 178 C322 178 327 184 323 192"/>
+  <path d="M362 152 L366 134"/>
+  <path d="M350 132 C360 127 374 127 386 131"/>
+  <circle cx="371" cy="140" r="5" stroke-width="2"/>
+  <path d="M358 129 L352 112 M347 108 c4 -3 9 -2 11 2" stroke-width="1.8"/>
+
+  <!-- stand -->
+  <path d="M296 234 L290 262" stroke-width="2"/>
+
+  <!-- the rod, leaning on the handlebar, its line and float -->
+  <path d="M448 263 L343 34" stroke-width="2.2"/>
+  <path d="M444 254 L439 243" stroke-width="5"/>
+  <circle cx="432" cy="229" r="4.5" stroke-width="1.8"/>
+  <path d="M343 34 C338 60 326 84 334 106" stroke-width="1.2"/>
+  <ellipse cx="334" cy="111" rx="3" ry="5" stroke-width="1.6"/>
+  <path d="M334 116 L334 126 c0 5 -6 5 -6 1" stroke-width="1.4"/>
+</svg>

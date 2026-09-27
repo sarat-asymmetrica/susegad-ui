@@ -1,0 +1,95 @@
+/* <sg-badge>. Without JavaScript this is the quiet look: the words, a shape
+   for the tone, and a hairline rule. The shape is a CSS mask with no content,
+   so assistive tech reads only the words. Warm draws a hand-inked outline;
+   playful fills a chip with the tone and adds a tiny kolam. */
+
+sg-badge {
+  --sg-badge-ink: var(--sg-text-soft);
+  --sg-badge-fill: var(--sg-text-soft);
+  --sg-badge-on: var(--sg-surface-raised);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.12em 0.55em 0.14em 0.45em;
+  font: var(--sg-weight-medium, 500) var(--sg-step--1, 0.85rem) / var(--sg-leading-snug, 1.3) var(--sg-font-body, sans-serif);
+  color: var(--sg-text);
+  border: var(--sg-hairline, 1px) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-1, 2px);
+  white-space: nowrap;
+  vertical-align: 0.08em;
+}
+/* Our display rule outranks the browser's own [hidden]; keep hidden meaning hidden. */
+sg-badge[hidden] { display: none; }
+
+sg-badge[tone="accent"] { --sg-badge-ink: var(--sg-accent-text); --sg-badge-fill: var(--sg-accent); --sg-badge-on: var(--sg-on-accent); }
+sg-badge[tone="success"] { --sg-badge-ink: var(--sg-success); --sg-badge-fill: var(--sg-success); }
+sg-badge[tone="warning"] { --sg-badge-ink: var(--sg-warning); --sg-badge-fill: var(--sg-warning); }
+sg-badge[tone="danger"] { --sg-badge-ink: var(--sg-danger); --sg-badge-fill: var(--sg-danger); }
+sg-badge[tone="info"] { --sg-badge-ink: var(--sg-info); --sg-badge-fill: var(--sg-info); }
+
+/* One shape per tone (badge.core.js ICONS; the tests keep these in step). */
+sg-badge { --sg-badge-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2012%2012'%3E%3Cpath%20fill-rule%3D'evenodd'%20d%3D'M6%201.6a4.4%204.4%200%201%200%200%208.8a4.4%204.4%200%201%200%200-8.8zM6%203.2a2.8%202.8%200%201%201%200%205.6a2.8%202.8%200%201%201%200-5.6z'%2F%3E%3C%2Fsvg%3E"); }
+sg-badge[tone="accent"] { --sg-badge-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2012%2012'%3E%3Cpath%20fill-rule%3D'evenodd'%20d%3D'M6%201.2L10.8%206L6%2010.8L1.2%206z'%2F%3E%3C%2Fsvg%3E"); }
+sg-badge[tone="success"] { --sg-badge-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2012%2012'%3E%3Cpath%20fill-rule%3D'evenodd'%20d%3D'M1.6%206.3L2.9%205L4.9%207L9.1%202.8L10.4%204.1L4.9%209.6z'%2F%3E%3C%2Fsvg%3E"); }
+sg-badge[tone="warning"] { --sg-badge-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2012%2012'%3E%3Cpath%20fill-rule%3D'evenodd'%20d%3D'M6%20.9L11.4%2010.7H.6zM5.3%204.3v3.3h1.4V4.3zM5.3%208.3v1.3h1.4V8.3z'%2F%3E%3C%2Fsvg%3E"); }
+sg-badge[tone="danger"] { --sg-badge-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2012%2012'%3E%3Cpath%20fill-rule%3D'evenodd'%20d%3D'M3%201.6L6%204.6L9%201.6L10.4%203L7.4%206L10.4%209L9%2010.4L6%207.4L3%2010.4L1.6%209L4.6%206L1.6%203z'%2F%3E%3C%2Fsvg%3E"); }
+sg-badge[tone="info"] { --sg-badge-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2012%2012'%3E%3Cpath%20fill-rule%3D'evenodd'%20d%3D'M6%20.8a5.2%205.2%200%201%200%200%2010.4a5.2%205.2%200%201%200%200-10.4zM5.3%205v4.1h1.4V5zM5.3%202.7V4h1.4V2.7z'%2F%3E%3C%2Fsvg%3E"); }
+
+sg-badge::before {
+  content: "";
+  flex: none;
+  width: 0.85em;
+  height: 0.85em;
+  background: var(--sg-badge-ink);
+  -webkit-mask: var(--sg-badge-icon) center / contain no-repeat;
+  mask: var(--sg-badge-icon) center / contain no-repeat;
+}
+
+/* ── warm: a hand-inked outline in the tone's ink ─────────────────────── */
+sg-badge[data-skin="warm"] {
+  border-color: transparent;
+  color: var(--sg-badge-ink);
+  padding-inline: 0.6em 0.7em;
+}
+sg-badge .sg-badge-ink {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--sg-badge-ink);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+sg-badge .sg-badge-ink path:first-child { stroke-width: 1.4; }
+sg-badge .sg-badge-ink path:last-child { stroke-width: 0.8; opacity: 0.5; }
+
+/* ── playful: a chip of colour with a tiny kolam ──────────────────────── */
+sg-badge[data-skin="playful"] {
+  border-color: transparent;
+  background: var(--sg-badge-fill);
+  color: var(--sg-badge-on);
+  border-radius: var(--sg-radius-pill, 999px);
+  padding-inline: 0.55em 0.45em;
+  --sg-badge-ink: var(--sg-badge-on);
+}
+sg-badge .sg-badge-motif {
+  position: absolute;
+  top: -0.45em;
+  right: -0.35em;
+  width: 1em;
+  height: 1em;
+  pointer-events: none;
+  fill: var(--sg-badge-fill);
+  stroke: var(--sg-surface-raised);
+  stroke-width: 1.1;
+  paint-order: stroke;
+}
+sg-badge .sg-badge-motif .sg-badge-motif-eye { fill: var(--sg-surface-raised); stroke: var(--sg-badge-fill); stroke-width: 0.9; }
+sg-badge[data-skin="playful"] { margin-inline-end: 0.3em; }
+
+/* Indic scripts sit taller: give the words room above and below. */
+sg-badge:is([data-sg-script="devanagari"], [data-sg-script="kannada"], [data-sg-script="other"]) { padding-block: 0.05em 0.1em; line-height: var(--sg-leading-body, 1.6); }

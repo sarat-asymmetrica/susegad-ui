@@ -1,0 +1,9 @@
+{
+  "name": "engine",
+  "type": "package",
+  "title": "Engine",
+  "description": "Fixture engine: one drawing helper, in a src/ folder to prove the tree is kept.",
+  "version": "0.1.0",
+  "files": ["index.js", "src/draw.js"],
+  "budget": { "jsBytes": 2000 }
+}

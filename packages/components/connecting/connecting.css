@@ -1,0 +1,49 @@
+/* <sg-connecting>: the words, and beside them a dot (quiet, and without
+   JavaScript) or a slice of night with fireflies (warm and playful). */
+
+sg-connecting {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sg-space-2, 0.5rem);
+  color: var(--sg-text, CanvasText);
+  vertical-align: middle;
+  line-height: var(--sg-leading-snug, 1.3);
+}
+
+/* The dot: a ring while connecting, filled when connected, struck through when
+   offline. Shape tells the states apart as well as colour, and the words say it. */
+sg-connecting::before {
+  content: "";
+  flex: none;
+  inline-size: 0.625em;
+  block-size: 0.625em;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 1.5px solid var(--sg-text-soft, GrayText);
+  transition: background-color var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out),
+    border-color var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out);
+}
+sg-connecting[state="connected"]::before {
+  border-color: var(--sg-success, CanvasText);
+  background: var(--sg-success, CanvasText);
+}
+sg-connecting[state="offline"]::before {
+  border-color: var(--sg-danger, CanvasText);
+  background: linear-gradient(45deg, transparent 42%, var(--sg-danger, CanvasText) 42% 58%, transparent 58%);
+}
+
+/* its display rule would otherwise beat the hidden attribute */
+sg-connecting[hidden] { display: none; }
+
+/* warm and playful draw fireflies instead of the dot */
+sg-connecting:is([data-skin="warm"], [data-skin="playful"])::before { display: none; }
+
+.sg-connecting__art {
+  display: block;
+  flex: none;
+  border-radius: var(--sg-radius-pill, 999px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  sg-connecting::before { transition: none; }
+}

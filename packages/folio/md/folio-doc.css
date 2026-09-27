@@ -1,0 +1,55 @@
+/* A Folio document written in Markdown: a readable page in the library's
+   tokens. Directive blocks keep a plain, readable form whether or not their
+   element has loaded. */
+
+.folio-doc {
+  max-inline-size: var(--folio-measure, 42rem);
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 3rem;
+  font: var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.6) var(--sg-font-body, system-ui, sans-serif);
+  color: var(--sg-text, CanvasText);
+}
+body:has(> .folio-doc) { margin: 0; background: var(--sg-paper, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.6) var(--sg-font-body, system-ui, sans-serif); }
+.folio-doc h1, .folio-doc h2, .folio-doc h3, .folio-doc h4 { font-family: var(--sg-font-display, serif); line-height: 1.2; margin: 2rem 0 0.6rem; }
+.folio-doc h1 { font-size: var(--sg-step-4, 2.2rem); margin-top: 0; }
+.folio-doc h2 { font-size: var(--sg-step-2, 1.45rem); }
+.folio-doc h3 { font-size: var(--sg-step-1, 1.2rem); }
+.folio-doc p, .folio-doc ul, .folio-doc ol, .folio-doc blockquote, .folio-doc pre, .folio-doc table, .folio-doc figure { margin: 0 0 1rem; }
+.folio-doc a { color: var(--sg-accent, LinkText); }
+.folio-doc img { max-inline-size: 100%; block-size: auto; }
+.folio-doc blockquote { padding-inline-start: 1rem; border-inline-start: 3px solid var(--sg-accent, currentColor); color: var(--sg-text-soft, inherit); }
+.folio-doc code { font-family: var(--sg-font-mono, monospace); font-size: 0.92em; }
+.folio-doc pre { overflow-x: auto; padding: 0.75rem 1rem; background: var(--sg-surface-sunk, rgb(0 0 0 / 0.04)); border-radius: var(--sg-radius-1, 4px); }
+.folio-doc hr { border: 0; border-top: 1px solid var(--sg-rule, currentColor); margin: 2rem 0; }
+.folio-doc table { inline-size: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.folio-doc th, .folio-doc td { text-align: start; padding: 0.45rem 0.5rem; border-bottom: 1px solid var(--sg-rule, currentColor); vertical-align: top; }
+.folio-doc .align-right { text-align: end; }
+.folio-doc .align-center { text-align: center; }
+.folio-doc sg-scene { margin: 1.5rem 0; border-radius: var(--sg-radius-2, 6px); }
+
+/* :::note */
+.folio-note { margin: 1.5rem 0; padding: 0.9rem 1.1rem; border-inline-start: 3px solid var(--sg-info, currentColor); background: color-mix(in oklab, var(--sg-info, CanvasText) 7%, transparent); border-radius: 0 var(--sg-radius-2, 6px) var(--sg-radius-2, 6px) 0; }
+.folio-note[data-tone='tip'] { border-color: var(--sg-accent, currentColor); background: color-mix(in oklab, var(--sg-accent, CanvasText) 7%, transparent); }
+.folio-note[data-tone='warning'] { border-color: var(--sg-warning, currentColor); background: color-mix(in oklab, var(--sg-warning, CanvasText) 9%, transparent); }
+.folio-note[data-tone='success'] { border-color: var(--sg-success, currentColor); background: color-mix(in oklab, var(--sg-success, CanvasText) 8%, transparent); }
+.folio-note__label { font-weight: var(--sg-weight-bold, 700); margin-bottom: 0.25rem !important; }
+.folio-note > :last-child { margin-bottom: 0; }
+
+/* :::diagram: without its element, the source reads as a list of steps */
+.folio-diagram { margin: 1.5rem 0; }
+.folio-diagram__source { white-space: pre-wrap; font-family: var(--sg-font-body, inherit); background: none; padding: 0; }
+.folio-diagram figcaption { font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); margin-top: 0.4rem; }
+
+/* :::timeline */
+.folio-timeline { list-style: none; padding: 0; border-inline-start: 2px solid var(--sg-rule, currentColor); }
+.folio-timeline li { position: relative; padding: 0 0 0.9rem 1.25rem; }
+.folio-timeline li::before { content: ''; position: absolute; inset-inline-start: -0.4rem; inset-block-start: 0.45rem; inline-size: 0.7rem; block-size: 0.7rem; border-radius: 50%; background: var(--sg-accent, currentColor); }
+.folio-timeline time, .folio-timeline__when { display: block; font-weight: var(--sg-weight-medium, 500); font-variant-numeric: tabular-nums; }
+.folio-timeline__title { font-weight: var(--sg-weight-bold, 700); }
+.folio-timeline__step { font-weight: var(--sg-weight-bold, 700); }
+
+/* ::signature, before (or without) its element: a labelled line to type a name on */
+sg-signature:not(:defined) { display: grid; gap: 0.3rem; max-inline-size: 26rem; margin: 1.5rem 0; }
+sg-signature:not(:defined) input { font: inherit; padding: 0.5rem 0.2rem; border: 0; border-bottom: 1px solid var(--sg-rule-strong, currentColor); background: transparent; color: inherit; }
+.folio-signature__for { margin: 0; font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); }
+.folio-fallback { color: var(--sg-text-soft, inherit); }

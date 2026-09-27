@@ -1,0 +1,117 @@
+/* <sg-sound-switch>. Without JavaScript, and in the quiet register, this is
+   the native switch drawn as a plain track and thumb with CSS only, next to a
+   note that says turning it on needs JavaScript (there is no sound without
+   it). Warm and playful lay a small drawn speaker over the track; playful's
+   two arcs of sound breathe gently while it is on. In forced-colours mode the
+   native control comes back. */
+
+sg-sound-switch[hidden] { display: none; } /* our display rule would otherwise beat the browser's [hidden] */
+
+sg-sound-switch {
+  --sg-ss-w: 2.3em;
+  --sg-ss-h: 1.3em;
+  display: block;
+  color: var(--sg-text, CanvasText);
+  font: var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif);
+}
+sg-sound-switch[data-skin="warm"],
+sg-sound-switch[data-skin="playful"] { --sg-ss-w: 2.6em; --sg-ss-h: 1.4em; }
+
+sg-sound-switch label:has(> input[type="checkbox"]),
+sg-sound-switch:has(> input[type="checkbox"]) {
+  display: inline-grid;
+  grid-template-columns: var(--sg-ss-w) minmax(0, 1fr);
+  column-gap: 0.7em;
+  align-items: start;
+  cursor: pointer;
+}
+sg-sound-switch input[type="checkbox"],
+sg-sound-switch .sg-sound-switch-art { grid-area: 1 / 1; }
+
+/* ── the plain switch: quiet and the no-JS path ───────────────────────── */
+sg-sound-switch input[type="checkbox"] {
+  appearance: none;
+  box-sizing: border-box;
+  position: relative;
+  width: var(--sg-ss-w);
+  height: var(--sg-ss-h);
+  margin: max(0px, calc((1lh - var(--sg-ss-h)) / 2)) 0 0;
+  font: inherit;
+  border: var(--sg-stroke, 1.5px) solid var(--sg-rule-strong, CanvasText);
+  border-radius: 999px;
+  background: var(--sg-surface-sunk, Canvas);
+  cursor: pointer;
+  transition: background-color var(--sg-dur-quick, 120ms) var(--sg-ease-out, ease-out), border-color var(--sg-dur-quick, 120ms);
+}
+sg-sound-switch input[type="checkbox"]::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0.14em;
+  width: 0.82em;
+  height: 0.82em;
+  border-radius: 50%;
+  background: var(--sg-text-soft, CanvasText);
+  transform: translate(0, -50%);
+  transition: transform var(--sg-dur-quick, 120ms) var(--sg-ease-out, ease-out), background-color var(--sg-dur-quick, 120ms);
+}
+sg-sound-switch input[type="checkbox"]:checked {
+  background: var(--sg-accent, Highlight);
+  border-color: var(--sg-accent, Highlight);
+}
+sg-sound-switch input[type="checkbox"]:checked::before {
+  background: var(--sg-on-accent, HighlightText);
+  transform: translate(calc(var(--sg-ss-w) - 0.82em - 0.28em - 2 * var(--sg-stroke, 1.5px)), -50%);
+}
+sg-sound-switch input[type="checkbox"]:focus-visible {
+  outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight);
+  outline-offset: var(--sg-focus-offset, 2px);
+}
+
+/* the "needs JavaScript" note: gone once the element has run */
+.sg-sound-switch-note { display: block; margin: 0.35em 0 0 calc(var(--sg-ss-w) + 0.7em); color: var(--sg-text-faint, GrayText); font-size: var(--sg-step--1, 0.85em); }
+sg-sound-switch[data-ready] .sg-sound-switch-note { display: none; }
+
+/* ── warm and playful: the speaker drawing replaces the look, not the control ── */
+sg-sound-switch .sg-sound-switch-art {
+  width: var(--sg-ss-w);
+  height: var(--sg-ss-h);
+  margin-top: max(0px, calc((1lh - var(--sg-ss-h)) / 2));
+  overflow: visible;
+  pointer-events: none;
+}
+sg-sound-switch:is([data-skin="warm"], [data-skin="playful"]) input[type="checkbox"] {
+  border-color: transparent;
+  background: transparent;
+}
+sg-sound-switch:is([data-skin="warm"], [data-skin="playful"]) input[type="checkbox"]::before { visibility: hidden; }
+sg-sound-switch .sg-sound-switch-art :is(path, g) { vector-effect: non-scaling-stroke; }
+
+sg-sound-switch .sg-sound-switch-body { fill: var(--sg-text-soft, CanvasText); stroke: var(--sg-text, CanvasText); stroke-width: 1; stroke-linejoin: round; }
+sg-sound-switch .sg-sound-switch-arc { fill: none; stroke: var(--sg-accent-text, CanvasText); stroke-width: 1.4; stroke-linecap: round; transition: opacity var(--sg-dur-calm, 280ms) var(--sg-ease-out, ease-out); }
+sg-sound-switch .sg-sound-switch-arcs { transform-box: fill-box; transform-origin: 0% 50%; }
+sg-sound-switch .sg-sound-switch-slash { fill: none; stroke: var(--sg-text-faint, CanvasText); stroke-width: 1.6; stroke-linecap: round; transition: opacity var(--sg-dur-quick, 120ms) var(--sg-ease-out, ease-out); }
+
+/* on: the arcs show, the slash lifts. off: the reverse. The state lives in a shape, never only a colour. */
+sg-sound-switch .sg-sound-switch-art:not([data-on]) .sg-sound-switch-arc { opacity: 0; }
+sg-sound-switch .sg-sound-switch-art[data-on] .sg-sound-switch-slash { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  sg-sound-switch .sg-sound-switch-arc,
+  sg-sound-switch .sg-sound-switch-slash { transition-duration: 1ms; }
+}
+
+/* ── forced colours: the system's own checkbox, in the system's colours ── */
+@media (forced-colors: active) {
+  sg-sound-switch input[type="checkbox"] {
+    appearance: auto !important;
+    width: auto !important;
+    height: auto !important;
+    border: revert !important;
+    background: revert !important;
+  }
+  sg-sound-switch label:has(> input[type="checkbox"]),
+  sg-sound-switch:has(> input[type="checkbox"]) { grid-template-columns: auto minmax(0, 1fr) !important; }
+  sg-sound-switch input[type="checkbox"]::before,
+  sg-sound-switch .sg-sound-switch-art { display: none !important; }
+}

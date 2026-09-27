@@ -1,0 +1,35 @@
+{
+  "name": "stamp",
+  "type": "component",
+  "title": "Stamp",
+  "description": "A mark that something real has happened: held, received, paid. The words are text in a role=\"status\" region, announced once when it lands. Quiet is a ruled rectangle; warm is a tilted block print with seeded ink starvation and an off-register ghost; playful presses down and the ink spreads.",
+  "version": "0.1.0",
+  "files": [
+    "stamp.js",
+    "stamp.core.js",
+    "stamp.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "stamp.prompt.md",
+    "stamp.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens",
+    "sound"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "stamp.prompt.md",
+  "docs": "stamp.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 14455 bytes: behaviour (stamp.js + stamp.core.js) 9.4 KB, skins quiet 0.6 KB, warm 4.0 KB, playful 0.4 KB plus warm."
+  }
+}

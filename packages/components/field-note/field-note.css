@@ -1,0 +1,57 @@
+/* Field note. The base rules are the quiet look and the no-JavaScript look:
+   small text in the danger colour with a mark, under the field. The element
+   sets data-shown while it has something to say, and data-skin when a skin is
+   mounted. Tokens only. */
+
+sg-field-note {
+  --note-ink: var(--sg-danger);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  margin-block-start: var(--sg-space-1);
+  color: var(--note-ink);
+  font: 400 0.875rem/1.4 var(--sg-font-body);
+}
+sg-field-note[tone="hint"] { --note-ink: var(--sg-text-soft); }
+sg-field-note[hidden] { display: none; }
+sg-field-note:not([data-shown]):defined { margin: 0; }
+sg-field-note:not([data-shown]) .sg-note-mark,
+sg-field-note:not([data-shown]) .sg-note-deco { display: none; }
+sg-field-note[tone="hint"] .sg-note-mark { display: none; }
+.sg-note-mark { flex: none; line-height: 0; padding-block-start: 0.1rem; }
+.sg-note-text { min-width: 0; }
+/* what a person must copy (an example, a number, an address) is set in the body face with even figures */
+sg-field-note:is([data-skin="warm"], [data-skin="playful"]) .sg-field-note__value { font-family: var(--sg-font-body); font-variant-numeric: tabular-nums lining-nums; font-size: 0.94em; font-weight: 500; }
+.sg-note-sr {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+.sg-note-deco { display: contents; } /* no box of its own: the arrow and underline sit beside the words, never over them */
+.sg-note-deco > * { pointer-events: none; }
+
+/* ── warm and playful: a margin note in the hand, with a pencil arrow up to the field ── */
+sg-field-note:is([data-skin="warm"], [data-skin="playful"]) {
+  font: 400 1.0625rem/1.35 var(--sg-font-hand);
+  padding-inline-start: 2.6rem;
+}
+/* room for the arrow only while there is something to say: an empty note takes no space */
+sg-field-note:is([data-skin="warm"], [data-skin="playful"])[data-shown] { margin-block-start: 0.4rem; min-block-size: 1.5rem; }
+sg-field-note:is([data-skin="warm"], [data-skin="playful"]) .sg-note-mark { display: none; }
+/* a hint is a gentle aside: no arrow, and it sits with the field's own text */
+sg-field-note:is([data-skin="warm"], [data-skin="playful"])[tone="hint"] { --note-ink: var(--sg-text-soft); padding-inline-start: 0; margin-block: 0; }
+sg-field-note[tone="hint"] { margin-block: 0; }
+sg-field-note[tone="hint"] .sg-note-arrow { display: none; }
+.sg-note-arrow {
+  position: absolute; inset-inline-start: 0.1rem; inset-block-start: -0.85rem;
+  inline-size: 2.5rem; block-size: 1.75rem; overflow: visible;
+  color: var(--sg-text-soft);
+}
+.sg-note-arrow path { fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.sg-note-underline {
+  position: absolute; inset-inline: 2.6rem auto; inset-block-start: calc(100% - 0.15rem); block-size: 0.5rem; overflow: visible;
+  color: color-mix(in oklch, var(--note-ink) 70%, transparent);
+}
+.sg-note-underline path { fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; }
+sg-field-note[data-skin="playful"] { --note-ink: var(--sg-danger); font-weight: 400; }
+sg-field-note[tone="hint"] .sg-note-underline { display: none; }

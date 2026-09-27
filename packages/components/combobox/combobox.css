@@ -1,0 +1,187 @@
+/* <sg-combobox>. The base rules are the quiet look and the no-JavaScript look:
+   a hairline input whose suggestions are the browser's own. With JavaScript,
+   the listbox is a popover anchored under the input. Warm and playful key off
+   data-skin, which only a mounted skin sets. Tokens only. */
+
+sg-combobox[hidden] { display: none; }
+sg-combobox {
+  display: grid;
+  gap: var(--sg-space-1, 0.25rem);
+  font: var(--sg-step-0, 1rem) / 1.4 var(--sg-font-body, system-ui, sans-serif);
+  color: var(--sg-text, CanvasText);
+  max-inline-size: 100%;
+  position: relative;
+}
+sg-combobox label { font-weight: var(--sg-weight-medium, 500); }
+sg-combobox input {
+  font: inherit;
+  color: inherit;
+  inline-size: 100%;
+  min-block-size: 2.75rem; /* a 44px target */
+  padding: 0.45rem 2.4rem 0.45rem 0.75rem;
+  border: 1px solid var(--sg-rule-strong, currentColor);
+  border-radius: var(--sg-radius-1, 4px);
+  background: var(--sg-surface-sunk, Canvas); /* a writing surface is a well you write into, like every form field */
+  box-sizing: border-box;
+}
+sg-combobox input:focus-visible {
+  outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight);
+  outline-offset: var(--sg-focus-offset, 2px);
+}
+sg-combobox input:is(:user-invalid, [aria-invalid="true"]) { border-color: var(--sg-danger, #b3261e); }
+
+/* the caret beside the input (decorative; the arrow keys and a click open the list) */
+.sg-combobox__caret {
+  position: absolute;
+  inset-inline-end: 0.75rem;
+  inset-block-end: calc(1.375rem - 0.3rem);
+  inline-size: 0.8rem;
+  block-size: 0.6rem;
+  color: var(--sg-text-soft, currentColor);
+  pointer-events: auto;
+  cursor: pointer;
+  transition: rotate var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out);
+}
+sg-combobox[data-open] .sg-combobox__caret { rotate: 180deg; }
+@supports (anchor-name: --a) {
+  .sg-combobox__caret { inset-block-end: auto; top: calc(anchor(center) - 0.3rem); right: calc(anchor(right) + 0.75rem); }
+}
+
+/* the listbox: a popover in the top layer, anchored under the input */
+.sg-combobox__list {
+  position: fixed;
+  inset: auto;
+  top: anchor(bottom);
+  left: anchor(left);
+  inline-size: anchor-size(width);
+  position-try-fallbacks: flip-block;
+  box-sizing: border-box;
+  margin: 0.25rem 0;
+  padding: 0.25rem;
+  list-style: none;
+  max-block-size: min(18rem, 50vh);
+  overflow: auto;
+  border: 1px solid var(--sg-rule-strong, currentColor);
+  border-radius: var(--sg-radius-1, 4px);
+  background: var(--sg-surface-raised, Canvas);
+  color: var(--sg-text, CanvasText);
+  box-shadow: var(--sg-lift, none);
+  font: var(--sg-step-0, 1rem) / 1.4 var(--sg-font-body, system-ui, sans-serif);
+}
+.sg-combobox__list [role='option'] {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.6rem;
+  min-block-size: 2.5rem;
+  box-sizing: border-box;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--sg-radius-1, 3px);
+  cursor: pointer;
+}
+.sg-combobox__list [role='option']:hover { background: color-mix(in oklab, var(--sg-ink, CanvasText) 7%, transparent); }
+.sg-combobox__list [aria-selected='true'] {
+  background: color-mix(in oklab, var(--sg-ink, CanvasText) 12%, transparent);
+  box-shadow: inset 3px 0 0 var(--sg-focus, Highlight);
+}
+.sg-combobox__list mark { background: none; color: inherit; font-weight: var(--sg-weight-bold, 700); }
+.sg-combobox__hint { color: var(--sg-text-soft, inherit); font-size: var(--sg-step--1, 0.875rem); }
+.sg-combobox__status {
+  position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+
+/* warm: written on the paper like the field; skins/warm.js draws the pencil rule
+   and its ink (field/rule.js). The list is edged in ink and ruled in pencil
+   between the suggestions; the active one is underlined in ink, not filled. */
+sg-combobox[data-skin='warm'] { --sg-rule-pencil: var(--sg-text, CanvasText); --sg-rule-ink: var(--sg-text, CanvasText); }
+sg-combobox[data-skin='warm']:has(input:is(:user-invalid, [aria-invalid="true"])) { --sg-rule-pencil: var(--sg-danger, CanvasText); --sg-rule-ink: var(--sg-danger, CanvasText); }
+sg-combobox[data-skin='warm'] input { border-color: transparent; background-color: transparent; border-radius: 0; }
+sg-combobox[data-skin='warm'] .sg-combobox__caret { inline-size: 0.95rem; block-size: 0.6rem; }
+sg-combobox .sg-rule { position: absolute; pointer-events: none; overflow: visible; }
+sg-combobox .sg-rule__pencil path { fill: var(--sg-rule-pencil); }
+sg-combobox .sg-rule__ink { fill: var(--sg-rule-ink); }
+sg-combobox[data-skin='warm'] .sg-combobox__list {
+  --sg-pencil-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 4' preserveAspectRatio='none'%3E%3Cpath d='M0.5 2.3C18 1.6 34 2.6 52 2 70 1.4 85 2.5 99.5 1.8' fill='none' stroke='black' stroke-width='1.2' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+  border: 1.5px solid var(--sg-ink, CanvasText);
+  border-radius: 7px 4px 8px 5px / 5px 8px 4px 7px;
+}
+sg-combobox[data-skin='warm'] .sg-combobox__list [role='option'] { position: relative; }
+/* a pencil rule between suggestions, a little in from each side */
+sg-combobox[data-skin='warm'] .sg-combobox__list [role='option']:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  inset: auto 0.5rem -1px 0.5rem;
+  block-size: 4px;
+  background: var(--sg-text-soft, CanvasText);
+  opacity: 0.55;
+  -webkit-mask: var(--sg-pencil-line) center / 100% 100% no-repeat;
+  mask: var(--sg-pencil-line) center / 100% 100% no-repeat;
+}
+sg-combobox[data-skin='warm'] .sg-combobox__list [role='option']:hover { background: none; }
+sg-combobox[data-skin='warm'] .sg-combobox__list [aria-selected='true'] { background: none; box-shadow: none; }
+/* the active suggestion's name, underlined in ink by hand */
+sg-combobox[data-skin='warm'] .sg-combobox__list .sg-combobox__value { position: relative; }
+sg-combobox[data-skin='warm'] .sg-combobox__list [aria-selected='true'] .sg-combobox__value::after {
+  content: '';
+  position: absolute;
+  inset: auto -0.2em -0.3em -0.15em;
+  block-size: 5px;
+  background: var(--sg-accent-text, CanvasText);
+  -webkit-mask: var(--sg-pencil-line) center / 100% 100% no-repeat;
+  mask: var(--sg-pencil-line) center / 100% 100% no-repeat;
+  filter: drop-shadow(0 0.6px 0 var(--sg-accent-text, CanvasText));
+}
+
+/* playful: a stamped box, the edge in accent ink with an off-register ghost, like select */
+sg-combobox[data-skin='playful'] input {
+  border: 1.5px solid var(--sg-accent-text, CanvasText);
+  border-radius: 5px 3px 6px 4px / 4px 6px 3px 5px;
+  box-shadow: 2px 2px 0 color-mix(in oklch, var(--sg-accent-text, CanvasText) 28%, transparent);
+}
+sg-combobox[data-skin='playful'] input:is(:user-invalid, [aria-invalid="true"]) {
+  border-color: var(--sg-danger, CanvasText);
+  box-shadow: 2px 2px 0 color-mix(in oklch, var(--sg-danger, CanvasText) 28%, transparent);
+}
+sg-combobox[data-skin='playful'] .sg-combobox__caret { inline-size: 1rem; block-size: 0.65rem; color: var(--sg-accent-text, currentColor); }
+
+/* playful: suggestions are stamped chips */
+sg-combobox[data-skin='playful'] .sg-combobox__list:popover-open {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.5rem;
+}
+sg-combobox[data-skin='playful'] .sg-combobox__list [role='option'] {
+  min-block-size: 2.4rem;
+  padding: 0.35rem 0.8rem;
+  border: 1.5px solid var(--sg-accent, CanvasText);
+  border-radius: 3px;
+  font-family: var(--sg-font-hand, inherit);
+  rotate: -1.1deg;
+}
+sg-combobox[data-skin='playful'] .sg-combobox__list [role='option']:nth-child(even) { rotate: 1deg; }
+sg-combobox[data-skin='playful'] .sg-combobox__list [aria-selected='true'] {
+  background: var(--sg-accent, CanvasText);
+  color: var(--sg-on-accent, Canvas);
+  box-shadow: 0 0 0 2px var(--sg-surface-raised, Canvas), 0 0 0 4px var(--sg-focus, Highlight);
+}
+sg-combobox[data-skin='playful'] .sg-combobox__list [aria-selected='true'] .sg-combobox__hint { color: inherit; }
+
+/* the list opens: nothing in quiet, a short unfurl in warm, a small bounce in playful */
+sg-combobox:is([data-skin='warm'], [data-skin='playful']) .sg-combobox__list {
+  transition: opacity var(--sg-dur-quick, 140ms) ease-out, translate var(--sg-dur-calm, 280ms) var(--sg-ease-out, ease-out),
+    display var(--sg-dur-calm, 280ms) allow-discrete, overlay var(--sg-dur-calm, 280ms) allow-discrete;
+}
+sg-combobox[data-skin='playful'] .sg-combobox__list { transition-timing-function: ease-out, var(--sg-ease-spring, ease-out); }
+@starting-style {
+  sg-combobox:is([data-skin='warm'], [data-skin='playful']) .sg-combobox__list:popover-open { opacity: 0; translate: 0 -6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sg-combobox__caret, .sg-combobox__list { transition: none !important; }
+}
+@media (forced-colors: active) {
+  sg-combobox .sg-rule { display: none; }
+  sg-combobox input { border: 1px solid CanvasText !important; box-shadow: none !important; }
+  sg-combobox .sg-combobox__list [aria-selected='true'] { outline: 2px solid Highlight; }
+}

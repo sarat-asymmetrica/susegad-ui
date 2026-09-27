@@ -1,0 +1,8 @@
+{
+  "name": "tokens",
+  "type": "package",
+  "title": "Tokens",
+  "description": "Fixture tokens: two colours as CSS custom properties with a JS mirror.",
+  "version": "0.1.0",
+  "files": ["tokens.css", "tokens.js"]
+}

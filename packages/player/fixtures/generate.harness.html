@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>generate sample</title></head>
+<body>
+<script type="module">
+  import kolam from '../../scenes/kolam/index.js';
+  import { recordSceneToWebm } from '../../export/webm.js';
+
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result.split(',')[1]);
+      r.onerror = () => reject(r.error);
+      r.readAsDataURL(blob);
+    });
+  }
+
+  const blob = await recordSceneToWebm(kolam, { register: 'warm', seed: 7, durationSec: 3, fps: 20 });
+  window.__webmBase64 = await blobToBase64(blob);
+  window.__done = true;
+</script>
+</body>
+</html>

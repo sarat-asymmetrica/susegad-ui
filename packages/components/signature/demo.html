@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signature</title>
+<link rel="stylesheet" href="./signature.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 60rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); }
+  form { display: grid; gap: var(--sg-space-3); max-width: 36rem; }
+  .send {
+    justify-self: start; font: var(--sg-weight-medium) var(--sg-step--1) / 1 var(--sg-font-body);
+    background: var(--sg-accent); color: var(--sg-on-accent); border: 0; border-radius: var(--sg-radius-2);
+    min-height: 2.75rem; padding: 0 1.2em; cursor: pointer;
+  }
+  .send:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+  output { display: block; font: var(--sg-step--1) / 1.4 var(--sg-font-mono); color: var(--sg-text-soft); overflow-wrap: anywhere; min-height: 1.4em; }
+  .grid { display: grid; gap: var(--sg-space-5); grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Signature</h1>
+  <p class="lede">Sign with a finger, a pen or the mouse, or type your full name. Both submit with the form, and the typed name works without JavaScript.</p>
+
+  <h2>Sign the booking</h2>
+  <form id="book" action="./demo.html" method="get">
+    <sg-signature id="sig">
+      <label for="sig-name">Type your full name to sign</label>
+      <input id="sig-name" name="signature" autocomplete="name" required>
+    </sg-signature>
+    <button class="send" type="submit">Sign and send</button>
+    <output id="sent" for="sig-name" aria-live="polite"></output>
+  </form>
+
+  <div class="grid">
+    <section>
+      <h2>Signed by drawing</h2>
+      <sg-signature id="drawn" seed="sarat">
+        <label for="drawn-name">Type your full name to sign</label>
+        <input id="drawn-name" name="guest" autocomplete="name">
+      </sg-signature>
+    </section>
+    <section>
+      <h2>Signed by typing</h2>
+      <sg-signature seed="typed">
+        <label for="typed-name">Type your full name to sign</label>
+        <input id="typed-name" name="host" autocomplete="name" value="Sarat Chandran">
+      </sg-signature>
+    </section>
+    <section>
+      <h2>Not open for signing yet</h2>
+      <sg-signature>
+        <label for="off-name">Type your full name to sign</label>
+        <input id="off-name" name="witness" disabled>
+      </sg-signature>
+      <p class="note">The owner signs after the guest.</p>
+    </section>
+  </div>
+</main>
+<script type="module">
+  import './signature.js';
+  await customElements.whenDefined('sg-signature');
+  // A handwritten "Sarat" for the demo: anchors joined smoothly, sampled at a
+  // hand's uneven pace (slow into the loops, quick along the joins).
+  const { catmull } = await import('/packages/engine/src/geom.js');
+  const pen = anchors => {
+    let t = 0, prev = null;
+    return catmull(anchors, 6).map(([x, y], i) => {
+      const d = prev ? Math.hypot(x - prev[0], y - prev[1]) : 0;
+      t += d / (0.35 + 0.9 * Math.abs(Math.sin(i * 0.21)));
+      prev = [x, y];
+      return [x, y, t, 0.5];
+    });
+  };
+  document.getElementById('drawn').strokes = [
+    pen([[168, 66], [140, 56], [110, 66], [112, 90], [146, 106], [160, 128], [146, 150], [110, 154], [90, 140]]),
+    pen([[176, 132], [192, 112], [208, 114], [202, 134], [190, 140], [186, 126], [206, 116], [212, 140], [222, 142], [230, 124], [236, 116], [242, 124], [248, 140],
+      [258, 128], [272, 112], [288, 116], [280, 136], [268, 140], [264, 126], [286, 114], [292, 140], [304, 142], [314, 128], [322, 84], [326, 120], [328, 140], [342, 144], [362, 130]]),
+    pen([[302, 104], [348, 96]]),
+  ];
+
+  const form = document.getElementById('book'), out = document.getElementById('sent');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const d = new FormData(form), path = d.get('signature-path') || '';
+    out.textContent = `Would send: signature "${d.get('signature')}", signature-path ${path ? `${path.length} characters of SVG path data` : 'empty'}.`;
+  });
+  form.addEventListener('reset', () => { out.textContent = ''; });
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+/* <sg-file-drop>: without JavaScript, the native file input with its label.
+   With it, a ruled drop zone that the real input covers. Tokens only. */
+
+sg-file-drop { display: block; }
+sg-file-drop[hidden] { display: none !important; }
+
+/* the zone: the input lies over all of it, transparent, so every click, key and drop is native */
+.sg-file-drop-zone {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; align-items: center; gap: 4px var(--sg-space-4, 16px);
+  min-height: 6.5rem; padding: var(--sg-space-3, 12px) var(--sg-space-4, 16px);
+  border: var(--sg-stroke, 1.5px) dashed var(--sg-rule-strong, color-mix(in oklab, currentColor 45%, transparent)); border-radius: var(--sg-radius-2, 6px);
+  background: transparent; /* the zone takes the colour of whatever it sits on */
+  transition: background-color var(--sg-dur-quick, 140ms), border-color var(--sg-dur-quick, 140ms);
+}
+.sg-file-drop-zone > input[type=file] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
+.sg-file-drop-zone > label { display: block; font-weight: var(--sg-weight-medium, 500); }
+.sg-file-drop-cue { color: var(--sg-text-soft, inherit); }
+/* with a picture (warm, playful): the picture on the left, the words beside it */
+.sg-file-drop-zone:has(> .sg-file-drop-art) { grid-template-columns: auto minmax(0, 1fr); }
+.sg-file-drop-zone > .sg-file-drop-art { grid-row: 1 / span 2; }
+/* focus is on the invisible input; show it on the zone */
+.sg-file-drop-zone:has(> input:focus-visible) { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+sg-file-drop[data-hover] .sg-file-drop-zone { border-style: solid; border-color: var(--sg-ink); background: var(--sg-surface-sunk, transparent); }
+
+/* what was chosen, and what happened, in words */
+.sg-file-drop-list { list-style: none; margin: var(--sg-space-2, 8px) 0 0; padding: 0; display: grid; gap: 4px; }
+.sg-file-drop-list:empty { display: none; }
+.sg-file-drop-file { display: flex; align-items: center; gap: var(--sg-space-3, 12px); padding: 4px 4px 4px 10px; border-bottom: var(--sg-hairline, 1px) solid var(--sg-rule); }
+.sg-file-drop-name { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.sg-file-drop-size { color: var(--sg-text-soft, inherit); font-size: var(--sg-step--1, 0.9rem); white-space: nowrap; }
+.sg-file-drop-remove {
+  width: 44px; height: 44px; flex: none; border: 0; border-radius: var(--sg-radius-1, 4px); background: none; color: inherit;
+  font: inherit; font-size: 1.3rem; line-height: 1; cursor: pointer;
+}
+.sg-file-drop-remove:hover { background: var(--sg-surface-sunk, rgba(0,0,0,.05)); }
+.sg-file-drop-remove:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); }
+.sg-file-drop-note { margin: var(--sg-space-2, 8px) 0 0; font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); }
+
+/* warm and playful: the post box */
+.sg-post { width: 5.5rem; height: auto; overflow: visible; }
+.sg-post-body, .sg-post-cap { fill: var(--sg-post-red, color-mix(in oklab, var(--sg-kokum, #9b2335) 55%, var(--sg-laterite, #b5532f))); stroke: var(--sg-ink); stroke-width: 1.2; stroke-linejoin: round; }
+.sg-post-band { fill: color-mix(in oklab, var(--sg-post-red, #a33a2e) 70%, black); stroke: var(--sg-ink); stroke-width: 1.2; }
+.sg-post-base { fill: color-mix(in oklab, var(--sg-ink) 80%, var(--sg-paper)); }
+.sg-post-slot { fill: #1a1210; }
+.sg-post-open .sg-post-slot { fill: #000; stroke: var(--sg-mango, #e8a33d); stroke-width: 1.2; }
+.sg-post-shade { fill: rgba(0, 0, 0, 0.16); }
+.sg-post-plate { fill: var(--sg-paper, #f4f0e6); stroke: var(--sg-ink); stroke-width: 0.8; }
+.sg-post-rules { stroke: var(--sg-ink-soft); stroke-width: 1; }
+.sg-post-paper { fill: var(--sg-paper, #fff); stroke: var(--sg-ink); stroke-width: 1.1; }
+.sg-post-flap { fill: none; stroke: var(--sg-ink); stroke-width: 1; stroke-linejoin: round; }
+.sg-post-stamp { fill: var(--sg-sea, #5b8fa8); }
+.sg-post-lift, .sg-post-box { transform-box: fill-box; transform-origin: 50% 100%; }
+.sg-post-thunk { stroke: var(--sg-ink); stroke-width: 1.4; stroke-linecap: round; fill: none; }
+[data-skin='playful'] .sg-post-stamp { fill: var(--sg-accent); }
+
+@media (max-width: 26rem) { .sg-post { width: 4rem; } }

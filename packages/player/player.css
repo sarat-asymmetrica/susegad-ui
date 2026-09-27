@@ -1,0 +1,179 @@
+/* <sg-player>: a native <video> or <audio>, its own bar once JavaScript
+   runs (the native `controls` stays as the no-JS path), captions in our
+   type, a poster that is a drawing, and optional video treatments and
+   annotations. Colours and space from tokens throughout. */
+
+sg-player[hidden] { display: none; }
+
+sg-player {
+  display: block;
+  position: relative;
+  max-width: 100%;
+  /* min-width:0 everywhere below is defensive: a canvas (the drawn scrubber)
+     measures its own space from a positioned ancestor and resizes itself to
+     match, and a grid or flex container (the page embedding this player,
+     not something this component controls) defaults every item's min-width
+     to auto (its max-content). Chain those two together with no explicit
+     min-width and the canvas's own measured size can feed back into how
+     much space the *page's* grid track gives it, growing without bound.
+     Pinning min-width:0 at each level breaks that loop for good, whatever
+     layout the player is dropped into. */
+  min-width: 0;
+  font: var(--sg-step-0, 1rem) / 1.4 var(--sg-font-body, system-ui, sans-serif);
+  color: var(--sg-text, CanvasText);
+}
+
+/* the frame: exactly the video's own box, so the poster, the treatment
+   canvas and the ink annotations overlay the picture and nothing else
+   (never stretching down over the bar below it). */
+.sg-player__frame { position: relative; display: block; min-width: 0; }
+
+.sg-player__media {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--sg-radius-2, 8px);
+  background: #000;
+}
+/* Stays in normal flow (only invisible): the frame's height still comes
+   from the video's own box. The treatment canvas is what actually covers
+   it, absolutely, once it has that real box to match. */
+.sg-player__media--treated { visibility: hidden; }
+
+.sg-player__treatment {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: var(--sg-radius-2, 8px);
+}
+.sg-player__treatment[hidden] { display: none; }
+
+.sg-player__annotations,
+.sg-player__poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.sg-player__annotations { z-index: 3; }
+.sg-player__poster {
+  z-index: 4;
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--sg-radius-2, 8px);
+  transition: opacity var(--sg-dur-calm, 320ms) var(--sg-ease-out, ease);
+}
+.sg-player__poster--hidden { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .sg-player__poster { transition: none; } }
+
+/* captions: always in the DOM, on by default, our type over the frame */
+.sg-player__captions {
+  position: absolute;
+  z-index: 5;
+  left: 6%;
+  right: 6%;
+  bottom: 4.5rem;
+  text-align: center;
+  font: 600 var(--sg-step-0, 1rem) / 1.35 var(--sg-font-body, system-ui, sans-serif);
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85), 0 0 1px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+  min-height: 1.35em;
+}
+.sg-player__captions:empty { display: none; }
+
+/* the bar */
+.sg-player__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sg-space-2, 0.5rem);
+  padding: var(--sg-space-2, 0.5rem) var(--sg-space-3, 0.75rem);
+  position: relative;
+  z-index: 6;
+  min-width: 0;
+}
+.sg-player__bar button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--sg-text, CanvasText);
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--sg-radius-1, 4px);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font: inherit;
+}
+.sg-player__bar button:hover { background: var(--sg-surface-raised, color-mix(in oklab, CanvasText 8%, Canvas)); }
+.sg-player__bar button:focus-visible { outline: 2px solid var(--sg-focus, Highlight); outline-offset: 2px; }
+.sg-player__bar button[hidden] { display: none; }
+
+.sg-player__play::before { content: '▶'; font-size: 0.8em; }
+.sg-player__play[data-state='pause']::before { content: '❚❚'; }
+.sg-player__cc { font-size: 0.7em; font-weight: 700; border: 1px solid var(--sg-rule-strong, currentColor); }
+.sg-player__cc::before { content: 'CC'; }
+
+/* the mute icon: a stroke drawing in currentColor (never a coloured platform
+   emoji), the waves and the slash cross-fading by [data-state]. The stroke
+   itself follows the register, the same hairline-to-bold step the scrubber
+   and Field's pencil rule use elsewhere in the library. */
+.sg-player__mute svg { width: 1.1rem; height: 1.1rem; overflow: visible; }
+.sg-player__mute-wave,
+.sg-player__mute-slash { stroke-width: var(--sg-player-icon-stroke, 1.3); transition: opacity var(--sg-dur-quick, 120ms) var(--sg-ease-out, ease); }
+.sg-player__mute-slash { opacity: 0; }
+.sg-player__mute[data-state='muted'] .sg-player__mute-wave { opacity: 0; }
+.sg-player__mute[data-state='muted'] .sg-player__mute-slash { opacity: 1; }
+sg-player[data-skin='quiet'] { --sg-player-icon-stroke: 1; }
+sg-player[data-skin='warm'] { --sg-player-icon-stroke: 1.4; }
+sg-player[data-skin='playful'] { --sg-player-icon-stroke: 1.9; }
+@media (prefers-reduced-motion: reduce) {
+  .sg-player__mute-wave, .sg-player__mute-slash { transition: none; }
+}
+
+.sg-player__time, .sg-player__duration { font-variant-numeric: tabular-nums; font-size: 0.85em; color: var(--sg-text-soft, inherit); white-space: nowrap; }
+
+.sg-player__seek {
+  flex: 1;
+  min-width: 0;
+  appearance: none;
+  background: transparent;
+  height: 1rem;
+  margin: 0;
+}
+.sg-player__seek::-webkit-slider-runnable-track { height: 3px; background: var(--sg-rule, color-mix(in oklab, CanvasText 18%, Canvas)); border-radius: 2px; }
+.sg-player__seek::-webkit-slider-thumb { appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--sg-ink, CanvasText); margin-top: -4.5px; }
+.sg-player__seek::-moz-range-track { height: 3px; background: var(--sg-rule, color-mix(in oklab, CanvasText 18%, Canvas)); border-radius: 2px; }
+.sg-player__seek::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: var(--sg-ink, CanvasText); }
+.sg-player__seek:focus-visible { outline: 2px solid var(--sg-focus, Highlight); outline-offset: 2px; }
+
+/* warm and playful draw an ink line where the native track sits, instead of
+   the plain browser one: the range stays a normal flex:1 item (so it, and
+   nothing else, gives up its width first when the bar is narrow), only its
+   own painted track and thumb turn transparent. The canvas is positioned
+   over the range's own box (not the whole bar), computed in JS from its
+   rect, so it never covers the buttons on either side. */
+sg-player[data-skin='warm'] .sg-player__seek,
+sg-player[data-skin='playful'] .sg-player__seek { background: transparent; }
+sg-player[data-skin='warm'] .sg-player__seek::-webkit-slider-runnable-track,
+sg-player[data-skin='playful'] .sg-player__seek::-webkit-slider-runnable-track { background: transparent; }
+sg-player[data-skin='warm'] .sg-player__seek::-webkit-slider-thumb,
+sg-player[data-skin='playful'] .sg-player__seek::-webkit-slider-thumb { background: transparent; }
+sg-player[data-skin='warm'] .sg-player__seek::-moz-range-track,
+sg-player[data-skin='playful'] .sg-player__seek::-moz-range-track { background: transparent; }
+sg-player[data-skin='warm'] .sg-player__seek::-moz-range-thumb,
+sg-player[data-skin='playful'] .sg-player__seek::-moz-range-thumb { background: transparent; border-color: transparent; }
+.sg-player__bar { position: relative; }
+.sg-player__scrub-art { position: absolute; min-width: 0; pointer-events: none; }
+
+@media (max-width: 390px) {
+  /* One row, always: the scrubber (flex:1, shrinking freely) takes what's
+     left. If even that isn't enough, the elapsed-time reading is the first
+     thing to go — the duration, the buttons and the scrubber itself all
+     matter more for actually using the player. */
+  .sg-player__time { display: none; }
+  .sg-player__captions { bottom: 5.5rem; }
+}

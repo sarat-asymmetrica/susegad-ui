@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  // ?register=quiet|warm|playful, ?theme=light|dark and ?palette=… set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute(`data-${k}`, v);
+  window.__ready = false; // set once the footer is mounted, so the tools wait for it
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saving footer</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="../../components/loader/loader.css">
+<link rel="stylesheet" href="../../components/badge/badge.css">
+<link rel="stylesheet" href="../../components/toast/toast.css">
+<link rel="stylesheet" href="../../components/connecting/connecting.css">
+<link rel="stylesheet" href="./recipe.css">
+<style>
+  body { margin: 0; background: var(--sg-paper, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem)/var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 44rem; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font: 600 var(--sg-step-3, 1.6rem)/1.15 var(--sg-font-display, inherit); margin: 0 0 6px; }
+  h2 { font: 600 var(--sg-step-1, 1.15rem)/1.3 var(--sg-font-display, inherit); margin: 40px 0 8px; }
+  p { margin: 0 0 14px; max-width: var(--sg-measure, 62ch); }
+  .lede, .note { color: var(--sg-text-soft, inherit); }
+
+  .sheet { background: var(--sg-surface-raised, Canvas); border: var(--sg-rule-width, 1px) solid var(--sg-rule, currentColor); border-radius: var(--sg-radius-2, 8px); }
+  .sheet__fields { display: grid; gap: 14px; padding: 18px 18px 20px; }
+  label { display: grid; gap: 4px; font-weight: var(--sg-weight-medium, 500); }
+  input, textarea { font: inherit; font-weight: var(--sg-weight-regular, 400); color: inherit; background: var(--sg-surface, Canvas); border: 1px solid var(--sg-rule-strong, currentColor); border-radius: var(--sg-radius-1, 4px); padding: 8px 10px; }
+  textarea { min-height: 6.5em; resize: vertical; }
+
+  /* the footer itself */
+  button { font: inherit; padding: 6px 14px; border-radius: var(--sg-radius-1, 6px); border: 1px solid currentColor; background: none; color: inherit; cursor: pointer; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+
+  .world { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 16px 0 0; }
+  .gallery { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .gallery li { display: grid; gap: 4px; }
+  .gallery .saving-footer { border: var(--sg-rule-width, 1px) solid var(--sg-rule, currentColor); border-radius: var(--sg-radius-2, 8px); background: var(--sg-surface-raised, Canvas); }
+  .gallery .caption { font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Saving footer</h1>
+  <p class="lede">A form that saves itself when you pause typing. The footer says what is happening: saving, saved and when, or why it could not save. When the connection drops, it shows the connection's state until it is back, then saves by itself.</p>
+
+  <form id="notes" class="sheet" aria-label="Arrival notes for room 3">
+    <div class="sheet__fields">
+      <label>Guest name <input name="guest" autocomplete="off" value="Anjali Kamat"></label>
+      <label>Arriving <input name="arrival" autocomplete="off" value="Friday, after 4 in the afternoon"></label>
+      <label>Notes for the house <textarea name="notes">Two adults and a small child. Please leave a kettle and a cot in the room.</textarea></label>
+    </div>
+    <footer class="saving-footer"></footer>
+  </form>
+
+  <div class="world">
+    <button type="button" id="network" aria-pressed="false">Turn the network off</button>
+    <span class="note">This switch stands in for the world, so you can see the footer when the connection drops.</span>
+  </div>
+
+  <h2>Every state of the footer</h2>
+  <ul class="gallery">
+    <li><span class="caption">Before any change</span><footer class="saving-footer" data-still='{}'></footer></li>
+    <li><span class="caption">Typing, not saved yet</span><footer class="saving-footer" data-still='{"phase":"unsaved"}'></footer></li>
+    <li><span class="caption">Saving</span><footer class="saving-footer" data-still='{"phase":"saving"}'></footer></li>
+    <li><span class="caption">Saved</span><footer class="saving-footer" data-still='{"phase":"saved","savedAt":"now"}'></footer></li>
+    <li><span class="caption">Could not save, and offline</span><footer class="saving-footer" data-still='{"phase":"failed","link":"down"}'></footer></li>
+    <li><span class="caption">Reconnecting</span><footer class="saving-footer" data-still='{"phase":"failed","link":"reconnecting"}'></footer></li>
+    <li><span class="caption">Back online, saving again</span><footer class="saving-footer" data-still='{"phase":"saving","upAt":"now"}'></footer></li>
+  </ul>
+</main>
+<sg-toast-region></sg-toast-region>
+<script type="module">
+  import { mountSavingFooter, stillFooter } from './recipe.js';
+  import { createTransport } from './transport.js';
+
+  const q = new URLSearchParams(location.search);
+  const transport = createTransport({ seed: q.get('seed') ?? 1 });
+  const toasts = document.querySelector('sg-toast-region');
+  await customElements.whenDefined('sg-toast-region');
+  mountSavingFooter(document.getElementById('notes'), { transport, toasts });
+
+  const now = Date.now();
+  for (const el of document.querySelectorAll('[data-still]')) {
+    const s = JSON.parse(el.dataset.still);
+    for (const k of ['savedAt', 'upAt']) if (s[k] === 'now') s[k] = now;
+    stillFooter(el, s, now);
+  }
+
+  const net = document.getElementById('network');
+  net.addEventListener('click', () => {
+    const off = net.getAttribute('aria-pressed') !== 'true';
+    transport.setNetwork(!off, Date.now());
+    net.setAttribute('aria-pressed', String(off));
+    net.textContent = off ? 'Turn the network on' : 'Turn the network off';
+  });
+  // ready once every tag the page uses is defined and the fonts are in
+  await Promise.all(['sg-loader', 'sg-badge', 'sg-toast-region', 'sg-toast', 'sg-connecting'].map(t => customElements.whenDefined(t)));
+  await document.fonts.ready;
+  window.__ready = true;
+</script>
+</body>
+</html>

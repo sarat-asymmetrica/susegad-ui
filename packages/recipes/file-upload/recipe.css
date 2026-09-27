@@ -1,0 +1,23 @@
+/* File upload: layout only. Every piece brings its own look for each register. */
+
+.upload { display: grid; gap: var(--sg-space-4, 1.5rem); }
+.upload__pick { display: grid; gap: var(--sg-space-1, 0.25rem); justify-items: start; }
+.upload__label { font-weight: var(--sg-weight-medium, 500); }
+.upload__hint { margin: 0; color: var(--sg-text-soft, inherit); font-size: var(--sg-step--1, 0.9rem); }
+.upload__drop { justify-self: stretch; margin-block-end: var(--sg-space-1, 0.25rem); }
+.upload__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sg-space-3, 1rem); }
+.upload__list[hidden], .upload__empty[hidden], .upload__stamp[hidden] { display: none; }
+.upload__row { display: grid; gap: var(--sg-space-2, 0.5rem); justify-items: start; }
+.upload__row sg-progress { justify-self: stretch; }
+.upload__retry,
+.upload__empty button {
+  font: inherit;
+  padding: 0.3rem 0.8rem;
+  border: 1px solid currentColor;
+  border-radius: var(--sg-radius-2, 6px);
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+.upload__stamp { justify-self: start; }
+.upload :focus-visible { outline: 2px solid var(--sg-focus, Highlight); outline-offset: 2px; }

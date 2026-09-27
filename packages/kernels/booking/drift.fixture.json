@@ -1,0 +1,4449 @@
+{
+ "about": "Behaviour of the booking kernels (packages/kernels/booking), recorded from the library, the source of truth. A copy that matches every case has not drifted. Regenerate only when the library changes on purpose.",
+ "today": "2026-10-20",
+ "blocks": [
+  {
+   "arrival": "2026-10-23",
+   "departure": "2026-10-27",
+   "kind": "booking"
+  },
+  {
+   "arrival": "2026-11-13",
+   "departure": "2026-11-16",
+   "kind": "booking"
+  },
+  {
+   "arrival": "2026-12-26",
+   "departure": "2027-01-01",
+   "kind": "booking"
+  },
+  {
+   "arrival": "2027-01-15",
+   "departure": "2027-01-18",
+   "kind": "hold"
+  },
+  {
+   "arrival": "2027-03-05",
+   "departure": "2027-03-08",
+   "kind": "owner"
+  }
+ ],
+ "rates": {
+  "currency": "INR",
+  "bands": [
+   {
+    "id": "launch",
+    "label": "Launch & monsoon",
+    "from": "04-01",
+    "to": "09-30",
+    "weekday": 12000,
+    "weekend": 16000,
+    "minNights": 3,
+    "provisional": true,
+    "tone": "free"
+   },
+   {
+    "id": "shoulder",
+    "label": "Shoulder",
+    "from": "10-01",
+    "to": "12-19",
+    "weekday": 20000,
+    "weekend": 26000,
+    "minNights": 3,
+    "provisional": true,
+    "tone": "free"
+   },
+   {
+    "id": "peak",
+    "label": "Christmas week",
+    "from": "12-20",
+    "to": "01-05",
+    "weekday": 40000,
+    "weekend": 48000,
+    "minNights": 4,
+    "provisional": true,
+    "tone": "peak"
+   },
+   {
+    "id": "shoulder",
+    "label": "Shoulder",
+    "from": "01-06",
+    "to": "01-31",
+    "weekday": 20000,
+    "weekend": 26000,
+    "minNights": 3,
+    "provisional": true,
+    "tone": "free"
+   },
+   {
+    "id": "late",
+    "label": "Late season",
+    "from": "02-01",
+    "to": "03-31",
+    "weekday": 20000,
+    "weekend": 26000,
+    "minNights": 3,
+    "provisional": true,
+    "tone": "free"
+   }
+  ],
+  "gst": {
+   "rate": 0.18,
+   "threshold": 7500,
+   "inclusive": false
+  },
+  "deposit": {
+   "amount": 15000,
+   "releaseDaysAfterCheckout": 7,
+   "provisional": true
+  },
+  "guests": {
+   "max": 6
+  },
+  "window": {
+   "openFrom": "2026-10-15",
+   "openUntil": "2027-06-30",
+   "minLeadDays": 2,
+   "maxNights": 21
+  },
+  "checkIn": "14:00",
+  "checkOut": "11:00"
+ },
+ "cases": [
+  {
+   "arrival": "2026-11-16",
+   "departure": "2026-11-20",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-11-16",
+    "departure": "2026-11-20",
+    "nightCount": 4,
+    "nights": [
+     {
+      "date": "2026-11-16",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-17",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-18",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-19",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 80000,
+    "gst": 14400,
+    "total": 94400,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-11-06",
+   "departure": "2026-11-09",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-11-06",
+    "departure": "2026-11-09",
+    "nightCount": 3,
+    "nights": [
+     {
+      "date": "2026-11-06",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-07",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-08",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 72000,
+    "gst": 12960,
+    "total": 84960,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-11-02",
+   "departure": "2026-11-09",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-11-02",
+    "departure": "2026-11-09",
+    "nightCount": 7,
+    "nights": [
+     {
+      "date": "2026-11-02",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-03",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-04",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-05",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-06",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-07",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-08",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 152000,
+    "gst": 27360,
+    "total": 179360,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-11-20",
+   "departure": "2026-11-23",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-11-20",
+    "departure": "2026-11-23",
+    "nightCount": 3,
+    "nights": [
+     {
+      "date": "2026-11-20",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-21",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-22",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 72000,
+    "gst": 12960,
+    "total": 84960,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-10-27",
+   "departure": "2026-10-30",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-10-27",
+    "departure": "2026-10-30",
+    "nightCount": 3,
+    "nights": [
+     {
+      "date": "2026-10-27",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-10-28",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-10-29",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 60000,
+    "gst": 10800,
+    "total": 70800,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-11-10",
+   "departure": "2026-11-13",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-11-10",
+    "departure": "2026-11-13",
+    "nightCount": 3,
+    "nights": [
+     {
+      "date": "2026-11-10",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-11",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-12",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 60000,
+    "gst": 10800,
+    "total": 70800,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-11-16",
+   "departure": "2026-11-19",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-11-16",
+    "departure": "2026-11-19",
+    "nightCount": 3,
+    "nights": [
+     {
+      "date": "2026-11-16",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-17",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-18",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 60000,
+    "gst": 10800,
+    "total": 70800,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-11-11",
+   "departure": "2026-11-18",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-11-11",
+    "departure": "2026-11-18",
+    "nightCount": 7,
+    "nights": [
+     {
+      "date": "2026-11-11",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-12",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-13",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-14",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-15",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-16",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-17",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 152000,
+    "gst": 27360,
+    "total": 179360,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": false,
+    "reasons": [
+     "The night of 2026-11-13 is already taken."
+    ]
+   }
+  },
+  {
+   "arrival": "2027-01-14",
+   "departure": "2027-01-19",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-01-14",
+    "departure": "2027-01-19",
+    "nightCount": 5,
+    "nights": [
+     {
+      "date": "2027-01-14",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-15",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-16",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-17",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-18",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 112000,
+    "gst": 20160,
+    "total": 132160,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": false,
+    "reasons": [
+     "The night of 2027-01-15 is already taken."
+    ]
+   }
+  },
+  {
+   "arrival": "2027-03-03",
+   "departure": "2027-03-09",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-03-03",
+    "departure": "2027-03-09",
+    "nightCount": 6,
+    "nights": [
+     {
+      "date": "2027-03-03",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-04",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-05",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-06",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-07",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-08",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "late"
+    ],
+    "minNights": 3,
+    "subtotal": 132000,
+    "gst": 23760,
+    "total": 155760,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": false,
+    "reasons": [
+     "The night of 2027-03-05 is already taken."
+    ]
+   }
+  },
+  {
+   "arrival": "2026-11-17",
+   "departure": "2026-11-18",
+   "quote": {
+    "ok": false,
+    "reasons": [
+     "This band has a 3-night minimum."
+    ],
+    "arrival": "2026-11-17",
+    "departure": "2026-11-18",
+    "nightCount": 1,
+    "nights": [
+     {
+      "date": "2026-11-17",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 20000,
+    "gst": 3600,
+    "total": 23600,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-11-17",
+   "departure": "2026-11-19",
+   "quote": {
+    "ok": false,
+    "reasons": [
+     "This band has a 3-night minimum."
+    ],
+    "arrival": "2026-11-17",
+    "departure": "2026-11-19",
+    "nightCount": 2,
+    "nights": [
+     {
+      "date": "2026-11-17",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-18",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 40000,
+    "gst": 7200,
+    "total": 47200,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-12-21",
+   "departure": "2026-12-24",
+   "quote": {
+    "ok": false,
+    "reasons": [
+     "The Christmas band has a 4-night minimum."
+    ],
+    "arrival": "2026-12-21",
+    "departure": "2026-12-24",
+    "nightCount": 3,
+    "nights": [
+     {
+      "date": "2026-12-21",
+      "band": "peak",
+      "label": "Christmas week",
+      "rate": 40000,
+      "weekend": false,
+      "tone": "peak",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-22",
+      "band": "peak",
+      "label": "Christmas week",
+      "rate": 40000,
+      "weekend": false,
+      "tone": "peak",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-23",
+      "band": "peak",
+      "label": "Christmas week",
+      "rate": 40000,
+      "weekend": false,
+      "tone": "peak",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "peak"
+    ],
+    "minNights": 4,
+    "subtotal": 120000,
+    "gst": 21600,
+    "total": 141600,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-12-20",
+   "departure": "2026-12-24",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-12-20",
+    "departure": "2026-12-24",
+    "nightCount": 4,
+    "nights": [
+     {
+      "date": "2026-12-20",
+      "band": "peak",
+      "label": "Christmas week",
+      "rate": 40000,
+      "weekend": false,
+      "tone": "peak",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-21",
+      "band": "peak",
+      "label": "Christmas week",
+      "rate": 40000,
+      "weekend": false,
+      "tone": "peak",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-22",
+      "band": "peak",
+      "label": "Christmas week",
+      "rate": 40000,
+      "weekend": false,
+      "tone": "peak",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-23",
+      "band": "peak",
+      "label": "Christmas week",
+      "rate": 40000,
+      "weekend": false,
+      "tone": "peak",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "peak"
+    ],
+    "minNights": 4,
+    "subtotal": 160000,
+    "gst": 28800,
+    "total": 188800,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-02-10",
+   "departure": "2027-02-12",
+   "quote": {
+    "ok": false,
+    "reasons": [
+     "This band has a 3-night minimum."
+    ],
+    "arrival": "2027-02-10",
+    "departure": "2027-02-12",
+    "nightCount": 2,
+    "nights": [
+     {
+      "date": "2027-02-10",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-11",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "late"
+    ],
+    "minNights": 3,
+    "subtotal": 40000,
+    "gst": 7200,
+    "total": 47200,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-02-10",
+   "departure": "2027-02-13",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-02-10",
+    "departure": "2027-02-13",
+    "nightCount": 3,
+    "nights": [
+     {
+      "date": "2027-02-10",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-11",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-12",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "late"
+    ],
+    "minNights": 3,
+    "subtotal": 66000,
+    "gst": 11880,
+    "total": 77880,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-12-17",
+   "departure": "2026-12-22",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-12-17",
+    "departure": "2026-12-22",
+    "nightCount": 5,
+    "nights": [
+     {
+      "date": "2026-12-17",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-18",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-19",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-20",
+      "band": "peak",
+      "label": "Christmas week",
+      "rate": 40000,
+      "weekend": false,
+      "tone": "peak",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-21",
+      "band": "peak",
+      "label": "Christmas week",
+      "rate": 40000,
+      "weekend": false,
+      "tone": "peak",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder",
+     "peak"
+    ],
+    "minNights": 4,
+    "subtotal": 152000,
+    "gst": 27360,
+    "total": 179360,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-01-03",
+   "departure": "2027-01-08",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-01-03",
+    "departure": "2027-01-08",
+    "nightCount": 5,
+    "nights": [
+     {
+      "date": "2027-01-03",
+      "band": "peak",
+      "label": "Christmas week",
+      "rate": 40000,
+      "weekend": false,
+      "tone": "peak",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-04",
+      "band": "peak",
+      "label": "Christmas week",
+      "rate": 40000,
+      "weekend": false,
+      "tone": "peak",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-05",
+      "band": "peak",
+      "label": "Christmas week",
+      "rate": 40000,
+      "weekend": false,
+      "tone": "peak",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-06",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-07",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "peak",
+     "shoulder"
+    ],
+    "minNights": 4,
+    "subtotal": 160000,
+    "gst": 28800,
+    "total": 188800,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-01-29",
+   "departure": "2027-02-02",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-01-29",
+    "departure": "2027-02-02",
+    "nightCount": 4,
+    "nights": [
+     {
+      "date": "2027-01-29",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-30",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-31",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-01",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder",
+     "late"
+    ],
+    "minNights": 3,
+    "subtotal": 92000,
+    "gst": 16560,
+    "total": 108560,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-03-29",
+   "departure": "2027-04-02",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-03-29",
+    "departure": "2027-04-02",
+    "nightCount": 4,
+    "nights": [
+     {
+      "date": "2027-03-29",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-30",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-31",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-01",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "late",
+     "launch"
+    ],
+    "minNights": 3,
+    "subtotal": 72000,
+    "gst": 12960,
+    "total": 84960,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-10-21",
+   "departure": "2026-10-24",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-10-21",
+    "departure": "2026-10-24",
+    "nightCount": 3,
+    "nights": [
+     {
+      "date": "2026-10-21",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-10-22",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-10-23",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 66000,
+    "gst": 11880,
+    "total": 77880,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": false,
+    "reasons": [
+     "Arrivals need at least 2 days' notice.",
+     "The night of 2026-10-23 is already taken."
+    ]
+   }
+  },
+  {
+   "arrival": "2026-10-22",
+   "departure": "2026-10-23",
+   "quote": {
+    "ok": false,
+    "reasons": [
+     "This band has a 3-night minimum."
+    ],
+    "arrival": "2026-10-22",
+    "departure": "2026-10-23",
+    "nightCount": 1,
+    "nights": [
+     {
+      "date": "2026-10-22",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 20000,
+    "gst": 3600,
+    "total": 23600,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-10-10",
+   "departure": "2026-10-14",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-10-10",
+    "departure": "2026-10-14",
+    "nightCount": 4,
+    "nights": [
+     {
+      "date": "2026-10-10",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-10-11",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-10-12",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-10-13",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 86000,
+    "gst": 15480,
+    "total": 101480,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": false,
+    "reasons": [
+     "The house opens for stays from 2026-10-15. Earlier dates are enquiries.",
+     "Arrivals need at least 2 days' notice."
+    ]
+   }
+  },
+  {
+   "arrival": "2027-06-27",
+   "departure": "2027-07-01",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-06-27",
+    "departure": "2027-07-01",
+    "nightCount": 4,
+    "nights": [
+     {
+      "date": "2027-06-27",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-28",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-29",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-30",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "launch"
+    ],
+    "minNights": 3,
+    "subtotal": 48000,
+    "gst": 8640,
+    "total": 56640,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-06-28",
+   "departure": "2027-07-02",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-06-28",
+    "departure": "2027-07-02",
+    "nightCount": 4,
+    "nights": [
+     {
+      "date": "2027-06-28",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-29",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-30",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-07-01",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "launch"
+    ],
+    "minNights": 3,
+    "subtotal": 48000,
+    "gst": 8640,
+    "total": 56640,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": false,
+    "reasons": [
+     "The calendar is open until 2027-06-30."
+    ]
+   }
+  },
+  {
+   "arrival": "2027-02-01",
+   "departure": "2027-02-22",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-02-01",
+    "departure": "2027-02-22",
+    "nightCount": 21,
+    "nights": [
+     {
+      "date": "2027-02-01",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-02",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-03",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-04",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-05",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-06",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-07",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-08",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-09",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-10",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-11",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-12",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-13",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-14",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-15",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-16",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-17",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-18",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-19",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-20",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-21",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "late"
+    ],
+    "minNights": 3,
+    "subtotal": 456000,
+    "gst": 82080,
+    "total": 538080,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-02-01",
+   "departure": "2027-02-23",
+   "quote": {
+    "ok": false,
+    "reasons": [
+     "Stays are capped at 21 nights; write to us for longer."
+    ],
+    "arrival": "2027-02-01",
+    "departure": "2027-02-23",
+    "nightCount": 22,
+    "nights": [
+     {
+      "date": "2027-02-01",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-02",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-03",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-04",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-05",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-06",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-07",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-08",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-09",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-10",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-11",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-12",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-13",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-14",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-15",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-16",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-17",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-18",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-19",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-20",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-21",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-22",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "late"
+    ],
+    "minNights": 3,
+    "subtotal": 476000,
+    "gst": 85680,
+    "total": 561680,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-11-20",
+   "departure": "2026-11-16",
+   "quote": {
+    "ok": false,
+    "reasons": [
+     "Departure must be after arrival."
+    ],
+    "arrival": "2026-11-20",
+    "departure": "2026-11-16",
+    "nightCount": 0,
+    "nights": [],
+    "bands": [],
+    "minNights": 0,
+    "subtotal": 0,
+    "gst": 0,
+    "total": 0,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": false
+   },
+   "validateRange": {
+    "ok": false,
+    "reasons": [
+     "Departure must be after arrival."
+    ]
+   }
+  },
+  {
+   "arrival": "2026-11-20",
+   "departure": "2026-11-20",
+   "quote": {
+    "ok": false,
+    "reasons": [
+     "Departure must be after arrival."
+    ],
+    "arrival": "2026-11-20",
+    "departure": "2026-11-20",
+    "nightCount": 0,
+    "nights": [],
+    "bands": [],
+    "minNights": 0,
+    "subtotal": 0,
+    "gst": 0,
+    "total": 0,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": false
+   },
+   "validateRange": {
+    "ok": false,
+    "reasons": [
+     "Departure must be after arrival."
+    ]
+   }
+  },
+  {
+   "arrival": "2026-02-30",
+   "departure": "2026-03-03",
+   "quote": {
+    "ok": false,
+    "reasons": [
+     "Dates are not valid."
+    ],
+    "nights": [],
+    "subtotal": 0,
+    "gst": 0,
+    "total": 0,
+    "deposit": 15000,
+    "minNights": 0,
+    "bands": []
+   },
+   "validateRange": {
+    "threw": "invalid calendar date: 2026-02-30"
+   }
+  },
+  {
+   "arrival": "not a date",
+   "departure": "2026-11-20",
+   "quote": {
+    "ok": false,
+    "reasons": [
+     "Dates are not valid."
+    ],
+    "nights": [],
+    "subtotal": 0,
+    "gst": 0,
+    "total": 0,
+    "deposit": 15000,
+    "minNights": 0,
+    "bands": []
+   },
+   "validateRange": {
+    "threw": "bad ISO date: not a date"
+   }
+  },
+  {
+   "arrival": "2027-03-20",
+   "departure": "2027-03-23",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-03-20",
+    "departure": "2027-03-23",
+    "nightCount": 3,
+    "nights": [
+     {
+      "date": "2027-03-20",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-21",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-22",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "late"
+    ],
+    "minNights": 3,
+    "subtotal": 66000,
+    "gst": 11880,
+    "total": 77880,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-03-06",
+   "departure": "2027-03-15",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-03-06",
+    "departure": "2027-03-15",
+    "nightCount": 9,
+    "nights": [
+     {
+      "date": "2027-03-06",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-07",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-08",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-09",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-10",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-11",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-12",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-13",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-14",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "late"
+    ],
+    "minNights": 3,
+    "subtotal": 198000,
+    "gst": 35640,
+    "total": 233640,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": false,
+    "reasons": [
+     "The night of 2027-03-06 is already taken."
+    ]
+   }
+  },
+  {
+   "arrival": "2027-04-08",
+   "departure": "2027-04-13",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-04-08",
+    "departure": "2027-04-13",
+    "nightCount": 5,
+    "nights": [
+     {
+      "date": "2027-04-08",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-09",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-10",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-11",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-12",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "launch"
+    ],
+    "minNights": 3,
+    "subtotal": 68000,
+    "gst": 12240,
+    "total": 80240,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-05-27",
+   "departure": "2027-06-05",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-05-27",
+    "departure": "2027-06-05",
+    "nightCount": 9,
+    "nights": [
+     {
+      "date": "2027-05-27",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-28",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-29",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-30",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-31",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-01",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-02",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-03",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-04",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "launch"
+    ],
+    "minNights": 3,
+    "subtotal": 120000,
+    "gst": 21600,
+    "total": 141600,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-11-09",
+   "departure": "2026-11-18",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-11-09",
+    "departure": "2026-11-18",
+    "nightCount": 9,
+    "nights": [
+     {
+      "date": "2026-11-09",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-10",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-11",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-12",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-13",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-14",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-15",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-16",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-17",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 192000,
+    "gst": 34560,
+    "total": 226560,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": false,
+    "reasons": [
+     "The night of 2026-11-13 is already taken."
+    ]
+   }
+  },
+  {
+   "arrival": "2026-12-13",
+   "departure": "2026-12-15",
+   "quote": {
+    "ok": false,
+    "reasons": [
+     "This band has a 3-night minimum."
+    ],
+    "arrival": "2026-12-13",
+    "departure": "2026-12-15",
+    "nightCount": 2,
+    "nights": [
+     {
+      "date": "2026-12-13",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-14",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 40000,
+    "gst": 7200,
+    "total": 47200,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-06-27",
+   "departure": "2027-06-28",
+   "quote": {
+    "ok": false,
+    "reasons": [
+     "This band has a 3-night minimum."
+    ],
+    "arrival": "2027-06-27",
+    "departure": "2027-06-28",
+    "nightCount": 1,
+    "nights": [
+     {
+      "date": "2027-06-27",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "launch"
+    ],
+    "minNights": 3,
+    "subtotal": 12000,
+    "gst": 2160,
+    "total": 14160,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-01-26",
+   "departure": "2027-01-27",
+   "quote": {
+    "ok": false,
+    "reasons": [
+     "This band has a 3-night minimum."
+    ],
+    "arrival": "2027-01-26",
+    "departure": "2027-01-27",
+    "nightCount": 1,
+    "nights": [
+     {
+      "date": "2027-01-26",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 20000,
+    "gst": 3600,
+    "total": 23600,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-11-08",
+   "departure": "2026-11-15",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-11-08",
+    "departure": "2026-11-15",
+    "nightCount": 7,
+    "nights": [
+     {
+      "date": "2026-11-08",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-09",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-10",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-11",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-12",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-13",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-14",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 152000,
+    "gst": 27360,
+    "total": 179360,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": false,
+    "reasons": [
+     "The night of 2026-11-13 is already taken."
+    ]
+   }
+  },
+  {
+   "arrival": "2027-06-10",
+   "departure": "2027-06-18",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-06-10",
+    "departure": "2027-06-18",
+    "nightCount": 8,
+    "nights": [
+     {
+      "date": "2027-06-10",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-11",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-12",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-13",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-14",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-15",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-16",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-17",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "launch"
+    ],
+    "minNights": 3,
+    "subtotal": 104000,
+    "gst": 18720,
+    "total": 122720,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-04-25",
+   "departure": "2027-04-26",
+   "quote": {
+    "ok": false,
+    "reasons": [
+     "This band has a 3-night minimum."
+    ],
+    "arrival": "2027-04-25",
+    "departure": "2027-04-26",
+    "nightCount": 1,
+    "nights": [
+     {
+      "date": "2027-04-25",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "launch"
+    ],
+    "minNights": 3,
+    "subtotal": 12000,
+    "gst": 2160,
+    "total": 14160,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-03-25",
+   "departure": "2027-03-30",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-03-25",
+    "departure": "2027-03-30",
+    "nightCount": 5,
+    "nights": [
+     {
+      "date": "2027-03-25",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-26",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-27",
+      "band": "late",
+      "label": "Late season",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-28",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-29",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "late"
+    ],
+    "minNights": 3,
+    "subtotal": 112000,
+    "gst": 20160,
+    "total": 132160,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-12-11",
+   "departure": "2026-12-20",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-12-11",
+    "departure": "2026-12-20",
+    "nightCount": 9,
+    "nights": [
+     {
+      "date": "2026-12-11",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-12",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-13",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-14",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-15",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-16",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-17",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-18",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-19",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 204000,
+    "gst": 36720,
+    "total": 240720,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-11-08",
+   "departure": "2026-11-16",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-11-08",
+    "departure": "2026-11-16",
+    "nightCount": 8,
+    "nights": [
+     {
+      "date": "2026-11-08",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-09",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-10",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-11",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-12",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-13",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-14",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-15",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 172000,
+    "gst": 30960,
+    "total": 202960,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": false,
+    "reasons": [
+     "The night of 2026-11-13 is already taken."
+    ]
+   }
+  },
+  {
+   "arrival": "2026-11-27",
+   "departure": "2026-11-28",
+   "quote": {
+    "ok": false,
+    "reasons": [
+     "This band has a 3-night minimum."
+    ],
+    "arrival": "2026-11-27",
+    "departure": "2026-11-28",
+    "nightCount": 1,
+    "nights": [
+     {
+      "date": "2026-11-27",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 26000,
+    "gst": 4680,
+    "total": 30680,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-04-19",
+   "departure": "2027-04-26",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-04-19",
+    "departure": "2027-04-26",
+    "nightCount": 7,
+    "nights": [
+     {
+      "date": "2027-04-19",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-20",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-21",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-22",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-23",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-24",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-25",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "launch"
+    ],
+    "minNights": 3,
+    "subtotal": 92000,
+    "gst": 16560,
+    "total": 108560,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-05-25",
+   "departure": "2027-06-02",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-05-25",
+    "departure": "2027-06-02",
+    "nightCount": 8,
+    "nights": [
+     {
+      "date": "2027-05-25",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-26",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-27",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-28",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-29",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-30",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-31",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-01",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "launch"
+    ],
+    "minNights": 3,
+    "subtotal": 104000,
+    "gst": 18720,
+    "total": 122720,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-05-18",
+   "departure": "2027-05-25",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-05-18",
+    "departure": "2027-05-25",
+    "nightCount": 7,
+    "nights": [
+     {
+      "date": "2027-05-18",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-19",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-20",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-21",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-22",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-23",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-24",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "launch"
+    ],
+    "minNights": 3,
+    "subtotal": 92000,
+    "gst": 16560,
+    "total": 108560,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-10-31",
+   "departure": "2026-11-04",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-10-31",
+    "departure": "2026-11-04",
+    "nightCount": 4,
+    "nights": [
+     {
+      "date": "2026-10-31",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-01",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-02",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-03",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 86000,
+    "gst": 15480,
+    "total": 101480,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-11-28",
+   "departure": "2026-12-04",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-11-28",
+    "departure": "2026-12-04",
+    "nightCount": 6,
+    "nights": [
+     {
+      "date": "2026-11-28",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-29",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-11-30",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-01",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-02",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-03",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 126000,
+    "gst": 22680,
+    "total": 148680,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-01-25",
+   "departure": "2027-01-28",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-01-25",
+    "departure": "2027-01-28",
+    "nightCount": 3,
+    "nights": [
+     {
+      "date": "2027-01-25",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-26",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-27",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 60000,
+    "gst": 10800,
+    "total": 70800,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-05-07",
+   "departure": "2027-05-10",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-05-07",
+    "departure": "2027-05-10",
+    "nightCount": 3,
+    "nights": [
+     {
+      "date": "2027-05-07",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-08",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-09",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "launch"
+    ],
+    "minNights": 3,
+    "subtotal": 44000,
+    "gst": 7920,
+    "total": 51920,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-05-28",
+   "departure": "2027-06-03",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-05-28",
+    "departure": "2027-06-03",
+    "nightCount": 6,
+    "nights": [
+     {
+      "date": "2027-05-28",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-29",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-30",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-05-31",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-01",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-06-02",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "launch"
+    ],
+    "minNights": 3,
+    "subtotal": 80000,
+    "gst": 14400,
+    "total": 94400,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2026-12-11",
+   "departure": "2026-12-16",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2026-12-11",
+    "departure": "2026-12-16",
+    "nightCount": 5,
+    "nights": [
+     {
+      "date": "2026-12-11",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-12",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-13",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-14",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2026-12-15",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder"
+    ],
+    "minNights": 3,
+    "subtotal": 112000,
+    "gst": 20160,
+    "total": 132160,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-03-14",
+   "departure": "2027-03-18",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-03-14",
+    "departure": "2027-03-18",
+    "nightCount": 4,
+    "nights": [
+     {
+      "date": "2027-03-14",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-15",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-16",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-17",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "late"
+    ],
+    "minNights": 3,
+    "subtotal": 80000,
+    "gst": 14400,
+    "total": 94400,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-01-04",
+   "departure": "2027-01-12",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-01-04",
+    "departure": "2027-01-12",
+    "nightCount": 8,
+    "nights": [
+     {
+      "date": "2027-01-04",
+      "band": "peak",
+      "label": "Christmas week",
+      "rate": 40000,
+      "weekend": false,
+      "tone": "peak",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-05",
+      "band": "peak",
+      "label": "Christmas week",
+      "rate": 40000,
+      "weekend": false,
+      "tone": "peak",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-06",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-07",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-08",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-09",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-10",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-11",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "peak",
+     "shoulder"
+    ],
+    "minNights": 4,
+    "subtotal": 212000,
+    "gst": 38160,
+    "total": 250160,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-03-21",
+   "departure": "2027-03-25",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-03-21",
+    "departure": "2027-03-25",
+    "nightCount": 4,
+    "nights": [
+     {
+      "date": "2027-03-21",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-22",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-23",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-03-24",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "late"
+    ],
+    "minNights": 3,
+    "subtotal": 80000,
+    "gst": 14400,
+    "total": 94400,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-04-19",
+   "departure": "2027-04-25",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-04-19",
+    "departure": "2027-04-25",
+    "nightCount": 6,
+    "nights": [
+     {
+      "date": "2027-04-19",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-20",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-21",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-22",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 12000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-23",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-04-24",
+      "band": "launch",
+      "label": "Launch & monsoon",
+      "rate": 16000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "launch"
+    ],
+    "minNights": 3,
+    "subtotal": 80000,
+    "gst": 14400,
+    "total": 94400,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  },
+  {
+   "arrival": "2027-01-29",
+   "departure": "2027-02-04",
+   "quote": {
+    "ok": true,
+    "reasons": [],
+    "arrival": "2027-01-29",
+    "departure": "2027-02-04",
+    "nightCount": 6,
+    "nights": [
+     {
+      "date": "2027-01-29",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-30",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 26000,
+      "weekend": true,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-01-31",
+      "band": "shoulder",
+      "label": "Shoulder",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-01",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-02",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     },
+     {
+      "date": "2027-02-03",
+      "band": "late",
+      "label": "Late season",
+      "rate": 20000,
+      "weekend": false,
+      "tone": "free",
+      "provisional": true
+     }
+    ],
+    "bands": [
+     "shoulder",
+     "late"
+    ],
+    "minNights": 3,
+    "subtotal": 132000,
+    "gst": 23760,
+    "total": 155760,
+    "gstMode": "exclusive",
+    "gstRate": 0.18,
+    "deposit": 15000,
+    "provisional": true
+   },
+   "validateRange": {
+    "ok": true,
+    "reasons": []
+   }
+  }
+ ]
+}

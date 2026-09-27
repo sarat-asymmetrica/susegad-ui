@@ -1,0 +1,41 @@
+{
+  "name": "player",
+  "type": "component",
+  "title": "Player",
+  "description": "The Susegad player: enhances a native video or audio element with a drawn scrubber, captions in our type, a poster that is a scene's still, WebGL video treatments (ink, halftone, duotone, riso) and timed ink annotations on the moving frame. Content sound plays only on its own play press.",
+  "version": "0.1.0",
+  "files": [
+    "player.js",
+    "player.core.js",
+    "annotations.js",
+    "annotations.core.js",
+    "treatments.js",
+    "treatments.core.js",
+    "poster.js",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "player.css",
+    "player.prompt.md",
+    "player.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens",
+    "narration"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "player.prompt.md",
+  "docs": "player.docs.md",
+  "budget": {
+    "jsBytes": 45500,
+    "frameMs": 16.7,
+    "reason": "Wider than a typical component's 12-16 KB (0009) because it carries four sub-systems a normal component doesn't: a WebGL video-treatment renderer (treatments.js, 8.3 KB after gating the black-canvas-before-first-frame fix behind a ready callback, plus its tested colour/halftone core), a poster renderer that drives a whole scene once (poster.js, 1.9 KB), an ink-annotation overlay (annotations.js, 2.7 KB) and the bar/captions/keyboard behaviour itself (player.js, 15.7 KB after the frame-wrapper, focusability and stroke-icon fixes, over the 12 KB default; declared here rather than split further, since the parts already separate cleanly into their own files and cores). Skins grew to 2.4 KB each (still well inside 8 KB) once they positioned the scrubber canvas against the range's own box, rather than the whole bar, per Sutradhar's review. Pure cores (player.core.js 3.0 KB, annotations.core.js 3.7 KB, treatments.core.js 3.7 KB = 10.4 KB) stay inside the 12 KB core allowance (0010) even summed. Measured total 44.5 KB; budgeted with a little headroom. This is closer to a scene's budget than a component's; worth a decision addendum if more AV components follow this shape."
+  }
+}

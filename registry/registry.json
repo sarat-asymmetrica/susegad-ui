@@ -1,0 +1,3256 @@
+{
+  "name": "susegad-ui",
+  "format": 1,
+  "base": "..",
+  "items": [
+    {
+      "name": "badge",
+      "type": "component",
+      "title": "Badge",
+      "description": "A word or two of status. The text is the meaning, a distinct shape per tone backs it up, colour comes last. Quiet is text with a hairline rule; warm is a hand-inked outline in the tone's ink; playful is a chip of colour with a kolam flower on the corner. Busy badges breathe or turn, never in quiet or under reduced motion.",
+      "version": "0.1.0",
+      "manifest": "packages/components/badge/registry.json",
+      "files": [
+        {
+          "path": "packages/components/badge/badge.core.js",
+          "bytes": 5824,
+          "hash": "sha256-0f1b3e0f528390cccd70203b6f3272ab4c686508cf1c1d3184834c12f6f22998"
+        },
+        {
+          "path": "packages/components/badge/badge.css",
+          "bytes": 5329,
+          "hash": "sha256-ace158236d20ac48f55a4246f9f775eb4eb64b2ac61a96f6165afce7627c3c71"
+        },
+        {
+          "path": "packages/components/badge/badge.docs.md",
+          "bytes": 2456,
+          "hash": "sha256-b09620449ede91c617b1d60063857b02b7da1bdbaa9a7978880256fafd3f382b"
+        },
+        {
+          "path": "packages/components/badge/badge.js",
+          "bytes": 1572,
+          "hash": "sha256-65402888bb55bd679a90d7c4a95a888ad9c1967f72019ae2348637c2fd31ad30"
+        },
+        {
+          "path": "packages/components/badge/badge.prompt.md",
+          "bytes": 4860,
+          "hash": "sha256-219ab4f40838fbad12f38fc9b87c9e5991519f5180f822e67bc3d4732bad9a3c"
+        },
+        {
+          "path": "packages/components/badge/skins/playful.js",
+          "bytes": 1282,
+          "hash": "sha256-d27735bb3b6e0a1cbb200c2eb432b0aa1fe5b6b15b25fbd06fae70773dc0eb9f"
+        },
+        {
+          "path": "packages/components/badge/skins/quiet.js",
+          "bytes": 223,
+          "hash": "sha256-21e8d2e288aebcdb658587dfba2604adf236db7868ff36da66a1d8600863c2f9"
+        },
+        {
+          "path": "packages/components/badge/skins/warm.js",
+          "bytes": 2113,
+          "hash": "sha256-89f87ab2c4c5789a048df14323041fffec728345066fd8c630a2b550995ccdb9"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 36864,
+        "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 11014 bytes: behaviour (badge.js + badge.core.js) 7.4 KB, skins quiet 0.2 KB, warm 2.1 KB, playful 1.3 KB."
+      },
+      "docs": "packages/components/badge/badge.docs.md",
+      "prompt": "packages/components/badge/badge.prompt.md",
+      "bytes": 23659,
+      "jsBytes": 11014,
+      "codeBytes": 8001,
+      "hash": "sha256-30b77c79d69e8ced0a69ba9e8b474acf77a9a6a1b98a4d8c85e4003a49f80eaa"
+    },
+    {
+      "name": "booking",
+      "type": "recipe",
+      "title": "Booking",
+      "description": "Book the whole house, or a room, in four steps built from every Wave 2 part: dates with the season ribbon, guests and room, your details with the phone confirmed by a code, and a signature to confirm and hold, with breakfast as a switch. A live quote from the booking kernels shows every band's nights, GST on its own line and the deposit, calls provisional figures provisional, and shows no figure for a single room the card does not price. The hold is stamped Held. A prototype that sends, holds and charges nothing, and says so; without JavaScript every step shows and the form validates and submits.",
+      "version": "0.1.0",
+      "manifest": "packages/recipes/booking/registry.json",
+      "files": [
+        {
+          "path": "packages/recipes/booking/booking.core.js",
+          "bytes": 7028,
+          "hash": "sha256-737430266ead42565b30b9457594308ba312006d6bbb15a8122b353c8ff99dd3"
+        },
+        {
+          "path": "packages/recipes/booking/held.html",
+          "bytes": 1303,
+          "hash": "sha256-0486715877829ed78921a299e6ae343061bf1ca8c5765d8ad39033dfcef7de19"
+        },
+        {
+          "path": "packages/recipes/booking/index.html",
+          "bytes": 9084,
+          "hash": "sha256-76bee8b57ad8d01107b7f46e3e770b0eeee434d187f82de13cfe65956c31494b"
+        },
+        {
+          "path": "packages/recipes/booking/README.md",
+          "bytes": 7050,
+          "hash": "sha256-89d4080c728e3337e21a0513a037e35c1d15f77228c7834e2f1783b8eff1938c"
+        },
+        {
+          "path": "packages/recipes/booking/recipe.css",
+          "bytes": 5753,
+          "hash": "sha256-23c39dc54db8d38d436f6bbbc01cbb485a2945be1bf033b51506363ddf32a7dc"
+        },
+        {
+          "path": "packages/recipes/booking/recipe.js",
+          "bytes": 8652,
+          "hash": "sha256-66d8e314523f86eb88275f7e8a95d9310f883aa1868108e0a36eafa20156a8ac"
+        },
+        {
+          "path": "packages/recipes/booking/recipe.prompt.md",
+          "bytes": 5288,
+          "hash": "sha256-d782373e0246c40177d827ab9f2c59a0185b17a15ea4377f42ccc2807152f758"
+        }
+      ],
+      "dependencies": [
+        "check",
+        "combobox",
+        "core",
+        "core-component",
+        "date-range",
+        "engine",
+        "field",
+        "field-note",
+        "form",
+        "kernels-booking",
+        "loader",
+        "otp",
+        "radio",
+        "select",
+        "signature",
+        "stamp",
+        "stepper",
+        "toast",
+        "toggle",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "docs": "packages/recipes/booking/README.md",
+      "prompt": "packages/recipes/booking/recipe.prompt.md",
+      "bytes": 44158,
+      "jsBytes": 15680,
+      "codeBytes": 12035,
+      "hash": "sha256-1d0150e62f30965d8381d5954ed4a0aa479d78f1b01dbf1b8d239d6247386b24"
+    },
+    {
+      "name": "check",
+      "type": "component",
+      "title": "Checkbox",
+      "description": "A native checkbox that submits, validates and takes Space with or without JavaScript. Quiet is a hairline box with a crisp tick drawn by CSS; warm sketches the box in four pencil strokes whose corners cross and draws a heavy tick in by hand; playful is a little rubber-stamp block, and stamps a bold tick over its edge, printed through the stamp's ink texture. Indeterminate, and a \"select all\" box that goes checked, mixed or clear with its children. Forced colours bring back the system checkbox.",
+      "version": "0.1.0",
+      "manifest": "packages/components/check/registry.json",
+      "files": [
+        {
+          "path": "packages/components/check/check.core.js",
+          "bytes": 5829,
+          "hash": "sha256-9a52e6c8635112dd1c770f5dca7fff0ac07dd58031829352b777129509e02920"
+        },
+        {
+          "path": "packages/components/check/check.css",
+          "bytes": 4865,
+          "hash": "sha256-ac3242207d5e00c39a5606609c66ce815a0d37db5a60972711c63252a934178a"
+        },
+        {
+          "path": "packages/components/check/check.docs.md",
+          "bytes": 2488,
+          "hash": "sha256-92a619b9554ef56ac4c5ae813becffa4a65132c45b638d04e5a667d8d5111977"
+        },
+        {
+          "path": "packages/components/check/check.js",
+          "bytes": 3890,
+          "hash": "sha256-42ff37008a286dfcef3410ff7ef21404d5f10502d47c8be308b2c63a5201381e"
+        },
+        {
+          "path": "packages/components/check/check.prompt.md",
+          "bytes": 6731,
+          "hash": "sha256-02c050e6327b3350024dbe65bf4988ad2e6b5d0814c043ea1d3fe28a50992fd8"
+        },
+        {
+          "path": "packages/components/check/skins/playful.js",
+          "bytes": 4277,
+          "hash": "sha256-95f1bafb9790ccdfef601638c1ffa208485fba38b8cdb004346faa4125654096"
+        },
+        {
+          "path": "packages/components/check/skins/quiet.js",
+          "bytes": 254,
+          "hash": "sha256-fa2afac9f097833ecfca9d0a508f39eadf0a0d10b003e00811bbb1681bc2c429"
+        },
+        {
+          "path": "packages/components/check/skins/warm.js",
+          "bytes": 2269,
+          "hash": "sha256-43f19c6fcc294148b1b19b8fab3ace6639a9648759c1a3ccb82a6521dec00cd7"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "stamp",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 36864,
+        "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 16519 bytes: behaviour (check.js + check.core.js) 9.5 KB, skins quiet 0.2 KB, warm 2.2 KB, playful 4.2 KB. The playful skin also imports inkMask from stamp.core.js."
+      },
+      "docs": "packages/components/check/check.docs.md",
+      "prompt": "packages/components/check/check.prompt.md",
+      "bytes": 30603,
+      "jsBytes": 16519,
+      "codeBytes": 12191,
+      "hash": "sha256-8a840c94e9ce5712634f36e370341fc946a7fa4a3f54ce8e90adc24a16aa2be8"
+    },
+    {
+      "name": "combobox",
+      "type": "component",
+      "title": "Combobox",
+      "description": "An input with suggestions. Without JavaScript it is the browser's own input list and datalist; with it, the ARIA APG editable combobox with a listbox popover, full keyboard support, and matching that finds places however people type them: without accents, by an older name, in another script, or spelled as heard. Warm writes it on the paper over the field's pencil rule, with a list ruled in pencil; playful is a stamped box with stamped chips.",
+      "version": "0.1.0",
+      "manifest": "packages/components/combobox/registry.json",
+      "files": [
+        {
+          "path": "packages/components/combobox/combobox.core.js",
+          "bytes": 4126,
+          "hash": "sha256-9bc1e8417ee5277968f258acf3f65d2d4e63e97f79effe8187fc0c7bdf2acac0"
+        },
+        {
+          "path": "packages/components/combobox/combobox.css",
+          "bytes": 9000,
+          "hash": "sha256-251825fc7987a5729f0406686464aceb94a8366f1dcc9afbe9c166e64cf50581"
+        },
+        {
+          "path": "packages/components/combobox/combobox.docs.md",
+          "bytes": 5162,
+          "hash": "sha256-10c0029b0daff2634a5f32981b0ffd8e7b42b2c9f76df5db92d42c9489f8010d"
+        },
+        {
+          "path": "packages/components/combobox/combobox.js",
+          "bytes": 9434,
+          "hash": "sha256-c9646722615ce681a1dc6a211f3c8e08a4aef17a27f184bf756275784806fdce"
+        },
+        {
+          "path": "packages/components/combobox/combobox.prompt.md",
+          "bytes": 6285,
+          "hash": "sha256-a5cff7ec23768c45d67953d6756255b8d819d9134ee4b2c4ec7ff88679dfbb4b"
+        },
+        {
+          "path": "packages/components/combobox/skins/caret.js",
+          "bytes": 1225,
+          "hash": "sha256-bb70b7d25b94fb50515447e65069373361d1dcfa6e5bab63bdb7af80de3772b8"
+        },
+        {
+          "path": "packages/components/combobox/skins/playful.js",
+          "bytes": 738,
+          "hash": "sha256-2b00d73b6c1e2ffe534905033682ea85b41ff44eb984ee878732def57a6719c5"
+        },
+        {
+          "path": "packages/components/combobox/skins/quiet.js",
+          "bytes": 297,
+          "hash": "sha256-7365be554086374142101b7e901eba133b84f3de79e1a91271efe3402804690e"
+        },
+        {
+          "path": "packages/components/combobox/skins/warm.js",
+          "bytes": 1586,
+          "hash": "sha256-ee21b7397b0b0b17828b19e1accbc97086958abd004e6e262d5711e676540fa9"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "field",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 20480,
+        "frameMs": 16.7,
+        "reason": "Behaviour 13.2 KB (0009 allows up to 16 KB with a reason): the APG editable-combobox keyboard model plus matching that folds Latin accents without touching Indic vowel signs, aliases across scripts and loose romanisation. Skins share a 1.2 KB caret and add 0.3 KB (quiet), 1.5 KB (warm) and 0.7 KB (playful); warm draws with field/rule.js, counted in field. Raised from 17 KB to 20 KB for the warm pencil rule (S5), well inside decision 0005's 12 KB plus 8 KB a skin, with about 15% headroom."
+      },
+      "docs": "packages/components/combobox/combobox.docs.md",
+      "prompt": "packages/components/combobox/combobox.prompt.md",
+      "bytes": 37853,
+      "jsBytes": 17406,
+      "codeBytes": 13576,
+      "hash": "sha256-7e22fe34fbca776d91c7d7865fbfa75c27563e8d751d88dcd8f3cae9ab90589c"
+    },
+    {
+      "name": "connecting",
+      "type": "component",
+      "title": "Connecting (FireflySync)",
+      "description": "A connection's state in words, read out as it changes. Quiet shows a static dot; warm and playful show fireflies that blink on their own while connecting and fall into step (Kuramoto coupling) only once connected. Offline, they dim.",
+      "version": "0.1.0",
+      "manifest": "packages/components/connecting/registry.json",
+      "files": [
+        {
+          "path": "packages/components/connecting/connecting.core.js",
+          "bytes": 5256,
+          "hash": "sha256-03ba2696d3d0b0b7ac4bc4c3c185c55135f7c288e46de780ef20df1f46dda0b6"
+        },
+        {
+          "path": "packages/components/connecting/connecting.css",
+          "bytes": 1667,
+          "hash": "sha256-d9c5cc8e247f84dab80402a75651b4e08478687feb1c758293846abec4c301b1"
+        },
+        {
+          "path": "packages/components/connecting/connecting.docs.md",
+          "bytes": 3694,
+          "hash": "sha256-51f3b0086064a844d1613985b9b49a849f80c5ada19fa1acf890730ea67fd124"
+        },
+        {
+          "path": "packages/components/connecting/connecting.js",
+          "bytes": 2819,
+          "hash": "sha256-b7faa0b592f136af7bcf829b260eab05d08f2503098d8d07b76dced5e6b27ece"
+        },
+        {
+          "path": "packages/components/connecting/connecting.prompt.md",
+          "bytes": 4456,
+          "hash": "sha256-2d5423517e5f96c33b9c0e12be9f9aec52f2464f83dc93ae92836cf6a59c1e7e"
+        },
+        {
+          "path": "packages/components/connecting/skins/fireflies.js",
+          "bytes": 5354,
+          "hash": "sha256-3e5ede42074890455a6f21572d033316f2a5e14d4f52d763700cea28f973df67"
+        },
+        {
+          "path": "packages/components/connecting/skins/playful.js",
+          "bytes": 235,
+          "hash": "sha256-c493a617d95a2159ef0f8a25cec03f06f07879c7f43639f167a0ef72dba6fa72"
+        },
+        {
+          "path": "packages/components/connecting/skins/quiet.js",
+          "bytes": 315,
+          "hash": "sha256-a9841b0dcc2a5cf1f0cc3b5b857fea89c33efe679ce16a0c6fd19110358dabd1"
+        },
+        {
+          "path": "packages/components/connecting/skins/warm.js",
+          "bytes": 306,
+          "hash": "sha256-fe28a0c3c76c24cb1e1fedeac00c1a23ced057a26c14ed542a2fc0db87759ca2"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 14336,
+        "frameMs": 16.7,
+        "reason": "The contract's 12 KB behaviour plus 8 KB per skin, declared as the sum used: behaviour (connecting.js and connecting.core.js) about 6.6 KB, the warm and playful skins about 5.7 KB each including the shared fireflies.js, quiet under 0.4 KB."
+      },
+      "docs": "packages/components/connecting/connecting.docs.md",
+      "prompt": "packages/components/connecting/connecting.prompt.md",
+      "bytes": 24102,
+      "jsBytes": 14285,
+      "codeBytes": 9755,
+      "hash": "sha256-ba4e09f0c6a886a535df888a06970251a99ee40dee389f30c4c006774ac42141"
+    },
+    {
+      "name": "core",
+      "type": "package",
+      "title": "Core",
+      "description": "The register (quiet, warm, playful) and its cascade, the scene contract as defineScene, and the sg-scene element that runs any scene with its still, scrim, calm rects, toggle and status text.",
+      "version": "0.1.0",
+      "manifest": "packages/core/registry.json",
+      "files": [
+        {
+          "path": "packages/core/colors.js",
+          "bytes": 1020,
+          "hash": "sha256-3758599ce4d29ed6f3f4bb49cf2450695f2122f24a6959f3d026ce1870561111"
+        },
+        {
+          "path": "packages/core/define-scene.js",
+          "bytes": 4682,
+          "hash": "sha256-3021da6efac129957278338abbae059984c28d0be0e18cecee97e3cb92392447"
+        },
+        {
+          "path": "packages/core/index.js",
+          "bytes": 454,
+          "hash": "sha256-8297d6aca29aec14dbe579194f962eb5a4b04347613e67a5ce8ece8622bc6e6e"
+        },
+        {
+          "path": "packages/core/README.md",
+          "bytes": 11660,
+          "hash": "sha256-d182fefd979b122c6f1a4d036a5b60b3c3019d58d0cc3b1dc35e1e932dac4804"
+        },
+        {
+          "path": "packages/core/register.js",
+          "bytes": 5141,
+          "hash": "sha256-4349b1c31b2b802bb9c1da69fc62483b15d7fb1539106ab86d81c03d352d255b"
+        },
+        {
+          "path": "packages/core/scene-element.js",
+          "bytes": 16580,
+          "hash": "sha256-5d8e7f0a3baf73bde300434b14c931e05871bf765a270aa2f775e38128507d69"
+        }
+      ],
+      "dependencies": [
+        "engine"
+      ],
+      "registers": [],
+      "budget": {
+        "jsBytes": 28672
+      },
+      "docs": "packages/core/README.md",
+      "bytes": 39537,
+      "jsBytes": 27877,
+      "codeBytes": 23480,
+      "hash": "sha256-3af982a23bc176333d455aa0447100fde4e63efc1060ada1e8d0abfe4ac117ef"
+    },
+    {
+      "name": "core-component",
+      "type": "package",
+      "title": "Core: components",
+      "description": "SgElement and defineComponent: the light-DOM base every sg-* component extends. It enhances a native child, follows the register, loads one skin per register lazily, batches updates, pauses off screen and survives moves.",
+      "version": "0.1.0",
+      "manifest": "packages/core/component.registry.json",
+      "files": [
+        {
+          "path": "packages/core/component.js",
+          "bytes": 5575,
+          "hash": "sha256-8b385ba0dfa3fb433edff1ed0761f4790f830061a89b628dc5dceed86a585a82"
+        }
+      ],
+      "dependencies": [
+        "core"
+      ],
+      "registers": [],
+      "budget": {
+        "jsBytes": 6144
+      },
+      "bytes": 5575,
+      "jsBytes": 5575,
+      "codeBytes": 4095,
+      "hash": "sha256-190c8e8f4f63c640bba58f20390ddac8179dc86a38e4d76e75494dab31938d26"
+    },
+    {
+      "name": "date-range",
+      "type": "component",
+      "title": "Date range",
+      "description": "Arrival and departure over two native date inputs that submit without JavaScript. With it, a two-month calendar that knows taken nights and turnover mornings from the booking kernels, moves like the APG date grid, feeds the kernels' reasons into native validation, and in warm and playful inks your stay under a season ribbon.",
+      "version": "0.1.0",
+      "manifest": "packages/components/date-range/registry.json",
+      "files": [
+        {
+          "path": "packages/components/date-range/date-range.core.js",
+          "bytes": 9949,
+          "hash": "sha256-40569c3986ea702d4dd9acdc6e29020b8fc3b0d07067f0b10c4eaf08c3441b8a"
+        },
+        {
+          "path": "packages/components/date-range/date-range.css",
+          "bytes": 6807,
+          "hash": "sha256-30c67344fcfaebf509840a3ae515ceef13f7d7ee30bee34094cf059c0134f928"
+        },
+        {
+          "path": "packages/components/date-range/date-range.docs.md",
+          "bytes": 6694,
+          "hash": "sha256-baed3e5fd879d23673455124d2c9e121253d3e933704a14e737b3598feb733e2"
+        },
+        {
+          "path": "packages/components/date-range/date-range.js",
+          "bytes": 15370,
+          "hash": "sha256-ebbd6f10150912ca3cc7efc3ea3f7ac3cf1e6f61964ca717c4a12c89f9e254cc"
+        },
+        {
+          "path": "packages/components/date-range/date-range.prompt.md",
+          "bytes": 4337,
+          "hash": "sha256-53b97dab1006680d2bf15924e799304b33a1f78c5de3977d777364f5b66a685a"
+        },
+        {
+          "path": "packages/components/date-range/skins/drawing.js",
+          "bytes": 13601,
+          "hash": "sha256-c13f5cda04b644585ead45b5cdef3095b71f24da548cfb29c4557f85aef0ab85"
+        },
+        {
+          "path": "packages/components/date-range/skins/playful.js",
+          "bytes": 309,
+          "hash": "sha256-cd74f79ad50a2c0c5c76f48259cb32eadabe0280e812ea73966146e31e3fb913"
+        },
+        {
+          "path": "packages/components/date-range/skins/quiet.js",
+          "bytes": 199,
+          "hash": "sha256-9a1affa25f366a837eb81e70885bfc851e27eab950a40c3a8be6fd738909c31a"
+        },
+        {
+          "path": "packages/components/date-range/skins/warm.js",
+          "bytes": 312,
+          "hash": "sha256-7572f2570d6b423a3a1faa6c928ea856a655f739e38e3fa374222d53e5055f68"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "kernels-booking",
+        "sound",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 40960,
+        "reason": "Parts per decision 0010: element date-range.js 15,050 bytes (over 12 KB, under 16 KB: the APG keyboard grid, turnover rules, native validation, the season table, the rates setter and open-from run in every register); pure core date-range.core.js 9,949 bytes (under its own 12 KB); shared skin helper skins/drawing.js 13,604 bytes, counted as one skin, over the 8 KB skin allowance because it holds the ink loops, the season ribbon and its phone-width key; skin files quiet 199, warm 312 and playful 309 bytes."
+      },
+      "docs": "packages/components/date-range/date-range.docs.md",
+      "prompt": "packages/components/date-range/date-range.prompt.md",
+      "bytes": 57578,
+      "jsBytes": 39740,
+      "codeBytes": 33076,
+      "hash": "sha256-69b25888f93ffd42222b4e8166646aac10599a2b9d12916504b677768822655c"
+    },
+    {
+      "name": "empty",
+      "type": "component",
+      "title": "Empty state",
+      "description": "What a place shows before there is anything in it: your heading, sentence and action, named as a region. Quiet adds a hairline drawing; warm sets a scene (Paus, rain on a Goan window) beside the words, drifting slowly; playful lets you play with it. The scene loads only when a warm or playful page needs it.",
+      "version": "0.1.0",
+      "manifest": "packages/components/empty/registry.json",
+      "files": [
+        {
+          "path": "packages/components/empty/empty.core.js",
+          "bytes": 3072,
+          "hash": "sha256-173aa3c2592d3b48c967c26053eada9bc7d0c5c5e1897f9a4a717c10d2881124"
+        },
+        {
+          "path": "packages/components/empty/empty.css",
+          "bytes": 2315,
+          "hash": "sha256-b38e98fd6995fabef3fa5b61bb363bb154f0a0622bb21ec686ae9b86c98da0f8"
+        },
+        {
+          "path": "packages/components/empty/empty.docs.md",
+          "bytes": 2337,
+          "hash": "sha256-aeed8a19485becb9779ae563e4a7f63f86a7e567c319194c2acdf38c3f5b50da"
+        },
+        {
+          "path": "packages/components/empty/empty.js",
+          "bytes": 2184,
+          "hash": "sha256-ca637b96fd7172714a2582ab3e6bfdd427b5f98e865b5b814a02d51666cbd401"
+        },
+        {
+          "path": "packages/components/empty/empty.prompt.md",
+          "bytes": 3692,
+          "hash": "sha256-5afe39c7c0054cb5b88cdfce8c065c07000431cf70245a9a3fe93bc856a90bbd"
+        },
+        {
+          "path": "packages/components/empty/skins/playful.js",
+          "bytes": 253,
+          "hash": "sha256-483b5aa87458a704b09fdb89dd5eea48653aa8e34a757eec13a0bc3fa1a154c8"
+        },
+        {
+          "path": "packages/components/empty/skins/quiet.js",
+          "bytes": 1060,
+          "hash": "sha256-19e68f76b2bdfb55bf7cdbff5d298d5e623e1826f2ffbac218e8ab32392b5bf1"
+        },
+        {
+          "path": "packages/components/empty/skins/warm.js",
+          "bytes": 2436,
+          "hash": "sha256-c4bed3878ec44cc8464c2015942e0e91a01cd84b99628b70070062bbe4536669"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "scene-paus",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 10240,
+        "frameMs": 16.7,
+        "reason": "Behaviour about 5.3 KB (empty.js 2.2 KB, empty.core.js 3.1 KB); skins about 0.9 KB (quiet), 2.4 KB (warm: the scene loads only once the empty state is on screen, and sits after the words in the document) and 0.3 KB (playful, which reuses warm). Declared with about 10% headroom. The scene it shows is its own registry item with its own budget."
+      },
+      "docs": "packages/components/empty/empty.docs.md",
+      "prompt": "packages/components/empty/empty.prompt.md",
+      "bytes": 17349,
+      "jsBytes": 9005,
+      "codeBytes": 5871,
+      "hash": "sha256-a0e7bb1d0c4f860bcb89eb62693f096a062ac3ee8a7b2e285b4c8fdac419f22b"
+    },
+    {
+      "name": "engine",
+      "type": "package",
+      "title": "Engine",
+      "description": "The pencil box every scene draws with: seeded randomness and noise, geometry, fields, ink and paper, the stage and loop, the quality governor and a small WebGL helper.",
+      "version": "0.1.0",
+      "manifest": "packages/engine/registry.json",
+      "files": [
+        {
+          "path": "packages/engine/index.js",
+          "bytes": 721,
+          "hash": "sha256-6fb35990e8448ad4ef89de932863951b59781b765363b21d6a32f1e7915c4f00"
+        },
+        {
+          "path": "packages/engine/README.md",
+          "bytes": 3316,
+          "hash": "sha256-3460a3ddc3d97095ca036358c76f993999fbd7284764e02ad47b6132f5bbbb5f"
+        },
+        {
+          "path": "packages/engine/src/color.js",
+          "bytes": 853,
+          "hash": "sha256-6e689690d930406d2d8a6dcb99314c9501c438b4cb7b3ab7346b9c4e9e214dd3"
+        },
+        {
+          "path": "packages/engine/src/fields.js",
+          "bytes": 8440,
+          "hash": "sha256-e98e9ed9830c8faf3eeff68553f8a4d4c6d8f79fe64b2adb2e08385e126bc121"
+        },
+        {
+          "path": "packages/engine/src/geom.js",
+          "bytes": 5632,
+          "hash": "sha256-2b9abb35cafe713cfa933bcb95b8b726ebb876df16072a54f3783eb99d20296c"
+        },
+        {
+          "path": "packages/engine/src/gl.js",
+          "bytes": 8157,
+          "hash": "sha256-070728bc1f2c37b9f3a6b8fd8431d2ccde41058f5cfae803d4bb0630e4dc8943"
+        },
+        {
+          "path": "packages/engine/src/governor.js",
+          "bytes": 2509,
+          "hash": "sha256-9701316b2e073da5b0d7230eab08161145100bfc317b6424832ba6d1802cd8e1"
+        },
+        {
+          "path": "packages/engine/src/hatch.js",
+          "bytes": 2799,
+          "hash": "sha256-ce8f5750e150d6e43a445072b47e83919084b6907755153fd2e07d1a1d6d8bcc"
+        },
+        {
+          "path": "packages/engine/src/ink.js",
+          "bytes": 2506,
+          "hash": "sha256-11e6dbd617e2a18d3adfcb1178047c6b9dd50967c68966f19e3c908d4941cebb"
+        },
+        {
+          "path": "packages/engine/src/loop.js",
+          "bytes": 3332,
+          "hash": "sha256-ba1c2c5b6c26c46f7ae056315f0564d66986d0b16b778c1c0e1afe5442137b83"
+        },
+        {
+          "path": "packages/engine/src/math.js",
+          "bytes": 2123,
+          "hash": "sha256-a6e1b41249f80da2446ec3214ecc876972cafd804056efa510bb9e5619cfd380"
+        },
+        {
+          "path": "packages/engine/src/noise.js",
+          "bytes": 2197,
+          "hash": "sha256-66cb9e68ef0f6a446a8e075f5f9f30ad8e161b5897d55bacb1399dd6e3b7800c"
+        },
+        {
+          "path": "packages/engine/src/paper.js",
+          "bytes": 3577,
+          "hash": "sha256-7e76620b83a929aa16b99ac543bb953686524ed330a91fdb3e5acd355edab8e3"
+        },
+        {
+          "path": "packages/engine/src/pointer.js",
+          "bytes": 1026,
+          "hash": "sha256-8dc9414065b41f5776d14b1c0b807c0bbe4dda73d6ca2dc1a93a8dd9f8619449"
+        },
+        {
+          "path": "packages/engine/src/rng.js",
+          "bytes": 1507,
+          "hash": "sha256-7778b92bfff3354d5342d1d3f755873b92e45e2480e11e4942e8331d8f889843"
+        },
+        {
+          "path": "packages/engine/src/stage.js",
+          "bytes": 3007,
+          "hash": "sha256-31e656c29e40c439122939c4329a7b2219e54017cb5cc5cb1950a19b2fbc99c7"
+        }
+      ],
+      "dependencies": [],
+      "registers": [],
+      "budget": {
+        "jsBytes": 53248
+      },
+      "docs": "packages/engine/README.md",
+      "bytes": 51702,
+      "jsBytes": 48386,
+      "codeBytes": 32934,
+      "hash": "sha256-34cc3d19d8f99415e0ebf0ae2697a06edd5977f0384bb44f3947fd1a91c5672f"
+    },
+    {
+      "name": "enquiry",
+      "type": "recipe",
+      "title": "Ask the house (enquiry)",
+      "description": "The Casa Exemplo enquiry form rebuilt from library parts: a native form the browser validates, ruled fields that ink as you type, notes in the house's own words, a still line drawing of the house's front elevation in warm and playful, and a send that says plainly it is a prototype and sends nothing. Without JavaScript it validates natively and posts to a page that keeps nothing.",
+      "version": "0.1.0",
+      "manifest": "packages/recipes/enquiry/registry.json",
+      "files": [
+        {
+          "path": "packages/recipes/enquiry/demo.js",
+          "bytes": 528,
+          "hash": "sha256-e8a882929c6ae34fd7cb311d20afc79de477648393870768641173aec345b293"
+        },
+        {
+          "path": "packages/recipes/enquiry/facade.svg",
+          "bytes": 16132,
+          "hash": "sha256-ce7cbbcf3c15ba0fbfbac5c2db121e37aa915ffac72a72370d66bc3341fb45a6"
+        },
+        {
+          "path": "packages/recipes/enquiry/index.html",
+          "bytes": 5929,
+          "hash": "sha256-d7855b69a2d634ed32121723ba56012c9d5a764342b97d0b62069443559928e9"
+        },
+        {
+          "path": "packages/recipes/enquiry/README.md",
+          "bytes": 5076,
+          "hash": "sha256-f11eb593fab54cd5081eada042bbb0223dbd1c07136c4af67c7c0e63d1c9fc9d"
+        },
+        {
+          "path": "packages/recipes/enquiry/recipe.css",
+          "bytes": 3696,
+          "hash": "sha256-cd8d91795fce3bd8a3a52d8aa03d8c43c52b69f86e8c29d80ce8a03a450f48b0"
+        },
+        {
+          "path": "packages/recipes/enquiry/recipe.js",
+          "bytes": 2831,
+          "hash": "sha256-82f6076bb9e3d4f67f40241927068f0c24d1f4e4ae9f5dbca25b28dba8cce8f9"
+        },
+        {
+          "path": "packages/recipes/enquiry/recipe.prompt.md",
+          "bytes": 5175,
+          "hash": "sha256-29c6537f04c98f0696cca8ae8909121d0e4e8f80702c6e49a3226e9e1f1f6a4f"
+        },
+        {
+          "path": "packages/recipes/enquiry/sent.html",
+          "bytes": 751,
+          "hash": "sha256-6ff0a0e1812e1a7ea11f68f3f0394e372672d4c13bdaeeadb03b43ffc44f359c"
+        }
+      ],
+      "dependencies": [
+        "combobox",
+        "core",
+        "core-component",
+        "engine",
+        "field",
+        "field-note",
+        "form",
+        "loader",
+        "otp",
+        "select",
+        "stamp",
+        "toast",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "docs": "packages/recipes/enquiry/README.md",
+      "prompt": "packages/recipes/enquiry/recipe.prompt.md",
+      "bytes": 40118,
+      "jsBytes": 3359,
+      "codeBytes": 1929,
+      "hash": "sha256-827dff953c446fedf1724ca5949cac1359426173770029e305b0aa9cfe45b29b"
+    },
+    {
+      "name": "export",
+      "type": "package",
+      "title": "Export",
+      "description": "A scene (or any canvas) to PNG, WebM and animated GIF. PNG uses canvas.toBlob; WebM records one requested frame at a time from canvas.captureStream(0), so a seeded run is reproducible however busy the machine is; GIF uses a small, dependency-free encoder (median-cut palette, an LZW core), tested against a reference decoder in Node.",
+      "version": "0.1.0",
+      "manifest": "packages/export/registry.json",
+      "files": [
+        {
+          "path": "packages/export/gif.core.js",
+          "bytes": 8371,
+          "hash": "sha256-2a3593253d97a9c30a1407e4ad18e8f8757d8cb1096fbc3b4a8185bc85b5ed0d"
+        },
+        {
+          "path": "packages/export/gif.js",
+          "bytes": 3480,
+          "hash": "sha256-3b7c61578fc1c15b1bfae3e8cfe8f65a27a24bdcef2920d4fdbd9714fd0b58fd"
+        },
+        {
+          "path": "packages/export/index.js",
+          "bytes": 538,
+          "hash": "sha256-3fc95a796182417830a0ff9ef6896f28c81f29f622f280296dddd8947b80484a"
+        },
+        {
+          "path": "packages/export/png.js",
+          "bytes": 2057,
+          "hash": "sha256-ee0e9ca25f438413c597939dd38f5e45e8ea340ad7113b66a315d47389e0edf6"
+        },
+        {
+          "path": "packages/export/README.md",
+          "bytes": 3472,
+          "hash": "sha256-54883447dbffbd9be3e8194a366c0c14828b0c5d3a31a8d0e6731425bce4aa4d"
+        },
+        {
+          "path": "packages/export/webm.js",
+          "bytes": 5337,
+          "hash": "sha256-5cd58cc970346b17b9eb73a8221faea01559dfe9d2ed4c350dd490e62ff5f28f"
+        }
+      ],
+      "dependencies": [],
+      "registers": [],
+      "budget": {
+        "jsBytes": 21000,
+        "reason": "Not a component (no registers, no skins): the whole package's behaviour, at roughly the component figure (0009) since export code runs the same way, a little over it once the real GCE/LZW fix and the pacing fix (webm.js) landed. index.js 0.5 KB, png.js 2.1 KB, webm.js 5.3 KB, gif.js 3.5 KB (the browser edges) plus gif.core.js 8.4 KB (the tested palette/LZW core, its own concern, like a component's *.core.js under 0010): 19.8 KB measured, budgeted with a little headroom."
+      },
+      "docs": "packages/export/README.md",
+      "bytes": 23255,
+      "jsBytes": 19783,
+      "codeBytes": 11969,
+      "hash": "sha256-bda64165226c65a585d4417358eaa7a748fb1a764f1f88f90809bfaead24a9e2"
+    },
+    {
+      "name": "field",
+      "type": "component",
+      "title": "Field (TextField, TextArea)",
+      "description": "A label over a ruled line, for a line of text or a longer message, wrapping a native input or textarea that types, autofills, validates and submits without JavaScript. Quiet is the hairline rule under a writing well; warm writes on the paper itself, over a seeded pencil rule that inks from left to right on focus and under your words as you type, with a laterite exercise-book margin down a textarea; playful draws the same in accent ink with a thicker nib and wobbles on twos while you type. Counts characters near a maxlength, aloud only at 20, 10 and 0.",
+      "version": "0.1.0",
+      "manifest": "packages/components/field/registry.json",
+      "files": [
+        {
+          "path": "packages/components/field/field.core.js",
+          "bytes": 5725,
+          "hash": "sha256-b9d7db2132cb8f2a92bdeb7a7362d6ee1599d7090a5e56a7de60008a65024d3b"
+        },
+        {
+          "path": "packages/components/field/field.css",
+          "bytes": 5357,
+          "hash": "sha256-2437b67f345437785b976a44d10c18352724694ab6face46c2ab0d02cb86ec44"
+        },
+        {
+          "path": "packages/components/field/field.docs.md",
+          "bytes": 3894,
+          "hash": "sha256-fa1b382f2a44db2eefa3d36563f172a4cb7be976935a2f9c4011df835930b463"
+        },
+        {
+          "path": "packages/components/field/field.js",
+          "bytes": 3806,
+          "hash": "sha256-37b47564bf2ac11f51a961163373481d623281d757d9aa60f48c0f6dbc6a1c36"
+        },
+        {
+          "path": "packages/components/field/field.prompt.md",
+          "bytes": 6758,
+          "hash": "sha256-22bbf5d2a8d4bcc409a07190abc5b3b191ea88f3e8955f131de6b2e9ae7fa6b6"
+        },
+        {
+          "path": "packages/components/field/rule.js",
+          "bytes": 3264,
+          "hash": "sha256-c03361c7bbea0ab85bcba789cd9073a8482aa068daf454caaaa476cb8331a0ed"
+        },
+        {
+          "path": "packages/components/field/skins/playful.js",
+          "bytes": 1223,
+          "hash": "sha256-dd73dc8a9d4bc596edc7eeea63565f2f396342b720026e63bafc38576c2d7ee6"
+        },
+        {
+          "path": "packages/components/field/skins/quiet.js",
+          "bytes": 206,
+          "hash": "sha256-88bf45fd4f501f0d509d1abf865cbb093bab8637a7f66c8c2ca7e903fdcbb299"
+        },
+        {
+          "path": "packages/components/field/skins/warm.js",
+          "bytes": 6964,
+          "hash": "sha256-fb7e345c8affcce69902d47887b50567a3b134f1388a81577af07ccb97427858"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 36864,
+        "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 21005 bytes: behaviour (field.js + field.core.js, and rule.js, the pencil rule select and combobox share) 12.4 KB, skins quiet 0.2 KB, warm 6.7 KB, playful 1.2 KB."
+      },
+      "docs": "packages/components/field/field.docs.md",
+      "prompt": "packages/components/field/field.prompt.md",
+      "bytes": 37197,
+      "jsBytes": 21188,
+      "codeBytes": 15058,
+      "hash": "sha256-a080c37bcd2f5709afb15843c45eb3c4b02a76884e7230b9c585825d263b766e"
+    },
+    {
+      "name": "field-note",
+      "type": "component",
+      "title": "Field note",
+      "description": "The note under a form field that says what is wrong and how to fix it. Follows constraint validation with its own wording (or shows a server message), never nags on the first try, wires aria-describedby and aria-invalid, focuses the first problem on submit. Quiet is small danger text with a mark; warm a margin note in the hand with a pencil arrow; playful inks it on and underlines it.",
+      "version": "0.1.0",
+      "manifest": "packages/components/field-note/registry.json",
+      "files": [
+        {
+          "path": "packages/components/field-note/field-note.core.js",
+          "bytes": 6587,
+          "hash": "sha256-59d3c4da747735505e0e8080153fba3dc50f1f12b1774a84a874fe653c839c63"
+        },
+        {
+          "path": "packages/components/field-note/field-note.css",
+          "bytes": 3277,
+          "hash": "sha256-92df647f3b0ce5d7634ee933d4d9c0165e9126a912c783454ce012798ee712bf"
+        },
+        {
+          "path": "packages/components/field-note/field-note.docs.md",
+          "bytes": 5284,
+          "hash": "sha256-b51a8a4b182677a95c67be0a12ea08e835da327a1d1c5a2a9eb2637fae61fe6e"
+        },
+        {
+          "path": "packages/components/field-note/field-note.js",
+          "bytes": 10263,
+          "hash": "sha256-0a6e7572a4050a6e72922eacd4253fdfd9564c02ad5df6dd3b3dfe539bbb64d7"
+        },
+        {
+          "path": "packages/components/field-note/field-note.prompt.md",
+          "bytes": 6056,
+          "hash": "sha256-e1a0ef796de90f48b1c44d37e2ab187e5729a7724050879817edaca13c60fdd7"
+        },
+        {
+          "path": "packages/components/field-note/skins/playful.js",
+          "bytes": 2484,
+          "hash": "sha256-d4683dcbc0e0d91b94d7a3bb831005322fff279b20f2482bf8a4298e72e6ddfd"
+        },
+        {
+          "path": "packages/components/field-note/skins/quiet.js",
+          "bytes": 481,
+          "hash": "sha256-f6f764e454721583035bf29788f87eabb5337a2797b809892843ccdbde91884b"
+        },
+        {
+          "path": "packages/components/field-note/skins/warm.js",
+          "bytes": 3346,
+          "hash": "sha256-d4076b3b1dc1206bf496d635de1c1dbfca99e90fd38c2ff63133d505e92c8750"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 39936,
+        "reason": "Decision 0009: 15 KB of behaviour (words in the person's terms, dates the way people say them, and a note that never appears mid-click and never repeats itself), plus 8 KB for each of three skins. Today 21939 bytes: behaviour (field-note.js + field-note.core.js) 14.3 KB, skins quiet 0.5 KB, warm 4.3 KB, playful 2.3 KB."
+      },
+      "docs": "packages/components/field-note/field-note.docs.md",
+      "prompt": "packages/components/field-note/field-note.prompt.md",
+      "bytes": 37778,
+      "jsBytes": 23161,
+      "codeBytes": 17352,
+      "hash": "sha256-1cb86a007d579ccbf5a05b7579e3656e180d7b8be6d82d4c3a5873eb3c648f2e"
+    },
+    {
+      "name": "file-drop",
+      "type": "component",
+      "title": "File drop",
+      "description": "A native file input you can also drop files onto. Without JavaScript it is the browser's own input; with it, the real input covers a drop zone, and the element checks accept, size and count, lists each file with a Remove button, and says every change in words. Quiet is a ruled zone; warm posts a letter into a pillar box; playful drops it in with a thunk.",
+      "version": "0.1.0",
+      "manifest": "packages/components/file-drop/registry.json",
+      "files": [
+        {
+          "path": "packages/components/file-drop/file-drop.core.js",
+          "bytes": 4126,
+          "hash": "sha256-c9d35bbd2e5d33d875285e12611a08023f983dccf57ea9c3740448214b6e8019"
+        },
+        {
+          "path": "packages/components/file-drop/file-drop.css",
+          "bytes": 4342,
+          "hash": "sha256-ea7f93ae4e78d97f967780a6c9ffe8117d2990d8ea29e2819f96b486c6e78e8b"
+        },
+        {
+          "path": "packages/components/file-drop/file-drop.docs.md",
+          "bytes": 2836,
+          "hash": "sha256-ca6ad6a5e2d7bed3bc85c72523fd6578cf482af77e0129c46300d8279f964e18"
+        },
+        {
+          "path": "packages/components/file-drop/file-drop.js",
+          "bytes": 6652,
+          "hash": "sha256-677d15f8c3de51951e845f7a13a6c6df7521271a44ec8759eb4e2cea3fa4c947"
+        },
+        {
+          "path": "packages/components/file-drop/file-drop.prompt.md",
+          "bytes": 3937,
+          "hash": "sha256-e97b60b337fd8d82c8158414a50a7e1f497c94880afe230162aaf873bfe06f5b"
+        },
+        {
+          "path": "packages/components/file-drop/skins/playful.js",
+          "bytes": 264,
+          "hash": "sha256-0d39c705354565796f85218305fdd555fc7c9e1200f9889b0b7459e5748d4799"
+        },
+        {
+          "path": "packages/components/file-drop/skins/post.js",
+          "bytes": 4545,
+          "hash": "sha256-428b7cef02ad33c7d4b502691fcf98309bb77fe6f15da374fd2cc83292edfcfc"
+        },
+        {
+          "path": "packages/components/file-drop/skins/quiet.js",
+          "bytes": 239,
+          "hash": "sha256-3b4938da9cb657fadb0ad1ba8246d20d92d0688f3a000f48993cedb1e18c412e"
+        },
+        {
+          "path": "packages/components/file-drop/skins/warm.js",
+          "bytes": 250,
+          "hash": "sha256-0f95200b5952fbb68e9c440ec9eed6cdbd5994f9265054e5e34ff1c57255ca71"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 18432,
+        "frameMs": 16.7,
+        "reason": "Behaviour about 10.2 KB (file-drop.js 6.1 KB, file-drop.core.js 4.1 KB); skins 0.2 KB (quiet), 4.5 KB of post box shared by warm and playful (skins/post.js), 0.3 KB each for warm and playful."
+      },
+      "docs": "packages/components/file-drop/file-drop.docs.md",
+      "prompt": "packages/components/file-drop/file-drop.prompt.md",
+      "bytes": 27191,
+      "jsBytes": 16076,
+      "codeBytes": 12694,
+      "hash": "sha256-0ed1709df4745fa777d045fe764d8461c29bc9b1e670848cb73db7894a862fbf"
+    },
+    {
+      "name": "file-upload",
+      "type": "recipe",
+      "title": "File upload",
+      "description": "Choose photos and PDFs and watch each one arrive. Files too large are refused in plain words beside the field, a dropped file keeps its bar where it stopped and offers Try again, and a Received stamp lands once every file is safe. Each bar reads 99% until the server confirms, so the warm kolam closes only when the file has really arrived. Driven by a pure, seeded fake transport you swap for your own.",
+      "version": "0.1.0",
+      "manifest": "packages/recipes/file-upload/registry.json",
+      "files": [
+        {
+          "path": "packages/recipes/file-upload/index.html",
+          "bytes": 5018,
+          "hash": "sha256-2bbac838ba5453fbe0ebb0101b5622a93570e9bf53e387d8f2a65bef2b69ed05"
+        },
+        {
+          "path": "packages/recipes/file-upload/README.md",
+          "bytes": 4269,
+          "hash": "sha256-800aab32e453b7b439885434f88a27cec5f89536f89840333f854e94e1ce2406"
+        },
+        {
+          "path": "packages/recipes/file-upload/recipe.css",
+          "bytes": 1168,
+          "hash": "sha256-c303df2da5d6c6410e8334b2d06003b3e7c44000cf9ec10eeef1a0df724ece39"
+        },
+        {
+          "path": "packages/recipes/file-upload/recipe.js",
+          "bytes": 6521,
+          "hash": "sha256-cdb6606eb332170de534910449a182f155ca721c0b6e5e73cbf2fc788bd9eb5f"
+        },
+        {
+          "path": "packages/recipes/file-upload/recipe.prompt.md",
+          "bytes": 4616,
+          "hash": "sha256-85ce1ac38c52b1b3949b2d182a0b066a4d2b8bfae0c0dedcf18bc6d9622abacc"
+        },
+        {
+          "path": "packages/recipes/file-upload/transport.js",
+          "bytes": 3416,
+          "hash": "sha256-da55c63c19cfa074e6720735befa155fe1fef9c0e1d1d0d80f77fef0bff08c4a"
+        },
+        {
+          "path": "packages/recipes/file-upload/upload.core.js",
+          "bytes": 6092,
+          "hash": "sha256-670babf8664132c821f7fb9160294ff569924bffadff42417913c973a18e0ae3"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "empty",
+        "engine",
+        "field-note",
+        "file-drop",
+        "progress",
+        "stamp",
+        "toast",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "docs": "packages/recipes/file-upload/README.md",
+      "prompt": "packages/recipes/file-upload/recipe.prompt.md",
+      "bytes": 31100,
+      "jsBytes": 16029,
+      "codeBytes": 12055,
+      "hash": "sha256-73e91fbe0aa79a5dadc6ce9fb456f393cd678b092bb46576a68929fe909818b6"
+    },
+    {
+      "name": "folio",
+      "type": "package",
+      "title": "Folio",
+      "description": "The document layer's pieces that travel with a document: Markdown with directives (scene, diagram, price-table, timeline, signature, note), rendered to HTML by a pure parser with line-numbered errors; the print sheet and the script that makes scenes print their still; the seal (the policy, the hash and verify) and the in-page check that lets a reader hash their own copy. The builder that inlines, subsets, seals and prints (build/, bin/) is a Node dev tool with npm dependencies (esbuild, subset-font, Playwright), so it stays in the repo and is not copied.",
+      "version": "0.1.0",
+      "manifest": "packages/folio/registry.json",
+      "files": [
+        {
+          "path": "packages/folio/build/seal.mjs",
+          "bytes": 3630,
+          "hash": "sha256-4c88612c4ddf6363d63a8734dcd11299c5b7b6ae34536b2f8a34eac2484d3a75"
+        },
+        {
+          "path": "packages/folio/folio-check.js",
+          "bytes": 1311,
+          "hash": "sha256-ad9750fa412b3e6174c189b58b66365b00d7a2f813a43a0bcc3117aed7f56402"
+        },
+        {
+          "path": "packages/folio/folio-print.css",
+          "bytes": 1958,
+          "hash": "sha256-ddad7e848d947ece2bcd3168b9b258291cb352ca03ca9652bf8f80a85e02159a"
+        },
+        {
+          "path": "packages/folio/folio-print.js",
+          "bytes": 540,
+          "hash": "sha256-4c263a73ce12c4c2945e07d0ff1e565551f2f5afce0a90417b0467230dc3e24f"
+        },
+        {
+          "path": "packages/folio/md/folio-doc.css",
+          "bytes": 4676,
+          "hash": "sha256-911d7f3dcce27269d0eb2b31f5815693b58f6617ca7ee23296680448fa394fc5"
+        },
+        {
+          "path": "packages/folio/md/index.js",
+          "bytes": 22817,
+          "hash": "sha256-b6dd9a30bd1788f55a5ced1b75146da4f68af14b763e58f95c90efc3a34fbe0c"
+        },
+        {
+          "path": "packages/folio/md/parse.js",
+          "bytes": 14723,
+          "hash": "sha256-48ac344666ffe09923c836b9c41a83fd773ac449e785794188d8791f876e368b"
+        },
+        {
+          "path": "packages/folio/README.md",
+          "bytes": 7351,
+          "hash": "sha256-08a36370fd046223dab95ec66c470f96c8026d30695cc83c268a4266bc76c701"
+        }
+      ],
+      "dependencies": [
+        "folio-diagram"
+      ],
+      "registers": [],
+      "budget": {
+        "jsBytes": 45056,
+        "reason": "Decision 0010 in spirit: the Markdown parser and directive renderer (md/index.js 22.9 KB, which checks a diagram's lines with folio-diagram's grammar,, md/parse.js 14.7 KB) are a pure core that runs in Node at build time and is fully tested; they never ship inside a sealed document. What a document carries is folio-print.js and folio-check.js, 1.9 KB together, and build/seal.mjs (3.6 KB) runs only in Node for folio verify. Declared at 44 KB: today 42.4 KB."
+      },
+      "docs": "packages/folio/README.md",
+      "bytes": 57006,
+      "jsBytes": 43021,
+      "codeBytes": 35326,
+      "hash": "sha256-53ee3d5a9ec7fc13d0effc381c3e23d72c4bd358fddc7db315dbad7787846eb5"
+    },
+    {
+      "name": "folio-diagram",
+      "type": "component",
+      "title": "Diagram",
+      "description": "A diagram from a few lines of text (Guest -> Portal: books): boxes, arrows, flows with things moving along them, groups, and step-through. Drawn at build time as a static SVG with its text alternative from the same source, so it reads and prints without JavaScript. Loops back go round the side that meets no other box, each label sits beside its own line, and where one cannot, every connection carries its step number instead. <sg-diagram> adds the draw-in, the moving flows, step-through by buttons and keys, register changes, and turns a wide diagram downward on a narrow screen before its words would shrink below about 12 px. Quiet is a plain pen; warm and playful ink it by hand.",
+      "version": "0.1.0",
+      "manifest": "packages/folio/diagram/registry.json",
+      "files": [
+        {
+          "path": "packages/folio/diagram/diagram.core.js",
+          "bytes": 20664,
+          "hash": "sha256-6c4bfff60f0b783a4d4e36b3fc35847f99137240d77e35f0ba6c06b73329f8ea"
+        },
+        {
+          "path": "packages/folio/diagram/diagram.css",
+          "bytes": 8791,
+          "hash": "sha256-0787ca4349405893b292a67f179b00a96392aa7bd5b852c7209911972e1e6190"
+        },
+        {
+          "path": "packages/folio/diagram/diagram.docs.md",
+          "bytes": 6545,
+          "hash": "sha256-ffbbd052a8294bf64c054b4708b4749eaa2a27dbd6377d97d5f9f13fd2b5a68d"
+        },
+        {
+          "path": "packages/folio/diagram/diagram.grammar.js",
+          "bytes": 4977,
+          "hash": "sha256-8c4862cd9d20200d83920ac01638c6a2348e6c12b05167859cb1d66829c5b4f8"
+        },
+        {
+          "path": "packages/folio/diagram/diagram.ink.js",
+          "bytes": 3468,
+          "hash": "sha256-c2836252024f70fb898631674d90b80710997198c9d48b005514b87a7fcdad9b"
+        },
+        {
+          "path": "packages/folio/diagram/diagram.js",
+          "bytes": 12347,
+          "hash": "sha256-970bd7acb0d5b32b686b81d6fbd68e7d4551a8b9a0ce87a26589c6eb740df670"
+        },
+        {
+          "path": "packages/folio/diagram/diagram.prompt.md",
+          "bytes": 5634,
+          "hash": "sha256-b75370314b6a8f985ffa23b6d35df6e2c2a45949716ef7f6cb144a8dc428b33d"
+        },
+        {
+          "path": "packages/folio/diagram/render.js",
+          "bytes": 7702,
+          "hash": "sha256-4ea96b5b1b58d30235869c7fdba1931eda9588dd59feef66c94d8fdf617eefbc"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 51200,
+        "reason": "Decisions 0009 and 0010, with the core over its allowance. The element (diagram.js 12.3 KB) is within 12 KB to 16 KB. The pure core is diagram.grammar.js (5.0 KB: the line grammar, which Folio's Markdown also uses to check a diagram unbuilt) and diagram.core.js (20.7 KB: layered layout, loop routing, label placement and the text alternative), 25.6 KB together, over 0010's 12 KB because the layout is the diagram; it runs in Node at build time and is tested. render.js (7.7 KB) writes the SVG as a string, pure, and diagram.ink.js (3.5 KB) is the hand-inked line, one skin helper. Declared at 50 KB: today about 49 KB. A document built from Markdown carries all of them, since the element redraws in the page."
+      },
+      "docs": "packages/folio/diagram/diagram.docs.md",
+      "prompt": "packages/folio/diagram/diagram.prompt.md",
+      "bytes": 70128,
+      "jsBytes": 49158,
+      "codeBytes": 38178,
+      "hash": "sha256-b5fea17e764c40ef94fd7862bd87d23f7cec0ecff160cb05656be15861373a1d"
+    },
+    {
+      "name": "form",
+      "type": "component",
+      "title": "Form",
+      "description": "A native form the browser validates, which says what happens when you send it. Adds a field note to every field, summarises problems and focuses the first, and follows an sg-submit promise (or posts itself with fetch): Sending only while work is pending, then Sent or why it could not send, in one polite voice. Quiet is words only; warm and playful draw a Loader and a Stamp, and a failure is also a Toast. Without JavaScript it validates and submits natively.",
+      "version": "0.1.0",
+      "manifest": "packages/components/form/registry.json",
+      "files": [
+        {
+          "path": "packages/components/form/form.core.js",
+          "bytes": 2874,
+          "hash": "sha256-81243251d593eb69a1d0455585478a19133bad1ecf760c5b9023c1ed3163968a"
+        },
+        {
+          "path": "packages/components/form/form.css",
+          "bytes": 1623,
+          "hash": "sha256-f8bf794b236f2db6785195c1ae6c4ee298e68a626eb1609487c588b5936a7075"
+        },
+        {
+          "path": "packages/components/form/form.docs.md",
+          "bytes": 4845,
+          "hash": "sha256-e3a1734130c037e5b01101b6b2f239598107a013bf809f38b0d20cce82f7dfc9"
+        },
+        {
+          "path": "packages/components/form/form.js",
+          "bytes": 8357,
+          "hash": "sha256-ea7e650ee3b341a593d91d44d8b09f0a4899d74ff2d0d2a8a8a8b185c27f22d1"
+        },
+        {
+          "path": "packages/components/form/form.prompt.md",
+          "bytes": 5700,
+          "hash": "sha256-fa733c278472d01ff35fa58b366ba38f9624cece3cb3c1540ed81e677807bda3"
+        },
+        {
+          "path": "packages/components/form/skins/playful.js",
+          "bytes": 256,
+          "hash": "sha256-28f88190313c219268efc810f4a26ea055e4d2e301864c3e0aae889577bf15b6"
+        },
+        {
+          "path": "packages/components/form/skins/quiet.js",
+          "bytes": 321,
+          "hash": "sha256-707949d67deb47ee118d6f3eea5177215d8f2c7014f4959e372a80a4f8304f7d"
+        },
+        {
+          "path": "packages/components/form/skins/warm.js",
+          "bytes": 2103,
+          "hash": "sha256-e5e864dfe6a5a4f54261bea1acea5c60ee8757668afa3938914d9e7fdefe39a9"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "field-note",
+        "loader",
+        "sound",
+        "stamp",
+        "toast",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 36864,
+        "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 13510 bytes: behaviour (form.js + form.core.js) 10.8 KB, skins quiet 0.3 KB, warm 1.9 KB, playful 0.3 KB."
+      },
+      "docs": "packages/components/form/form.docs.md",
+      "prompt": "packages/components/form/form.prompt.md",
+      "bytes": 26079,
+      "jsBytes": 13911,
+      "codeBytes": 9690,
+      "hash": "sha256-152961cd1d69833f357aa7031b9406b16b81412bed960bc6087a5723a4a962fe"
+    },
+    {
+      "name": "kernels-booking",
+      "type": "package",
+      "title": "Kernels: booking",
+      "description": "Pure booking kernels from the Casa Exemplo redesign: ISO day arithmetic with no timezone drift, a rate card that keeps its provisional flags, quotes with every night, GST on its own line and the deposit, and availability with same-day turnover. No dependencies; runs in Node.",
+      "version": "0.1.0",
+      "manifest": "packages/kernels/booking/registry.json",
+      "files": [
+        {
+          "path": "packages/kernels/booking/availability.js",
+          "bytes": 3527,
+          "hash": "sha256-f06efdefea9a0601427b7f8a08a235163f09ac3769f53fc081088f605357022c"
+        },
+        {
+          "path": "packages/kernels/booking/dates.js",
+          "bytes": 3859,
+          "hash": "sha256-d8f1ea81b92e6d90c60020f3a9e783889c910b2ba0afd9b0c2927fed0e32e669"
+        },
+        {
+          "path": "packages/kernels/booking/drift.fixture.json",
+          "bytes": 88528,
+          "hash": "sha256-32c715e9a30817540f5fd64d3f10bc5a2a3ada72d096f1b6b2efd186471ebd32"
+        },
+        {
+          "path": "packages/kernels/booking/drift.test.js",
+          "bytes": 2389,
+          "hash": "sha256-d8abc2b03f565880d9a89f07b76fc03033e49f4915fb8d19ca582c155635614a"
+        },
+        {
+          "path": "packages/kernels/booking/index.js",
+          "bytes": 270,
+          "hash": "sha256-dea731e8d00f3fa0a19a373916eb67b8bd99beea9632c10520be304384d4fa18"
+        },
+        {
+          "path": "packages/kernels/booking/pricing.js",
+          "bytes": 3898,
+          "hash": "sha256-968beb28e55fab4f430de33bac8b12b10f7729b384ccd38841481ce1dc768949"
+        },
+        {
+          "path": "packages/kernels/booking/rates.js",
+          "bytes": 2853,
+          "hash": "sha256-c64e0c4ca4e8371103d65c71e92450f6ceca0fa474d2101eca7ef5c82133d7a3"
+        }
+      ],
+      "dependencies": [],
+      "registers": [],
+      "budget": {
+        "jsBytes": 18432,
+        "reason": "The five kernel files are 14,595 bytes; drift.test.js (2,389 bytes) ships with them so a consumer with its own copy can check it for drift, and it never loads in a page."
+      },
+      "bytes": 105324,
+      "jsBytes": 16796,
+      "codeBytes": 10818,
+      "hash": "sha256-5e5fd2db8159d0011e36314a5c19b0367e9aedcd7a3a0adf80ab6f824c3da3f1"
+    },
+    {
+      "name": "loader",
+      "type": "component",
+      "title": "Loader",
+      "description": "A polite status region that says in words what is loading, with a small drawing beside it: three pulsing dots in quiet, a light travelling round a kolam and lighting each dot in warm, a spinning bambaram in playful. It never claims how far along the work is.",
+      "version": "0.1.0",
+      "manifest": "packages/components/loader/registry.json",
+      "files": [
+        {
+          "path": "packages/components/loader/loader.css",
+          "bytes": 1258,
+          "hash": "sha256-9c6c273e4e2e29cfe6565998741991e23b7da895b9ccb7b7c1d9d81ef485b5ee"
+        },
+        {
+          "path": "packages/components/loader/loader.docs.md",
+          "bytes": 2804,
+          "hash": "sha256-02df89fe029cd62f8c0ebb5c18b53738360058792ab2fa3457e1399c85959e26"
+        },
+        {
+          "path": "packages/components/loader/loader.js",
+          "bytes": 3253,
+          "hash": "sha256-db0fe2ec47e5d19a3cb367a57c6785eb9e10ae0a461599d5d38e8d793fe3a24e"
+        },
+        {
+          "path": "packages/components/loader/loader.prompt.md",
+          "bytes": 3273,
+          "hash": "sha256-c756bb703de9c3c182cab1dd380c512a301d25db4c85eddc7b692c06b762903d"
+        },
+        {
+          "path": "packages/components/loader/skins/playful.js",
+          "bytes": 3274,
+          "hash": "sha256-6b7fa91c0b63086d7b1f621bb4a4dfe07893c001b9840ee61c77a8e4cdbded38"
+        },
+        {
+          "path": "packages/components/loader/skins/quiet.js",
+          "bytes": 870,
+          "hash": "sha256-1011d90d6c5572402405dfbbd860e0cc8f55298fcda31df71bddce14518923a8"
+        },
+        {
+          "path": "packages/components/loader/skins/warm.js",
+          "bytes": 2873,
+          "hash": "sha256-2fc65a23fce242ee04c4b89f6d27f0d941023e0c53561deee973e8fa1dd7307c"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "scene-kolam",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 11264,
+        "frameMs": 16.7,
+        "reason": "The contract's 12 KB behaviour plus 8 KB per skin, declared as the sum used: behaviour (loader.js) about 3.2 KB, including the status line that announces a newly added loader once; skins about 0.9 KB (quiet), 2.9 KB (warm) and 3.3 KB (playful). The warm skin reuses the Kolam scene's geometry."
+      },
+      "docs": "packages/components/loader/loader.docs.md",
+      "prompt": "packages/components/loader/loader.prompt.md",
+      "bytes": 17605,
+      "jsBytes": 10270,
+      "codeBytes": 8049,
+      "hash": "sha256-e510634d0501ac3a0bdc251aa066d6f57cb682bb17ec136ebabfe01d94d7947c"
+    },
+    {
+      "name": "narration",
+      "type": "package",
+      "title": "Narration",
+      "description": "Recorded or synthesised speech plus a WebVTT timing track that drives captions and word-by-word highlighting. A pure timing core (phrase splitting, a WAV duration reader, script-aware word weights with a real Devanagari and Kannada akshara segmenter, a WebVTT writer and parser), a provider interface with a Sarvam bulbul adapter and an offline silent-WAV stub, a fixture cache keyed on the request so tests and demos never call the network, the <sg-narration> highlight driver, and an offline speechSynthesis fallback.",
+      "version": "0.1.0",
+      "manifest": "packages/narration/registry.json",
+      "files": [
+        {
+          "path": "packages/narration/cache.js",
+          "bytes": 3649,
+          "hash": "sha256-56855d97da894e568ea95700e5d5718f03d6b41fa2c4bf8e3f1bdbf980b2c953"
+        },
+        {
+          "path": "packages/narration/fixtures/README.md",
+          "bytes": 175,
+          "hash": "sha256-95320948d4311be645455a5e7aaa8c8b341a9c8d365eb0427f8a23ee79584ad8"
+        },
+        {
+          "path": "packages/narration/index.js",
+          "bytes": 4355,
+          "hash": "sha256-e8766089ed3562abd79f6f88174e96cd26d43f74ebe8aedfb8c50c02be7c095e"
+        },
+        {
+          "path": "packages/narration/narration.css",
+          "bytes": 913,
+          "hash": "sha256-2ff1e800510897f7088ecfe290f5b94cc21e98e2225221473ef94c292ee5ef85"
+        },
+        {
+          "path": "packages/narration/narration.docs.md",
+          "bytes": 7121,
+          "hash": "sha256-040a9a56cc265dbfb35be2130aa15c6a65fd5a07db96f4aee565cde18c20aa1b"
+        },
+        {
+          "path": "packages/narration/narration.prompt.md",
+          "bytes": 6828,
+          "hash": "sha256-85be7b644dd222b26b1e8992d79d7a7e435cd703ae1b1aaabd35178101effabd"
+        },
+        {
+          "path": "packages/narration/phrase.js",
+          "bytes": 2742,
+          "hash": "sha256-850f56c03100b470f7b9cc614e1ceab1f806dcbc343625dfa26b17a5d446696a"
+        },
+        {
+          "path": "packages/narration/providers/index.js",
+          "bytes": 1164,
+          "hash": "sha256-3a79e72bd058cb1a1e5abddd7549a1756358fc7dc0a4dcefc1381d10c9ed022f"
+        },
+        {
+          "path": "packages/narration/providers/sarvam.js",
+          "bytes": 2281,
+          "hash": "sha256-91338b1402e4f9a5491f0bd77f0e592bbac007372216af531292d09aa6bcb1cc"
+        },
+        {
+          "path": "packages/narration/providers/stub.js",
+          "bytes": 911,
+          "hash": "sha256-edce1f1c84c8d397ae163a8968902da99a5d2398a76442e254deca34a586f4f2"
+        },
+        {
+          "path": "packages/narration/reader.js",
+          "bytes": 7762,
+          "hash": "sha256-61424bfa76e71bdf2bf4fe7760e4432d11032c3dc357492b53012264757ec6e8"
+        },
+        {
+          "path": "packages/narration/synth.mjs",
+          "bytes": 2796,
+          "hash": "sha256-f53e2400d6a87d21a5c354c79d10523ce157d0659c6e1020b596894e2b597150"
+        },
+        {
+          "path": "packages/narration/timing.js",
+          "bytes": 2364,
+          "hash": "sha256-003835d11329946c2a5a967857e976cd46c20586d893613af34d3990940dc324"
+        },
+        {
+          "path": "packages/narration/vtt.js",
+          "bytes": 3541,
+          "hash": "sha256-e2ecc86bd14c18c8f7e9d28f85682190564c2d75c19305d740647b09f7f92f7d"
+        },
+        {
+          "path": "packages/narration/wav.js",
+          "bytes": 6406,
+          "hash": "sha256-b1a75f51932ae59c04aef728ccdb2aa88a238a34c1b6e7dde9cf9e05d6224666"
+        },
+        {
+          "path": "packages/narration/weights.js",
+          "bytes": 3501,
+          "hash": "sha256-703cec71c5aa150739d4c6840d18d39a19e56346f80ea1d7549b610fb3b0230c"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component"
+      ],
+      "registers": [],
+      "budget": {
+        "jsBytes": 45056,
+        "reason": "A package budget in the shape of engine and tokens (decision 0001), not a component's 12/8 KB split: the pure timing core, three providers, the fixture cache and the DOM highlight driver together, today 40355 bytes, with headroom for the Sarvam adapter to grow as the API does."
+      },
+      "docs": "packages/narration/narration.docs.md",
+      "prompt": "packages/narration/narration.prompt.md",
+      "bytes": 56509,
+      "jsBytes": 41472,
+      "codeBytes": 24187,
+      "hash": "sha256-116271886934eea5120c4aaa6ae1943db6f0875e42eb766b31fbba46fde6cd81"
+    },
+    {
+      "name": "otp",
+      "type": "component",
+      "title": "One-time code",
+      "description": "A one-time code entry. The native path is one input with autocomplete=\"one-time-code\" and the number pad, which submits, takes SMS autofill and works without JavaScript. With JavaScript the same input lies transparently over a row of aria-hidden boxes: typing over a box replaces it, backspace works back across them, and a paste keeps just the digits. Quiet is plain boxes; warm stamp boxes that ink each digit; playful a stamp per digit.",
+      "version": "0.1.0",
+      "manifest": "packages/components/otp/registry.json",
+      "files": [
+        {
+          "path": "packages/components/otp/otp.core.js",
+          "bytes": 6143,
+          "hash": "sha256-aaae17918b197a3afff43553252067b416ad65d94eeb30070489e188ea313925"
+        },
+        {
+          "path": "packages/components/otp/otp.css",
+          "bytes": 5552,
+          "hash": "sha256-f9e1155498d7ae3405daafad54f1453ac3582a816692734b9e0b22b1c61fc32b"
+        },
+        {
+          "path": "packages/components/otp/otp.docs.md",
+          "bytes": 4641,
+          "hash": "sha256-3aa5b920527062e64c8092f9f3c42cbcb10627c0a72420c7e6ac59f37d527284"
+        },
+        {
+          "path": "packages/components/otp/otp.js",
+          "bytes": 7466,
+          "hash": "sha256-1bc130785dbd41db63ae3a6c4eed628eca9f4fa5841c5c922b153c34328147a9"
+        },
+        {
+          "path": "packages/components/otp/otp.prompt.md",
+          "bytes": 5053,
+          "hash": "sha256-65abe422afe8b27001203dee71a17895b054c4068c8ada6ea67b12332e7554f3"
+        },
+        {
+          "path": "packages/components/otp/skins/boxes.js",
+          "bytes": 1607,
+          "hash": "sha256-f63579708446b772c0a93a70c3dee94447091b118a44fb168504d174eebb56c8"
+        },
+        {
+          "path": "packages/components/otp/skins/playful.js",
+          "bytes": 445,
+          "hash": "sha256-f15d9b975325680ff3d102d014f8db98800c03f570cfd7f21e767066abe06243"
+        },
+        {
+          "path": "packages/components/otp/skins/quiet.js",
+          "bytes": 228,
+          "hash": "sha256-7f4e59b9b2108a2e47d8b17103dc6069873c1bcbf7142b19de8bcb2993ce7d44"
+        },
+        {
+          "path": "packages/components/otp/skins/warm.js",
+          "bytes": 2368,
+          "hash": "sha256-e85e39a6a4494d3a828d9c89e6ba8609834188b79a6f06c60ae8c845b3cfcbd1"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 38912,
+        "reason": "Decision 0009: behaviour declared at 14 KB (the box-by-box editing model over one native input, and digits from every Indian script and full width read as ASCII), plus 8 KB for each of three skins. Today: behaviour 13.0 KB (otp.js 7.5, otp.core.js 5.6); skins share 1.6 KB of boxes, quiet adds 0.2 KB, warm 2.4 KB, playful 0.4 KB plus warm."
+      },
+      "docs": "packages/components/otp/otp.docs.md",
+      "prompt": "packages/components/otp/otp.prompt.md",
+      "bytes": 33503,
+      "jsBytes": 18257,
+      "codeBytes": 12800,
+      "hash": "sha256-c487408ccf40cc53ebc89fa9db73845e9d76759d9373e6d5192458102f52ebf9"
+    },
+    {
+      "name": "player",
+      "type": "component",
+      "title": "Player",
+      "description": "The Susegad player: enhances a native video or audio element with a drawn scrubber, captions in our type, a poster that is a scene's still, WebGL video treatments (ink, halftone, duotone, riso) and timed ink annotations on the moving frame. Content sound plays only on its own play press.",
+      "version": "0.1.0",
+      "manifest": "packages/player/registry.json",
+      "files": [
+        {
+          "path": "packages/player/annotations.core.js",
+          "bytes": 3681,
+          "hash": "sha256-2dd55fc937d3314cf3a3d394b4376fcc1464cb654fe74193345b998309c895b7"
+        },
+        {
+          "path": "packages/player/annotations.js",
+          "bytes": 2694,
+          "hash": "sha256-95fb64907ecf5a57beeb338845a08fa472ec12c548f954c52c57827e844aed6e"
+        },
+        {
+          "path": "packages/player/player.core.js",
+          "bytes": 2985,
+          "hash": "sha256-da51254bed0699539680c5bba3066a5901f2b18900508fa15f17a88ab8b6be3b"
+        },
+        {
+          "path": "packages/player/player.css",
+          "bytes": 7855,
+          "hash": "sha256-f0ea31fc732c69986b70d876b1b9e14925f56d2177a1769e3c50515b5d44f247"
+        },
+        {
+          "path": "packages/player/player.docs.md",
+          "bytes": 4281,
+          "hash": "sha256-6ba4b84af896048ba6f7b2585142c09757b427ccd6a52048437668ed0dedea90"
+        },
+        {
+          "path": "packages/player/player.js",
+          "bytes": 16106,
+          "hash": "sha256-5d17271f71814837dd5fc128c075b6636ad18c894ccd2bcbe0d8cf2a922a830a"
+        },
+        {
+          "path": "packages/player/player.prompt.md",
+          "bytes": 5349,
+          "hash": "sha256-10ba553f731d0836019201741de005f49ec19e963fb7fbec4bc60547a515f3be"
+        },
+        {
+          "path": "packages/player/poster.js",
+          "bytes": 1871,
+          "hash": "sha256-6a073f3f62aa60bb19b0cfcd1f51413a77d3b1a3ccc497b23d02add407608b26"
+        },
+        {
+          "path": "packages/player/skins/playful.js",
+          "bytes": 2430,
+          "hash": "sha256-ee04852dfc46d5a59d91ce424de74d4935363b2ba7d3a48128cd3e18d19991df"
+        },
+        {
+          "path": "packages/player/skins/quiet.js",
+          "bytes": 220,
+          "hash": "sha256-d97e0a91da31406d58e1c3f8d2ee6c8d6dc94765eb0f0d39a5941005bc846724"
+        },
+        {
+          "path": "packages/player/skins/warm.js",
+          "bytes": 2430,
+          "hash": "sha256-cb467e3f250a70dde6d1207f238cf8816e8fe8e9afdf680e88d68162b6412a02"
+        },
+        {
+          "path": "packages/player/treatments.core.js",
+          "bytes": 3734,
+          "hash": "sha256-a43aa5d8d5045e9d0ccb4b3e62f9662a42325d3c9548c8f984d29e76a2747baa"
+        },
+        {
+          "path": "packages/player/treatments.js",
+          "bytes": 8343,
+          "hash": "sha256-1a74eb2e18ae10e7289aa525c3bdbfaff5ed7ada0cd3f3964e5906c95839797d"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "narration",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 45500,
+        "frameMs": 16.7,
+        "reason": "Wider than a typical component's 12-16 KB (0009) because it carries four sub-systems a normal component doesn't: a WebGL video-treatment renderer (treatments.js, 8.3 KB after gating the black-canvas-before-first-frame fix behind a ready callback, plus its tested colour/halftone core), a poster renderer that drives a whole scene once (poster.js, 1.9 KB), an ink-annotation overlay (annotations.js, 2.7 KB) and the bar/captions/keyboard behaviour itself (player.js, 15.7 KB after the frame-wrapper, focusability and stroke-icon fixes, over the 12 KB default; declared here rather than split further, since the parts already separate cleanly into their own files and cores). Skins grew to 2.4 KB each (still well inside 8 KB) once they positioned the scrubber canvas against the range's own box, rather than the whole bar, per Sutradhar's review. Pure cores (player.core.js 3.0 KB, annotations.core.js 3.7 KB, treatments.core.js 3.7 KB = 10.4 KB) stay inside the 12 KB core allowance (0010) even summed. Measured total 44.5 KB; budgeted with a little headroom. This is closer to a scene's budget than a component's; worth a decision addendum if more AV components follow this shape."
+      },
+      "docs": "packages/player/player.docs.md",
+      "prompt": "packages/player/player.prompt.md",
+      "bytes": 61979,
+      "jsBytes": 44494,
+      "codeBytes": 31520,
+      "hash": "sha256-68cd88a012b88778e8385c51a33acd5e15fc5847e82c668f5e4926b0438dd903"
+    },
+    {
+      "name": "progress",
+      "type": "component",
+      "title": "Progress",
+      "description": "Enhances a native progress element. Quiet is the native bar as a pencil hairline; warm is a small kolam drawn exactly as far as the value, closing at 100%; playful is a cutting-chai glass that fills with tea. It moves only when the value moves, and without a value it says in words what is happening.",
+      "version": "0.1.0",
+      "manifest": "packages/components/progress/registry.json",
+      "files": [
+        {
+          "path": "packages/components/progress/progress.css",
+          "bytes": 3000,
+          "hash": "sha256-d888f3ab5f91177804905a9a73d8b4c3c61b3d7f81db6e7b298863dd69fcd74a"
+        },
+        {
+          "path": "packages/components/progress/progress.docs.md",
+          "bytes": 3915,
+          "hash": "sha256-b51fc13744fe343a9bcd0067332b40e01d485024ce11e52929e044840066b121"
+        },
+        {
+          "path": "packages/components/progress/progress.js",
+          "bytes": 4496,
+          "hash": "sha256-c6645d17c53c27eaf374abcb3c6ccc9fd12aff1c34b28c41ba62c613bd0c9595"
+        },
+        {
+          "path": "packages/components/progress/progress.prompt.md",
+          "bytes": 4224,
+          "hash": "sha256-a65bc7f4ffa5bbd9734ed4ba9b008100b1880e5a1c49b119f4ca72e7383dda7c"
+        },
+        {
+          "path": "packages/components/progress/skins/playful.js",
+          "bytes": 6199,
+          "hash": "sha256-b8f53f3718e49712abac62545522df14f01b773deee838557ad3ae00c8050199"
+        },
+        {
+          "path": "packages/components/progress/skins/quiet.js",
+          "bytes": 234,
+          "hash": "sha256-7ff076728c23b6000f5aceb2aa5db8ad8cc8cd4138a6343e8e5c2bc11c301594"
+        },
+        {
+          "path": "packages/components/progress/skins/warm.js",
+          "bytes": 3656,
+          "hash": "sha256-4e7caf606a54112fdbc27db4298179fca787eb4a5f297ade3579be340a19536a"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "scene-kolam",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 15360,
+        "frameMs": 16.7,
+        "reason": "The contract's 12 KB behaviour plus 8 KB per skin, declared as the sum used: behaviour (progress.js) about 4.4 KB, skins about 0.2 KB (quiet), 3.6 KB (warm) and 6.3 KB (playful, including the slosh that never shows more than the value). The warm skin reuses the Kolam scene's geometry rather than carrying its own."
+      },
+      "docs": "packages/components/progress/progress.docs.md",
+      "prompt": "packages/components/progress/progress.prompt.md",
+      "bytes": 25724,
+      "jsBytes": 14585,
+      "codeBytes": 11410,
+      "hash": "sha256-6c6fefa9ea7bca5a98983b826485340427d74eb500559ccd9135c1203b8880a0"
+    },
+    {
+      "name": "proposal",
+      "type": "recipe",
+      "title": "Proposal",
+      "description": "A proposal written in Markdown and built into one sealed Folio file: a cover with the Paus scene, who it is for and from, its date and how long it holds, and a stamped status while it is a draft; one section per heading; a rate card and stay prices worked out by the booking kernels, with other dates to try; a plan you can walk through with a native range; scope and cost tables that stack into labelled cards on a phone; terms; and a signing block with the options as native radios and <sg-signature>. It reads, prints and can be signed on paper without JavaScript. The page builder (proposal.page.js, build.mjs) runs in Node beside Folio and is not copied.",
+      "version": "0.1.0",
+      "manifest": "packages/recipes/proposal/registry.json",
+      "files": [
+        {
+          "path": "packages/recipes/proposal/index.html",
+          "bytes": 10461,
+          "hash": "sha256-bd2a8fd9b2deff1a89a5437893acfe24aba33753d01e5e1d9afcd69011c66634"
+        },
+        {
+          "path": "packages/recipes/proposal/price-table.core.js",
+          "bytes": 7661,
+          "hash": "sha256-4be2e8b1a45a6838753dd453aee69e173abd519c6d728a4e15e777df105024ab"
+        },
+        {
+          "path": "packages/recipes/proposal/price-table.css",
+          "bytes": 6234,
+          "hash": "sha256-f6ccc3fb96e989c3199bda45f652e4cac06be96e4cd5dbe22df7ae649202cbcd"
+        },
+        {
+          "path": "packages/recipes/proposal/price-table.js",
+          "bytes": 3618,
+          "hash": "sha256-52938df6aa9322d7d611e45fa613d368979407f2f15135cab152041a5dcd0ca3"
+        },
+        {
+          "path": "packages/recipes/proposal/proposal.core.js",
+          "bytes": 542,
+          "hash": "sha256-fa8786ce1912d6b5e5f7ce35a533678ecb2930d66874a49b9e59e14a557e130b"
+        },
+        {
+          "path": "packages/recipes/proposal/proposal.css",
+          "bytes": 22124,
+          "hash": "sha256-67affe2393a049307fa20b34f06e4bfef1c795c4ccdc15ccb14f2afc9d23918d"
+        },
+        {
+          "path": "packages/recipes/proposal/proposal.docs.md",
+          "bytes": 4288,
+          "hash": "sha256-96efa0be97e5e442877cbd8c0b3ea8e09ab29a331c641b9a5a5617ac9d6ea350"
+        },
+        {
+          "path": "packages/recipes/proposal/proposal.js",
+          "bytes": 1556,
+          "hash": "sha256-88c239c68934773316b647d65648bf2783d821ad2c98982614603e587eef2cb4"
+        },
+        {
+          "path": "packages/recipes/proposal/proposal.prompt.md",
+          "bytes": 5685,
+          "hash": "sha256-ecb08ea12a15f912117eed6a0e8c5db65a0610251d11b8521e1f9bee1b27e914"
+        },
+        {
+          "path": "packages/recipes/proposal/timeline.core.js",
+          "bytes": 3486,
+          "hash": "sha256-f1e744423a7e7b890e4aafd04f73cd9980c08668b70001c019031990f64b555e"
+        },
+        {
+          "path": "packages/recipes/proposal/timeline.css",
+          "bytes": 3889,
+          "hash": "sha256-bf93a3e129abb1f878edb21a8d13835d08479ed4250dd3d3ae028cc68affb20a"
+        },
+        {
+          "path": "packages/recipes/proposal/timeline.js",
+          "bytes": 2567,
+          "hash": "sha256-fed979373e18d9b43d32539ab177b916ba6990aa17b86bfc08a5f7e96b0fc861"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "kernels-booking",
+        "scene-paus",
+        "signature",
+        "stamp",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "docs": "packages/recipes/proposal/proposal.docs.md",
+      "prompt": "packages/recipes/proposal/proposal.prompt.md",
+      "bytes": 72111,
+      "jsBytes": 19430,
+      "codeBytes": 15581,
+      "hash": "sha256-52623870ab40a5bb3b5e8760eb3fbe58615c3059747ec36fc23b8e99b855154f"
+    },
+    {
+      "name": "radio",
+      "type": "component",
+      "title": "Radio group",
+      "description": "A real fieldset of native radios: arrow keys, one choice per name, required and submitting all stay the browser's, with or without JavaScript. Quiet is hairline circles drawn by CSS; warm draws pencil circles and circles the choice in ink, a leaning oval that runs past its start; playful turns the choice into a four-petalled kolam flower. Forced colours bring back the system radios.",
+      "version": "0.1.0",
+      "manifest": "packages/components/radio/registry.json",
+      "files": [
+        {
+          "path": "packages/components/radio/radio.core.js",
+          "bytes": 3761,
+          "hash": "sha256-1e2588f9aae7f43bd9149af18b385dfe71448bb0290d318e0c7c02a4f081dcb5"
+        },
+        {
+          "path": "packages/components/radio/radio.css",
+          "bytes": 5244,
+          "hash": "sha256-faab6ec5d2ca57900d3541f79d0ff6bb184809aa8ac6cb9540c9623da53378c9"
+        },
+        {
+          "path": "packages/components/radio/radio.docs.md",
+          "bytes": 2208,
+          "hash": "sha256-172741e339a6cc9e0fd19c1305a45896d1e902fefde6d8981641fdd4a1f63710"
+        },
+        {
+          "path": "packages/components/radio/radio.js",
+          "bytes": 2545,
+          "hash": "sha256-72ff29e2e90fae5aabde20363609afbf85a1abbd9f356d1f487a697663b9477f"
+        },
+        {
+          "path": "packages/components/radio/radio.prompt.md",
+          "bytes": 4664,
+          "hash": "sha256-d9b7e1191825746c71e6fd55a7611a2867bf5365b2c77c5cdfa29e7cdcb22ee0"
+        },
+        {
+          "path": "packages/components/radio/skins/playful.js",
+          "bytes": 1525,
+          "hash": "sha256-b0937efe42ced221b6b70638820fb065a979697f9ea6739a234bcaf7667ba48e"
+        },
+        {
+          "path": "packages/components/radio/skins/quiet.js",
+          "bytes": 254,
+          "hash": "sha256-c76db5e9c0948366a65cdf3454b84f424f29f95432c2e2027954f399c1929331"
+        },
+        {
+          "path": "packages/components/radio/skins/warm.js",
+          "bytes": 2739,
+          "hash": "sha256-fb101295e284214fc54557b30abab351ecc4d1c96fd178195df7ecfa7ec1c2d8"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 36864,
+        "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 10824 bytes: behaviour (radio.js + radio.core.js) 6.2 KB, skins quiet 0.2 KB, warm 2.7 KB, playful 1.5 KB."
+      },
+      "docs": "packages/components/radio/radio.docs.md",
+      "prompt": "packages/components/radio/radio.prompt.md",
+      "bytes": 22940,
+      "jsBytes": 10824,
+      "codeBytes": 7720,
+      "hash": "sha256-abba43204356b1db809762af998d81675e5a25795af575b4b5c3075cd8d833f4"
+    },
+    {
+      "name": "room-details",
+      "type": "recipe",
+      "title": "Room details",
+      "description": "A guest-facing room card for a homestay. A skeleton stands in until the room's details really arrive, then inks them in: a painted view, name, beds, the rate in rupees with Indian digit grouping, what is included, and availability as a badge. If the details cannot be loaded it says so plainly, with Try again. Driven by a pure, seeded fake source you swap for your own.",
+      "version": "0.1.0",
+      "manifest": "packages/recipes/room-details/registry.json",
+      "files": [
+        {
+          "path": "packages/recipes/room-details/index.html",
+          "bytes": 5001,
+          "hash": "sha256-28c41e4b3ca8e22b44636707a09eafd00660ab816e590c39f7a629a6ce59447e"
+        },
+        {
+          "path": "packages/recipes/room-details/README.md",
+          "bytes": 3679,
+          "hash": "sha256-4fcbec2e0090f3371e2a493714f1eb578277e1f0002d78d516923f059261c296"
+        },
+        {
+          "path": "packages/recipes/room-details/recipe.css",
+          "bytes": 2218,
+          "hash": "sha256-1726b565851566ff94b8bf5b812cac2a0c2ef6cd0d005f82aa19b00c403dfd34"
+        },
+        {
+          "path": "packages/recipes/room-details/recipe.js",
+          "bytes": 6827,
+          "hash": "sha256-5bf68d546349d9a1e8d2b5baa645194ffbbafc597045da0b6d625c6254104c29"
+        },
+        {
+          "path": "packages/recipes/room-details/recipe.prompt.md",
+          "bytes": 3403,
+          "hash": "sha256-9d2e6eed623fb650061fc1574264c2201c8a6f5a48b92ca8cdc5f143ed7ecace"
+        },
+        {
+          "path": "packages/recipes/room-details/room.core.js",
+          "bytes": 3471,
+          "hash": "sha256-db62bfca636bfaa16f4127cfccfe209b94829b957a41bcf95ca10098e42648d6"
+        },
+        {
+          "path": "packages/recipes/room-details/source.js",
+          "bytes": 3075,
+          "hash": "sha256-ea014fc564406b4ca58076d6554063f7f6c2afec4d489ca6c280b1dd8a578126"
+        }
+      ],
+      "dependencies": [
+        "badge",
+        "core",
+        "core-component",
+        "engine",
+        "skeleton",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "docs": "packages/recipes/room-details/README.md",
+      "prompt": "packages/recipes/room-details/recipe.prompt.md",
+      "bytes": 27674,
+      "jsBytes": 13373,
+      "codeBytes": 10273,
+      "hash": "sha256-3452270c13f9ce0a7233b1a474fc6980442b13b54c08aaaba6c65089c03296a9"
+    },
+    {
+      "name": "saving-footer",
+      "type": "recipe",
+      "title": "Saving footer",
+      "description": "A form that saves itself when the person pauses typing, with a footer that says Saving, Saved at 14:32, or why it could not save. Offline, it shows the connection with fireflies and saves by itself once the connection is back. Driven by a pure, seeded fake transport you swap for your own.",
+      "version": "0.1.0",
+      "manifest": "packages/recipes/saving-footer/registry.json",
+      "files": [
+        {
+          "path": "packages/recipes/saving-footer/footer.core.js",
+          "bytes": 6446,
+          "hash": "sha256-69d2b980b4e20645b2f52de9ca608ea6a3940a1f822817c119319c97955a0756"
+        },
+        {
+          "path": "packages/recipes/saving-footer/index.html",
+          "bytes": 6489,
+          "hash": "sha256-73ec94666b2862c8a10002ad22cf19d1637a038e57dd7bb21a41247c9b568830"
+        },
+        {
+          "path": "packages/recipes/saving-footer/README.md",
+          "bytes": 5124,
+          "hash": "sha256-281080135337b858656df24d2b8eb31c22814f3513c3df58a1673c7b5dd18aa5"
+        },
+        {
+          "path": "packages/recipes/saving-footer/recipe.css",
+          "bytes": 813,
+          "hash": "sha256-6e745bc4951a3c0020e8f38f9d7ce2197e64d682d678dfbe14d8fa2b2fb9451d"
+        },
+        {
+          "path": "packages/recipes/saving-footer/recipe.js",
+          "bytes": 4563,
+          "hash": "sha256-4b715cec2d334e4598df1f3d7afbbacba2cc87f30f960d57e56606ea736859ba"
+        },
+        {
+          "path": "packages/recipes/saving-footer/recipe.prompt.md",
+          "bytes": 4020,
+          "hash": "sha256-283249d3e2f08bd0d87c0398d821283b7e52a0692e59d1cde85e07aa8df1fcd9"
+        },
+        {
+          "path": "packages/recipes/saving-footer/transport.js",
+          "bytes": 3692,
+          "hash": "sha256-ead30bce5eb0805da6017d71390d83063a7bb1421801856cdab4c4b62ed00223"
+        }
+      ],
+      "dependencies": [
+        "badge",
+        "connecting",
+        "core",
+        "core-component",
+        "engine",
+        "loader",
+        "toast",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "docs": "packages/recipes/saving-footer/README.md",
+      "prompt": "packages/recipes/saving-footer/recipe.prompt.md",
+      "bytes": 31147,
+      "jsBytes": 14701,
+      "codeBytes": 9697,
+      "hash": "sha256-cdb9cf69f82270c73c8996800ab7c62903750c50822b2312a84bbee23ed850db"
+    },
+    {
+      "name": "scene-kolam",
+      "type": "scene",
+      "title": "Kolam",
+      "description": "One unbroken line of rice flour around a grid of dots, found with the mirror-curve method. Hairline ink in quiet, drawn once at a hand's pace in warm, poured by your hand with rangoli colour and ants in playful. The progress attribute draws it exactly that far.",
+      "version": "0.1.0",
+      "manifest": "packages/scenes/kolam/registry.json",
+      "files": [
+        {
+          "path": "packages/scenes/kolam/index.js",
+          "bytes": 1059,
+          "hash": "sha256-9c28094fcc808f103950471eba3c0b856b673a2d67c92bbbbfae87d66f2c0a2e"
+        },
+        {
+          "path": "packages/scenes/kolam/kolam.prompt.md",
+          "bytes": 5629,
+          "hash": "sha256-d030893a8d897f5860a259284dad256d19a3b6044fa8735af7e53f6cc7b17ad7"
+        },
+        {
+          "path": "packages/scenes/kolam/meta.js",
+          "bytes": 4556,
+          "hash": "sha256-b4f5624fb5c47f70aa9b2d14d2d857883176f78fad7bcf191836e47c0fb370c8"
+        },
+        {
+          "path": "packages/scenes/kolam/model.js",
+          "bytes": 12026,
+          "hash": "sha256-59c7a3c3df2a85c1fed2a7eda379ea1a787af8b04311188e1a24a1bad493a8e0"
+        },
+        {
+          "path": "packages/scenes/kolam/render.js",
+          "bytes": 20407,
+          "hash": "sha256-09c31a12d2d3821fb5ad2a3fe604f4fc3fdf4f3a54131cded8ea66560b86691e"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 40960
+      },
+      "prompt": "packages/scenes/kolam/kolam.prompt.md",
+      "bytes": 43677,
+      "jsBytes": 38048,
+      "codeBytes": 31421,
+      "hash": "sha256-70a1225177a973ef6d1669e780723f0e114664014eea691c392d1100640698af"
+    },
+    {
+      "name": "scene-paus",
+      "type": "scene",
+      "title": "Paus",
+      "description": "The monsoon through a Goan window: rain beads, merges and runs down fogged glass. Hosts text in calm zones, clears from the sill up with progress, and wipes under a finger or the arrow keys.",
+      "version": "0.1.0",
+      "manifest": "packages/scenes/paus/registry.json",
+      "files": [
+        {
+          "path": "packages/scenes/paus/index.js",
+          "bytes": 812,
+          "hash": "sha256-f177641e67c94d8f810a4878f26eef904947e78b7899ce8bcab383304a0d37b9"
+        },
+        {
+          "path": "packages/scenes/paus/meta.js",
+          "bytes": 4230,
+          "hash": "sha256-0d2c899442dfca636bc7221f60283e73e89281f94195b9d446b3554373d8b34f"
+        },
+        {
+          "path": "packages/scenes/paus/model.js",
+          "bytes": 12879,
+          "hash": "sha256-256095ad4a9417a4c80fbb75590e52512e09dd08abfbabaf87b1863b53efebd0"
+        },
+        {
+          "path": "packages/scenes/paus/paus.prompt.md",
+          "bytes": 7688,
+          "hash": "sha256-a2816a749eff880b299f37789570c11a7a5a2add78dc84bed23b21c6034fc991"
+        },
+        {
+          "path": "packages/scenes/paus/render.js",
+          "bytes": 41037,
+          "hash": "sha256-51ed9d6b3793b920fed1aadd63cacd7545b67b4721352e79b5a5468e35303bd0"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 61440,
+        "reason": "The heavy baseline scene: drop simulation, fog mask, dusk palette, three registers."
+      },
+      "prompt": "packages/scenes/paus/paus.prompt.md",
+      "bytes": 66646,
+      "jsBytes": 58958,
+      "codeBytes": 49861,
+      "hash": "sha256-4b3f9175f9f2ba4cffa23617a2147608816161cf08d12ebcb69e8a2fab28287b"
+    },
+    {
+      "name": "scene-rampon",
+      "type": "scene",
+      "title": "Rampon",
+      "description": "Dusk on the Goan shore: a ballpoint sea of short hatching strokes that boils like hand-drawn animation, a sun sinking into haze, palms swaying in seeded wind, a ramponkar's canoe with its net heaped inside, and a few distant birds. Quiet is a single still; warm boils gently; playful boils in full, a click draws a new evening, and a koel calls.",
+      "version": "0.1.0",
+      "manifest": "packages/scenes/rampon/registry.json",
+      "files": [
+        {
+          "path": "packages/scenes/rampon/index.js",
+          "bytes": 609,
+          "hash": "sha256-539642520fc5b712c174b92d90b8e97ac3d6d70e3988209a770b01e20ac98eb2"
+        },
+        {
+          "path": "packages/scenes/rampon/meta.js",
+          "bytes": 3798,
+          "hash": "sha256-ec95f07a8efa40e2e951f7ec740bd046998280c352e5b71caf5cf97980bf016a"
+        },
+        {
+          "path": "packages/scenes/rampon/model.js",
+          "bytes": 4954,
+          "hash": "sha256-883e8cdc127bb8656c7c1ac9ecd686dae7d913cf79a1c2f027c5cb675dc7f390"
+        },
+        {
+          "path": "packages/scenes/rampon/rampon.prompt.md",
+          "bytes": 4078,
+          "hash": "sha256-f15d41bba3f7e245812e600432be9b20789af3c85ddfacdc6d503f02d64e058f"
+        },
+        {
+          "path": "packages/scenes/rampon/render.js",
+          "bytes": 14353,
+          "hash": "sha256-dad8957a2c03328613851f50a41029116e5eb063ea84dfa0dcc855e79c57c967"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 40960
+      },
+      "prompt": "packages/scenes/rampon/rampon.prompt.md",
+      "bytes": 27792,
+      "jsBytes": 23714,
+      "codeBytes": 20566,
+      "hash": "sha256-a0e4c732702d23677b7267d0cda09849784de75c9b6cae46e4127dc6f5da833e"
+    },
+    {
+      "name": "scene-tollem",
+      "type": "scene",
+      "title": "Tollem",
+      "description": "Looking down into a Goan pool at noon: a WebGL net of light over pale tiles, a frangipani that drops a flower now and then, and a full 2D painting when WebGL is missing, lost or too slow. Quiets under text, shows progress as a flower's place across the pool, and ripples under a finger or the arrow keys.",
+      "version": "0.1.0",
+      "manifest": "packages/scenes/tollem/registry.json",
+      "files": [
+        {
+          "path": "packages/scenes/tollem/index.js",
+          "bytes": 1311,
+          "hash": "sha256-28488587fd5785373dadf1d45bd9d5eaf29bfecc7bc99b30c68e0d325a0831e3"
+        },
+        {
+          "path": "packages/scenes/tollem/meta.js",
+          "bytes": 6316,
+          "hash": "sha256-d842590b605e60177e206edd14d251631a1bf788b4627d4be63d8d883f57ecb7"
+        },
+        {
+          "path": "packages/scenes/tollem/model.js",
+          "bytes": 13493,
+          "hash": "sha256-2179568109b8dbabcdccdb776e55e0d70a36e3c015f86146917a6e302dd906c8"
+        },
+        {
+          "path": "packages/scenes/tollem/render.js",
+          "bytes": 23326,
+          "hash": "sha256-6310c3b34d95b1cf042c16eb0d44f65caa6ad112b164d8457ab3d927e1f005d2"
+        },
+        {
+          "path": "packages/scenes/tollem/tollem.prompt.md",
+          "bytes": 8580,
+          "hash": "sha256-6b32342c87a20cbeaeba2ebea8063c424b9c3bcf3f6d3e7d70cb2284a0a24281"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 45056,
+        "reason": "Two complete renderers: the WebGL shader and a full 2D fallback."
+      },
+      "prompt": "packages/scenes/tollem/tollem.prompt.md",
+      "bytes": 53026,
+      "jsBytes": 44446,
+      "codeBytes": 38950,
+      "hash": "sha256-7576c843b51fd550c7f299804863968cb37efc9b14acd7f5421b1ef846dca2d6"
+    },
+    {
+      "name": "select",
+      "type": "component",
+      "title": "Select",
+      "description": "The browser's own select, kept native: its keyboard, its screen-reader role and its place in the form are untouched. Where customizable select is supported, CSS draws the button, the caret and the picker: a hairline box and list in quiet; in warm the select is written on the paper, over the field's pencil rule, with a caret of two pencil strokes and ink over the rule under a chosen value; in playful a stamped box with an accent caret, and stamped chips.",
+      "version": "0.1.0",
+      "manifest": "packages/components/select/registry.json",
+      "files": [
+        {
+          "path": "packages/components/select/select.css",
+          "bytes": 8712,
+          "hash": "sha256-166b11c4ff19c84faf69987eae7a1e66d46e344148c98ca2832c03c42436892d"
+        },
+        {
+          "path": "packages/components/select/select.docs.md",
+          "bytes": 3219,
+          "hash": "sha256-73e26b24ee155b3668e9b83a6640ce250c975198953f04b2b8e4150cbeae53af"
+        },
+        {
+          "path": "packages/components/select/select.js",
+          "bytes": 2330,
+          "hash": "sha256-fcd74bfdfb94bfd14809d925c3d6067bb81a9c06a81b8666b92285b040b9f538"
+        },
+        {
+          "path": "packages/components/select/select.prompt.md",
+          "bytes": 4503,
+          "hash": "sha256-98fae27408d1ef49a8c063bf0030e668026a32ddc2645bcc0606c2ea1921f089"
+        },
+        {
+          "path": "packages/components/select/skins/playful.js",
+          "bytes": 596,
+          "hash": "sha256-c024d7fe027ad3db8302ec9ff6ef7082dbaf550c246a0a02e480843e1927543c"
+        },
+        {
+          "path": "packages/components/select/skins/quiet.js",
+          "bytes": 159,
+          "hash": "sha256-d4a92f235dcd0016c447a3423a631abffc8354c5f773cc9bfd0aca0ddf38b468"
+        },
+        {
+          "path": "packages/components/select/skins/warm.js",
+          "bytes": 1603,
+          "hash": "sha256-9b58350732ff77059afddf3f8168cad9cfa899776eb5ee1714e234a2e2bfcc20"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "field",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 6144,
+        "frameMs": 16.7,
+        "reason": "Behaviour (select.js) about 2.3 KB; skins about 0.2 KB (quiet), 1.6 KB (warm) and 0.6 KB (playful). Most of the look is CSS on the native element. The warm skin draws with field/rule.js (about 3.1 KB, counted in field)."
+      },
+      "docs": "packages/components/select/select.docs.md",
+      "prompt": "packages/components/select/select.prompt.md",
+      "bytes": 21122,
+      "jsBytes": 4688,
+      "codeBytes": 3161,
+      "hash": "sha256-0c9d541f5ab8d9f32747e5cf002e7126d23829f08de3e144c5765595c65be3d7"
+    },
+    {
+      "name": "signature",
+      "type": "component",
+      "title": "Signature",
+      "description": "Sign by hand or by typing your name. The native path is a typed-name input that submits and works without JavaScript; with it, a pad takes a finger, pen or mouse, inks the stroke from the pen's pressure and speed, and submits the ink as SVG path data in a hidden input. Undo and start again are real buttons. Quiet is a plain line and a plain pen; warm a broad nib whose fresh ink dries into the paper; playful adds a flourish.",
+      "version": "0.1.0",
+      "manifest": "packages/components/signature/registry.json",
+      "files": [
+        {
+          "path": "packages/components/signature/signature.core.js",
+          "bytes": 5709,
+          "hash": "sha256-dc2242a35c94226f3449dabbc14f936f468889e431e884135e63a1a568d2139c"
+        },
+        {
+          "path": "packages/components/signature/signature.css",
+          "bytes": 3386,
+          "hash": "sha256-4dad1de63dde86a7b4d714b859a4703629e57c3143702f5c993405ec22562e55"
+        },
+        {
+          "path": "packages/components/signature/signature.docs.md",
+          "bytes": 5126,
+          "hash": "sha256-a2e6692b131438b1af1342bbe1e9b5f777d90bdfe2049e8619a078a4cf5f1ab0"
+        },
+        {
+          "path": "packages/components/signature/signature.js",
+          "bytes": 8769,
+          "hash": "sha256-16b0bb20e7eb96244423b69f44e04e75b1da916c1cb9b55ac7a7347cf3f8e0af"
+        },
+        {
+          "path": "packages/components/signature/signature.prompt.md",
+          "bytes": 5672,
+          "hash": "sha256-cdfecbbd714681c96b7ed870ded093f797938c86194294036648d8ad13971932"
+        },
+        {
+          "path": "packages/components/signature/skins/marks.js",
+          "bytes": 2433,
+          "hash": "sha256-572e76d40cb99fb5df2f6d2005f871a1664e670b36456a10139ee52e504ea8cf"
+        },
+        {
+          "path": "packages/components/signature/skins/paint.js",
+          "bytes": 7176,
+          "hash": "sha256-bab2cb6d64fb23c74ed7a1ef199424426a94578d62a7daa009f01a4f00366cc4"
+        },
+        {
+          "path": "packages/components/signature/skins/playful.js",
+          "bytes": 383,
+          "hash": "sha256-b90fda37d449694e86cd8bf6a061e414031e052584ca3a08df81a83963d81e55"
+        },
+        {
+          "path": "packages/components/signature/skins/quiet.js",
+          "bytes": 276,
+          "hash": "sha256-534419743c269fa6af9cd4eb2a57bcca67a1804168887ad1fc886c08436be892"
+        },
+        {
+          "path": "packages/components/signature/skins/warm.js",
+          "bytes": 371,
+          "hash": "sha256-7f24aefc3645c36e760d49a5acc77516b021332f03b5578a8e1956af7d1836a8"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 39936,
+        "reason": "Decision 0009: behaviour declared at 15 KB (the ink ribbon lives in the element, because the submitted path must be exactly the ink shown), plus 8 KB for each of three skins. Today: behaviour 14.3 KB (signature.js 8.6, signature.core.js 5.7); the skins share a 9.6 KB painter (skins/paint.js 7.2 and skins/marks.js 2.4: baking, drying, grain, the typed name, the flourish), and each skin file is under 0.4 KB. A page loads one skin and the painter, 10.0 KB, which is over the 8 KB per skin; the painter is one piece of work, split no further."
+      },
+      "docs": "packages/components/signature/signature.docs.md",
+      "prompt": "packages/components/signature/signature.prompt.md",
+      "bytes": 39301,
+      "jsBytes": 25117,
+      "codeBytes": 18931,
+      "hash": "sha256-f589faafb05f6684e08b6d78938428c91f3e453867c03f47ab547271a038a3e2"
+    },
+    {
+      "name": "skeleton",
+      "type": "component",
+      "title": "Skeleton",
+      "description": "A placeholder for a region whose content is on its way. The region is aria-busy and says what is loading, then announces the arrival once. Quiet is flat sunk blocks; warm is a pencil sketch whose outlines ink in when the content arrives; playful adds colour washes and a wobble on twos while waiting.",
+      "version": "0.1.0",
+      "manifest": "packages/components/skeleton/registry.json",
+      "files": [
+        {
+          "path": "packages/components/skeleton/skeleton.core.js",
+          "bytes": 4728,
+          "hash": "sha256-3620ed765c74c4e93656491616f516bf167f1a9ad756f769f944d6f7f6acbcc3"
+        },
+        {
+          "path": "packages/components/skeleton/skeleton.css",
+          "bytes": 2123,
+          "hash": "sha256-2b8fba0365031836208439fe212a793a7b745aafa422a2772898ae7c9ca433f5"
+        },
+        {
+          "path": "packages/components/skeleton/skeleton.docs.md",
+          "bytes": 3133,
+          "hash": "sha256-66ff7928a450f44c51273a23182bf88c64a647f90842d95c10fce6227b68ce27"
+        },
+        {
+          "path": "packages/components/skeleton/skeleton.js",
+          "bytes": 2487,
+          "hash": "sha256-2a78c5ff42d0224f34d0b09036d9c8dc3012ade1a10ad5b60b5e8bb0cbce03f4"
+        },
+        {
+          "path": "packages/components/skeleton/skeleton.prompt.md",
+          "bytes": 4111,
+          "hash": "sha256-7512242475f4b56d3ee93b84a409b3567f3baaf5afbdb16be19a0fe604efde3e"
+        },
+        {
+          "path": "packages/components/skeleton/skins/draw.js",
+          "bytes": 5635,
+          "hash": "sha256-b524467bdc2e083b9ccb3bd5dbe7b7e24dc439c357871084d0d186d05b039c5c"
+        },
+        {
+          "path": "packages/components/skeleton/skins/playful.js",
+          "bytes": 2452,
+          "hash": "sha256-ccc033e2bc0caf8851473d8d315088257676e63096f52993bcd8b1206e6da39e"
+        },
+        {
+          "path": "packages/components/skeleton/skins/quiet.js",
+          "bytes": 1482,
+          "hash": "sha256-d36c4e0d205c2780c528345b370ea1581cf24bd20f4b1e6dde38137f9a446cc2"
+        },
+        {
+          "path": "packages/components/skeleton/skins/warm.js",
+          "bytes": 1232,
+          "hash": "sha256-c54706e7364716cdae09ab09059a76fe8d661c44311661743a50b77607c72ffa"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 18432,
+        "frameMs": 16.7,
+        "reason": "The contract's 12 KB behaviour plus 8 KB per skin, declared as the sum used: behaviour about 7.0 KB (skeleton.js 2.5 KB, skeleton.core.js 4.6 KB); skins about 1.3 KB (quiet), 5.5 KB of shared drawing (skins/draw.js: the layer every skin uses, plus the pencil for warm and playful), 1.1 KB (warm) and 2.3 KB (playful). A page loads one skin and draw.js."
+      },
+      "docs": "packages/components/skeleton/skeleton.docs.md",
+      "prompt": "packages/components/skeleton/skeleton.prompt.md",
+      "bytes": 27383,
+      "jsBytes": 18016,
+      "codeBytes": 14391,
+      "hash": "sha256-14af6c1fa11d1753547181a4805004e76317d64265d14501e05620b217c5d352"
+    },
+    {
+      "name": "sound",
+      "type": "package",
+      "title": "Sound",
+      "description": "The synthesised UI vocabulary (tick, confirm, complete, gentle error) with Web Audio, no audio files. One global switch, off by default and remembered per viewer, that never sounds before a user gesture even when remembered on. Paired haptics on the same rules. Soundscapes live in sound/scapes/ and are added separately by the scene that uses them.",
+      "version": "0.1.0",
+      "manifest": "packages/sound/registry.json",
+      "files": [
+        {
+          "path": "packages/sound/haptics.js",
+          "bytes": 448,
+          "hash": "sha256-2ffdabc47998cb821b0b67e75c5c630d7cf2859a396131a269c67837ff1c8795"
+        },
+        {
+          "path": "packages/sound/index.js",
+          "bytes": 376,
+          "hash": "sha256-22119293238aa744103edcf817e171390b96d59e7f17a50492d3b4f3d1087c1a"
+        },
+        {
+          "path": "packages/sound/patches.js",
+          "bytes": 1871,
+          "hash": "sha256-7ca84f67682601b607d1b9e69de3d909953e65a331904fb438eeac542188b9e9"
+        },
+        {
+          "path": "packages/sound/player.js",
+          "bytes": 1704,
+          "hash": "sha256-b6e1eb2a58f2fc7b31fb1716000763f1c22ef60fbd5e0748511d3cbfc82d5a46"
+        },
+        {
+          "path": "packages/sound/README.md",
+          "bytes": 1587,
+          "hash": "sha256-c79efbba278c8aa70c3b07b93a981bcff0d8a80b361b40c5922f17f68739f217"
+        },
+        {
+          "path": "packages/sound/switch.js",
+          "bytes": 5185,
+          "hash": "sha256-18c59f196f3ffc7392c04e9f1b59bbd10ff4a96b35285ddbc4a58abaac642d31"
+        }
+      ],
+      "dependencies": [],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 14336
+      },
+      "docs": "packages/sound/README.md",
+      "bytes": 11171,
+      "jsBytes": 9584,
+      "codeBytes": 4681,
+      "hash": "sha256-36d76867502c528df048e43d122c3ee21b809738a03eab1af604fee3fe4e324a"
+    },
+    {
+      "name": "sound-scape-paus-rain",
+      "type": "package",
+      "title": "Paus rain",
+      "description": "Each visible raindrop on Paus's glass becomes an audible tick, seeded like the drawing itself. Voice-limited and pooled (never more than a handful of oscillators at once, however hard it is raining), panned by where each drop sits and pitched a little higher for a smaller one. Only runs with the sound switch on, and stops when the scene leaves the viewport or the tab is hidden. attachPausRain(sceneEl) wires it to a live <sg-scene name=\"paus\">.",
+      "version": "0.1.0",
+      "manifest": "packages/sound/scapes/registry.json",
+      "files": [
+        {
+          "path": "packages/sound/scapes/paus-rain.core.js",
+          "bytes": 1783,
+          "hash": "sha256-04400c0fe06eb03a4e8036efd86cea2527e286a17e1abd275b3936fccc0654d0"
+        },
+        {
+          "path": "packages/sound/scapes/paus-rain.js",
+          "bytes": 4032,
+          "hash": "sha256-436491bfcf4911b88c1983d44e68c1ec32a33c4e96d21b13fb0987f809cef8d7"
+        }
+      ],
+      "dependencies": [
+        "scene-paus",
+        "sound"
+      ],
+      "registers": [],
+      "budget": {
+        "jsBytes": 6144
+      },
+      "bytes": 5815,
+      "jsBytes": 5815,
+      "codeBytes": 3589,
+      "hash": "sha256-9811071a7f50725cfc0dcdb067376686e33f8e34263504ccf4276589d867406c"
+    },
+    {
+      "name": "sound-scape-rampon-koel",
+      "type": "package",
+      "title": "Rampon koel",
+      "description": "A rising three-note \"ku-oo\" call in a bout of three that speeds up, then quiet, then another bout, the way a real koel calls. Only in playful, only with the switch on, and only while a bird is actually visible on screen, read from the same birdX() the scene draws its birds from. attachRamponKoel(sceneEl) wires it to a live <sg-scene name=\"rampon\">.",
+      "version": "0.1.0",
+      "manifest": "packages/sound/scapes/rampon-koel.registry.json",
+      "files": [
+        {
+          "path": "packages/sound/scapes/rampon-koel.core.js",
+          "bytes": 896,
+          "hash": "sha256-6a54a919cede209ccbfae1ec5b846388b369f49503fca19379a031d514777c42"
+        },
+        {
+          "path": "packages/sound/scapes/rampon-koel.js",
+          "bytes": 3719,
+          "hash": "sha256-e392d70b1273dd3c73fb00b2de95f7335c3c098a6c3fba87dae0981e3fb3697c"
+        }
+      ],
+      "dependencies": [
+        "scene-rampon",
+        "sound"
+      ],
+      "registers": [],
+      "budget": {
+        "jsBytes": 6144
+      },
+      "bytes": 4615,
+      "jsBytes": 4615,
+      "codeBytes": 2983,
+      "hash": "sha256-e6c998ae353dcf4579c1aab4a91427dee0798ad82843aba20412e1cfa3c842dc"
+    },
+    {
+      "name": "sound-switch",
+      "type": "component",
+      "title": "Sound switch",
+      "description": "The one control that turns Susegad's sound switch on or off, site-wide, over a native checkbox with role=switch. Checking it is the user's own gesture, so switch.js can resume the audio context right there and play the switch's own confirmation. Without JavaScript the checkbox still works as a switch but has no effect, and a note says so. Quiet is the plain switch; warm draws a small speaker with a slash when off and two arcs when on; playful breathes those arcs gently while on.",
+      "version": "0.1.0",
+      "manifest": "packages/components/sound-switch/registry.json",
+      "files": [
+        {
+          "path": "packages/components/sound-switch/skins/playful.js",
+          "bytes": 1385,
+          "hash": "sha256-e3d76db453bc13a404f13f63f7d9557bb62ab442ee4ed0e2d0fa292016b86e50"
+        },
+        {
+          "path": "packages/components/sound-switch/skins/quiet.js",
+          "bytes": 272,
+          "hash": "sha256-fec70c2d7db4e1c55d131679d4686a7e9be3db553422a27ce2bb15368be931af"
+        },
+        {
+          "path": "packages/components/sound-switch/skins/warm.js",
+          "bytes": 1465,
+          "hash": "sha256-96c1d114961cddadcbba4fbdf409a9941c59f4caadc4fcd6ccf8d440ccdb493d"
+        },
+        {
+          "path": "packages/components/sound-switch/sound-switch.core.js",
+          "bytes": 1634,
+          "hash": "sha256-c952f5d8db9e45c232cf2fb0d6b43d754e0a0c8bae55f1f7016512eff9db8802"
+        },
+        {
+          "path": "packages/components/sound-switch/sound-switch.css",
+          "bytes": 5448,
+          "hash": "sha256-76288102d1dd783b8f1f646900ec16f7f48cadd57f42f3c7e371341d511288f3"
+        },
+        {
+          "path": "packages/components/sound-switch/sound-switch.docs.md",
+          "bytes": 3195,
+          "hash": "sha256-c9d8fbb40b2811e0e0db608a635aeb8730762fe0ac3714cbcd9bbb8ce77ac11a"
+        },
+        {
+          "path": "packages/components/sound-switch/sound-switch.js",
+          "bytes": 2601,
+          "hash": "sha256-8d65956ea48a7bd4775a84d18baf89f862d694c48fa0c0d152f5c2f79c5ea309"
+        },
+        {
+          "path": "packages/components/sound-switch/sound-switch.prompt.md",
+          "bytes": 4083,
+          "hash": "sha256-90f9e3aeac634b7f5c1409402479093411f78295c9419576e4e0a5f4f9f0cd7d"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "sound",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 12288
+      },
+      "docs": "packages/components/sound-switch/sound-switch.docs.md",
+      "prompt": "packages/components/sound-switch/sound-switch.prompt.md",
+      "bytes": 20083,
+      "jsBytes": 7357,
+      "codeBytes": 4496,
+      "hash": "sha256-c1a8b29934c822431176e19429c70590b9ef989217359a88ff11b9753bb27198"
+    },
+    {
+      "name": "stamp",
+      "type": "component",
+      "title": "Stamp",
+      "description": "A mark that something real has happened: held, received, paid. The words are text in a role=\"status\" region, announced once when it lands. Quiet is a ruled rectangle; warm is a tilted block print with seeded ink starvation and an off-register ghost; playful presses down and the ink spreads.",
+      "version": "0.1.0",
+      "manifest": "packages/components/stamp/registry.json",
+      "files": [
+        {
+          "path": "packages/components/stamp/skins/playful.js",
+          "bytes": 433,
+          "hash": "sha256-8a8a481508e703ff35307d1d6063ef9ab26f7be71e60ee4c8c3340e68561c031"
+        },
+        {
+          "path": "packages/components/stamp/skins/quiet.js",
+          "bytes": 625,
+          "hash": "sha256-e7fd9287bee9a753e35f81440abd51ba4c2fe7b22b00a9d78840d208b4b7b9af"
+        },
+        {
+          "path": "packages/components/stamp/skins/warm.js",
+          "bytes": 3989,
+          "hash": "sha256-747a5b7a19e95ecf7f51653b36a9d450436c77e6c8582f3ac0e7c24ea2158708"
+        },
+        {
+          "path": "packages/components/stamp/stamp.core.js",
+          "bytes": 5838,
+          "hash": "sha256-46f4c92bf76bdb3fbf2b723dce5dc5a396fee5e31db5471d9be073655f3c1367"
+        },
+        {
+          "path": "packages/components/stamp/stamp.css",
+          "bytes": 5514,
+          "hash": "sha256-dcd345117ab2afa75b0fe11dc95fff478490168d87965042bb5aa505787615ab"
+        },
+        {
+          "path": "packages/components/stamp/stamp.docs.md",
+          "bytes": 3500,
+          "hash": "sha256-26ed69cf78486341838ebcf33833a87005db4af0e8c0473e36d40be66528fb23"
+        },
+        {
+          "path": "packages/components/stamp/stamp.js",
+          "bytes": 3981,
+          "hash": "sha256-a38bb4af9d2488ad83d3bbeb7d196e7b36ca847d06a9d72b2e91beee25f43dbe"
+        },
+        {
+          "path": "packages/components/stamp/stamp.prompt.md",
+          "bytes": 5676,
+          "hash": "sha256-ba33c0a2810482e44b90305d539e956b7e8e7c01c2db116d54be1b016466f1fe"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "sound",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 36864,
+        "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 14455 bytes: behaviour (stamp.js + stamp.core.js) 9.4 KB, skins quiet 0.6 KB, warm 4.0 KB, playful 0.4 KB plus warm."
+      },
+      "docs": "packages/components/stamp/stamp.docs.md",
+      "prompt": "packages/components/stamp/stamp.prompt.md",
+      "bytes": 29556,
+      "jsBytes": 14866,
+      "codeBytes": 10348,
+      "hash": "sha256-e18329e0665366ff288d949b5ff6973c16e69ea3a88b5faa1b97fc4a78326e7f"
+    },
+    {
+      "name": "stepper",
+      "type": "component",
+      "title": "Stepper",
+      "description": "A long form walked one step at a time. Without JavaScript every step is a visible fieldset with one submit. With it, Back and Next, focus on each step's legend, progress in words, and nothing typed ever lost. Quiet is numbered stations; warm is a walk on a survey map, the road found round the hills with A*; playful adds footprints.",
+      "version": "0.1.0",
+      "manifest": "packages/components/stepper/registry.json",
+      "files": [
+        {
+          "path": "packages/components/stepper/skins/map.js",
+          "bytes": 4478,
+          "hash": "sha256-3057347f1e39f64285744f6b4fac05748689eab69813b2e073fcb55c6148907d"
+        },
+        {
+          "path": "packages/components/stepper/skins/playful.js",
+          "bytes": 290,
+          "hash": "sha256-d756e23f8f56e10cb38316233166334979572d425a8233dd9e29caafc90e1ae5"
+        },
+        {
+          "path": "packages/components/stepper/skins/quiet.js",
+          "bytes": 1224,
+          "hash": "sha256-c8a5378f2a18763026922278f217ffb2bdab822f174a073be25499bc68abe0dd"
+        },
+        {
+          "path": "packages/components/stepper/skins/warm.js",
+          "bytes": 318,
+          "hash": "sha256-6a30239ae8855618a80ed27f153bc49748a2fbac9e77e884b16ab0bbdaf9818e"
+        },
+        {
+          "path": "packages/components/stepper/stepper.core.js",
+          "bytes": 5624,
+          "hash": "sha256-c578856566f3ad6a95806c46251a791eece11c62ded670d6f31c8a969a114c26"
+        },
+        {
+          "path": "packages/components/stepper/stepper.css",
+          "bytes": 3290,
+          "hash": "sha256-263fc22889dc9594bcff4bd63236a553141aba2cb7cfacea4d2a7f3d790ccb71"
+        },
+        {
+          "path": "packages/components/stepper/stepper.docs.md",
+          "bytes": 2455,
+          "hash": "sha256-b884c2123aeb0df0ba4d01820d5654cc7acbfa383f9aaa8b4e21bcc105c04dc6"
+        },
+        {
+          "path": "packages/components/stepper/stepper.js",
+          "bytes": 6039,
+          "hash": "sha256-3be9d8fec338d3988c9091aae669e0aeec5565f9130dda4ea78691bae1c79546"
+        },
+        {
+          "path": "packages/components/stepper/stepper.prompt.md",
+          "bytes": 4221,
+          "hash": "sha256-c156305795d5ffcfa46753e95ee095a1c9420cc2a92116b6f16fedb0f7b84290"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 20480,
+        "frameMs": 16.7,
+        "reason": "Behaviour about 11.7 KB (stepper.js 6.0 KB, stepper.core.js 5.6 KB with the terrain, A* and footprints); skins 1.2 KB (quiet), 4.5 KB of map shared by warm and playful (skins/map.js), 0.3 KB each for warm and playful. Total 17,973 bytes; declared at 20,480 for about 12% headroom (review W2 P12, as Wave 1 P7 asked), within decision 0009."
+      },
+      "docs": "packages/components/stepper/stepper.docs.md",
+      "prompt": "packages/components/stepper/stepper.prompt.md",
+      "bytes": 27939,
+      "jsBytes": 17973,
+      "codeBytes": 14164,
+      "hash": "sha256-846abcc44ef862a5b9c3ee3c9445b9f2d5f9e226cd9060a98ec450b1d9b26dc6"
+    },
+    {
+      "name": "storybook-spread",
+      "type": "recipe",
+      "title": "The first rain (storybook spread)",
+      "description": "One bilingual (English and Marathi), narrated spread of a Goan children's storybook: text beside the paus scene, word-by-word highlighting, always-present captions, and rain intensity driven by which words are playing, not the clock. Works without JavaScript: the story text and native audio controls and captions are always there.",
+      "version": "0.1.0",
+      "manifest": "packages/recipes/storybook-spread/registry.json",
+      "files": [
+        {
+          "path": "packages/recipes/storybook-spread/build.mjs",
+          "bytes": 2639,
+          "hash": "sha256-8356f354cce4b74fb6630f700b6e91f24f07fb15730271a8d8debfe7515fa2c7"
+        },
+        {
+          "path": "packages/recipes/storybook-spread/demo.js",
+          "bytes": 1223,
+          "hash": "sha256-b43a2609c9ff293a68423b4329955a459e95102457cd07ea3d1576989da8e701"
+        },
+        {
+          "path": "packages/recipes/storybook-spread/index.html",
+          "bytes": 5099,
+          "hash": "sha256-7411038362a83071bedf109dfac96c9a617a4cbd5d661a506029bc225e9a7b6b"
+        },
+        {
+          "path": "packages/recipes/storybook-spread/README.md",
+          "bytes": 6082,
+          "hash": "sha256-3930441d825a6dca53c0752e9947e5efac0519926d87d8a0c146129768936e0c"
+        },
+        {
+          "path": "packages/recipes/storybook-spread/recipe.css",
+          "bytes": 2795,
+          "hash": "sha256-ceb8fefeeb6c9ca3217c580fe961ed1d6b2267fd589ebde6bda6f40fae523f96"
+        },
+        {
+          "path": "packages/recipes/storybook-spread/recipe.js",
+          "bytes": 7087,
+          "hash": "sha256-7dce46e8fe6be0583be0a43be22466238c99bdf466d4ab0653f11c5cdee7f487"
+        },
+        {
+          "path": "packages/recipes/storybook-spread/recipe.prompt.md",
+          "bytes": 4229,
+          "hash": "sha256-70724256e1a687de3088caa73803e94645822adea2e21a30c1b2e631343e826c"
+        },
+        {
+          "path": "packages/recipes/storybook-spread/spread.en.vtt",
+          "bytes": 2189,
+          "hash": "sha256-0a8d2f82dc02382b76b18f856bbabfc3d2821e7c1286bb18bb6533df331cc1c4"
+        },
+        {
+          "path": "packages/recipes/storybook-spread/spread.en.wav",
+          "bytes": 1848372,
+          "hash": "sha256-4dadbfba6a070e374f408546ed952cc15874189c1090f671c6ebaf0f40f9b775"
+        },
+        {
+          "path": "packages/recipes/storybook-spread/spread.mr.vtt",
+          "bytes": 2680,
+          "hash": "sha256-cb846ad95a84e24f9ece2a35cd1735ec942f1f3cda84286a14070f22404f3ed8"
+        },
+        {
+          "path": "packages/recipes/storybook-spread/spread.mr.wav",
+          "bytes": 2346718,
+          "hash": "sha256-add811ed198c53efa51223ea3644c86d30e0d406ff3989d6c7125b48e333f17d"
+        },
+        {
+          "path": "packages/recipes/storybook-spread/story/spread.json",
+          "bytes": 13342,
+          "hash": "sha256-3e1c262cabf21adcfa92ed67c7ad2703e20ad7adcd5e60046c9172e34000e3dd"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "narration",
+        "player",
+        "scene-paus",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "docs": "packages/recipes/storybook-spread/README.md",
+      "prompt": "packages/recipes/storybook-spread/recipe.prompt.md",
+      "bytes": 4242455,
+      "jsBytes": 10949,
+      "codeBytes": 6274,
+      "hash": "sha256-1cde9e0c6ac86b50673379283328d9b6cfbf3f92d4e15de9e4eb3e04618198f7"
+    },
+    {
+      "name": "toast",
+      "type": "component",
+      "title": "Toast",
+      "description": "Short messages that never take focus. A region holds two live regions (polite, and alert for errors) and a pile of letters: the newest in front, the rest peeking above, fanning out when pointed at or focused. Timing follows WCAG 2.2.1: reading time, no timeout for errors or actions, pause on hover, focus and hidden tab. Quiet is a ruled note; warm an inland letter that unfolds; playful adds a postmark that lands.",
+      "version": "0.1.0",
+      "manifest": "packages/components/toast/registry.json",
+      "files": [
+        {
+          "path": "packages/components/toast/skins/playful.js",
+          "bytes": 3671,
+          "hash": "sha256-536f4fb1dff2f393cb420824de978af4dbeb905da85b419d2d3718bd359e1b13"
+        },
+        {
+          "path": "packages/components/toast/skins/quiet.js",
+          "bytes": 895,
+          "hash": "sha256-be7ec75fbf38ab46890cce31b9e3db27bef0e117e147099de6785d71a8dad875"
+        },
+        {
+          "path": "packages/components/toast/skins/warm.js",
+          "bytes": 2198,
+          "hash": "sha256-37ae6cf5564eee8b441b202dd43ba5ff9cee0f8e5a8323ca99afc336b9132f14"
+        },
+        {
+          "path": "packages/components/toast/toast.core.js",
+          "bytes": 6826,
+          "hash": "sha256-f6da76c1758cad6a000373d03bc5f33b6a3c5789cae6f227c2ec37273aa72f93"
+        },
+        {
+          "path": "packages/components/toast/toast.css",
+          "bytes": 11146,
+          "hash": "sha256-071d81998ed614a4414e940e1e3f8a86934887d7ecfb13233123cbf108c27194"
+        },
+        {
+          "path": "packages/components/toast/toast.docs.md",
+          "bytes": 5981,
+          "hash": "sha256-fe438c168689c427c224f6a01855d45585b70a0c16dd8ff427b562ead578e5e0"
+        },
+        {
+          "path": "packages/components/toast/toast.js",
+          "bytes": 18986,
+          "hash": "sha256-bc130032d816ef64f55008b1536167403eb95abf96b75f66268ea96af1eb6fe7"
+        },
+        {
+          "path": "packages/components/toast/toast.prompt.md",
+          "bytes": 8647,
+          "hash": "sha256-9fffb23bdd9ff2cdb71c696a9bc9d355d4152807cafac18ebc0975dd1edea0f1"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "sound",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 53248,
+        "reason": "Decisions 0007 and 0009: two elements (<sg-toast-region> and <sg-toast>) at 14 KB of behaviour each, 28 KB for the pair (WCAG 2.2.1 timing, two live regions, the pile, and room for the pile so focus is never hidden, 2.4.11), plus 8 KB for each of three skins. Today 32445 bytes: behaviour (toast.js + toast.core.js) 25.1 KB, skins quiet 0.9 KB, warm 2.1 KB, playful 3.6 KB."
+      },
+      "docs": "packages/components/toast/toast.docs.md",
+      "prompt": "packages/components/toast/toast.prompt.md",
+      "bytes": 58350,
+      "jsBytes": 32576,
+      "codeBytes": 25195,
+      "hash": "sha256-64473b82d5d673f4fb50d0738208042c87126c5dafbf442ba1ab5e9440322434"
+    },
+    {
+      "name": "toggle",
+      "type": "component",
+      "title": "Toggle",
+      "description": "A native switch (a checkbox with role=\"switch\") that submits and takes Space with or without JavaScript. Quiet is a plain track and thumb drawn by CSS; warm is the brass tower bolt from a Goan door, sliding into its keeper; playful is a clay diya that lights, its flame flickering only while lit and on screen. Forced colours bring back the system control.",
+      "version": "0.1.0",
+      "manifest": "packages/components/toggle/registry.json",
+      "files": [
+        {
+          "path": "packages/components/toggle/skins/playful.js",
+          "bytes": 1603,
+          "hash": "sha256-2970d64e66cfb0ac82395da2dc7938f3a5549fa17bbf67aa29ce8e1833597b91"
+        },
+        {
+          "path": "packages/components/toggle/skins/quiet.js",
+          "bytes": 256,
+          "hash": "sha256-3d53b5ab2e92ce859b5249efc18af0414a50f7af47f6e2d7c3b3403b73d862c5"
+        },
+        {
+          "path": "packages/components/toggle/skins/warm.js",
+          "bytes": 2166,
+          "hash": "sha256-f7d6ca0ed82c35755dfc813f3c3e3aaad3a7b23eddd4ee235b8d7c76e21bcc77"
+        },
+        {
+          "path": "packages/components/toggle/toggle.core.js",
+          "bytes": 3194,
+          "hash": "sha256-262c077d8b2a5ed30377a36142714c0942f424f368c37b448086cef671a73f84"
+        },
+        {
+          "path": "packages/components/toggle/toggle.css",
+          "bytes": 7009,
+          "hash": "sha256-aa0c82759d5767466c914bb0e983c12a5693e65c7eee40da5457df5953bf4ee3"
+        },
+        {
+          "path": "packages/components/toggle/toggle.docs.md",
+          "bytes": 1779,
+          "hash": "sha256-66cf60e1ad1763c4562b0d005bdd85dc52e6323e25b23d8bdb85e0f822628b71"
+        },
+        {
+          "path": "packages/components/toggle/toggle.js",
+          "bytes": 2133,
+          "hash": "sha256-e5e67964a598fee2166cad717b8c327d3f1e228df353410d62b7a52a723654fb"
+        },
+        {
+          "path": "packages/components/toggle/toggle.prompt.md",
+          "bytes": 4398,
+          "hash": "sha256-f1530797f2972aa19dc817ea3327f486daec2341122aae224183a95137032636"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 36864,
+        "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 9352 bytes: behaviour (toggle.js + toggle.core.js) 5.3 KB, skins quiet 0.3 KB, warm 2.2 KB, playful 1.6 KB."
+      },
+      "docs": "packages/components/toggle/toggle.docs.md",
+      "prompt": "packages/components/toggle/toggle.prompt.md",
+      "bytes": 22538,
+      "jsBytes": 9352,
+      "codeBytes": 6316,
+      "hash": "sha256-c70ca5c3481b4be55a606ed906b37c50bc974a6aa72d038616619ccede344fde"
+    },
+    {
+      "name": "tokens",
+      "type": "package",
+      "title": "Tokens",
+      "description": "Colour (OKLCH, light and dark, Susegad and Casa palettes), type for Latin, Devanagari and Kannada, space, motion, sound names and the register, as CSS custom properties with a JS mirror. Self-hosted OFL fonts split by script. Includes palette-from-photo.",
+      "version": "0.1.0",
+      "manifest": "packages/tokens/registry.json",
+      "files": [
+        {
+          "path": "packages/tokens/color.js",
+          "bytes": 7980,
+          "hash": "sha256-7d9ba1effe1e1b6ced298d238caed1b8c92ec91cfe8d30ea82998fa4ffecd80e"
+        },
+        {
+          "path": "packages/tokens/fonts.css",
+          "bytes": 6613,
+          "hash": "sha256-8b84b0eb174e62a1da4d97b15c08c7d207879a3cc1bf33facb63a24ba7691aab"
+        },
+        {
+          "path": "packages/tokens/fonts/castoro/castoro-400-700-italic-latin.woff2",
+          "bytes": 50740,
+          "hash": "sha256-46b44933b5dcdb72c1ba1829ebff6bbb33d3c36989fc35dd70004a10b4e4a1d3"
+        },
+        {
+          "path": "packages/tokens/fonts/castoro/castoro-400-700-latin.woff2",
+          "bytes": 49272,
+          "hash": "sha256-5d02e78bca2be252933edb2d7ba2e0d4e904033000fa6ec4650ce831e0b6fe33"
+        },
+        {
+          "path": "packages/tokens/fonts/castoro/OFL.txt",
+          "bytes": 4390,
+          "hash": "sha256-5b3228558cbf744e6e4050b688ee83cb2f7646cd5ec7f88553add9cb0486ab36"
+        },
+        {
+          "path": "packages/tokens/fonts/fallbacks.json",
+          "bytes": 720,
+          "hash": "sha256-cf740a61036dcb658bd91778e67dd61173be8abbc7468b6c346ca14d106d58df"
+        },
+        {
+          "path": "packages/tokens/fonts/kalam/kalam-300-devanagari.woff2",
+          "bytes": 47516,
+          "hash": "sha256-c5235e4b1fc0e5426c7f3cf7cefb00b53106f56b1f92d6812c06ce00a52b044e"
+        },
+        {
+          "path": "packages/tokens/fonts/kalam/kalam-300-latin.woff2",
+          "bytes": 16688,
+          "hash": "sha256-fd7d0a86526c4d4c93d5dc3c988c3b431e6c13efbc01a2a0859e93ef365d880e"
+        },
+        {
+          "path": "packages/tokens/fonts/kalam/kalam-400-devanagari.woff2",
+          "bytes": 52912,
+          "hash": "sha256-7fc2e1c3aa5df7cb6025c148fb0a0ba0252f71033d84928faacef8e62aa6fce9"
+        },
+        {
+          "path": "packages/tokens/fonts/kalam/kalam-400-latin.woff2",
+          "bytes": 18248,
+          "hash": "sha256-6fcdb4bd61c5d7ac683a9e0a83a7a2d7957ace931182605266563621c6eebca8"
+        },
+        {
+          "path": "packages/tokens/fonts/kalam/OFL.txt",
+          "bytes": 4373,
+          "hash": "sha256-f62ef357d3a1c3d27edd35a6e1ba350e8a8d13499797964eeadefbf0b3b15d1f"
+        },
+        {
+          "path": "packages/tokens/fonts/mukta/mukta-400-devanagari.woff2",
+          "bytes": 61024,
+          "hash": "sha256-7bed328e5483685220ad72178076591ed7388451bd88ea7615670f530af43bc4"
+        },
+        {
+          "path": "packages/tokens/fonts/mukta/mukta-400-latin.woff2",
+          "bytes": 21356,
+          "hash": "sha256-eb97bbce6b21dada6c6ea29a6463c742781931b583829359af10a9f50f9d94a9"
+        },
+        {
+          "path": "packages/tokens/fonts/mukta/mukta-500-devanagari.woff2",
+          "bytes": 67512,
+          "hash": "sha256-c8a1cbd90c1b2430929289c4a94e4f638b5b1517b11f3cd710fc7afc09fd0819"
+        },
+        {
+          "path": "packages/tokens/fonts/mukta/mukta-500-latin.woff2",
+          "bytes": 22124,
+          "hash": "sha256-a15ef406432d438acbf980519261104973840c9d5e3835e37c6be51de38b0f8a"
+        },
+        {
+          "path": "packages/tokens/fonts/mukta/mukta-600-devanagari.woff2",
+          "bytes": 65596,
+          "hash": "sha256-2ce8b63f8adae8b02f184baf49bd098bc5c3214d36a66b19ba3c3cb50167c4e9"
+        },
+        {
+          "path": "packages/tokens/fonts/mukta/mukta-600-latin.woff2",
+          "bytes": 21760,
+          "hash": "sha256-791fb17116c84b514b0e87b52cb0de0fbb42b7c7f2c9f02b10a4d9601c388869"
+        },
+        {
+          "path": "packages/tokens/fonts/mukta/OFL.txt",
+          "bytes": 4367,
+          "hash": "sha256-2ee5e8e47cd7d08f60bb9555f72b25912c9e81b13f5bc9a0551ddf943da6ca98"
+        },
+        {
+          "path": "packages/tokens/fonts/notosanskannada/noto-sans-kannada-400-600-kannada.woff2",
+          "bytes": 46904,
+          "hash": "sha256-c0839e610e518836305683b2c65e18ca07947067a02ed50f74b9dd72211695c1"
+        },
+        {
+          "path": "packages/tokens/fonts/notosanskannada/OFL.txt",
+          "bytes": 4383,
+          "hash": "sha256-9d49a4e56df9b36403b139f48bf07fd87cc5e716cb3203c54b04b674adb16238"
+        },
+        {
+          "path": "packages/tokens/fonts/README.md",
+          "bytes": 4376,
+          "hash": "sha256-821054829c9681ae06ba0da910ffb6943d3703b7155354c93eeaa3364ebd92f9"
+        },
+        {
+          "path": "packages/tokens/fonts/tirodevanagarimarathi/OFL.txt",
+          "bytes": 4387,
+          "hash": "sha256-2ed6051706542c5d6d96480318152b17900bb6d4dbadb11d7d5d6464d8b3e0dd"
+        },
+        {
+          "path": "packages/tokens/fonts/tirodevanagarimarathi/tiro-devanagari-marathi-400-devanagari.woff2",
+          "bytes": 59828,
+          "hash": "sha256-3c9235cda127020c8c4177a230f4d9c633d3d6c4ee7240557304d693bfd033a7"
+        },
+        {
+          "path": "packages/tokens/fonts/tirokannada/OFL.txt",
+          "bytes": 4387,
+          "hash": "sha256-2ed6051706542c5d6d96480318152b17900bb6d4dbadb11d7d5d6464d8b3e0dd"
+        },
+        {
+          "path": "packages/tokens/fonts/tirokannada/tiro-kannada-400-kannada.woff2",
+          "bytes": 46176,
+          "hash": "sha256-7a560d49cd549abb9a46ac850fef58c0c1dcf675389a2ae342465c3d1b4647a7"
+        },
+        {
+          "path": "packages/tokens/tokens.css",
+          "bytes": 21532,
+          "hash": "sha256-1cec2430fb0a74edea836e4fb6a9df6411f6858a49c2de972a279052c9d96778"
+        },
+        {
+          "path": "packages/tokens/tokens.js",
+          "bytes": 23438,
+          "hash": "sha256-1729b1406510775194ca29c64c53fe40c4b3fb5fc447ca8a10198b2034ca6cc3"
+        }
+      ],
+      "dependencies": [],
+      "registers": [],
+      "bytes": 738602,
+      "jsBytes": 31418,
+      "codeBytes": 21818,
+      "hash": "sha256-f41dcc836cf4f38f2aff44505d71f2b611169164cc3e7b7a45f2ae699d7f4b52"
+    }
+  ]
+}

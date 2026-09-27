@@ -1,0 +1,33 @@
+{
+  "name": "folio-diagram",
+  "type": "component",
+  "title": "Diagram",
+  "description": "A diagram from a few lines of text (Guest -> Portal: books): boxes, arrows, flows with things moving along them, groups, and step-through. Drawn at build time as a static SVG with its text alternative from the same source, so it reads and prints without JavaScript. Loops back go round the side that meets no other box, each label sits beside its own line, and where one cannot, every connection carries its step number instead. <sg-diagram> adds the draw-in, the moving flows, step-through by buttons and keys, register changes, and turns a wide diagram downward on a narrow screen before its words would shrink below about 12 px. Quiet is a plain pen; warm and playful ink it by hand.",
+  "version": "0.1.0",
+  "files": [
+    "diagram.js",
+    "diagram.core.js",
+    "diagram.grammar.js",
+    "render.js",
+    "diagram.ink.js",
+    "diagram.css",
+    "diagram.prompt.md",
+    "diagram.docs.md"
+  ],
+  "dependencies": [
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "diagram.prompt.md",
+  "docs": "diagram.docs.md",
+  "budget": {
+    "jsBytes": 51200,
+    "reason": "Decisions 0009 and 0010, with the core over its allowance. The element (diagram.js 12.3 KB) is within 12 KB to 16 KB. The pure core is diagram.grammar.js (5.0 KB: the line grammar, which Folio's Markdown also uses to check a diagram unbuilt) and diagram.core.js (20.7 KB: layered layout, loop routing, label placement and the text alternative), 25.6 KB together, over 0010's 12 KB because the layout is the diagram; it runs in Node at build time and is tested. render.js (7.7 KB) writes the SVG as a string, pure, and diagram.ink.js (3.5 KB) is the hand-inked line, one skin helper. Declared at 50 KB: today about 49 KB. A document built from Markdown carries all of them, since the element redraws in the page."
+  }
+}

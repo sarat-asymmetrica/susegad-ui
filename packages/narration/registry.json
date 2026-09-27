@@ -1,0 +1,35 @@
+{
+  "name": "narration",
+  "type": "package",
+  "title": "Narration",
+  "description": "Recorded or synthesised speech plus a WebVTT timing track that drives captions and word-by-word highlighting. A pure timing core (phrase splitting, a WAV duration reader, script-aware word weights with a real Devanagari and Kannada akshara segmenter, a WebVTT writer and parser), a provider interface with a Sarvam bulbul adapter and an offline silent-WAV stub, a fixture cache keyed on the request so tests and demos never call the network, the <sg-narration> highlight driver, and an offline speechSynthesis fallback.",
+  "version": "0.1.0",
+  "files": [
+    "index.js",
+    "phrase.js",
+    "wav.js",
+    "weights.js",
+    "timing.js",
+    "vtt.js",
+    "cache.js",
+    "reader.js",
+    "narration.css",
+    "synth.mjs",
+    "providers/index.js",
+    "providers/stub.js",
+    "providers/sarvam.js",
+    "fixtures/README.md",
+    "narration.prompt.md",
+    "narration.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core"
+  ],
+  "prompt": "narration.prompt.md",
+  "docs": "narration.docs.md",
+  "budget": {
+    "jsBytes": 45056,
+    "reason": "A package budget in the shape of engine and tokens (decision 0001), not a component's 12/8 KB split: the pure timing core, three providers, the fixture cache and the DOM highlight driver together, today 40355 bytes, with headroom for the Sarvam adapter to grow as the API does."
+  }
+}

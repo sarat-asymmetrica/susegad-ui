@@ -1,0 +1,12 @@
+{
+  "name": "saving-footer",
+  "type": "recipe",
+  "title": "Saving footer",
+  "description": "A form that saves itself when the person pauses typing, with a footer that says Saving, Saved at 14:32, or why it could not save. Offline, it shows the connection with fireflies and saves by itself once the connection is back. Driven by a pure, seeded fake transport you swap for your own.",
+  "version": "0.1.0",
+  "files": ["recipe.js", "footer.core.js", "transport.js", "recipe.css", "index.html", "README.md", "recipe.prompt.md"],
+  "dependencies": ["loader", "badge", "toast", "connecting", "core-component", "core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "recipe.prompt.md",
+  "docs": "README.md"
+}

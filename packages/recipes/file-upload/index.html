@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  // ?register=quiet|warm|playful, ?theme=light|dark and ?palette=… set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute(`data-${k}`, v);
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>File upload</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="../../components/file-drop/file-drop.css">
+<link rel="stylesheet" href="../../components/progress/progress.css">
+<link rel="stylesheet" href="../../components/field-note/field-note.css">
+<link rel="stylesheet" href="../../components/toast/toast.css">
+<link rel="stylesheet" href="../../components/stamp/stamp.css">
+<link rel="stylesheet" href="../../components/empty/empty.css">
+<link rel="stylesheet" href="./recipe.css">
+<style>
+  body { margin: 0; background: var(--sg-paper, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem)/var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 44rem; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font: 600 var(--sg-step-3, 1.6rem)/1.15 var(--sg-font-display, inherit); margin: 0 0 6px; }
+  h2 { font: 600 var(--sg-step-1, 1.15rem)/1.3 var(--sg-font-display, inherit); margin: 44px 0 10px; }
+  h3 { font: 600 var(--sg-step-0, 1rem)/1.3 var(--sg-font-body, inherit); margin: 0 0 4px; }
+  p { margin: 0 0 14px; max-width: var(--sg-measure, 62ch); }
+  .lede, .note { color: var(--sg-text-soft, inherit); }
+  .sheet { background: var(--sg-surface-raised, Canvas); border: 1px solid var(--sg-rule, currentColor); border-radius: var(--sg-radius-2, 8px); padding: 18px; }
+  .demo-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 14px; }
+  .demo-actions button { font: inherit; padding: 0.4rem 0.9rem; border-radius: var(--sg-radius-2, 6px); border: 1px solid currentColor; background: none; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--sg-focus, Highlight); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>File upload</h1>
+  <p class="lede">Send photos and PDFs for a booking. Each file has its own progress bar, and a bar reaches the end only when the server confirms it has the file. In the warm register, that is when the kolam closes.</p>
+
+  <h2 id="h-try">Try it</h2>
+  <p class="note">Choose your own files, or use the samples. Nothing leaves this page: a pretend server reports the bytes, at the pace a real connection might.</p>
+  <div class="demo-actions">
+    <button type="button" id="samples">Add four sample files</button>
+  </div>
+  <section class="sheet" aria-labelledby="h-try"><div id="live"></div></section>
+
+  <h2 id="h-mid">Part way through</h2>
+  <section class="sheet" aria-labelledby="h-mid"><div id="mid"></div></section>
+
+  <h2 id="h-trouble">A file too large, and one that didn't arrive</h2>
+  <section class="sheet" aria-labelledby="h-trouble"><div id="trouble"></div></section>
+
+  <h2 id="h-done">Everything received</h2>
+  <section class="sheet" aria-labelledby="h-done"><div id="done"></div></section>
+</main>
+<sg-toast-region></sg-toast-region>
+<script type="module">
+  import { mountFileUpload } from './recipe.js';
+  import { createUploadTransport } from './transport.js';
+
+  const MB = 1024 * 1024;
+  const SAMPLES = [
+    { name: 'veranda-in-the-rain.jpg', size: 3.1 * MB, type: 'image/jpeg' },
+    { name: 'room-rates-2026.pdf', size: 0.9 * MB, type: 'application/pdf' },
+    { name: 'front-door.png', size: 1.7 * MB, type: 'image/png' },
+    { name: 'drone-flyover.jpg', size: 14.2 * MB, type: 'image/jpeg' },
+  ];
+  // The rate PDF drops half way on its first try, so the retry path is part of the demo.
+  const flaky = (f, attempt) => (f.name === 'room-rates-2026.pdf' && attempt === 1 ? 0.55 : null);
+
+  const live = mountFileUpload(document.getElementById('live'), { transport: createUploadTransport({ seed: 7, fails: flaky }) });
+  document.getElementById('samples').addEventListener('click', () => live.add(SAMPLES));
+
+  // Three moments, frozen from the same seeded transport so every run looks the same.
+  const still = (id, files, t, fails) => {
+    const u = mountFileUpload(document.getElementById(id), { transport: createUploadTransport({ seed: 7, fails }), toasts: null });
+    u.session.add(files, 0);
+    u.freezeAt(t);
+  };
+  still('mid', SAMPLES.slice(0, 3), 2600);
+  still('trouble', [SAMPLES[1], SAMPLES[3]], 60_000, flaky);
+  still('done', SAMPLES.slice(0, 3), 60_000);
+
+  // For the tools: ready once the fonts are in and every sg-* element is defined.
+  await document.fonts.ready;
+  await Promise.all([...new Set([...document.querySelectorAll('*')].map(e => e.localName).filter(n => n.startsWith('sg-')))].map(t => customElements.whenDefined(t)));
+  window.__ready = true;
+</script>
+</body>
+</html>

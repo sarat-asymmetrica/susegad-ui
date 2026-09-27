@@ -1,0 +1,24 @@
+/* Form. The status line under the submit button says each state in words;
+   warm and playful draw a Loader and a Stamp beside it (their own CSS, loader.css
+   and stamp.css, must be linked too). Without JavaScript none of this appears:
+   the form validates and submits on its own. Tokens only. */
+
+sg-form { display: block; }
+sg-form[hidden] { display: none; }
+
+.sg-form-status { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sg-space-2) var(--sg-space-3); min-block-size: 1.5rem; }
+.sg-form-words { margin: 0; font: 400 0.9375rem/1.45 var(--sg-font-body); color: var(--sg-text-soft); max-inline-size: 40rem; }
+.sg-form-words:empty { display: none; }
+sg-form:is([data-state="invalid"], [data-state="failed"]) .sg-form-words { color: var(--sg-danger); }
+sg-form[data-state="sent"]:not([data-tone="info"], [data-tone="neutral"]) .sg-form-words { color: var(--sg-success); }
+.sg-form-art:empty { display: none; }
+
+/* in warm and playful the Loader carries these words while sending, so the line steps out of sight (it is still read).
+   After sending the words stay: the Stamp is the moment, the words are the information. */
+.sg-form-status:has(sg-stamp) { flex-direction: column; align-items: flex-start; }
+sg-form:is([data-skin="warm"], [data-skin="playful"])[data-state="sending"] .sg-form-words {
+  position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+
+/* a submit button that is busy keeps its focus and says so by looking it */
+sg-form :is(button, input[type="submit"])[aria-disabled="true"] { cursor: progress; opacity: 0.7; }

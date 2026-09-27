@@ -1,0 +1,34 @@
+{
+  "name": "select",
+  "type": "component",
+  "title": "Select",
+  "description": "The browser's own select, kept native: its keyboard, its screen-reader role and its place in the form are untouched. Where customizable select is supported, CSS draws the button, the caret and the picker: a hairline box and list in quiet; in warm the select is written on the paper, over the field's pencil rule, with a caret of two pencil strokes and ink over the rule under a chosen value; in playful a stamped box with an accent caret, and stamped chips.",
+  "version": "0.1.0",
+  "files": [
+    "select.js",
+    "select.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "select.prompt.md",
+    "select.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "tokens",
+    "field"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "select.prompt.md",
+  "docs": "select.docs.md",
+  "budget": {
+    "jsBytes": 6144,
+    "frameMs": 16.7,
+    "reason": "Behaviour (select.js) about 2.3 KB; skins about 0.2 KB (quiet), 1.6 KB (warm) and 0.6 KB (playful). Most of the look is CSS on the native element. The warm skin draws with field/rule.js (about 3.1 KB, counted in field)."
+  }
+}

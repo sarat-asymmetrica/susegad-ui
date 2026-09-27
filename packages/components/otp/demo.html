@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One-time code</title>
+<link rel="stylesheet" href="./otp.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 60rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); }
+  form { display: grid; gap: var(--sg-space-3); justify-items: start; }
+  .send {
+    font: var(--sg-weight-medium) var(--sg-step--1) / 1 var(--sg-font-body);
+    background: var(--sg-accent); color: var(--sg-on-accent); border: 0; border-radius: var(--sg-radius-2);
+    min-height: 2.75rem; padding: 0 1.2em; cursor: pointer;
+  }
+  .send:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+  output { display: block; font: var(--sg-step--1) / 1.4 var(--sg-font-body); color: var(--sg-text-soft); min-height: 1.4em; }
+  .error { margin: 0; font-size: var(--sg-step--1); color: var(--sg-danger); }
+  .grid { display: grid; gap: var(--sg-space-5); grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); }
+</style>
+</head>
+<body>
+<main>
+  <h1>One-time code</h1>
+  <p class="lede">One real input under a row of boxes, so typing, paste, password managers and the phone's code-from-messages suggestion all work, with or without JavaScript.</p>
+
+  <h2>Confirm your phone number</h2>
+  <form id="verify" action="./demo.html" method="get">
+    <sg-otp>
+      <label for="code">Enter the 6-digit code we sent to 98220 12345</label>
+      <input id="code" name="code" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required>
+    </sg-otp>
+    <button class="send" type="submit">Confirm</button>
+    <output id="sent" for="code" aria-live="polite"></output>
+  </form>
+
+  <div class="grid">
+    <section>
+      <h2>Filled in</h2>
+      <sg-otp seed="filled">
+        <label for="filled">Code from your email</label>
+        <input id="filled" name="filled" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" value="482913">
+      </sg-otp>
+    </section>
+    <section>
+      <h2>Four digits</h2>
+      <sg-otp length="4" seed="pin">
+        <label for="pin">Enter the 4-digit code from the gate</label>
+        <input id="pin" name="pin" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]{4}" value="27">
+      </sg-otp>
+    </section>
+    <section>
+      <h2>Not accepted</h2>
+      <sg-otp seed="wrong">
+        <label for="wrong">Enter the 6-digit code we sent to 98220 12345</label>
+        <input id="wrong" name="wrong" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" value="118204" aria-invalid="true" aria-describedby="wrong-note">
+        <p class="error" id="wrong-note">That code doesn't match. Check the latest message from us, or ask for a new code.</p>
+      </sg-otp>
+    </section>
+    <section>
+      <h2>Waiting for a code</h2>
+      <sg-otp>
+        <label for="later">Enter the 6-digit code we sent to 98220 12345</label>
+        <input id="later" name="later" autocomplete="one-time-code" inputmode="numeric" maxlength="6" disabled>
+      </sg-otp>
+      <p class="note">The boxes open once the message is sent.</p>
+    </section>
+  </div>
+</main>
+<script type="module">
+  import './otp.js';
+  const form = document.getElementById('verify'), out = document.getElementById('sent');
+  form.addEventListener('submit', e => { e.preventDefault(); out.textContent = `Would confirm code ${new FormData(form).get('code')}.`; });
+</script>
+</body>
+</html>

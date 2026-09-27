@@ -1,0 +1,544 @@
+{
+  "name": "casa-photo",
+  "files": [
+    "photos/facade-800.webp",
+    "photos/gate-800.webp",
+    "photos/nameplate-800.webp",
+    "photos/doors-800.webp",
+    "photos/balcao-800.webp",
+    "photos/wing-800.webp",
+    "photos/carport-800.webp",
+    "photos/stair-800.webp",
+    "photos/pool-800.webp",
+    "photos/detail-800.webp"
+  ],
+  "samples": 165280,
+  "swatches": [
+    {
+      "hex": "#BCAE8B",
+      "oklch": "oklch(75.31% 0.0497 88.82)",
+      "weight": 0.0906
+    },
+    {
+      "hex": "#4A3F32",
+      "oklch": "oklch(37.49% 0.027 70.39)",
+      "weight": 0.0853
+    },
+    {
+      "hex": "#73654C",
+      "oklch": "oklch(51.37% 0.042 81.65)",
+      "weight": 0.0758
+    },
+    {
+      "hex": "#1D160E",
+      "oklch": "oklch(20.62% 0.0194 73.17)",
+      "weight": 0.0727
+    },
+    {
+      "hex": "#0C0603",
+      "oklch": "oklch(13% 0.0163 53.98)",
+      "weight": 0.0714
+    },
+    {
+      "hex": "#D3D5CA",
+      "oklch": "oklch(86.92% 0.0161 115.39)",
+      "weight": 0.0708
+    },
+    {
+      "hex": "#27301E",
+      "oklch": "oklch(29.57% 0.0353 130.44)",
+      "weight": 0.0642
+    },
+    {
+      "hex": "#7C7E78",
+      "oklch": "oklch(58.86% 0.0082 121.02)",
+      "weight": 0.0636
+    },
+    {
+      "hex": "#809CA5",
+      "oklch": "oklch(67.44% 0.0336 218.21)",
+      "weight": 0.0605
+    },
+    {
+      "hex": "#E6F1F7",
+      "oklch": "oklch(95.24% 0.0141 229.22)",
+      "weight": 0.0584
+    },
+    {
+      "hex": "#51512E",
+      "oklch": "oklch(42.65% 0.0537 108.87)",
+      "weight": 0.058
+    },
+    {
+      "hex": "#B58E58",
+      "oklch": "oklch(67.13% 0.0858 73.98)",
+      "weight": 0.0508
+    },
+    {
+      "hex": "#4F5D63",
+      "oklch": "oklch(46.96% 0.0201 222)",
+      "weight": 0.0482
+    },
+    {
+      "hex": "#8BBDCE",
+      "oklch": "oklch(76.91% 0.058 220.87)",
+      "weight": 0.0478
+    },
+    {
+      "hex": "#3D2515",
+      "oklch": "oklch(29.05% 0.046 52.69)",
+      "weight": 0.046
+    },
+    {
+      "hex": "#8B864A",
+      "oklch": "oklch(60.99% 0.0809 104.07)",
+      "weight": 0.036
+    }
+  ],
+  "pigments": [
+    {
+      "name": "pigment-1",
+      "family": "ochre",
+      "l": 0.6648,
+      "c": 0.1269,
+      "h": 67.1,
+      "weight": 0.0219,
+      "css": "oklch(66.48% 0.1269 67.1)",
+      "hex": "#C78330"
+    },
+    {
+      "name": "pigment-2",
+      "family": "blue",
+      "l": 0.7855,
+      "c": 0.1091,
+      "h": 213.11,
+      "weight": 0.0229,
+      "css": "oklch(78.55% 0.1091 213.11)",
+      "hex": "#56CBE3"
+    },
+    {
+      "name": "pigment-3",
+      "family": "olive",
+      "l": 0.6398,
+      "c": 0.1152,
+      "h": 115.32,
+      "weight": 0.0155,
+      "css": "oklch(63.98% 0.1152 115.32)",
+      "hex": "#8A943A"
+    },
+    {
+      "name": "pigment-4",
+      "family": "terracotta",
+      "l": 0.4908,
+      "c": 0.1143,
+      "h": 25.06,
+      "weight": 0.0034,
+      "css": "oklch(49.08% 0.1143 25.06)",
+      "hex": "#97433E"
+    }
+  ],
+  "sources": {
+    "danger": "pigment-4",
+    "warning": "pigment-1",
+    "success": "pigment-3",
+    "info": "pigment-2"
+  },
+  "light": {
+    "paper": {
+      "l": 0.95,
+      "c": 0.016,
+      "h": 88.82
+    },
+    "paper-raised": {
+      "l": 0.977,
+      "c": 0.008,
+      "h": 88.82
+    },
+    "paper-deep": {
+      "l": 0.914,
+      "c": 0.022,
+      "h": 88.82
+    },
+    "rule": {
+      "l": 0.877,
+      "c": 0.025,
+      "h": 88.82
+    },
+    "ink": {
+      "l": 0.2614,
+      "c": 0.0249,
+      "h": 86.49
+    },
+    "ink-soft": {
+      "l": 0.4409,
+      "c": 0.0286,
+      "h": 86.49
+    },
+    "ink-faint": {
+      "l": 0.5026,
+      "c": 0.0249,
+      "h": 86.49
+    },
+    "rule-strong": {
+      "l": 0.5968,
+      "c": 0.0249,
+      "h": 86.49
+    },
+    "accent": {
+      "l": 0.549,
+      "c": 0.1214,
+      "h": 67.1
+    },
+    "on-accent": {
+      "l": 0.977,
+      "c": 0.008,
+      "h": 88.82
+    },
+    "accent-text": {
+      "l": 0.5092,
+      "c": 0.1126,
+      "h": 67.1
+    },
+    "danger": {
+      "l": 0.516,
+      "c": 0.1143,
+      "h": 25.06
+    },
+    "warning": {
+      "l": 0.5092,
+      "c": 0.1126,
+      "h": 67.1
+    },
+    "success": {
+      "l": 0.4973,
+      "c": 0.1132,
+      "h": 115.32
+    },
+    "info": {
+      "l": 0.4946,
+      "c": 0.0867,
+      "h": 213.11
+    },
+    "focus": {
+      "l": 0.5797,
+      "c": 0.1016,
+      "h": 213.11
+    },
+    "selection": {
+      "l": 0.88,
+      "c": 0.06,
+      "h": 67.1
+    }
+  },
+  "dark": {
+    "paper": {
+      "l": 0.205,
+      "c": 0.0155,
+      "h": 86.49
+    },
+    "paper-raised": {
+      "l": 0.25,
+      "c": 0.0155,
+      "h": 86.49
+    },
+    "paper-deep": {
+      "l": 0.17,
+      "c": 0.0155,
+      "h": 86.49
+    },
+    "rule": {
+      "l": 0.33,
+      "c": 0.0155,
+      "h": 86.49
+    },
+    "ink": {
+      "l": 0.9033,
+      "c": 0.02,
+      "h": 88.82
+    },
+    "ink-soft": {
+      "l": 0.722,
+      "c": 0.022,
+      "h": 88.82
+    },
+    "ink-faint": {
+      "l": 0.6314,
+      "c": 0.025,
+      "h": 88.82
+    },
+    "rule-strong": {
+      "l": 0.5352,
+      "c": 0.025,
+      "h": 88.82
+    },
+    "accent": {
+      "l": 0.6159,
+      "c": 0.1269,
+      "h": 67.1
+    },
+    "on-accent": {
+      "l": 0.205,
+      "c": 0.0155,
+      "h": 86.49
+    },
+    "accent-text": {
+      "l": 0.6387,
+      "c": 0.1269,
+      "h": 67.1
+    },
+    "danger": {
+      "l": 0.6447,
+      "c": 0.1143,
+      "h": 25.06
+    },
+    "warning": {
+      "l": 0.6387,
+      "c": 0.1269,
+      "h": 67.1
+    },
+    "success": {
+      "l": 0.6258,
+      "c": 0.1152,
+      "h": 115.32
+    },
+    "info": {
+      "l": 0.6215,
+      "c": 0.1089,
+      "h": 213.11
+    },
+    "focus": {
+      "l": 0.6,
+      "c": 0.1051,
+      "h": 213.11
+    },
+    "selection": {
+      "l": 0.3522,
+      "c": 0.05,
+      "h": 67.1
+    }
+  },
+  "contrast": {
+    "light": {
+      "ink": {
+        "paper": 13.38,
+        "paper-raised": 14.49,
+        "paper-deep": 12
+      },
+      "ink-soft": {
+        "paper": 6.69,
+        "paper-raised": 7.24,
+        "paper-deep": 6
+      },
+      "ink-faint": {
+        "paper": 5.13,
+        "paper-raised": 5.55,
+        "paper-deep": 4.6
+      },
+      "accent-text": {
+        "paper": 5.13,
+        "paper-raised": 5.55,
+        "paper-deep": 4.6
+      },
+      "success": {
+        "paper": 5.13,
+        "paper-raised": 5.55,
+        "paper-deep": 4.6
+      },
+      "warning": {
+        "paper": 5.13,
+        "paper-raised": 5.55,
+        "paper-deep": 4.6
+      },
+      "danger": {
+        "paper": 5.13,
+        "paper-raised": 5.55,
+        "paper-deep": 4.6
+      },
+      "info": {
+        "paper": 5.13,
+        "paper-raised": 5.55,
+        "paper-deep": 4.6
+      },
+      "on-accent": {
+        "accent": 4.7
+      },
+      "rule-strong": {
+        "paper": 3.46,
+        "paper-raised": 3.74,
+        "paper-deep": 3.1
+      },
+      "focus": {
+        "paper": 3.57,
+        "paper-raised": 3.86,
+        "paper-deep": 3.2
+      },
+      "selection": {
+        "ink": 10.69,
+        "ink-soft": 5.35
+      },
+      "scrim": {
+        "ink over #000000": 11.57,
+        "ink over #FFFFFF": 14.59,
+        "ink-soft over #000000": 5.78,
+        "ink-soft over #FFFFFF": 7.29
+      }
+    },
+    "dark": {
+      "ink": {
+        "paper": 13.44,
+        "paper-raised": 12,
+        "paper-deep": 14.34
+      },
+      "ink-soft": {
+        "paper": 7.28,
+        "paper-raised": 6.5,
+        "paper-deep": 7.77
+      },
+      "ink-faint": {
+        "paper": 5.15,
+        "paper-raised": 4.6,
+        "paper-deep": 5.5
+      },
+      "accent-text": {
+        "paper": 5.15,
+        "paper-raised": 4.6,
+        "paper-deep": 5.5
+      },
+      "success": {
+        "paper": 5.15,
+        "paper-raised": 4.6,
+        "paper-deep": 5.5
+      },
+      "warning": {
+        "paper": 5.15,
+        "paper-raised": 4.6,
+        "paper-deep": 5.5
+      },
+      "danger": {
+        "paper": 5.15,
+        "paper-raised": 4.6,
+        "paper-deep": 5.5
+      },
+      "info": {
+        "paper": 5.15,
+        "paper-raised": 4.6,
+        "paper-deep": 5.5
+      },
+      "on-accent": {
+        "accent": 4.7
+      },
+      "rule-strong": {
+        "paper": 3.47,
+        "paper-raised": 3.1,
+        "paper-deep": 3.7
+      },
+      "focus": {
+        "paper": 4.72,
+        "paper-raised": 4.22,
+        "paper-deep": 5.04
+      },
+      "selection": {
+        "ink": 8.49,
+        "ink-soft": 4.6
+      },
+      "scrim": {
+        "ink over #000000": 13.72,
+        "ink over #FFFFFF": 10.15,
+        "ink-soft over #000000": 7.44,
+        "ink-soft over #FFFFFF": 5.5
+      }
+    }
+  },
+  "worst": {
+    "ratio": 4.6,
+    "theme": "light",
+    "role": "ink-faint",
+    "ground": "paper-deep"
+  },
+  "comparison": [
+    {
+      "role": "paper",
+      "reference": "#F4F0E6",
+      "extracted": "#F3EEE3",
+      "as": "paper",
+      "deltaE": 0.6
+    },
+    {
+      "role": "paper-raised",
+      "reference": "#FBF9F4",
+      "extracted": "#FAF7F1",
+      "as": "paper-raised",
+      "deltaE": 0.6
+    },
+    {
+      "role": "paper-deep",
+      "reference": "#EAE4D6",
+      "extracted": "#E8E2D3",
+      "as": "paper-deep",
+      "deltaE": 0.6
+    },
+    {
+      "role": "rule",
+      "reference": "#DED8C8",
+      "extracted": "#DDD6C4",
+      "as": "rule",
+      "deltaE": 0.7
+    },
+    {
+      "role": "ink",
+      "reference": "#2E2419",
+      "extracted": "#2A2416",
+      "as": "ink",
+      "deltaE": 1
+    },
+    {
+      "role": "ink-soft",
+      "reference": "#6A5F4E",
+      "extracted": "#5A5241",
+      "as": "ink-soft",
+      "deltaE": 5
+    },
+    {
+      "role": "ink-faint",
+      "reference": "#6D6456",
+      "extracted": "#6A6354",
+      "as": "ink-faint",
+      "deltaE": 0.6
+    },
+    {
+      "role": "teak",
+      "reference": "#7E5F32",
+      "extracted": "#905700",
+      "as": "accent-text",
+      "deltaE": 4.1
+    },
+    {
+      "role": "tile",
+      "reference": "#8F4C20",
+      "extracted": "#905700",
+      "as": "warning",
+      "deltaE": 3.7
+    },
+    {
+      "role": "pool",
+      "reference": "#166E82",
+      "extracted": "#006E7F",
+      "as": "info",
+      "deltaE": 0.9
+    },
+    {
+      "role": "moss",
+      "reference": "#4C5A42",
+      "extracted": "#616900",
+      "as": "success",
+      "deltaE": 8.8
+    },
+    {
+      "role": "laterite",
+      "reference": "#A4452C",
+      "extracted": "#9F4A45",
+      "as": "danger",
+      "deltaE": 2.9
+    }
+  ]
+}

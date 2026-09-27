@@ -1,0 +1,2 @@
+@import '../../tokens/tokens.css';
+.hello { color: var(--sg-kumkum); }

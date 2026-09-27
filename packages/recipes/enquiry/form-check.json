@@ -1,0 +1,12 @@
+{
+  "about": "An enquiry as a guest would write it, with a phone number written with a hyphen. Read by tools/form-check.mjs.",
+  "values": {
+    "name": "Anjali Kamat",
+    "contact": "98220-12345",
+    "from": "Pune",
+    "dates": "A week in late November",
+    "group": "4",
+    "occasion": "A family holiday",
+    "message": "Is the pool open in November?"
+  }
+}

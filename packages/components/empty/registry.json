@@ -1,0 +1,17 @@
+{
+  "name": "empty",
+  "type": "component",
+  "title": "Empty state",
+  "description": "What a place shows before there is anything in it: your heading, sentence and action, named as a region. Quiet adds a hairline drawing; warm sets a scene (Paus, rain on a Goan window) beside the words, drifting slowly; playful lets you play with it. The scene loads only when a warm or playful page needs it.",
+  "version": "0.1.0",
+  "files": ["empty.js", "empty.core.js", "empty.css", "skins/quiet.js", "skins/warm.js", "skins/playful.js", "empty.prompt.md", "empty.docs.md"],
+  "dependencies": ["core-component", "core", "scene-paus", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "empty.prompt.md",
+  "docs": "empty.docs.md",
+  "budget": {
+    "jsBytes": 10240,
+    "frameMs": 16.7,
+    "reason": "Behaviour about 5.3 KB (empty.js 2.2 KB, empty.core.js 3.1 KB); skins about 0.9 KB (quiet), 2.4 KB (warm: the scene loads only once the empty state is on screen, and sits after the words in the document) and 0.3 KB (playful, which reuses warm). Declared with about 10% headroom. The scene it shows is its own registry item with its own budget."
+  }
+}

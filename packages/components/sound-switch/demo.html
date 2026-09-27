@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sound switch</title>
+<link rel="stylesheet" href="./sound-switch.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 44rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .lede { margin: 0 0 var(--sg-space-5); color: var(--sg-text-soft); max-width: var(--sg-measure); }
+  fieldset { border: var(--sg-hairline, 1px) solid var(--sg-rule); border-radius: var(--sg-radius-3); background: var(--sg-surface-raised); padding: var(--sg-space-3) var(--sg-space-4) var(--sg-space-4); margin: 0 0 var(--sg-space-4); display: grid; gap: var(--sg-space-3); }
+  legend { float: left; width: 100%; font-weight: 500; padding: 0; margin-bottom: var(--sg-space-1); }
+  #log { display: block; margin-top: var(--sg-space-3); font: var(--sg-step--1) / 1.5 var(--sg-font-mono); color: var(--sg-text-soft); min-height: 1.5em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Sound switch</h1>
+  <p class="lede">The one control that turns Susegad's sound switch on or off, site-wide. Turning it on plays its own confirmation, because clicking it is the user's gesture.</p>
+
+  <fieldset>
+    <legend>Site sound</legend>
+    <sg-sound-switch>
+      <label><input type="checkbox" role="switch"> Sound</label>
+      <small class="sg-sound-switch-note">Turning sound on needs JavaScript.</small>
+    </sg-sound-switch>
+    <sg-sound-switch id="second">
+      <label><input type="checkbox" role="switch"> Also here (a second control, same switch)</label>
+      <small class="sg-sound-switch-note">Turning sound on needs JavaScript.</small>
+    </sg-sound-switch>
+  </fieldset>
+
+  <fieldset>
+    <legend>In Marathi and Kannada</legend>
+    <!-- These Indian-language strings are drafts awaiting a native speaker's check. -->
+    <sg-sound-switch lang="mr">
+      <label><input type="checkbox" role="switch"> आवाज</label>
+      <small class="sg-sound-switch-note">आवाज सुरू करण्यासाठी JavaScript लागते.</small>
+    </sg-sound-switch>
+    <sg-sound-switch lang="kn">
+      <label><input type="checkbox" role="switch"> ಧ್ವನಿ</label>
+      <small class="sg-sound-switch-note">ಧ್ವನಿ ಆನ್ ಮಾಡಲು JavaScript ಬೇಕು.</small>
+    </sg-sound-switch>
+  </fieldset>
+
+  <output id="log" aria-live="polite"></output>
+</main>
+<script type="module">
+  import './sound-switch.js';
+  import { onSoundChange } from '/packages/sound/index.js';
+  onSoundChange(on => { document.getElementById('log').textContent = `sound switch: ${on ? 'on' : 'off'}`; });
+</script>
+</body>
+</html>

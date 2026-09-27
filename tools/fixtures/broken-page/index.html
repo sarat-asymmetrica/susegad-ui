@@ -1,0 +1,23 @@
+<!doctype html>
+<!-- Deliberately inaccessible. tools/axe.mjs must report every problem here and exit non-zero.
+     Expected: html-has-lang, image-alt, button-name, color-contrast, label. -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Broken fixture</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; background: #fff; margin: 16px; }
+  .faint { color: #d8d8d8; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Booking</h1>
+  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'/%3E" width="40" height="40">
+  <p class="faint">This grey text is far too faint to read.</p>
+  <input type="text">
+  <button></button>
+</main>
+</body>
+</html>

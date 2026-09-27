@@ -1,0 +1,185 @@
+/* <sg-select>. The select stays the browser's own. These rules are the quiet
+   look and the no-JavaScript look: a hairline box, a plain caret, a plain list.
+   Where customizable select is supported, the picker is drawn too; the warm and
+   playful looks key off data-skin, which only a mounted skin sets. Tokens only. */
+
+sg-select[hidden] { display: none; }
+sg-select {
+  --sg-select-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10'%3E%3Cpath d='M1.5 1.5 8 8l6.5-6.5' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  display: grid;
+  gap: var(--sg-space-1, 0.25rem);
+  font: var(--sg-step-0, 1rem) / 1.4 var(--sg-font-body, system-ui, sans-serif);
+  color: var(--sg-text, CanvasText);
+  max-inline-size: 100%;
+  position: relative;
+}
+sg-select label { font-weight: var(--sg-weight-medium, 500); }
+
+sg-select select {
+  font: inherit;
+  color: inherit;
+  inline-size: 100%;
+  min-block-size: 2.75rem; /* a 44px target */
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--sg-rule-strong, currentColor);
+  border-radius: var(--sg-radius-1, 4px);
+  background-color: var(--sg-surface-sunk, Canvas); /* a writing surface is a well you write into, like every form field */
+  accent-color: var(--sg-ink, CanvasText);
+}
+sg-select select:focus-visible {
+  outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight);
+  outline-offset: var(--sg-focus-offset, 2px);
+}
+sg-select select:disabled { opacity: 0.55; cursor: not-allowed; }
+sg-select select:is(:user-invalid, [aria-invalid="true"]) { border-color: var(--sg-danger, #b3261e); }
+
+/* Customizable select: the same native element, with a drawn button, caret and list. */
+@supports (appearance: base-select) {
+  sg-select select,
+  sg-select select::picker(select) { appearance: base-select; }
+
+  sg-select select {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+  }
+  sg-select select::picker-icon {
+    content: '';
+    inline-size: 0.8rem;
+    block-size: 0.5rem;
+    margin-inline-start: auto;
+    background: currentColor;
+    mask: var(--sg-select-caret) center / contain no-repeat;
+    transition: rotate var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out);
+  }
+  sg-select select:open::picker-icon { rotate: 180deg; }
+
+  sg-select select::picker(select) {
+    margin-block-start: 0.25rem;
+    padding: 0.25rem;
+    border: 1px solid var(--sg-rule-strong, currentColor);
+    border-radius: var(--sg-radius-1, 4px);
+    background: var(--sg-surface-raised, Canvas);
+    color: var(--sg-text, CanvasText);
+    box-shadow: var(--sg-lift, none);
+    max-block-size: min(20rem, 60vh);
+  }
+  sg-select option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-block-size: 2.5rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--sg-radius-1, 3px);
+    cursor: pointer;
+  }
+  sg-select option:is(:hover, :focus-visible) {
+    background: color-mix(in oklab, var(--sg-ink, CanvasText) 9%, transparent);
+    outline: none;
+  }
+  sg-select option:focus-visible { box-shadow: inset 0 0 0 2px var(--sg-focus, Highlight); }
+  sg-select option:checked { font-weight: var(--sg-weight-medium, 500); }
+  sg-select option::checkmark {
+    content: '';
+    order: 1;
+    margin-inline-start: auto;
+    inline-size: 0.9rem;
+    block-size: 0.7rem;
+    background: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 11'%3E%3Cpath d='M1.5 5.8 5.2 9.3 12.5 1.7' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+  sg-select option:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* warm: a caret of two uneven pencil strokes that cross at the point, and a list drawn in ink */
+  sg-select[data-skin='warm'] {
+    --sg-select-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10'%3E%3Cg fill='none' stroke='black' stroke-linecap='round'%3E%3Cpath d='M1.3 1.6C3.2 3.5 5.4 6.3 8.6 9' stroke-width='1.9'/%3E%3Cpath d='M7.1 8.7C9.3 6.2 11.9 3.6 14.8 1.1' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  sg-select[data-skin='warm'] select::picker-icon { inline-size: 0.95rem; block-size: 0.6rem; }
+  sg-select[data-skin='warm'] select::picker(select) {
+    border: 1.5px solid var(--sg-ink, CanvasText);
+    border-radius: 7px 4px 8px 5px / 5px 8px 4px 7px;
+    padding: 0.35rem;
+  }
+  sg-select[data-skin='warm'] option:checked {
+    background-image: linear-gradient(transparent 84%, color-mix(in oklab, var(--sg-accent, CanvasText) 45%, transparent) 84% 90%, transparent 90%);
+  }
+
+  /* playful: a caret in accent ink with a thick, round nib */
+  sg-select[data-skin='playful'] {
+    --sg-select-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10'%3E%3Cpath d='M2 2.2 8 7.8l6-5.6' fill='none' stroke='black' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+  sg-select[data-skin='playful'] select::picker-icon { inline-size: 1rem; block-size: 0.65rem; color: var(--sg-accent-text, CanvasText); }
+
+  /* playful: the options are stamped chips */
+  /* only while open: a display here would otherwise keep every closed picker on screen */
+  sg-select[data-skin='playful'] select:open::picker(select) { display: flex; }
+  sg-select[data-skin='playful'] select::picker(select) {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.5rem;
+    max-inline-size: min(24rem, 92vw);
+  }
+  sg-select[data-skin='playful'] option {
+    flex: none;
+    min-block-size: 2.4rem;
+    padding: 0.3rem 0.8rem;
+    border: 1.5px solid var(--sg-accent, CanvasText);
+    border-radius: 3px;
+    font-family: var(--sg-font-hand, inherit);
+    rotate: -1.2deg;
+  }
+  sg-select[data-skin='playful'] option:nth-child(even) { rotate: 1.1deg; }
+  sg-select[data-skin='playful'] option:checked {
+    background: var(--sg-accent, CanvasText);
+    color: var(--sg-on-accent, Canvas);
+  }
+  sg-select[data-skin='playful'] option::checkmark { display: none; }
+
+  /* the list opens: nothing in quiet, a short unfurl in warm, a small bounce in playful */
+  sg-select[data-skin='warm'] select::picker(select),
+  sg-select[data-skin='playful'] select::picker(select) {
+    transition: opacity var(--sg-dur-quick, 140ms) ease-out, translate var(--sg-dur-calm, 280ms) var(--sg-ease-out, ease-out), display var(--sg-dur-calm, 280ms) allow-discrete, overlay var(--sg-dur-calm, 280ms) allow-discrete;
+  }
+  sg-select[data-skin='playful'] select::picker(select) { transition-timing-function: ease-out, var(--sg-ease-spring, ease-out); }
+  @starting-style {
+    sg-select[data-skin='warm'] select:open::picker(select),
+    sg-select[data-skin='playful'] select:open::picker(select) { opacity: 0; translate: 0 -6px; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  sg-select select::picker-icon,
+  sg-select select::picker(select) { transition: none !important; }
+}
+
+/* warm: written on the paper, like the field; skins/warm.js draws the pencil rule
+   and the ink (field/rule.js), and the CSS box steps aside but keeps its width */
+sg-select[data-skin='warm'] select {
+  border-color: transparent;
+  background-color: transparent;
+  border-radius: 0;
+}
+sg-select[data-skin='warm'] { --sg-rule-pencil: var(--sg-text, CanvasText); --sg-rule-ink: var(--sg-text, CanvasText); }
+sg-select[data-skin='warm']:has(select:hover) { --sg-rule-pencil: var(--sg-text, CanvasText); }
+sg-select[data-skin='warm']:has(select:is(:user-invalid, [aria-invalid="true"])) { --sg-rule-pencil: var(--sg-danger, CanvasText); --sg-rule-ink: var(--sg-danger, CanvasText); }
+sg-select[data-skin='warm']:has(select:disabled) .sg-rule { opacity: 0.55; }
+sg-select .sg-rule { position: absolute; pointer-events: none; overflow: visible; }
+sg-select .sg-rule__pencil path { fill: var(--sg-rule-pencil); }
+sg-select .sg-rule__ink { fill: var(--sg-rule-ink); }
+
+/* playful: a stamped box, the edge in accent ink with an off-register ghost, like the Wave 1 stamp */
+sg-select[data-skin='playful'] select {
+  border: 1.5px solid var(--sg-accent-text, CanvasText);
+  border-radius: 5px 3px 6px 4px / 4px 6px 3px 5px;
+  box-shadow: 2px 2px 0 color-mix(in oklch, var(--sg-accent-text, CanvasText) 28%, transparent);
+}
+sg-select[data-skin='playful'] select:is(:user-invalid, [aria-invalid="true"]) {
+  border-color: var(--sg-danger, CanvasText);
+  box-shadow: 2px 2px 0 color-mix(in oklch, var(--sg-danger, CanvasText) 28%, transparent);
+}
+
+@media (forced-colors: active) {
+  sg-select .sg-rule { display: none; }
+  sg-select select { border: 1px solid CanvasText !important; box-shadow: none !important; }
+}

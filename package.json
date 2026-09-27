@@ -1,0 +1,30 @@
+{
+  "name": "susegad-ui",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Beautiful and comfortable interfaces and documents: three registers, drawn in code, copied into your project.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test \"packages/**/*.test.js\" \"tools/**/*.test.mjs\" \"registry/**/*.test.mjs\"",
+    "serve": "node tools/serve.mjs",
+    "check": "node tools/checks.mjs",
+    "folio": "node packages/folio/bin/folio.mjs",
+    "docs:build": "node apps/docs/build.mjs",
+    "deploy": "node apps/docs/build.mjs && wrangler deploy"
+  },
+  "devDependencies": {
+    "axe-core": "^4.13.0",
+    "esbuild": "0.28.2",
+    "playwright": "^1.63.0",
+    "subset-font": "2.9.0",
+    "wrangler": "4.141.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sarat-asymmetrica/susegad-ui.git"
+  }
+}

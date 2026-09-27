@@ -1,0 +1,13 @@
+// The docs site on Cloudflare Workers, as static assets only (no Worker code).
+// Build first: `node apps/docs/build.mjs`, then `npx wrangler deploy`.
+// Every path in out/docs is relative, so the site works at the root.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "susegad-ui",
+  "compatibility_date": "2026-09-27",
+  "assets": {
+    "directory": "./out/docs",
+    // A missing page gets the Rafe 404: "Take your time".
+    "not_found_handling": "404-page"
+  }
+}

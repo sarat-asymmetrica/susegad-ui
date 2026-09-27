@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stamp</title>
+<link rel="stylesheet" href="./stamp.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 60rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  .lede { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--sg-space-4); align-items: center; }
+  .card { background: var(--sg-surface-raised); border: var(--sg-hairline) solid var(--sg-rule); border-radius: var(--sg-radius-3); box-shadow: var(--sg-lift); padding: var(--sg-space-4); display: grid; gap: var(--sg-space-3); max-width: 26rem; }
+  .card p { margin: 0; }
+  .card .price { font: 400 var(--sg-step-2) / 1.2 var(--sg-font-display); }
+  button {
+    font: var(--sg-weight-medium) var(--sg-step--1) / 1 var(--sg-font-body);
+    background: var(--sg-accent); color: var(--sg-on-accent); border: 0; border-radius: var(--sg-radius-2);
+    padding: 0.7em 1em; cursor: pointer;
+  }
+  button.secondary { background: transparent; color: var(--sg-accent-text); box-shadow: inset 0 0 0 var(--sg-hairline) var(--sg-rule-strong); }
+  button:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+  .note { font-size: var(--sg-step--1); color: var(--sg-text-soft); max-width: var(--sg-measure); }
+  .log { font-size: var(--sg-step--1); color: var(--sg-text-soft); min-height: 1.6em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Stamp</h1>
+  <p class="lede">A mark that something real has happened: held, received, paid. The words are text a screen reader reads once, when the stamp lands.</p>
+
+  <h2>Stamped when the work is done</h2>
+  <div class="card">
+    <p>Casa Exemplo, 12 to 15 October, 3 nights</p>
+    <p class="price">₹25,500</p>
+    <div class="row">
+      <button type="button" id="hold">Hold these dates</button>
+      <button type="button" id="release" class="secondary">Release</button>
+    </div>
+    <sg-stamp id="held" tone="success" seed="casa-12-15-oct" pending>
+      <p role="status"><strong>Held</strong> <span>12 to 15 Oct, for 20 minutes</span></p>
+    </sg-stamp>
+    <p class="log" id="log" aria-hidden="true"></p>
+  </div>
+
+  <h2>Tones</h2>
+  <div class="row">
+    <sg-stamp tone="accent" seed="paid"><p role="status"><strong>Paid</strong> <span>₹25,500 on 24 Sep</span></p></sg-stamp>
+    <sg-stamp tone="success" seed="received"><p role="status"><strong>Received</strong> <span>3 files</span></p></sg-stamp>
+    <sg-stamp tone="warning" seed="unconfirmed"><p role="status"><strong>Unconfirmed</strong> <span>Awaiting the owner</span></p></sg-stamp>
+    <sg-stamp tone="danger" seed="declined"><p role="status"><strong>Declined</strong> <span>Card not charged</span></p></sg-stamp>
+    <sg-stamp tone="info" seed="draft"><p role="status"><strong>Draft</strong> <span>Not sent yet</span></p></sg-stamp>
+    <sg-stamp tone="neutral" seed="void"><p role="status"><strong>Void</strong></p></sg-stamp>
+  </div>
+
+  <h2>In Marathi, Kannada and Konkani</h2>
+  <!-- These Indian-language strings are drafts awaiting a native speaker's check. -->
+  <div class="row">
+    <sg-stamp tone="success" seed="mr-received" lang="mr"><p role="status"><strong>मिळाले</strong> <span>३ फायली, २४ सप्टेंबर</span></p></sg-stamp>
+    <sg-stamp tone="accent" seed="kn-held" lang="kn"><p role="status"><strong>ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ</strong> <span>೨೦ ನಿಮಿಷಗಳ ಕಾಲ</span></p></sg-stamp>
+    <sg-stamp tone="info" seed="kok-latn" lang="kok-Latn"><p role="status"><strong>Pavlem</strong> <span>24 Setembr</span></p></sg-stamp>
+    <sg-stamp tone="warning" seed="mixed"><p role="status"><strong>Held</strong> <span lang="kn">ಅಕ್ಟೋಬರ್ ೧೨ರಿಂದ ೧೫ರವರೆಗೆ</span></p></sg-stamp>
+  </div>
+  <p class="note">Capitals and letter spacing apply to Latin lines only. Spacing out Devanagari or Kannada would break the headline and the joined letters.</p>
+
+  <h2>A long line wraps inside the frame</h2>
+  <sg-stamp tone="accent" seed="long"><p role="status"><strong>Confirmed</strong> <span>Booking VQ-2026-1012 for Sarat and family, 12 to 15 October</span></p></sg-stamp>
+</main>
+<script type="module">
+  import './stamp.js';
+  const held = document.getElementById('held'), log = document.getElementById('log');
+  document.getElementById('hold').addEventListener('click', () => held.stamp());
+  document.getElementById('release').addEventListener('click', () => { held.lift(); log.textContent = ''; });
+  held.addEventListener('sg-stamp', e => { log.textContent = `sg-stamp fired, tone ${e.detail.tone}`; });
+  // ?stamped shows the held stamp already landed (for the matrix and axe).
+  if (new URLSearchParams(location.search).has('stamped')) held.stamp();
+</script>
+</body>
+</html>

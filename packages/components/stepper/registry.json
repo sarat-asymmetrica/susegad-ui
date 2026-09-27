@@ -1,0 +1,17 @@
+{
+  "name": "stepper",
+  "type": "component",
+  "title": "Stepper",
+  "description": "A long form walked one step at a time. Without JavaScript every step is a visible fieldset with one submit. With it, Back and Next, focus on each step's legend, progress in words, and nothing typed ever lost. Quiet is numbered stations; warm is a walk on a survey map, the road found round the hills with A*; playful adds footprints.",
+  "version": "0.1.0",
+  "files": ["stepper.js", "stepper.core.js", "stepper.css", "skins/map.js", "skins/quiet.js", "skins/warm.js", "skins/playful.js", "stepper.prompt.md", "stepper.docs.md"],
+  "dependencies": ["core-component", "core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "stepper.prompt.md",
+  "docs": "stepper.docs.md",
+  "budget": {
+    "jsBytes": 20480,
+    "frameMs": 16.7,
+    "reason": "Behaviour about 11.7 KB (stepper.js 6.0 KB, stepper.core.js 5.6 KB with the terrain, A* and footprints); skins 1.2 KB (quiet), 4.5 KB of map shared by warm and playful (skins/map.js), 0.3 KB each for warm and playful. Total 17,973 bytes; declared at 20,480 for about 12% headroom (review W2 P12, as Wave 1 P7 asked), within decision 0009."
+  }
+}

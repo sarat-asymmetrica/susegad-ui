@@ -1,0 +1,132 @@
+/* <sg-stamp>. Without JavaScript this is the quiet look: a ruled rectangle
+   with the words in it. The warm and playful skins add a carved double frame,
+   a tilt, an off-register ghost and ink texture; the words stay DOM text. */
+
+sg-stamp {
+  --sg-stamp-ink: var(--sg-accent-text);
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  color: var(--sg-stamp-ink);
+  width: fit-content; /* never stretch to a grid or flex track: a stamp is the size of its words */
+  max-width: 100%;
+}
+sg-stamp[tone="success"] { --sg-stamp-ink: var(--sg-success); }
+sg-stamp[tone="warning"] { --sg-stamp-ink: var(--sg-warning); }
+sg-stamp[tone="danger"] { --sg-stamp-ink: var(--sg-danger); }
+sg-stamp[tone="info"] { --sg-stamp-ink: var(--sg-info); }
+sg-stamp[tone="neutral"] { --sg-stamp-ink: var(--sg-text-soft); }
+
+/* Our display rule outranks the browser's own [hidden]; keep hidden meaning hidden. */
+sg-stamp[hidden] { display: none; }
+
+/* Not stamped yet: keep the space, show nothing, say nothing. */
+sg-stamp[pending] { visibility: hidden; }
+
+sg-stamp > :is([role="status"], .sg-stamp-words) {
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  gap: 0.2em;
+  padding: 0.55em 1.1em 0.6em;
+  border: var(--sg-stroke, 1.5px) solid currentColor;
+  border-radius: var(--sg-radius-1, 2px);
+  text-align: center;
+  font: var(--sg-weight-medium, 500) var(--sg-step--1, 0.85rem) / var(--sg-leading-snug, 1.3) var(--sg-font-body, sans-serif);
+  overflow-wrap: anywhere;
+}
+sg-stamp > :is([role="status"], .sg-stamp-words) > strong {
+  font: var(--sg-weight-bold, 600) var(--sg-step-1, 1.2rem) / var(--sg-leading-tight, 1.15) var(--sg-font-body, sans-serif);
+}
+
+/* Capitals and tracking suit Latin only. Spaced-out Devanagari or Kannada
+   breaks the headline and the conjuncts, so the core tags each line's script. */
+sg-stamp [data-sg-script="latin"] {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding-inline-start: 0.1em; /* tracking adds space after the last letter; balance it */
+}
+sg-stamp > :is([role="status"], .sg-stamp-words) > strong[data-sg-script="latin"] { letter-spacing: 0.2em; padding-inline-start: 0.2em; }
+
+/* ── warm and playful: the carved block ───────────────────────────────── */
+
+sg-stamp:is([data-skin="warm"], [data-skin="playful"]) {
+  transform: rotate(var(--sg-stamp-rotate, 0deg));
+  transform-origin: 50% 55%;
+  padding: 0.35em;
+}
+sg-stamp:is([data-skin="warm"], [data-skin="playful"]) > :is([role="status"], .sg-stamp-words) {
+  border-color: transparent;
+  padding: 0.7em 1.4em 0.75em;
+}
+sg-stamp:is([data-skin="warm"], [data-skin="playful"]) > :is([role="status"], .sg-stamp-words) > strong {
+  font: var(--sg-weight-bold, 600) var(--sg-step-3, 1.6rem) / 1.1 var(--sg-font-display, serif);
+  font-weight: 700;
+}
+/* The Tiro faces ship one weight, and they are already strong; never fake a bold.
+   Their strokes are also far thinner than bold Castoro's, and ink starvation
+   ate whole letters, so Indic words keep the ghost but not the texture. */
+sg-stamp:is([data-skin="warm"], [data-skin="playful"]) > :is([role="status"], .sg-stamp-words) > strong:not([data-sg-script="latin"]) {
+  font-weight: 400;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+/* The texture and the ghost sit on the frame and the big word only; the
+   detail line stays crisp, so small text keeps its full contrast. */
+sg-stamp .sg-stamp-frame,
+sg-stamp:is([data-skin="warm"], [data-skin="playful"]) > :is([role="status"], .sg-stamp-words) > strong {
+  -webkit-mask-image: var(--sg-stamp-mask, none);
+  mask-image: var(--sg-stamp-mask, none);
+  -webkit-mask-size: var(--sg-stamp-mask-w) var(--sg-stamp-mask-h);
+  mask-size: var(--sg-stamp-mask-w) var(--sg-stamp-mask-h);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  /* the ghost follows the ink token, so it stays the stamp's colour even if a builder recolours the words */
+  filter: drop-shadow(var(--sg-stamp-ghost-x, 2px) var(--sg-stamp-ghost-y, 1.4px) 0 color-mix(in oklch, var(--sg-stamp-ink) 26%, transparent));
+}
+sg-stamp:is([data-skin="warm"], [data-skin="playful"]) > :is([role="status"], .sg-stamp-words) > strong {
+  -webkit-mask-position: var(--sg-stamp-word-x, 0) var(--sg-stamp-word-y, 0);
+  mask-position: var(--sg-stamp-word-x, 0) var(--sg-stamp-word-y, 0);
+}
+sg-stamp .sg-stamp-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 3px solid currentColor;
+  border-radius: 3px;
+  -webkit-mask-position: 0 0;
+  mask-position: 0 0;
+}
+sg-stamp .sg-stamp-frame::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1.2px solid currentColor;
+  border-radius: 1px;
+}
+
+/* playful: ink spreads into the paper as the block lifts */
+sg-stamp .sg-stamp-spread {
+  position: absolute;
+  inset: -14%;
+  pointer-events: none;
+  opacity: 0;
+  border-radius: 40%;
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--sg-stamp-ink) 28%, transparent), transparent);
+}
+sg-stamp[data-skin="playful"] .sg-stamp-frame { border-width: 3.5px; }
+
+/* playful: a small block-print diamond on each side, cut into the same block */
+sg-stamp .sg-stamp-motif {
+  position: absolute;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin-top: -4.5px;
+  background: currentColor;
+  transform: rotate(45deg);
+  box-shadow: 0 0 0 2px var(--sg-surface-raised, #fff), 0 0 0 3.2px currentColor;
+}
+sg-stamp .sg-stamp-motif:first-of-type { left: -6px; }
+sg-stamp .sg-stamp-motif:last-of-type { right: -6px; }

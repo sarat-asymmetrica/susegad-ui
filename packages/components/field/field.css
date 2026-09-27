@@ -1,0 +1,103 @@
+/* Field: a label over a ruled line. These rules are the quiet look and what a
+   page without JavaScript shows, since they style the native label and
+   control directly. The skins lay ink on the rule: over the control but
+   below the words for a line (a band as tall as the ink), and between the
+   ruled lines of a textarea. Tokens only. */
+
+sg-field {
+  --field-line: 1.75rem;           /* one ruled line: the textarea's line height and its rule spacing */
+  --field-rule: var(--sg-rule-strong);
+  --field-ink: var(--sg-text);
+  position: relative;
+  display: grid;
+  gap: var(--sg-space-1);
+  min-inline-size: 0;
+}
+sg-field[hidden] { display: none; }
+/* the label matches every other form part's (select, combobox): the page's size and face, medium weight */
+sg-field > label { font-weight: var(--sg-weight-medium, 500); line-height: 1.35; color: var(--sg-text); }
+
+sg-field :is(input, textarea) {
+  position: relative; z-index: 1;
+  box-sizing: border-box;
+  inline-size: 100%;
+  margin: 0;
+  font: 400 1.0625rem/1.5 var(--sg-font-body);
+  color: var(--sg-text);
+  /* a writing surface is a well you write into: the same sunk ground as select and combobox */
+  background-color: var(--sg-surface-sunk);
+  border: 0;
+  border-block-end: var(--sg-hairline) solid var(--field-rule);
+  border-radius: var(--sg-radius-1) var(--sg-radius-1) 0 0;
+  padding: 0.5rem 0.5rem 0.4rem;
+  min-block-size: 2.75rem; /* a 44 px target, like every other form part */
+  caret-color: var(--sg-accent-text);
+}
+sg-field :is(input, textarea)::placeholder { color: var(--sg-text-faint); opacity: 1; }
+sg-field :is(input, textarea):hover { --field-rule: var(--sg-text-soft); }
+sg-field :is(input, textarea):focus-visible {
+  outline: var(--sg-focus-width) solid var(--sg-focus);
+  outline-offset: var(--sg-focus-offset);
+  border-block-end-color: var(--sg-text);
+}
+/* an error: the rule turns to the danger colour and thickens; the field note says why */
+sg-field :is(input, textarea)[aria-invalid="true"] {
+  --field-rule: var(--sg-danger);
+  border-block-end-width: 2px;
+  --field-ink: var(--sg-danger);
+}
+sg-field:has([aria-invalid="true"]) { --field-ink: var(--sg-danger); }
+
+/* a textarea is ruled like a notebook page; the rules scroll with the words */
+sg-field textarea {
+  line-height: var(--field-line);
+  padding-block: 0 0.25rem;
+  min-block-size: calc(var(--field-line) * 4 + 0.25rem);
+  resize: vertical;
+  background-image: linear-gradient(transparent calc(var(--field-line) - 1px), var(--sg-rule) calc(var(--field-line) - 1px));
+  background-size: 100% var(--field-line);
+  background-attachment: local;
+  border-block-end: 0;
+  box-shadow: inset 0 -1px 0 var(--field-rule);
+}
+sg-field textarea[aria-invalid="true"] { box-shadow: inset 0 -2px 0 var(--sg-danger); }
+
+/* the character count, near the end of a maxlength */
+.sg-field-count { justify-self: end; font: 400 0.8125rem/1.3 var(--sg-font-body); color: var(--sg-text-soft); min-block-size: 1.1em; }
+.sg-field-count[data-over] { color: var(--sg-danger); }
+.sg-field-sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ── the drawing (warm and playful skins) ─────────────────────────── */
+/* The skin draws the rule in pencil, so the CSS rule steps aside (its width
+   stays, so nothing shifts). Every mark is aria-hidden; the control is unchanged. */
+sg-field:is([data-skin="warm"], [data-skin="playful"]) {
+  --field-pencil: var(--sg-text);
+  --field-nib: var(--sg-text);
+}
+sg-field[data-skin="playful"] { --field-pencil: var(--sg-accent-text); --field-nib: var(--sg-accent-text); --field-ink: var(--sg-accent); }
+sg-field:is([data-skin="warm"], [data-skin="playful"]):has(:is(input, textarea):hover) { --field-pencil: var(--sg-text); }
+sg-field:is([data-skin="warm"], [data-skin="playful"]):has([aria-invalid="true"]) { --field-pencil: var(--sg-danger); --field-nib: var(--sg-danger); --field-ink: var(--sg-danger); }
+sg-field:is([data-skin="warm"], [data-skin="playful"]) input { border-block-end-color: transparent; }
+/* warm writes on the paper itself, like a form filled in by hand: no well, only the pencil rule */
+sg-field[data-skin="warm"] :is(input, textarea) { background-color: transparent; }
+sg-field:is([data-skin="warm"], [data-skin="playful"]) textarea { box-shadow: none; padding-inline-start: 2rem; }
+sg-field[data-skin="playful"] textarea { padding-inline-start: 2.25rem; }
+
+.sg-field-ink {
+  position: absolute; z-index: 2; pointer-events: none; overflow: visible;
+  color: color-mix(in oklch, var(--field-ink) 88%, transparent);
+}
+.sg-field-ink path { fill: currentColor; }
+.sg-field-pencil path { fill: var(--field-pencil); }
+.sg-field-pencil .sg-field-margin { fill: var(--sg-laterite); }
+.sg-field-focus { fill: var(--field-nib); }
+.sg-field-mirror {
+  position: absolute; inset-block-start: 0; inset-inline-start: 0; visibility: hidden; pointer-events: none;
+  white-space: pre-wrap; overflow-wrap: break-word; word-break: normal; block-size: auto;
+}
+
+/* ── forced colours: the system's own rule, and no drawing ─────────── */
+@media (forced-colors: active) {
+  .sg-field-ink { display: none; }
+  sg-field :is(input, textarea) { border-block-end: 1px solid CanvasText !important; box-shadow: none !important; }
+}

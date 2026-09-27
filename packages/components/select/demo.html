@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Select</title>
+<link rel="stylesheet" href="./select.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem)/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 36rem; margin: 0 auto; padding: 2rem 1rem 3rem; }
+  h1 { margin: 0 0 0.25rem; font: 600 1.6rem/1.2 var(--sg-font-display, inherit); }
+  .lede { margin: 0 0 1.5rem; color: var(--sg-text-soft, inherit); }
+  form { display: grid; gap: 1.5rem; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 30rem) { .row { grid-template-columns: 1fr; } }
+  .hint { margin: 0; font-size: 0.875rem; color: var(--sg-text-soft, inherit); }
+  :focus-visible { outline: 2px solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  .error { margin: 0; font-size: 0.875rem; color: var(--sg-danger, CanvasText); }
+  h2 { margin: 2.5rem 0 1rem; font: 600 1.15rem/1.3 var(--sg-font-display, inherit); }
+  .states { display: grid; gap: 1.5rem; }
+  output { display: block; font-size: 0.875rem; color: var(--sg-text-soft, inherit); min-block-size: 1.3em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Select</h1>
+  <p class="lede">The browser's own select, kept native: it works with the keyboard, a screen reader and no JavaScript, and it submits with the form.</p>
+  <form id="stay" action="#" method="get">
+    <div class="row">
+      <sg-select>
+        <label for="guests">Guests</label>
+        <select id="guests" name="guests">
+          <option>1</option><option selected>2</option><option>3</option><option>4</option>
+        </select>
+      </sg-select>
+      <sg-select>
+        <label for="room">Room</label>
+        <select id="room" name="room" required>
+          <option value="">Choose a room</option>
+          <option value="balcao">Balcão, with the veranda</option>
+          <option value="sotano">Sotão, under the roof</option>
+          <option value="quintal">Quintal, by the well</option>
+        </select>
+      </sg-select>
+    </div>
+    <sg-select>
+      <label for="arrive">How you are arriving</label>
+      <select id="arrive" name="arrive">
+        <optgroup label="By road">
+          <option>From Panaji, by car</option>
+          <option>From Margao, by taxi</option>
+        </optgroup>
+        <optgroup label="By rail">
+          <option>Konkan Railway to Thivim</option>
+          <option>Konkan Railway to Madgaon</option>
+        </optgroup>
+      </select>
+    </sg-select>
+    <sg-select>
+      <label for="lang">Letters from us in</label>
+      <select id="lang" name="lang">
+        <option value="en">English</option>
+        <option value="kok-deva" lang="kok">कोंकणी (देवनागरी)</option>
+        <option value="kok-latn" lang="kok-Latn">Konknni (Romi)</option>
+        <option value="mr" lang="mr">मराठी</option>
+        <option value="kn" lang="kn">ಕನ್ನಡ</option>
+      </select>
+    </sg-select>
+    <sg-select>
+      <label for="season">Season</label>
+      <select id="season" name="season" disabled aria-describedby="season-hint">
+        <option>Monsoon, June to September</option>
+      </select>
+      <p class="hint" id="season-hint">Set by your dates.</p>
+    </sg-select>
+    <button type="submit" class="demo-button">Check the stay</button>
+    <output id="sent" for="guests room arrive lang" aria-live="polite"></output>
+  </form>
+
+  <h2>Chosen, and wrong</h2>
+  <div class="states">
+    <sg-select>
+      <label for="meal">Dinner on the first night</label>
+      <select id="meal" name="meal">
+        <option value="">No dinner</option>
+        <option value="xacuti" selected>Chicken xacuti with poee</option>
+        <option value="fish">Fish curry rice</option>
+      </select>
+    </sg-select>
+    <sg-select>
+      <label for="room2">Room for the second night</label>
+      <select id="room2" name="room2" required aria-invalid="true" aria-describedby="room2-error">
+        <option value="">Choose a room</option>
+        <option value="balcao">Balcão, with the veranda</option>
+        <option value="sotano">Sotão, under the roof</option>
+      </select>
+      <p class="error" id="room2-error">Choose a room for the second night.</p>
+    </sg-select>
+  </div>
+</main>
+<script type="module">
+  import './select.js';
+  const form = document.getElementById('stay'), sent = document.getElementById('sent');
+  // The demo stays on the page: show what the form would send.
+  form.addEventListener('submit', e => { e.preventDefault(); sent.textContent = `Would send: ${new URLSearchParams(new FormData(form))}`; });
+</script>
+</body>
+</html>

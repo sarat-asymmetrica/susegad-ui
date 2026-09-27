@@ -1,0 +1,106 @@
+/* <sg-check>. Without JavaScript, and in the quiet register, this is the
+   native checkbox as a hairline box with a crisp tick, drawn with CSS only.
+   Warm and playful lay an aria-hidden drawing over the same box; the native
+   input stays underneath and takes every click and key. In forced-colours
+   mode the native checkbox comes back, in the system's colours. */
+
+sg-check[hidden] { display: none; } /* our display rule would otherwise beat the browser's [hidden] */
+
+sg-check {
+  display: block;
+  color: var(--sg-text, CanvasText);
+  font: var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif);
+}
+
+/* The box sits in column one of the label, level with the first line of the words. */
+sg-check label:has(> input[type="checkbox"]),
+sg-check:has(> input[type="checkbox"]) {
+  display: inline-grid;
+  grid-template-columns: 1.15em minmax(0, 1fr);
+  column-gap: 0.6em;
+  align-items: start;
+  cursor: pointer;
+}
+sg-check input[type="checkbox"],
+sg-check .sg-check-art { grid-area: 1 / 1; }
+
+sg-check input[type="checkbox"] {
+  appearance: none;
+  box-sizing: border-box;
+  display: grid;
+  place-content: center;
+  width: 1.15em;
+  height: 1.15em;
+  margin: calc((1lh - 1.15em) / 2) 0 0;
+  font: inherit;
+  border: var(--sg-stroke, 1.5px) solid var(--sg-rule-strong, CanvasText);
+  border-radius: var(--sg-radius-1, 2px);
+  background: var(--sg-surface-raised, Canvas);
+  cursor: pointer;
+}
+/* The tick and the dash: one shape, clipped. Token ink, so it follows the palette and theme. */
+sg-check input[type="checkbox"]::before {
+  content: "";
+  width: 0.72em;
+  height: 0.72em;
+  background: var(--sg-accent-text, CanvasText);
+  clip-path: polygon(14% 52%, 0 66%, 38% 100%, 100% 22%, 86% 8%, 38% 72%);
+  transform: scale(0);
+  transition: transform var(--sg-dur-quick, 120ms) var(--sg-ease-out, ease-out);
+}
+sg-check input[type="checkbox"]:checked::before { transform: scale(1); }
+sg-check input[type="checkbox"]:indeterminate::before { clip-path: inset(38% 4% 38% 4%); transform: scale(1); }
+sg-check input[type="checkbox"]:is(:checked, :indeterminate) { border-color: var(--sg-accent-text, CanvasText); }
+
+sg-check input[type="checkbox"]:focus-visible {
+  outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight);
+  outline-offset: var(--sg-focus-offset, 2px);
+}
+/* After someone has touched it and it is still wrong (a required box left clear). */
+sg-check input[type="checkbox"]:user-invalid { border-color: var(--sg-danger, CanvasText); }
+
+sg-check:has(input:disabled) { color: var(--sg-text-soft, GrayText); }
+sg-check:has(input:disabled) label,
+sg-check input[type="checkbox"]:disabled { cursor: not-allowed; }
+sg-check input[type="checkbox"]:disabled { border-style: dashed; background: var(--sg-surface-sunk, Canvas); }
+
+/* ── warm and playful: the drawing replaces the look, not the control ─── */
+
+sg-check .sg-check-art {
+  width: 1.15em;
+  height: 1.15em;
+  margin-top: calc((1lh - 1.15em) / 2);
+  overflow: visible;
+  pointer-events: none;
+}
+sg-check:is([data-skin="warm"], [data-skin="playful"]) input[type="checkbox"] {
+  border-color: transparent;
+  background: transparent;
+}
+sg-check:is([data-skin="warm"], [data-skin="playful"]) input[type="checkbox"]::before { visibility: hidden; }
+
+/* warm: pencil, a sketched box whose corners cross and a tick half as heavy again as it was */
+sg-check .sg-check-box { fill: none; stroke: var(--sg-text-soft, CanvasText); stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; }
+sg-check .sg-check-mark { fill: none; stroke: var(--sg-accent-text, CanvasText); stroke-width: 3.45; stroke-linecap: round; stroke-linejoin: round; }
+sg-check input:user-invalid ~ .sg-check-art .sg-check-box { stroke: var(--sg-danger, CanvasText); }
+sg-check input:disabled ~ .sg-check-art .sg-check-box { stroke-dasharray: 1.6 1.6; }
+
+/* playful: a stamp block, a heavy edge and a fine inner rule, and a stamped tick */
+sg-check[data-skin="playful"] .sg-check-box { stroke: var(--sg-accent-text, CanvasText); stroke-width: 2.1; }
+sg-check .sg-check-inner { fill: none; stroke: var(--sg-accent-text, CanvasText); stroke-width: 0.7; stroke-opacity: 0.7; }
+sg-check input:disabled ~ .sg-check-art .sg-check-inner { display: none; }
+sg-check .sg-check-stamp { fill: var(--sg-accent-text, CanvasText); transform-box: fill-box; transform-origin: center; }
+sg-check .sg-check-stamp circle { fill: var(--sg-accent-text, CanvasText); }
+
+/* ── forced colours: the system's own checkbox, in the system's colours ── */
+@media (forced-colors: active) {
+  sg-check input[type="checkbox"] {
+    appearance: auto !important;
+    width: auto !important;
+    height: auto !important;
+    border: revert !important;
+    background: revert !important;
+  }
+  sg-check input[type="checkbox"]::before,
+  sg-check .sg-check-art { display: none !important; }
+}

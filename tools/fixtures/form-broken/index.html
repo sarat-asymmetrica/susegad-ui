@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Broken form fixture</title>
+</head>
+<body>
+<main>
+<h1>Broken forms</h1>
+<!-- Broken on purpose. tools/form-check.mjs must fail both forms. -->
+
+<!-- 1. Required in name only: the fields are "required" by aria and the label, but the browser does
+        not know, so an empty submit goes through. -->
+<form id="no-constraints" action="/enquire" method="post">
+  <label>Email * <input name="email" aria-required="true"></label>
+  <button>Send</button>
+</form>
+
+<!-- 2. The only button is type="button" and nothing wires it up, so a filled form never submits. -->
+<form id="dead-button" action="/enquire" method="post">
+  <label>Email <input name="email" type="email" required></label>
+  <button type="button">Send</button>
+</form>
+</main>
+</body>
+</html>

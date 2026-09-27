@@ -1,0 +1,23 @@
+# File upload
+
+*The kolam closes when the server has the file, not a moment before.*
+
+A file uploader for a booking or an enquiry: choose photos and PDFs, see each one arrive, and get a "Received" stamp at the end.
+
+## The prompt
+
+Build a file upload flow from Susegad UI components, in plain JavaScript with no framework. Use a native file input with a visible label and a hint that says which kinds of file and how large, linked with `aria-describedby`. Before any files, show an empty state with a heading, one sentence about what will appear, and a "Choose files" button that opens the input. Check each chosen file in a pure function: refuse files over the size limit or of the wrong kind, and say why in a field note beside the input, naming the file, its size and the limit, and how to fix it. Give every accepted file its own progress bar, a native `<progress>` inside `<sg-progress>`, labelled with the file's name and size. Drive the bars only from what the transport reports: write a pure, seeded pretend transport that plans each upload as a short wait, chunks of bytes at a varying rate with the odd slow patch, a pause while the server checks the file, then done, and that can drop a file part way; the page polls it on each animation frame, and only while something is on its way. Set each bar's maximum to the file's bytes plus one step for the server's check, so a bar reads 99% and says "checking the file" after the last byte, and reaches the end, closing the warm register's kolam, only when the server confirms. When a file drops, keep its bar where it stopped, say "didn't upload" in its label, add a "Try again" button to its row, and show an error toast with the same action; dismiss that toast once the file is sent again. When every file has arrived, show one success toast and land a "Received" stamp with the number of files and their total size; lift it again if more files are added. Let the page's register choose every picture, with no extra code: in quiet, hairline bars, a small pencil window in the empty state and a ruled stamp; in warm, a kolam per file, the rain scene beside the empty state's words, inland-letter toasts and a block-print stamp; in playful, chai glasses that fill, a window you can wipe and a postmark on each letter. With reduced motion every piece shows its finished state. Keep it usable by keyboard and screen reader: the native progress elements are named by their labels, "Try again" is a real button named for its file, errors are spoken as alerts and successes politely, and no toast ever takes focus. Keep every string in one object so the words can be edited in one place.
+
+## Words to code
+
+| When you say | Technique | What happens |
+|---|---|---|
+| Check each chosen file in a pure function | validation | `vet()` splits the chosen files into those taken and a note about the rest. It runs in Node, so the rules and the words are tested without a browser. |
+| a pure, seeded pretend transport | simulation | Each upload's whole timeline is planned from a seed when it starts, so the same files always upload the same way and tests can step through it with a virtual clock. |
+| only while something is on its way | motion that follows the work | The page's animation frame loop runs while `transport.busy()` is true and stops after the last event. With nothing moving on the wire, nothing moves on the screen. |
+| the file's bytes plus one step for the server's check | the server's word | A bar cannot reach 100% on bytes alone. Its last step is the server's confirmation, so "Done" and the closed kolam always mean the file is safe. |
+| keep its bar where it stopped | failure said plainly | A dropped file keeps the bytes that were reported. The label and the toast say what happened and what to do. |
+| dismiss that toast once the file is sent again | tidy state | The recipe remembers each file's error toast and dismisses it when the file is retried, so no toast outlives the problem it describes. |
+| land a "Received" stamp | state as a mark | The stamp is in the page from the start, marked pending. It lands, and is read out, only when every file has arrived, and lifts again if more files are added. |
+| Let the page's register choose every picture | registers | The recipe draws nothing itself. Each component reads `data-register` and loads only its own skin, so one attribute on the page changes the whole flow, and a quiet page never downloads the scene or the playful skins. |
+| Keep every string in one object | copy | `STRINGS` in `upload.core.js` holds every word a person reads, including the error messages with their fixes. |

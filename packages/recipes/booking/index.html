@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  // ?register=quiet|warm|playful, ?theme=light|dark and ?palette=… set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute(`data-${k}`, v);
+  window.__ready = false; // set once the booking form is wired, so the tools wait for it
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book a stay</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="../../components/stepper/stepper.css">
+<link rel="stylesheet" href="../../components/date-range/date-range.css">
+<link rel="stylesheet" href="../../components/select/select.css">
+<link rel="stylesheet" href="../../components/radio/radio.css">
+<link rel="stylesheet" href="../../components/combobox/combobox.css">
+<link rel="stylesheet" href="../../components/check/check.css">
+<link rel="stylesheet" href="../../components/field/field.css">
+<link rel="stylesheet" href="../../components/field-note/field-note.css">
+<link rel="stylesheet" href="../../components/otp/otp.css">
+<link rel="stylesheet" href="../../components/toggle/toggle.css">
+<link rel="stylesheet" href="../../components/signature/signature.css">
+<link rel="stylesheet" href="../../components/form/form.css">
+<link rel="stylesheet" href="../../components/loader/loader.css">
+<link rel="stylesheet" href="../../components/stamp/stamp.css">
+<link rel="stylesheet" href="../../components/toast/toast.css">
+<link rel="stylesheet" href="./recipe.css">
+<style>
+  body { margin: 0; background: var(--sg-paper, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem)/var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 68rem; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font: 600 var(--sg-step-3, 1.6rem)/1.15 var(--sg-font-display, inherit); margin: 0 0 6px; }
+  .lede { color: var(--sg-text-soft, inherit); max-width: var(--sg-measure, 62ch); margin: 0 0 24px; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Book a stay</h1>
+  <p class="lede">Four short steps: your dates, guests and room, your details, and a signature to hold the dates. The price is worked out night by night from the house's rate card, with GST on its own line.</p>
+
+  <div class="booking" id="booking">
+    <sg-form>
+      <!-- Without JavaScript the browser checks the fields and posts them to held.html, which keeps nothing.
+           POST, never GET: a name, a number and a signature must not end up in the address bar. In your project, point action at your own endpoint. -->
+      <form action="./held.html" method="post">
+        <sg-stepper>
+          <fieldset>
+            <legend>Dates</legend>
+            <sg-date-range prices today="2026-10-20"
+              blocks='[{"arrival":"2026-10-23","departure":"2026-10-27","kind":"booking"},{"arrival":"2026-11-13","departure":"2026-11-16","kind":"booking"},{"arrival":"2026-12-26","departure":"2027-01-01","kind":"booking"},{"arrival":"2027-01-15","departure":"2027-01-18","kind":"hold"}]'>
+              <div class="booking__dates">
+                <div class="booking__date"><label>Arrival <input type="date" name="arrival" required min="2026-10-22" max="2027-06-30"></label></div>
+                <div class="booking__date"><label>Departure <input type="date" name="departure" required min="2026-10-23" max="2027-07-01"></label></div>
+              </div>
+            </sg-date-range>
+            <p class="booking__note">Stays are at least 3 nights, and 4 over Christmas week.</p>
+          </fieldset>
+
+          <fieldset>
+            <legend>Guests and room</legend>
+            <div class="booking__grid">
+              <sg-select>
+                <label for="guests">Guests</label>
+                <select id="guests" name="guests">
+                  <option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option>
+                </select>
+              </sg-select>
+              <sg-combobox>
+                <label for="from">Coming from</label>
+                <input id="from" name="from" list="from-cities" autocomplete="address-level2">
+                <datalist id="from-cities">
+                  <option value="Mumbai" data-aliases="Bombay, मुंबई"></option>
+                  <option value="Pune" data-aliases="पुणे"></option>
+                  <option value="Bengaluru" data-aliases="Bangalore, ಬೆಂಗಳೂರು"></option>
+                  <option value="Hyderabad"></option>
+                  <option value="Delhi" data-aliases="New Delhi, दिल्ली"></option>
+                  <option value="Kolhapur" data-aliases="कोल्हापूर"></option>
+                  <option value="Belagavi" data-aliases="Belgaum, ಬೆಳಗಾವಿ"></option>
+                </datalist>
+              </sg-combobox>
+            </div>
+            <sg-radio-group>
+              <fieldset>
+                <legend>Room</legend>
+                <!-- UNVERIFIED: room names and places are on the owner's list to confirm; see ROOMS in booking.core.js. -->
+                <label><input type="radio" name="room" value="whole" required checked> The whole house</label>
+                <label><input type="radio" name="room" value="sotao" required> Sotão, under the roof</label>
+                <label><input type="radio" name="room" value="balcao" required> Balcão, at the front of the house</label>
+                <label><input type="radio" name="room" value="quintal" required> Quintal, at the back of the house</label>
+              </fieldset>
+            </sg-radio-group>
+          </fieldset>
+
+          <fieldset>
+            <legend>Your details</legend>
+            <div class="booking__grid">
+              <sg-field>
+                <label for="name">Your name</label>
+                <input id="name" name="name" required autocomplete="name">
+              </sg-field>
+              <sg-field>
+                <label for="phone">Mobile number</label>
+                <input id="phone" name="phone" type="tel" required autocomplete="tel" inputmode="tel" pattern="[+\p{Nd} \-]{10,15}">
+              </sg-field>
+            </div>
+            <div class="booking__verify" hidden>
+              <sg-otp>
+                <label for="code">Enter the 6-digit code we sent</label>
+                <input id="code" name="code" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6">
+              </sg-otp>
+            </div>
+            <noscript><p class="booking__note">Without JavaScript we confirm your number when we write back.</p></noscript>
+          </fieldset>
+
+          <fieldset>
+            <legend>Confirm and hold</legend>
+            <sg-check><label><input type="checkbox" name="rules" value="yes" required data-summary-name="House rules"> I have read the house rules: no parties, quiet after 10 at night, and the pool is not guarded.</label></sg-check>
+            <sg-toggle><label><input type="checkbox" role="switch" name="breakfast" value="yes"> Breakfast each morning</label></sg-toggle>
+            <p class="booking__note">Breakfast is arranged with the house and is not in this price.</p>
+            <sg-signature>
+              <label for="sig">Type your full name to sign</label>
+              <input id="sig" name="signature" autocomplete="name" required>
+            </sg-signature>
+            <p class="booking__prototype">This is a prototype. Holding dates here holds nothing and charges nothing.</p>
+            <noscript><p class="booking__prototype">Without JavaScript this form sends your answers to a page that keeps nothing; the price and the hold need JavaScript.</p></noscript>
+          </fieldset>
+
+          <button class="booking__hold" type="submit">Hold these dates</button>
+        </sg-stepper>
+      </form>
+    </sg-form>
+
+    <aside class="booking-quote" aria-labelledby="quote-title">
+      <h2 id="quote-title">Your stay</h2>
+      <!-- the script fills the card; without it, the card says what happens instead of promising a price -->
+      <div class="booking-quote__body"><noscript><p class="booking-quote__empty">The house will send the price when they write back.</p></noscript></div>
+      <p class="booking-quote__said sg-vh" role="status"></p>
+    </aside>
+  </div>
+</main>
+<script type="module">
+  import { mountBooking } from './recipe.js';
+  const tags = ['sg-form', 'sg-stepper', 'sg-date-range', 'sg-select', 'sg-combobox', 'sg-radio-group', 'sg-check', 'sg-field', 'sg-otp', 'sg-toggle', 'sg-signature'];
+  await Promise.all(tags.map(t => customElements.whenDefined(t)));
+  mountBooking(document.getElementById('booking'));
+  await document.fonts.ready;
+  window.__ready = true;
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "sound-switch",
+  "type": "component",
+  "title": "Sound switch",
+  "description": "The one control that turns Susegad's sound switch on or off, site-wide, over a native checkbox with role=switch. Checking it is the user's own gesture, so switch.js can resume the audio context right there and play the switch's own confirmation. Without JavaScript the checkbox still works as a switch but has no effect, and a note says so. Quiet is the plain switch; warm draws a small speaker with a slash when off and two arcs when on; playful breathes those arcs gently while on.",
+  "version": "0.1.0",
+  "files": [
+    "sound-switch.js",
+    "sound-switch.core.js",
+    "sound-switch.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "sound-switch.prompt.md",
+    "sound-switch.docs.md"
+  ],
+  "dependencies": ["core-component", "core", "tokens", "sound"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "sound-switch.prompt.md",
+  "docs": "sound-switch.docs.md",
+  "budget": { "jsBytes": 12288 }
+}

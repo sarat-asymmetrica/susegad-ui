@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en" data-register="warm" data-palette="susegad">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Susegad UI</title>
+  <meta name="description" content="A front-end library for interfaces and documents that are beautiful and comfortable at the same time. Every piece has three registers and ships with its prompt.">
+  <meta name="color-scheme" content="light dark">
+  <script src="./prefs.js"></script>
+  <link rel="stylesheet" href="../../packages/tokens/fonts.css">
+  <link rel="stylesheet" href="../../packages/tokens/tokens.css">
+  <link rel="stylesheet" href="./docs.css">
+  <script type="module" src="./docs.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+
+  <header class="bar">
+    <div class="bar-in">
+      <a class="brand" href="./" aria-label="Susegad UI, home">Susegad <span>UI</span></a>
+      <nav class="nav" aria-label="Sections">
+        <a href="#ideas">Ideas</a>
+        <a href="#scenes">Scenes</a>
+        <a href="#pencil-box">Pencil box</a>
+        <a href="./components.html">Components</a>
+      </nav>
+      <form class="prefs" id="prefs" aria-label="How this page looks">
+        <fieldset class="seg seg-register" data-pref="register">
+          <legend>Register</legend>
+          <div class="seg-row">
+            <label><input type="radio" name="register" value="quiet"><span>Quiet</span></label>
+            <label><input type="radio" name="register" value="warm"><span>Warm</span></label>
+            <label><input type="radio" name="register" value="playful"><span>Playful</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="seg" data-pref="theme">
+          <legend>Theme</legend>
+          <div class="seg-row">
+            <label><input type="radio" name="theme" value="auto"><span>Auto</span></label>
+            <label><input type="radio" name="theme" value="light"><span>Light</span></label>
+            <label><input type="radio" name="theme" value="dark"><span>Dark</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="seg" data-pref="palette">
+          <legend>Palette</legend>
+          <div class="seg-row">
+            <label><input type="radio" name="palette" value="susegad"><span>Susegad</span></label>
+            <label><input type="radio" name="palette" value="casa"><span>Casa</span></label>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="toran" aria-hidden="true"></div>
+  </header>
+
+  <main class="wrap" id="main" tabindex="-1">
+    <section class="mast" aria-labelledby="title">
+      <div class="mast-text">
+        <p class="kicker">a front-end library, drawn in code in Goa</p>
+        <h1 id="title">Susegad <span class="h1-ui">UI</span></h1>
+        <p class="gloss">Konkani, from the Portuguese <i>sossegado</i>: the unhurried contentment of a Goan afternoon.</p>
+        <p class="lede">Susegad UI is a library for interfaces and documents that are beautiful and comfortable at the same time. It grew out of a sketchbook of code-drawn studies of Goa and India, and it keeps their craft: drawings that host your words, show something real and answer the person using them. Every piece comes in three registers, ships with the prompt you could give an AI agent to make it, and keeps its keyboard and screen reader support in a plain core underneath.</p>
+      </div>
+      <figure class="mast-art" id="mast-art">
+        <div class="mast-frame">
+          <sg-scene class="mast-kolam" id="mast-kolam" name="kolam" seed="7" label="A kolam: one unbroken line looping around a grid of dots"></sg-scene>
+        </div>
+        <figcaption class="mast-note">one line, never lifted<span class="if-moving">, drawing itself as you read</span></figcaption>
+      </figure>
+    </section>
+
+    <section class="ideas" id="ideas" aria-labelledby="ideas-title">
+      <h2 id="ideas-title" class="section-title">Three ideas</h2>
+      <ol class="idea-list">
+        <li class="idea">
+          <h3>One component, three registers</h3>
+          <p>Every piece has a quiet, warm and playful register, set for the whole page the way colour mode is. The same progress bar is a pencil hairline for an ERP buyer, a kolam that closes for a homestay, and a string of bunting that fills up for a festival. Try the register switch at the top of this page. The whole page changes, not just the drawings.</p>
+          <div class="specimens" role="group" aria-label="The same upload progress in each register">
+            <figure class="spec" data-register="quiet">
+              <figcaption>quiet</figcaption>
+              <div class="spec-bar" aria-hidden="true"><i></i></div>
+              <p class="spec-text">3 of 5 photos uploaded</p>
+            </figure>
+            <figure class="spec" data-register="warm">
+              <figcaption>warm</figcaption>
+              <div class="spec-bar" aria-hidden="true"><i></i></div>
+              <p class="spec-text">3 of 5 photos uploaded</p>
+            </figure>
+            <figure class="spec" data-register="playful">
+              <figcaption>playful</figcaption>
+              <div class="spec-bar" aria-hidden="true"><i></i></div>
+              <p class="spec-text">3 of 5 photos uploaded</p>
+            </figure>
+          </div>
+        </li>
+        <li class="idea">
+          <h3>Every component ships with its prompt</h3>
+          <p>Next to the code sits the prompt you could give an AI agent to make it, and a map from the words in that prompt to the techniques in the code. The library teaches as it serves. Each scene below carries its prompt on a blue inland letter you can copy, with the map just after it.</p>
+        </li>
+        <li class="idea">
+          <h3>Behaviour and skin are separate</h3>
+          <p>Keyboard, focus and screen reader support live in a headless core that is boringly correct. The theatre is a skin on top. The quiet skin has to pass an accessibility audit without a single flourish, and every drawing also says what it shows in text.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="scenes" id="scenes" aria-labelledby="scenes-title">
+      <div class="section-head">
+        <h2 id="scenes-title" class="section-title">Scenes</h2>
+        <p class="section-intro">A scene is a drawing that does a job. It can hold your content, reflect something real such as upload progress, or respond to the person using it. Each one here is drawn live by <code>&lt;sg-scene&gt;</code>, with the prompt that made it and a map from its words to the code. Every other piece of the library, components and recipes included, lives on the <a href="./components.html">Components page</a>.</p>
+      </div>
+      <div id="plates" class="plates">
+        <noscript><p class="note">The scenes are drawn with JavaScript. Everything else on this page works without it.</p></noscript>
+      </div>
+    </section>
+
+    <section class="box" id="pencil-box" aria-labelledby="box-title">
+      <div class="section-head">
+        <h2 id="box-title" class="section-title">The pencil box</h2>
+        <p class="section-intro">A handful of techniques do nearly all the work. Every scene lists the ones it uses, and each tag brings you back here.</p>
+      </div>
+      <dl class="tools" id="tools"></dl>
+    </section>
+
+  </main>
+
+  <footer class="foot wrap">
+    <p class="sig">made by Claude with Sarat, Asymmetrica, Goa, 2026</p>
+    <p class="for"><a href="./for-rafe.html">For Rafe</a>, who lent us his Activa and went fishing.</p>
+    <p>MIT licensed code; documentation under CC BY 4.0. This page makes no requests to anyone else's servers and keeps your settings only in your own browser. The prompt cards borrow their blue from the India Post inland letter.</p>
+  </footer>
+
+  <dialog class="closer" id="closer" aria-labelledby="closer-title">
+    <div class="closer-head">
+      <h2 id="closer-title"></h2>
+      <p class="word" id="closer-word"></p>
+      <button class="btn" type="button" id="closer-close" autofocus>Close</button>
+    </div>
+    <div class="closer-slot" id="closer-slot"></div>
+  </dialog>
+
+  <p class="sr-only" id="announce" aria-live="polite"></p>
+</body>
+</html>

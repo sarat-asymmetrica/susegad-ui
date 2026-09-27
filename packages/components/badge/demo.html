@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Badge</title>
+<link rel="stylesheet" href="./badge.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 60rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-3); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--sg-space-3); align-items: center; }
+  .sunk { background: var(--sg-surface-sunk); padding: var(--sg-space-3); border-radius: var(--sg-radius-2); }
+  table { width: 100%; border-collapse: collapse; font-size: var(--sg-step--1); }
+  th, td { text-align: left; padding: var(--sg-space-2) var(--sg-space-2); border-bottom: var(--sg-hairline) solid var(--sg-rule); }
+  th { color: var(--sg-text-soft); font-weight: var(--sg-weight-medium); }
+  .table-wrap { overflow-x: auto; background: var(--sg-surface-raised); border: var(--sg-hairline) solid var(--sg-rule); border-radius: var(--sg-radius-3); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Badge</h1>
+  <p class="lede">A word or two of status. The word is the meaning, a shape for each tone backs it up, and colour comes last.</p>
+
+  <h2>Tones</h2>
+  <div class="row">
+    <sg-badge>Archived</sg-badge>
+    <sg-badge tone="accent">New</sg-badge>
+    <sg-badge tone="success">Paid</sg-badge>
+    <sg-badge tone="warning">Peak season</sg-badge>
+    <sg-badge tone="danger">Overdue</sg-badge>
+    <sg-badge tone="info">Draft</sg-badge>
+  </div>
+
+  <h2>Still happening</h2>
+  <div class="row">
+    <sg-badge tone="info" busy>Saving</sg-badge>
+    <sg-badge tone="accent" busy>Uploading 3 of 8</sg-badge>
+    <sg-badge tone="neutral" busy>Syncing with the channel manager</sg-badge>
+  </div>
+  <p class="note">A busy badge says in words what is happening. In quiet and under reduced motion nothing moves; in warm the mark breathes, in playful the kolam turns, and both stop off screen.</p>
+
+  <h2>In Marathi, Kannada and Konkani</h2>
+  <!-- These Indian-language strings are drafts awaiting a native speaker's check. -->
+  <div class="row">
+    <sg-badge tone="success" lang="mr">भरले</sg-badge>
+    <sg-badge tone="warning" lang="mr">प्रलंबित</sg-badge>
+    <sg-badge tone="success" lang="kn">ಪಾವತಿಸಲಾಗಿದೆ</sg-badge>
+    <sg-badge tone="danger" lang="kn">ಬಾಕಿ ಇದೆ</sg-badge>
+    <sg-badge tone="info" lang="kok-Latn">Draft asa</sg-badge>
+  </div>
+
+  <h2>In running text and on a sunk ground</h2>
+  <p>Your booking for 12 to 15 October is <sg-badge tone="success">Confirmed</sg-badge> and the deposit is <sg-badge tone="warning">Due on 1 Oct</sg-badge>.</p>
+  <div class="row sunk">
+    <sg-badge tone="accent">Direct booking</sg-badge>
+    <sg-badge tone="info">Returning guest</sg-badge>
+    <sg-badge>3 nights</sg-badge>
+  </div>
+
+  <h2>In a table</h2>
+  <div class="table-wrap">
+    <table>
+      <caption class="note" style="text-align:left;padding:var(--sg-space-2) var(--sg-space-2) 0">Bookings this month</caption>
+      <thead><tr><th scope="col">Guest</th><th scope="col">Dates</th><th scope="col">Status</th></tr></thead>
+      <tbody>
+        <tr><td>Anjali Naik</td><td>12 to 15 Oct</td><td><sg-badge tone="success">Paid</sg-badge></td></tr>
+        <tr><td>Rohan D'Souza</td><td>20 to 22 Oct</td><td><sg-badge tone="warning">Deposit due</sg-badge></td></tr>
+        <tr><td>Meera Kulkarni</td><td>26 to 31 Oct</td><td><sg-badge tone="danger">Payment failed</sg-badge></td></tr>
+        <tr><td>Farid Shaikh</td><td>2 to 4 Nov</td><td><sg-badge tone="info" busy>Checking payment</sg-badge></td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+<script type="module">import './badge.js';</script>
+</body>
+</html>

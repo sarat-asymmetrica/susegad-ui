@@ -1,0 +1,34 @@
+{
+  "name": "radio",
+  "type": "component",
+  "title": "Radio group",
+  "description": "A real fieldset of native radios: arrow keys, one choice per name, required and submitting all stay the browser's, with or without JavaScript. Quiet is hairline circles drawn by CSS; warm draws pencil circles and circles the choice in ink, a leaning oval that runs past its start; playful turns the choice into a four-petalled kolam flower. Forced colours bring back the system radios.",
+  "version": "0.1.0",
+  "files": [
+    "radio.js",
+    "radio.core.js",
+    "radio.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "radio.prompt.md",
+    "radio.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "radio.prompt.md",
+  "docs": "radio.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 10824 bytes: behaviour (radio.js + radio.core.js) 6.2 KB, skins quiet 0.2 KB, warm 2.7 KB, playful 1.5 KB."
+  }
+}

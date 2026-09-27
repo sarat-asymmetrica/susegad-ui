@@ -1,0 +1,135 @@
+/* <sg-toggle>. Without JavaScript, and in the quiet register, this is the
+   native switch drawn as a plain track and thumb with CSS only; the thumb's
+   side says on or off. Warm lays a brass latch over it, playful a clay lamp;
+   the native input stays underneath, the size of the drawing, and takes every
+   click and key. In forced-colours mode the native control comes back. */
+
+sg-toggle[hidden] { display: none; } /* our display rule would otherwise beat the browser's [hidden] */
+
+sg-toggle {
+  --sg-toggle-w: 2.3em;
+  --sg-toggle-h: 1.3em;
+  /* decoration only: the state is always carried by a shape outlined in the text colour */
+  --sg-toggle-brass: light-dark(oklch(0.8 0.11 84), oklch(0.66 0.1 80));
+  --sg-toggle-brass-deep: light-dark(oklch(0.62 0.1 70), oklch(0.5 0.08 68));
+  --sg-toggle-clay: light-dark(oklch(0.6 0.12 40), oklch(0.52 0.1 38));
+  --sg-toggle-flame: light-dark(oklch(0.84 0.15 82), oklch(0.86 0.15 86));
+  --sg-toggle-flame-core: light-dark(oklch(0.97 0.05 95), oklch(0.98 0.04 95));
+  display: block;
+  color: var(--sg-text, CanvasText);
+  font: var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif);
+}
+sg-toggle[data-skin="warm"] { --sg-toggle-w: 2.75em; --sg-toggle-h: 1.5em; }
+sg-toggle[data-skin="playful"] { --sg-toggle-w: 2.1em; --sg-toggle-h: 2.1em; }
+
+sg-toggle label:has(> input[type="checkbox"]),
+sg-toggle:has(> input[type="checkbox"]) {
+  display: inline-grid;
+  grid-template-columns: var(--sg-toggle-w) minmax(0, 1fr);
+  column-gap: 0.7em;
+  align-items: start;
+  cursor: pointer;
+}
+sg-toggle input[type="checkbox"],
+sg-toggle .sg-toggle-art { grid-area: 1 / 1; }
+
+/* ── the plain switch: quiet and the no-JS path ───────────────────────── */
+sg-toggle input[type="checkbox"] {
+  appearance: none;
+  box-sizing: border-box;
+  position: relative;
+  width: var(--sg-toggle-w);
+  height: var(--sg-toggle-h);
+  margin: max(0px, calc((1lh - var(--sg-toggle-h)) / 2)) 0 0;
+  font: inherit;
+  border: var(--sg-stroke, 1.5px) solid var(--sg-rule-strong, CanvasText);
+  border-radius: 999px;
+  background: var(--sg-surface-sunk, Canvas);
+  cursor: pointer;
+  transition: background-color var(--sg-dur-quick, 120ms) var(--sg-ease-out, ease-out), border-color var(--sg-dur-quick, 120ms);
+}
+sg-toggle input[type="checkbox"]::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0.14em;
+  width: 0.82em;
+  height: 0.82em;
+  border-radius: 50%;
+  background: var(--sg-text-soft, CanvasText);
+  transform: translate(0, -50%);
+  transition: transform var(--sg-dur-quick, 120ms) var(--sg-ease-out, ease-out), background-color var(--sg-dur-quick, 120ms);
+}
+sg-toggle input[type="checkbox"]:checked {
+  background: var(--sg-accent, Highlight);
+  border-color: var(--sg-accent, Highlight);
+}
+sg-toggle input[type="checkbox"]:checked::before {
+  background: var(--sg-on-accent, HighlightText);
+  transform: translate(calc(var(--sg-toggle-w) - 0.82em - 0.28em - 2 * var(--sg-stroke, 1.5px)), -50%);
+}
+sg-toggle input[type="checkbox"]:focus-visible {
+  outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight);
+  outline-offset: var(--sg-focus-offset, 2px);
+}
+sg-toggle:has(input:disabled) { color: var(--sg-text-soft, GrayText); }
+sg-toggle:has(input:disabled) label,
+sg-toggle input[type="checkbox"]:disabled { cursor: not-allowed; }
+sg-toggle input[type="checkbox"]:disabled { border-style: dashed; opacity: 0.75; }
+
+/* ── warm and playful: the drawing replaces the look, not the control ─── */
+sg-toggle .sg-toggle-art {
+  width: var(--sg-toggle-w);
+  height: var(--sg-toggle-h);
+  margin-top: max(0px, calc((1lh - var(--sg-toggle-h)) / 2));
+  overflow: visible;
+  pointer-events: none;
+}
+sg-toggle:is([data-skin="warm"], [data-skin="playful"]) input[type="checkbox"] {
+  border-color: transparent;
+  background: transparent;
+  border-radius: var(--sg-radius-2, 4px);
+}
+sg-toggle:is([data-skin="warm"], [data-skin="playful"]) input[type="checkbox"]::before { visibility: hidden; }
+sg-toggle .sg-toggle-art :is(path, rect, circle, line) { vector-effect: non-scaling-stroke; }
+sg-toggle input:disabled ~ .sg-toggle-art { opacity: 0.55; }
+
+/* warm: the brass latch. The bolt's position is the state. */
+sg-toggle .sg-toggle-plate { fill: var(--sg-toggle-brass); stroke: var(--sg-text, CanvasText); stroke-width: 1.1; }
+sg-toggle .sg-toggle-screw { fill: var(--sg-toggle-brass-deep); stroke: var(--sg-text, CanvasText); stroke-width: 0.8; }
+sg-toggle .sg-toggle-keeper { fill: var(--sg-toggle-brass-deep); stroke: var(--sg-text, CanvasText); stroke-width: 1.1; }
+sg-toggle .sg-toggle-bolt { transition: transform var(--sg-dur-calm, 280ms) var(--sg-ease-spring, ease-out); }
+sg-toggle .sg-toggle-art[data-on] .sg-toggle-bolt { transform: translateX(8.5px); }
+sg-toggle .sg-toggle-shaft { fill: var(--sg-toggle-brass); stroke: var(--sg-text, CanvasText); stroke-width: 1.2; }
+sg-toggle .sg-toggle-handle { fill: none; stroke: var(--sg-text, CanvasText); stroke-width: 1.8; stroke-linecap: round; }
+sg-toggle .sg-toggle-knob { fill: var(--sg-toggle-brass-deep); stroke: var(--sg-text, CanvasText); stroke-width: 1; }
+sg-toggle .sg-toggle-art:not([data-on]) .sg-toggle-when-on,
+sg-toggle .sg-toggle-art[data-on] .sg-toggle-when-off { opacity: 0; }
+sg-toggle .sg-toggle-when-on,
+sg-toggle .sg-toggle-when-off { transition: opacity var(--sg-dur-quick, 120ms) var(--sg-ease-out, ease-out); }
+
+/* playful: the lamp. The flame is the state; its outline keeps it 3:1 on any paper. */
+sg-toggle .sg-toggle-bowl { fill: var(--sg-toggle-clay); stroke: var(--sg-text, CanvasText); stroke-width: 1.1; stroke-linejoin: round; }
+sg-toggle .sg-toggle-rim { fill: none; stroke: var(--sg-text, CanvasText); stroke-width: 0.9; }
+sg-toggle .sg-toggle-wick { stroke: var(--sg-text, CanvasText); stroke-width: 1.4; stroke-linecap: round; }
+sg-toggle .sg-toggle-glow { fill: var(--sg-toggle-flame); opacity: 0.35; }
+sg-toggle .sg-toggle-flame { fill: var(--sg-toggle-flame); stroke: var(--sg-text, CanvasText); stroke-width: 0.9; stroke-linejoin: round; }
+sg-toggle .sg-toggle-flame-core { fill: var(--sg-toggle-flame-core); stroke: none; }
+sg-toggle .sg-toggle-fire { transform-box: fill-box; transform-origin: 50% 100%; }
+sg-toggle .sg-toggle-light { transition: opacity var(--sg-dur-calm, 280ms) var(--sg-ease-out, ease-out); }
+sg-toggle .sg-toggle-art:not([data-on]) .sg-toggle-light { opacity: 0; }
+
+/* ── forced colours: the system's own checkbox, in the system's colours ── */
+@media (forced-colors: active) {
+  sg-toggle input[type="checkbox"] {
+    appearance: auto !important;
+    width: auto !important;
+    height: auto !important;
+    border: revert !important;
+    background: revert !important;
+  }
+  sg-toggle label:has(> input[type="checkbox"]),
+  sg-toggle:has(> input[type="checkbox"]) { grid-template-columns: auto minmax(0, 1fr) !important; }
+  sg-toggle input[type="checkbox"]::before,
+  sg-toggle .sg-toggle-art { display: none !important; }
+}

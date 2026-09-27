@@ -1,0 +1,17 @@
+{
+  "name": "skeleton",
+  "type": "component",
+  "title": "Skeleton",
+  "description": "A placeholder for a region whose content is on its way. The region is aria-busy and says what is loading, then announces the arrival once. Quiet is flat sunk blocks; warm is a pencil sketch whose outlines ink in when the content arrives; playful adds colour washes and a wobble on twos while waiting.",
+  "version": "0.1.0",
+  "files": ["skeleton.js", "skeleton.core.js", "skeleton.css", "skins/draw.js", "skins/quiet.js", "skins/warm.js", "skins/playful.js", "skeleton.prompt.md", "skeleton.docs.md"],
+  "dependencies": ["core-component", "core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "skeleton.prompt.md",
+  "docs": "skeleton.docs.md",
+  "budget": {
+    "jsBytes": 18432,
+    "frameMs": 16.7,
+    "reason": "The contract's 12 KB behaviour plus 8 KB per skin, declared as the sum used: behaviour about 7.0 KB (skeleton.js 2.5 KB, skeleton.core.js 4.6 KB); skins about 1.3 KB (quiet), 5.5 KB of shared drawing (skins/draw.js: the layer every skin uses, plus the pencil for warm and playful), 1.1 KB (warm) and 2.3 KB (playful). A page loads one skin and draw.js."
+  }
+}

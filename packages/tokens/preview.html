@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Susegad tokens</title>
+<link rel="stylesheet" href="./tokens.css">
+<link rel="stylesheet" href="./palettes/casa-photo.css">
+<!-- ?nofonts shows the system fallbacks alone, as a reader without web fonts sees them. -->
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--sg-surface);
+    color: var(--sg-text);
+    font: var(--sg-weight-regular) var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body);
+  }
+  ::selection { background: var(--sg-selection); color: var(--sg-text); }
+  header, main { max-width: 1320px; margin: 0 auto; padding: var(--sg-space-5) 16px 0; }
+  header h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  header p { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  main { display: grid; gap: var(--sg-space-5); grid-template-columns: repeat(auto-fit, minmax(min(100%, 600px), 1fr)); padding-bottom: var(--sg-space-6); }
+
+  /* One panel per palette × theme. It reads the tokens itself, so a nested
+     data-theme resolves correctly. */
+  .panel {
+    background: var(--sg-surface);
+    color: var(--sg-text);
+    border: var(--sg-hairline) solid var(--sg-rule);
+    border-radius: var(--sg-radius-3);
+    box-shadow: var(--sg-lift);
+    padding: var(--sg-space-4);
+    min-width: 0;
+  }
+  .panel h2 { font: 400 var(--sg-step-2) / var(--sg-leading-tight) var(--sg-font-display); margin: 0; }
+  .panel .sub { margin: var(--sg-space-1) 0 var(--sg-space-4); font-size: var(--sg-step--1); color: var(--sg-text-faint); }
+  h3 { font: var(--sg-weight-medium) var(--sg-step--1) / 1.2 var(--sg-font-body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--sg-text-soft); margin: var(--sg-space-4) 0 var(--sg-space-2); }
+
+  /* Each pigment is a swatch with its name below it. The name wraps rather than clips, and a
+     hairline inset keeps a swatch visible when it matches its card (night on night). */
+  .pigments { display: grid; grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr)); gap: var(--sg-space-3) var(--sg-space-2); margin: 0; padding: 0; list-style: none; }
+  .pigment { display: grid; gap: var(--sg-space-1); min-width: 0; }
+  .pigment i { display: block; height: 30px; border-radius: var(--sg-radius-2); box-shadow: inset 0 0 0 var(--sg-hairline) var(--sg-rule); }
+  .pigment span { font-size: 12px; line-height: 1.25; color: var(--sg-text-soft); overflow-wrap: anywhere; }
+
+  table { width: 100%; border-collapse: collapse; font-size: var(--sg-step--1); font-variant-numeric: tabular-nums; }
+  th { text-align: left; font-weight: var(--sg-weight-medium); color: var(--sg-text-soft); padding: 4px 6px; border-bottom: var(--sg-hairline) solid var(--sg-rule); }
+  td { padding: 5px 6px; border-bottom: var(--sg-hairline) solid var(--sg-rule); }
+  td.ratio { text-align: right; }
+  td.ratio.on-surface-sunk { background: var(--sg-surface-sunk); }
+  td.ratio.on-surface-raised { background: var(--sg-surface-raised); }
+  .chip { display: inline-block; width: 0.9em; height: 0.9em; border-radius: 50%; vertical-align: -0.1em; margin-right: 6px; box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--sg-text) 20%, transparent); }
+  .pass { color: var(--sg-success); }
+  .fail { color: var(--sg-danger); font-weight: var(--sg-weight-bold); }
+  .sample { font-weight: var(--sg-weight-medium); }
+
+  .specimen { display: grid; gap: var(--sg-space-2); }
+  .specimen .display { font: 400 var(--sg-step-3) / var(--sg-leading-tight) var(--sg-font-display); }
+  .specimen .hand { font: 400 var(--sg-step-1) / var(--sg-leading-snug) var(--sg-font-hand); color: var(--sg-accent-text); }
+  .specimen p { margin: 0; max-width: var(--sg-measure); }
+  .specimen .mono { font: var(--sg-step--1) / 1.5 var(--sg-font-mono); background: var(--sg-surface-sunk); padding: var(--sg-space-2) var(--sg-space-3); border-radius: var(--sg-radius-2); overflow-x: auto; }
+  .script-label { font-size: var(--sg-step--1); color: var(--sg-text-faint); }
+  .script-label .review { margin-left: 0.5em; color: var(--sg-text-soft); }
+
+  .registers { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--sg-space-2); }
+  .reg { background: var(--sg-surface-raised); border: var(--sg-hairline) solid var(--sg-rule); border-radius: var(--sg-radius-2); padding: var(--sg-space-3); min-width: 0; }
+  .reg strong { display: block; font-weight: var(--sg-weight-medium); }
+  .reg dl { margin: var(--sg-space-2) 0 0; font-size: 12px; line-height: 1.45; color: var(--sg-text-soft); display: grid; grid-template-columns: auto 1fr; gap: 0 8px; }
+  .reg dt { color: var(--sg-text-faint); }
+  .reg dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .reg svg { display: block; width: 100%; height: 22px; margin-top: var(--sg-space-2); color: var(--sg-rule-strong); }
+  button.act {
+    margin-top: var(--sg-space-2);
+    font: var(--sg-weight-medium) var(--sg-step--1) / 1 var(--sg-font-body);
+    background: var(--sg-accent); color: var(--sg-on-accent);
+    border: 0; border-radius: var(--sg-radius-2); padding: 0.6em 0.9em;
+    transition: transform var(--sg-dur-calm) var(--sg-ease-spring), box-shadow var(--sg-dur-quick) var(--sg-ease-out);
+    cursor: pointer;
+  }
+  button.act:hover { transform: translateY(calc(-2px * var(--sg-motion-scale))); }
+  button.act:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+  .scrim-demo { margin-top: var(--sg-space-3); position: relative; border-radius: var(--sg-radius-2); overflow: hidden; min-height: 92px;
+    background: repeating-linear-gradient(115deg, #000 0 14px, #fff 14px 28px, var(--sg-laterite, #a4452c) 28px 42px, var(--sg-pool, var(--sg-sea)) 42px 56px); }
+  .scrim-demo p { position: relative; margin: var(--sg-space-3); padding: var(--sg-space-2) var(--sg-space-3); background: var(--sg-scrim); border-radius: var(--sg-radius-2); font-size: var(--sg-step--1); }
+  .scrim-demo p span { color: var(--sg-text-soft); }
+  footer { max-width: 1320px; margin: 0 auto; padding: 0 16px var(--sg-space-5); color: var(--sg-text-faint); font-size: var(--sg-step--1); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Susegad tokens</h1>
+  <p>Every palette in both themes, with each text role measured against each surface as the browser paints it. Ratios are WCAG 2.2; AA text needs 4.5:1, focus rings and control borders 3:1.</p>
+</header>
+<main id="panels" aria-live="polite"></main>
+<footer id="foot"></footer>
+
+<script type="module">
+  import { palettes, registers, textRoles, surfaceRoles, contrast, readColor, readToken, type } from './tokens.js';
+
+  const params = new URLSearchParams(location.search);
+  // Web fonts are subset by script and load on demand; ask for each face with
+  // text in its own script so the page is finished before anyone looks.
+  const faces = [["'Castoro'", 'Aa'], ["'Mukta'", 'Aa अ'], ["'Kalam'", 'Aa अ'], ["'Tiro Devanagari Marathi'", 'पाऊस'], ["'Tiro Kannada'", 'ಮಳೆ'], ["'Noto Sans Kannada'", 'ಮಳೆ']];
+  const fontsLoaded = params.has('nofonts') ? Promise.resolve() : new Promise(resolve => {
+    const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: `./${type.fontFaces}` });
+    link.onload = () => Promise.all(faces.map(([f, t]) => document.fonts.load(`400 24px ${f}`, t))).then(() => document.fonts.ready).then(resolve, resolve);
+    link.onerror = resolve; // missing fonts.css: the system faces take over
+    document.head.append(link);
+  });
+
+  const show = params.get('palettes')?.split(',') ?? ['susegad', 'casa', 'casa-photo'];
+  const labels = { susegad: 'Susegad', casa: 'Casa', 'casa-photo': 'Casa, from its photographs' };
+  const el = (tag, attrs = {}, ...kids) => {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) k === 'class' ? (n.className = v) : n.setAttribute(k, v);
+    n.append(...kids);
+    return n;
+  };
+  const fmt = r => r.toFixed(2);
+
+  function wobble(amount, seed) {
+    // A rule drawn with the register's wobble: straight at 0, a hand line above.
+    let s = seed, d = 'M0 11';
+    const rnd = () => ((s = (s * 16807) % 2147483647) / 2147483647 - 0.5);
+    for (let x = 8; x <= 200; x += 8) d += ` L${x} ${(11 + rnd() * amount * 4).toFixed(2)}`;
+    return `<svg viewBox="0 0 200 22" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>`;
+  }
+
+  function panel(palette, theme) {
+    const p = el('section', { class: 'panel', 'data-palette': palette, 'data-theme': theme, 'aria-label': `${labels[palette]}, ${theme}` });
+    p.append(el('h2', {}, labels[palette]), el('p', { class: 'sub' }, `${theme} theme · data-palette="${palette}" data-theme="${theme}"`));
+
+    const pig = palettes[palette]?.pigments;
+    if (pig) {
+      p.append(el('h3', {}, 'Pigments'));
+      const row = el('ul', { class: 'pigments' });
+      for (const name of Object.keys(pig)) {
+        const chip = el('i', { 'aria-hidden': 'true' });
+        chip.style.background = `var(--sg-${name})`;
+        row.append(el('li', { class: 'pigment', title: `--sg-${name}` }, chip, el('span', {}, name)));
+      }
+      p.append(row);
+    }
+
+    p.append(el('h3', {}, 'Text roles on each surface'));
+    const table = el('table');
+    const head = el('tr', {}, el('th', { scope: 'col' }, 'Role'));
+    for (const g of surfaceRoles) head.append(el('th', { scope: 'col', style: 'text-align:right' }, g.replace('surface-', '').replace('surface', 'base')));
+    table.append(el('thead', {}, head));
+    const body = el('tbody');
+    table.append(body);
+    p.append(table);
+    p._fill = () => {
+      body.textContent = '';
+      let fails = 0;
+      const rows = [...textRoles, 'focus', 'rule-strong'];
+      for (const role of rows) {
+        const need = role === 'focus' || role === 'rule-strong' ? 3 : 4.5;
+        const fg = readColor(p, role);
+        const chip = el('span', { class: 'chip', 'aria-hidden': 'true' });
+        chip.style.background = `var(--sg-${role})`;
+        const name = el('span', { class: 'sample' }, role);
+        if (need === 4.5) name.style.color = `var(--sg-${role})`;
+        const tr = el('tr', {}, el('td', {}, chip, name));
+        for (const g of surfaceRoles) {
+          const r = contrast(fg, readColor(p, g));
+          const ok = r >= need;
+          if (!ok) fails++;
+          tr.append(el('td', { class: `ratio on-${g}` }, el('span', { class: ok ? 'pass' : 'fail' }, `${fmt(r)}${ok ? '' : ' fail'}`)));
+        }
+        body.append(tr);
+      }
+      const onA = contrast(readColor(p, 'on-accent'), readColor(p, 'accent'));
+      if (onA < 4.5) fails++;
+      body.append(el('tr', {}, el('td', {}, 'on-accent on accent'), el('td', { class: 'ratio', colspan: '3' }, el('span', { class: onA >= 4.5 ? 'pass' : 'fail' }, fmt(onA)))));
+      return fails;
+    };
+
+    p.append(el('h3', {}, 'Type'));
+    const spec = el('div', { class: 'specimen' });
+    spec.innerHTML = `
+      <div class="display">Come for the rain</div>
+      <p>Our lowest rate runs June to September: ₹4,50,000 a season, or ₹8,500 a night. The veranda stays dry.</p>
+      <!-- The Indian-language samples below are drafts awaiting a native speaker's review (Rasika P8, owner Kathakar). -->
+      <div class="script-label">मराठी · कोंकणी <span class="review">draft, awaiting a native speaker's check</span></div>
+      <div class="display" lang="mr" data-review="native-speaker">पावसासाठी या</div>
+      <p lang="kok" data-review="native-speaker">पावसाच्या दिसांनी आमचें सगळ्यांत उणें भाडें. व्हरांडो सुको उरता.</p>
+      <div class="script-label">Konkani in Romi <span class="review">draft, awaiting a native speaker's check</span></div>
+      <p lang="kok-Latn" data-review="native-speaker">Paus ailo. Jun thaun Setembr porian amchem sogleant unnem bhadem; varand sukem urta.</p>
+      <div class="script-label">ಕನ್ನಡ <span class="review">draft, awaiting a native speaker's check</span></div>
+      <div class="display" lang="kn" data-review="native-speaker">ಮಳೆಗಾಗಿ ಬನ್ನಿ</div>
+      <p lang="kn" data-review="native-speaker">ಜೂನ್‌ನಿಂದ ಸೆಪ್ಟೆಂಬರ್‌ವರೆಗೆ ನಮ್ಮ ಕಡಿಮೆ ದರ. ವರಾಂಡ ಒಣಗಿರುತ್ತದೆ.</p>
+      <div class="hand">held for you · आपल्यासाठी राखून ठेवले</div>
+      <div class="mono">--sg-accent: light-dark(…); ಕನ್ನಡ देवनागरी</div>`;
+    p.append(spec);
+
+    p.append(el('h3', {}, 'Registers'));
+    const regs = el('div', { class: 'registers' });
+    Object.keys(registers).forEach((name, i) => {
+      const r = el('div', { class: 'reg', 'data-register': name });
+      r.append(el('strong', {}, name));
+      const dl = el('dl');
+      r.append(dl);
+      r.insertAdjacentHTML('beforeend', wobble(registers[name].wobble, 7 + i * 31));
+      r.append(el('button', { class: 'act', type: 'button' }, 'Hold these dates'));
+      r._fill = () => {
+        dl.textContent = '';
+        for (const [label, k] of [['calm', 'dur-calm'], ['slow', 'dur-slow'], ['ornament', 'ornament'], ['wobble', 'wobble'], ['overshoot', 'overshoot'], ['sound', 'sound-vocabulary']]) {
+          dl.append(el('dt', { title: `--sg-${k}` }, label), el('dd', {}, readToken(r, k).replace(/"/g, '')));
+        }
+      };
+      regs.append(r);
+    });
+    p.append(regs);
+
+    const scr = el('div', { class: 'scrim-demo' });
+    scr.innerHTML = '<p>Text on the scrim, over any drawing. <span>Soft text stays readable too.</span></p>';
+    p.append(scr);
+    return p;
+  }
+
+  const root = document.getElementById('panels');
+  const all = [];
+  for (const palette of show) for (const theme of ['light', 'dark']) {
+    const p = panel(palette, theme);
+    root.append(p);
+    all.push(p);
+  }
+
+  const fill = () => {
+    let fails = 0;
+    for (const p of all) {
+      fails += p._fill();
+      for (const r of p.querySelectorAll('.reg')) r._fill();
+    }
+    document.getElementById('foot').textContent = fails
+      ? `${fails} pairs are below their target.`
+      : `Every pair above meets its target. Fonts: ${params.has('nofonts') ? 'system fallbacks only' : 'web fonts, falling back to system faces'}.`;
+    window.__fails = fails;
+  };
+  fill();
+  // Fonts change nothing about colour, but the screenshot should wait for them.
+  fontsLoaded.then(() => { fill(); window.__ready = true; });
+</script>
+</body>
+</html>

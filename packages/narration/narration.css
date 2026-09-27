@@ -1,0 +1,36 @@
+/* sg-narration: layout only. The highlight itself is a colour and weight
+   change on the current word, never motion alone (honesty: it marks
+   nothing that isn't playing), and it never removes the word from the flow
+   of text, so captions stay readable if the audio is off entirely. */
+
+sg-narration {
+  display: block;
+}
+
+sg-narration audio {
+  width: 100%;
+  display: block;
+  margin-block-end: var(--sg-space-3, 0.75rem);
+}
+
+sg-narration [data-word] {
+  color: var(--sg-text);
+}
+
+sg-narration [data-word][aria-current='true'] {
+  color: var(--sg-accent-text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--sg-accent);
+  text-underline-offset: 0.15em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  sg-narration [data-word] {
+    transition: color var(--sg-dur-quick, 150ms) var(--sg-ease-out, ease-out);
+  }
+}
+
+sg-narration[hidden] {
+  display: none !important;
+}

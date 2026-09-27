@@ -1,0 +1,35 @@
+{
+  "name": "field",
+  "type": "component",
+  "title": "Field (TextField, TextArea)",
+  "description": "A label over a ruled line, for a line of text or a longer message, wrapping a native input or textarea that types, autofills, validates and submits without JavaScript. Quiet is the hairline rule under a writing well; warm writes on the paper itself, over a seeded pencil rule that inks from left to right on focus and under your words as you type, with a laterite exercise-book margin down a textarea; playful draws the same in accent ink with a thicker nib and wobbles on twos while you type. Counts characters near a maxlength, aloud only at 20, 10 and 0.",
+  "version": "0.1.0",
+  "files": [
+    "field.js",
+    "field.core.js",
+    "rule.js",
+    "field.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "field.prompt.md",
+    "field.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "field.prompt.md",
+  "docs": "field.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 21005 bytes: behaviour (field.js + field.core.js, and rule.js, the pencil rule select and combobox share) 12.4 KB, skins quiet 0.2 KB, warm 6.7 KB, playful 1.2 KB."
+  }
+}

@@ -1,0 +1,65 @@
+/* <sg-price-table>: a proposal's rate card and stay prices. Plain and legible
+   first, because these are read, printed and signed. Figures sit in tabular
+   numerals on the right; the total is the one heavy line. */
+
+sg-price-table { display: block; container-type: inline-size; margin: var(--sg-space-4, 1.5rem) 0; }
+
+.price-table { inline-size: 100%; border-collapse: collapse; margin: 0 0 var(--sg-space-2, 0.5rem); font-variant-numeric: tabular-nums lining-nums; }
+.price-table caption {
+  caption-side: top; text-align: start; padding-block-end: var(--sg-space-2, 0.5rem);
+  font: var(--sg-step-0, 1rem) / 1.3 var(--sg-font-display, serif); color: var(--sg-text, inherit);
+}
+.price-table :is(th, td) { text-align: start; padding: 0.55rem 0.75rem 0.55rem 0; border-block-end: var(--sg-hairline, 1px) solid var(--sg-rule, currentColor); vertical-align: baseline; }
+.price-table :is(th, td):last-child { padding-inline-end: 0; }
+.price-table thead th { font: var(--sg-weight-medium, 500) var(--sg-step--1, 0.9rem) / 1.3 var(--sg-font-body, sans-serif); color: var(--sg-text-soft, inherit); border-block-end-color: var(--sg-rule-strong, currentColor); }
+.price-table tbody th { font-weight: var(--sg-weight-medium, 500); }
+.price-table .num { text-align: end; white-space: nowrap; }
+.price-table tfoot th { font-weight: var(--sg-weight-regular, 400); }
+.price-table tfoot tr.is-before :is(th, td) { border-block-start: var(--sg-hairline, 1px) solid var(--sg-rule-strong, currentColor); }
+.price-table tfoot tr.is-total :is(th, td) { font-weight: var(--sg-weight-bold, 700); font-size: var(--sg-step-1, 1.2rem); border-block-end: 3px double var(--sg-rule-strong, currentColor); padding-block: 0.7rem; }
+.price-table tfoot tr.is-deposit :is(th, td) { color: var(--sg-text-soft, inherit); border-block-end: 0; }
+.price-table tr[data-peak] th { color: var(--sg-warning, inherit); }
+
+/* provisional is a word first; the style only backs it up */
+.price-table__provisional {
+  display: inline-block; margin-inline-start: 0.4rem; padding: 0 0.4rem; vertical-align: 0.08em;
+  font: var(--sg-weight-regular, 400) 0.74em / 1.5 var(--sg-font-body, sans-serif); letter-spacing: 0.02em;
+  border: 1px dashed var(--sg-warning, currentColor); border-radius: var(--sg-radius-1, 4px); color: var(--sg-text-soft, inherit);
+}
+.price-table__note { font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); margin: 0 0 var(--sg-space-3, 1rem); max-inline-size: var(--sg-measure, 62ch); }
+.price-table__refused { color: var(--sg-danger, inherit); font-size: var(--sg-step--1, 0.9rem); }
+
+/* try other dates: a native disclosure with two date inputs */
+.price-table__try { margin: 0 0 var(--sg-space-3, 1rem); font-size: var(--sg-step--1, 0.9rem); }
+.price-table__try summary { cursor: pointer; color: var(--sg-accent-text, LinkText); font-weight: var(--sg-weight-medium, 500); min-block-size: 2.75rem; display: flex; align-items: center; gap: 0.5rem; inline-size: fit-content; list-style: none; }
+.price-table__try summary::-webkit-details-marker { display: none; }
+.price-table__try summary::before { content: '+'; display: grid; place-items: center; inline-size: 1.3rem; block-size: 1.3rem; border-radius: 50%; box-shadow: inset 0 0 0 1px currentColor; font-weight: var(--sg-weight-regular, 400); line-height: 1; }
+.price-table__try[open] summary::before { content: '2'; }
+.price-table__try summary:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); border-radius: var(--sg-radius-1, 4px); }
+.price-table__try-fields { display: flex; flex-wrap: wrap; align-items: end; gap: 0.75rem 1rem; padding: 0.75rem 1rem; background: var(--sg-surface-sunk, transparent); border-radius: var(--sg-radius-2, 6px); }
+.price-table__try-fields label { color: var(--sg-text-soft, inherit); }
+.price-table__try input { font: inherit; color: var(--sg-text, inherit); min-block-size: 2.75rem; padding: 0 0.5rem; border: 0; border-block-end: var(--sg-stroke, 1.5px) solid var(--sg-rule-strong, currentColor); background: transparent; }
+.price-table__try button { font: inherit; min-block-size: 2.75rem; padding: 0 1rem; border: 0; border-radius: var(--sg-radius-2, 6px); box-shadow: inset 0 0 0 1px var(--sg-rule-strong, currentColor); background: none; color: var(--sg-accent-text, inherit); cursor: pointer; }
+.price-table__try :is(input, button):focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+.price-table__vh { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.price-table__said { margin: 0.5rem 0 0; color: var(--sg-text-soft, inherit); }
+.price-table__said:empty { display: none; }
+
+/* On a narrow page the rate card stacks: one small card per season, each figure labelled. */
+@container (max-width: 34rem) {
+  .price-table[data-view="bands"] thead { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
+  .price-table[data-view="bands"] tbody { display: block; }
+  .price-table[data-view="bands"] tr { display: grid; grid-template-columns: 1fr 1fr; gap: 0.15rem 1rem; padding: 0.7rem 0; border-block-end: var(--sg-hairline, 1px) solid var(--sg-rule-strong, currentColor); }
+  .price-table[data-view="bands"] :is(th, td) { display: block; border: 0; padding: 0; text-align: start; }
+  .price-table[data-view="bands"] tbody th { grid-column: 1 / -1; font-size: var(--sg-step-0, 1rem); margin-block-end: 0.15rem; }
+  .price-table[data-view="bands"] td:first-of-type { grid-column: 1 / -1; }
+  .price-table[data-view="bands"] td[data-label]::before { content: attr(data-label); display: block; font-size: var(--sg-step--1, 0.85rem); color: var(--sg-text-soft, inherit); }
+  .price-table[data-view="stay"] tbody th { font-weight: var(--sg-weight-regular, 400); white-space: nowrap; }
+  .price-table :is(th, td) { padding-inline-end: 0.5rem; }
+}
+
+@media print {
+  .price-table__try { display: none; }
+  .price-table tfoot tr.is-total :is(th, td) { font-size: 1.05em; }
+  sg-price-table { break-inside: avoid; } /* the table, its note and the words under it, together */
+}

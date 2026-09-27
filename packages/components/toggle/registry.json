@@ -1,0 +1,34 @@
+{
+  "name": "toggle",
+  "type": "component",
+  "title": "Toggle",
+  "description": "A native switch (a checkbox with role=\"switch\") that submits and takes Space with or without JavaScript. Quiet is a plain track and thumb drawn by CSS; warm is the brass tower bolt from a Goan door, sliding into its keeper; playful is a clay diya that lights, its flame flickering only while lit and on screen. Forced colours bring back the system control.",
+  "version": "0.1.0",
+  "files": [
+    "toggle.js",
+    "toggle.core.js",
+    "toggle.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "toggle.prompt.md",
+    "toggle.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "toggle.prompt.md",
+  "docs": "toggle.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 9352 bytes: behaviour (toggle.js + toggle.core.js) 5.3 KB, skins quiet 0.3 KB, warm 2.2 KB, playful 1.6 KB."
+  }
+}

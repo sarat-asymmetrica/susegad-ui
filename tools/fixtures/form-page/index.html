@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Form fixture</title>
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<style>
+  body { margin: 0; padding: 24px 16px; background: var(--sg-paper, Canvas); color: var(--sg-ink, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  form { max-width: 32rem; margin: 0 auto; display: grid; gap: 12px; }
+  label { display: grid; gap: 4px; }
+  input, select, textarea, button { font: inherit; padding: 8px; }
+  fieldset { display: flex; gap: 16px; }
+</style>
+</head>
+<body>
+<main>
+<h1>Book a room</h1>
+<!-- A good form: every required field has a valid sample, and the browser validates it on its own.
+     tools/form-check.mjs must block the empty submit and send the filled one, with and without JavaScript. -->
+<form id="booking" action="/book" method="post">
+  <noscript><p>This form works without JavaScript.</p></noscript>
+  <label>Your name <input name="name" autocomplete="name" required minlength="2"></label>
+  <label>Email <input name="email" type="email" autocomplete="email" required></label>
+  <label>Phone <input name="phone" type="tel" autocomplete="tel" required pattern="\+?[0-9 ]{10,15}"></label>
+  <label>PIN code <input name="pin" inputmode="numeric" required pattern="[1-9][0-9]{5}"></label>
+  <label>Guests <input name="guests" type="number" min="1" max="6" step="1" required></label>
+  <label>Arrival <input name="arrival" type="date" min="2026-10-01" max="2027-03-31" required></label>
+  <label>Room
+    <select name="room" required>
+      <option value="">Choose a room</option>
+      <option value="balcao">Balcao</option>
+      <option value="quintal">Quintal</option>
+    </select>
+  </label>
+  <fieldset><legend>Breakfast</legend>
+    <label><input type="radio" name="breakfast" value="yes" required> Yes</label>
+    <label><input type="radio" name="breakfast" value="no"> No</label>
+  </fieldset>
+  <label>Anything we should know? <textarea name="notes" minlength="10" required></textarea></label>
+  <label><input type="checkbox" name="terms" required> I have read the house rules</label>
+  <label>Nickname <input name="nickname"></label>
+  <button>Send booking</button>
+</form>
+
+<h2>Ask a question</h2>
+<!-- Progressive enhancement: without JavaScript it posts like any form; with it, a script sends
+     the same fields with fetch and stays on the page. Both must count as a submit. -->
+<form id="enquiry" action="/enquire" method="post">
+  <label>Email <input name="email" type="email" autocomplete="email" required></label>
+  <label>Question <textarea name="question" required></textarea></label>
+  <button>Ask</button>
+  <p id="enquiry-status" role="status"></p>
+</form>
+<script type="module">
+  const form = document.getElementById('enquiry');
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    await fetch(form.action, { method: 'POST', body: new URLSearchParams(new FormData(form)) });
+    document.getElementById('enquiry-status').textContent = 'Thanks, we will write back within a day.';
+  });
+</script>
+</main>
+</body>
+</html>

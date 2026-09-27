@@ -1,0 +1,183 @@
+{
+  "name": "susegad-ui",
+  "format": 1,
+  "base": "..",
+  "items": [
+    {
+      "name": "core",
+      "type": "package",
+      "title": "Core",
+      "description": "Fixture core: defineScene and a minimal <sg-scene> that draws once on a canvas.",
+      "version": "0.1.0",
+      "manifest": "packages/core/registry.json",
+      "files": [
+        {
+          "path": "packages/core/define-scene.js",
+          "bytes": 350,
+          "hash": "sha256-0bb02743b21857bd408d693f94d5fdd795e88bb634f3566e1e48b9821d20e871"
+        },
+        {
+          "path": "packages/core/index.js",
+          "bytes": 89,
+          "hash": "sha256-3b48d6524d45e729094c0f2216f2769a5d501bbf624bd460e4a857e55ee5281b"
+        },
+        {
+          "path": "packages/core/scene-element.js",
+          "bytes": 653,
+          "hash": "sha256-1f85dff2712fa8b8c4676a0f7371826620d6d81bac60cd78fac7c2f7ae560cc3"
+        }
+      ],
+      "dependencies": [
+        "engine",
+        "tokens"
+      ],
+      "registers": [],
+      "bytes": 1092,
+      "jsBytes": 1092,
+      "codeBytes": 1088,
+      "hash": "sha256-4fd00e0767e21bab72dc6dbd0ea6ccabaec7c23fe6f0f0343266882886d60629"
+    },
+    {
+      "name": "engine",
+      "type": "package",
+      "title": "Engine",
+      "description": "Fixture engine: one drawing helper, in a src/ folder to prove the tree is kept.",
+      "version": "0.1.0",
+      "manifest": "packages/engine/registry.json",
+      "files": [
+        {
+          "path": "packages/engine/index.js",
+          "bytes": 38,
+          "hash": "sha256-65a736f488c4cd02510170102d5d13897f77be3309dcf7b78aa6ad84786e9527"
+        },
+        {
+          "path": "packages/engine/src/draw.js",
+          "bytes": 164,
+          "hash": "sha256-07b13b4a9c4e6398c4ebac520fae299617534de6c460724787536c94a1093efd"
+        }
+      ],
+      "dependencies": [],
+      "registers": [],
+      "budget": {
+        "jsBytes": 2000
+      },
+      "bytes": 202,
+      "jsBytes": 202,
+      "codeBytes": 180,
+      "hash": "sha256-7f96967a313c788ac4634fecb2def6954ce9855892a7f31f7ec0c9f7aecf6dce"
+    },
+    {
+      "name": "hello",
+      "type": "recipe",
+      "title": "Hello",
+      "description": "Fixture recipe: a greeting beside the dot scene, to prove recipes copy to susegad/recipes/ with their imports intact.",
+      "version": "0.1.0",
+      "manifest": "packages/recipes/hello/registry.json",
+      "files": [
+        {
+          "path": "packages/recipes/hello/index.html",
+          "bytes": 206,
+          "hash": "sha256-d16fa2acd2f688c55fd144d11fcc9b4520d4a7f3652a81c7bea53eef7c96018c"
+        },
+        {
+          "path": "packages/recipes/hello/README.md",
+          "bytes": 79,
+          "hash": "sha256-c66ca082c2ba0743e3e92072875b182179030fe15fed537cd5906ac9a9523f58"
+        },
+        {
+          "path": "packages/recipes/hello/recipe.css",
+          "bytes": 71,
+          "hash": "sha256-765a8aec161541b513d35be238601f04771b242c92b472e8b4dab6a41aa093be"
+        },
+        {
+          "path": "packages/recipes/hello/recipe.js",
+          "bytes": 247,
+          "hash": "sha256-eb69687d5ab127a9e31944b347870d1a2117e3ef5a27345708fc27863fe6c72d"
+        }
+      ],
+      "dependencies": [
+        "scene-dot",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "docs": "packages/recipes/hello/README.md",
+      "bytes": 603,
+      "jsBytes": 247,
+      "codeBytes": 187,
+      "hash": "sha256-2d871ed6052d20245f05e6c8d7e613e309d004741b78c3649159e72b0fa2ecf0"
+    },
+    {
+      "name": "scene-dot",
+      "type": "scene",
+      "title": "Dot",
+      "description": "Fixture scene: a kumkum dot on paper. One path is repo-rooted on purpose.",
+      "version": "0.1.0",
+      "manifest": "packages/scenes/dot/registry.json",
+      "files": [
+        {
+          "path": "packages/scenes/dot/dot.prompt.md",
+          "bytes": 87,
+          "hash": "sha256-cf551b2c258e2120a62c166cd358ef2b1ac5e47cecff9f6b46e89b7b4b1a1e6c"
+        },
+        {
+          "path": "packages/scenes/dot/index.js",
+          "bytes": 361,
+          "hash": "sha256-554731df734ec78c1277c259d3d48544cbd5acc6a76b0cf4eaf65cb5039d98e0"
+        },
+        {
+          "path": "packages/scenes/dot/model.js",
+          "bytes": 142,
+          "hash": "sha256-d6c1365c9b7b20aa7e96593cf06ab10b335e6e02b2a2e73c3dd6b8f48fa1d60c"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "engine"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "budget": {
+        "jsBytes": 4000,
+        "frameMs": 16.7
+      },
+      "prompt": "packages/scenes/dot/dot.prompt.md",
+      "bytes": 590,
+      "jsBytes": 503,
+      "codeBytes": 458,
+      "hash": "sha256-223a2e63a259eff4130d59b52523d33a797b78247783d21325e2e17bb170f8c3"
+    },
+    {
+      "name": "tokens",
+      "type": "package",
+      "title": "Tokens",
+      "description": "Fixture tokens: two colours as CSS custom properties with a JS mirror.",
+      "version": "0.1.0",
+      "manifest": "packages/tokens/registry.json",
+      "files": [
+        {
+          "path": "packages/tokens/tokens.css",
+          "bytes": 78,
+          "hash": "sha256-3b2b8a19504984c97e6d1bacbca8353da618338be0f4e37125da920120745ed6"
+        },
+        {
+          "path": "packages/tokens/tokens.js",
+          "bytes": 79,
+          "hash": "sha256-53d4149a2a1c7e1abe989098a03e904934fcef3fac0e753db3a1605ad5c8d21d"
+        }
+      ],
+      "dependencies": [],
+      "registers": [],
+      "bytes": 157,
+      "jsBytes": 79,
+      "codeBytes": 79,
+      "hash": "sha256-2be8716b6978e16f220ad4b22996f3c0f387c197fee3c5633e61be04638227be"
+    }
+  ]
+}

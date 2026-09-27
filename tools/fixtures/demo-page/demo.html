@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo fixture</title>
+<style>
+  body { margin: 0; padding: 24px 16px; background: var(--sg-paper, Canvas); color: var(--sg-ink, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 40rem; margin: 0 auto; display: grid; gap: 16px; }
+  .spinner { width: 24px; height: 24px; border-radius: 50%; border: 3px solid currentColor; border-right-color: transparent; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(1turn); } }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Demo fixture</h1>
+  <p>A stand-in for a component demo page. It loads <code>tools/harness/demo.js</code>, upgrades one custom element, and calls <code>__demoReady()</code>.</p>
+  <sg-fixture-badge>Loading</sg-fixture-badge>
+  <div class="spinner" role="status" aria-label="Loading"></div>
+</main>
+<script type="module">
+  customElements.define('sg-fixture-badge', class extends HTMLElement {
+    connectedCallback() {
+      this.setAttribute('role', 'status');
+      this.textContent = `Ready in the ${document.documentElement.dataset.register || 'warm'} register`;
+    }
+  });
+  await customElements.whenDefined('sg-fixture-badge');
+  window.__demoReady();
+</script>
+</body>
+</html>

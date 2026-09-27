@@ -1,0 +1,20 @@
+# Saving footer
+
+*A form that saves itself, and a footer that never claims more than the network has done.*
+
+## The prompt
+
+Build a form footer that saves the form when the person pauses typing and says what is happening, using the Susegad UI Loader, Badge, Toast and Connecting components. Keep the logic pure and testable: a state machine that takes the person's edits and a transport's events and returns the next state and the effects to carry out, and a view that turns the state into the footer's words. Drive every state from a transport: a fake one for the demo, pure and seeded, whose saves take a seeded time and fail if the link is down when they start or drops while they are in flight, and whose link comes back through a reconnect handshake. The footer shows "Saving" with the loader only while a save is in flight, then a badge saying "Saved at 14:32" with the time the save finished. If a save fails, the badge says "Not saved", an error toast says "Couldn't save. Check your connection and try again." with a Try again button, and the Connecting indicator shows the link as offline, then connecting while it reconnects. When the link is up again, try once more by itself, clear the error toast, say "You're back online. Your changes are saved.", and let the fireflies be seen in step for a few seconds before the indicator goes. Edits made during a save are saved straight after it. Give the footer one polite status line for its words, keep the pictures hidden from screen readers, and make "Save now" a real submit button with Ctrl+S as a shortcut. Let the page's register choose the pictures: in quiet, three dots that pulse slowly, a hairline badge and a still dot for the link; in warm, a kolam loader, a hand-inked badge and fireflies; in playful, a spinning top, a colour chip and a brighter swarm. With reduced motion nothing moves, and the words carry every state. The typing pause only decides when a save starts; it must never show as progress. Show every state of the footer on the demo page.
+
+## Words to code
+
+| When you say | Technique | What happens |
+|---|---|---|
+| a state machine that takes the person's edits and a transport's events | pure core | `reduce(state, event)` returns the next state and a list of effects such as "start a save" or "show the error toast". The page carries the effects out; the machine never touches the DOM or a timer, so it is tested with a virtual clock. |
+| pure and seeded, whose saves take a seeded time | determinism | Each save's time comes from a seeded generator, and each reconnect handshake's length is seeded by when the link came back, so the same actions at the same times always give the same story. |
+| fail if the link is down when they start or drops while they are in flight | failure at the real moment | The transport checks the whole span of each save against the link. A save that started before the drop fails when the drop happens, not before, and not after. |
+| only while a save is in flight | motion that follows the work | The loader is tied to the machine's in-flight save, which the transport's answer clears. The test checks this at every 50 ms step of a twenty-second run. |
+| with the time the save finished | real state | "Saved at" uses the time in the transport's `saved` event, formatted as a 24-hour clock, never the time the page last looked. |
+| try once more by itself, clear the error toast | recovery | The machine starts a save when the link event says `up` and the last save failed. One error toast is shown per outage, however many tries fail. |
+| Let the page's register choose the pictures | registers | The recipe draws nothing itself. Loader, Badge, Toast and Connecting each read `data-register` and load only their own skin, so one attribute on the page changes the whole footer. |
+| one polite status line for its words | accessibility | A visually hidden `role="status"` span holds the footer's words. The loader and badge sit in an `aria-hidden` wrapper, so a screen reader hears each state once. |

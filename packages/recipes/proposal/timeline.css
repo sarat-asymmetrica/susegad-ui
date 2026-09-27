@@ -1,0 +1,45 @@
+/* <sg-timeline>: the plan, in order. Without a script it is a numbered list
+   on a rule; with one, a native range walks through the steps, the current
+   step is marked, and the ones done go quiet. */
+
+sg-timeline { display: block; margin: var(--sg-space-4, 1.5rem) 0; }
+.timeline__heading { font-weight: var(--sg-weight-medium, 500); margin: 0 0 var(--sg-space-2, 0.5rem); }
+.timeline { list-style: none; counter-reset: step; margin: 0; padding: 0; }
+.timeline__step {
+  counter-increment: step; position: relative; margin-inline-start: 1rem;
+  padding: 0.15rem 0 1.1rem 2.1rem; border-inline-start: 1.5px solid var(--sg-rule-strong, currentColor);
+}
+.timeline__step:last-child { border-inline-start-color: transparent; padding-block-end: 0.2rem; }
+.timeline__step::before {
+  content: counter(step); position: absolute; inset-inline-start: calc(-1rem - 0.75px); inset-block-start: 0;
+  inline-size: 2rem; block-size: 2rem; display: grid; place-items: center; border-radius: 50%; box-sizing: border-box;
+  font: var(--sg-weight-medium, 500) var(--sg-step--1, 0.85rem) / 1 var(--sg-font-body, sans-serif); font-variant-numeric: lining-nums;
+  background: var(--sg-surface, Canvas); color: var(--sg-text, inherit); border: 1.5px solid var(--sg-rule-strong, currentColor);
+  transition: background-color 200ms, color 200ms, border-color 200ms;
+}
+.timeline__title { display: block; font-weight: var(--sg-weight-medium, 500); line-height: 1.35; padding-block-start: 0.2rem; }
+.timeline__text { display: block; color: var(--sg-text-soft, inherit); max-inline-size: var(--sg-measure, 62ch); }
+.timeline__when { display: block; font-size: var(--sg-step--1, 0.85rem); color: var(--sg-text-soft, inherit); font-variant-numeric: tabular-nums; }
+
+.timeline__scrub { display: grid; gap: 0.35rem; margin-block-end: var(--sg-space-3, 1rem); padding: 0.75rem 1rem 0.85rem; background: var(--sg-surface-sunk, transparent); border-radius: var(--sg-radius-2, 6px); }
+.timeline__scrub label { font-weight: var(--sg-weight-medium, 500); }
+.timeline__scrub input[type="range"] { inline-size: 100%; min-block-size: 2.75rem; margin: 0; accent-color: var(--sg-accent, AccentColor); cursor: pointer; }
+.timeline__scrub input[type="range"]:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+.timeline__said { margin: 0; font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); min-block-size: 1.4em; }
+
+/* with the scrubber: steps done are quieter, the current one stands out */
+sg-timeline[data-step] .timeline__step { cursor: pointer; }
+sg-timeline[data-step] .timeline__step[data-done] { border-inline-start-color: var(--sg-accent, currentColor); }
+sg-timeline[data-step] .timeline__step[data-done] :is(.timeline__title, .timeline__text) { color: var(--sg-text-soft, inherit); }
+sg-timeline[data-step] .timeline__step[data-done]::before { background: var(--sg-surface-sunk, Canvas); border-color: var(--sg-accent, currentColor); color: var(--sg-accent-text, inherit); }
+sg-timeline[data-step] .timeline__step[aria-current="step"]::before { background: var(--sg-accent, CanvasText); color: var(--sg-on-accent, Canvas); border-color: var(--sg-accent, CanvasText); }
+sg-timeline[data-step] .timeline__step[aria-current="step"] .timeline__title { color: var(--sg-accent-text, inherit); }
+
+@media (prefers-reduced-motion: reduce) { .timeline__step::before { transition: none; } }
+@media print {
+  .timeline__scrub { display: none; }
+  .timeline__step { break-inside: avoid; }
+  sg-timeline[data-step] .timeline__step::before { background: #fff !important; color: #111 !important; border-color: #777 !important; }
+  sg-timeline[data-step] .timeline__step :is(.timeline__title, .timeline__text) { color: inherit !important; }
+  sg-timeline[data-step] .timeline__step { border-inline-start-color: #999 !important; }
+}

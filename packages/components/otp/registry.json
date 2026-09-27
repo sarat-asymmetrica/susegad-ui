@@ -1,0 +1,35 @@
+{
+  "name": "otp",
+  "type": "component",
+  "title": "One-time code",
+  "description": "A one-time code entry. The native path is one input with autocomplete=\"one-time-code\" and the number pad, which submits, takes SMS autofill and works without JavaScript. With JavaScript the same input lies transparently over a row of aria-hidden boxes: typing over a box replaces it, backspace works back across them, and a paste keeps just the digits. Quiet is plain boxes; warm stamp boxes that ink each digit; playful a stamp per digit.",
+  "version": "0.1.0",
+  "files": [
+    "otp.js",
+    "otp.core.js",
+    "otp.css",
+    "skins/boxes.js",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "otp.prompt.md",
+    "otp.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "otp.prompt.md",
+  "docs": "otp.docs.md",
+  "budget": {
+    "jsBytes": 38912,
+    "reason": "Decision 0009: behaviour declared at 14 KB (the box-by-box editing model over one native input, and digits from every Indian script and full width read as ASCII), plus 8 KB for each of three skins. Today: behaviour 13.0 KB (otp.js 7.5, otp.core.js 5.6); skins share 1.6 KB of boxes, quiet adds 0.2 KB, warm 2.4 KB, playful 0.4 KB plus warm."
+  }
+}

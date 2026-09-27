@@ -1,0 +1,43 @@
+/* <sg-skeleton>: layout and the three registers. Tokens only. */
+
+sg-skeleton { display: block; position: relative; }
+/* hidden always wins, whatever display a skin sets */
+sg-skeleton[hidden] { display: none !important; }
+
+/* the hidden line that says what is loading, and announces the arrival */
+sg-skeleton > .sg-skeleton-status {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+
+/* while busy, stale or partial content stays out of sight and out of the reading order */
+sg-skeleton[busy] > :not(.sg-skeleton-deco, .sg-skeleton-status) { display: none !important; }
+
+/* without JavaScript: one flat sunk block stands in (the quiet look) */
+sg-skeleton[busy]:not(:defined) {
+  min-height: 5.5rem; border-radius: var(--sg-radius-2, 4px);
+  background: var(--sg-surface-sunk, #eee8da);
+}
+
+.sg-skeleton-deco { display: block; position: relative; pointer-events: none; overflow: visible; }
+.sg-skeleton-deco[hidden] { display: none; }
+/* on arrival the drawing lifts off the flow and the content takes its place beneath */
+.sg-skeleton-deco.sg-leaving { position: absolute; inset: 0 auto auto 0; z-index: 1; }
+
+/* quiet: flat blocks, a shade deeper than the surface; nothing moves */
+.sg-skeleton-block { position: absolute; background: var(--sg-surface-sunk, #eee8da); }
+
+/* warm and playful: while the outlines ink in, the arrived content waits unseen (it is already readable) */
+sg-skeleton[data-inking] > :not(.sg-skeleton-deco, .sg-skeleton-status) { position: absolute; inset: 0 0 auto 0; opacity: 0; }
+
+sg-skeleton[data-arriving] > :not(.sg-skeleton-deco, .sg-skeleton-status) {
+  animation: sg-skeleton-in var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out) both;
+}
+sg-skeleton[data-skin='warm'][data-arriving] > :not(.sg-skeleton-deco, .sg-skeleton-status),
+sg-skeleton[data-skin='playful'][data-arriving] > :not(.sg-skeleton-deco, .sg-skeleton-status) {
+  animation-duration: 220ms;
+}
+@keyframes sg-skeleton-in { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  sg-skeleton[data-arriving] > * { animation: none !important; }
+}

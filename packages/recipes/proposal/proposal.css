@@ -1,0 +1,238 @@
+/* The proposal: a document to read slowly, print and sign. One column at a
+   reading measure, a cover with the scene, the meta set like a letterhead,
+   one section per heading, tables that stack on a phone, and a signing block
+   that works on screen and on paper.
+
+   Registers. Quiet: hairlines, no numerals, the scene a still; formal and
+   finished. Warm (the default): hand-inked rules, section numerals in the
+   hand face, a stamped status, notes on raised paper. Playful: the same
+   bones, with the numerals in teak discs, the rules in the accent, and a
+   little more tilt in the stamp. Never louder than the words. */
+
+.proposal-page { margin: 0; background: var(--sg-paper, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.6) var(--sg-font-body, system-ui, sans-serif); }
+
+.proposal {
+  --proposal-measure: 40rem;
+  --proposal-ink-rule: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 8' preserveAspectRatio='none'%3E%3Cpath d='M0 4.3C60 3.1 118 5.2 196 3.9S330 3 400 4.1L400 4.9C338 4.4 262 5.6 198 4.8S64 4.5 0 5.3Z'/%3E%3C/svg%3E");
+  box-sizing: border-box;
+  max-inline-size: calc(var(--proposal-measure) + 2 * 16px);
+  margin: 0 auto;
+  padding: var(--sg-space-5, 2.5rem) 16px var(--sg-space-6, 4rem);
+  font: var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.6) var(--sg-font-body, system-ui, sans-serif);
+  color: var(--sg-text, CanvasText);
+  counter-reset: section;
+  overflow-wrap: break-word;
+}
+.proposal :is(p, ul, ol, blockquote) { margin: 0 0 1rem; max-inline-size: var(--sg-measure, 62ch); }
+.proposal :is(ul, ol) { padding-inline-start: 1.25rem; }
+.proposal li { margin-block-end: 0.35rem; }
+.proposal li::marker { color: var(--sg-accent-text, currentColor); }
+.proposal a { color: var(--sg-accent-text, LinkText); text-underline-offset: 0.15em; }
+.proposal a:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+.proposal strong { font-weight: var(--sg-weight-bold, 600); }
+.proposal :is(h1, h2, h3) { font-family: var(--sg-font-display, serif); font-weight: var(--sg-weight-regular, 400); line-height: var(--sg-leading-tight, 1.15); color: var(--sg-text, inherit); text-wrap: balance; }
+.proposal h1 { font-size: var(--sg-step-5, 2.6rem); margin: 0 0 0.5rem; letter-spacing: -0.01em; }
+.proposal h2 { font-size: var(--sg-step-3, 1.9rem); margin: 0 0 1.1rem; }
+.proposal h3 { font-size: var(--sg-step-1, 1.25rem); margin: 2rem 0 0.75rem; }
+
+/* ── the cover ─────────────────────────────────────────────────────────── */
+
+.proposal-cover { position: relative; display: grid; gap: var(--sg-space-4, 1.5rem); margin-block-end: var(--sg-space-5, 2.5rem); }
+.proposal-cover sg-scene { border-radius: var(--sg-radius-3, 8px); overflow: hidden; box-shadow: var(--sg-lift, none); --sg-reading-place: end start; }
+.proposal-cover sg-scene :is(h1, p) { max-inline-size: 26ch; }
+.proposal-cover sg-scene h1 { font-size: var(--sg-step-4, 2.2rem); }
+.proposal-cover sg-scene p { margin: 0; color: var(--sg-text-soft, inherit); max-inline-size: 48ch; }
+/* before the scene draws, or without scripts: a pale window of lime plaster, the words on it */
+.proposal-cover sg-scene:not(:defined) {
+  display: block; padding: clamp(1.25rem, 6vw, 3rem);
+  background: linear-gradient(170deg, var(--sg-surface-raised, Canvas), var(--sg-surface-sunk, Canvas));
+  border: 1px solid var(--sg-rule, currentColor);
+}
+/* the draft's status, stamped across the corner of the picture */
+.proposal-cover__art { position: relative; }
+.proposal-cover__art > sg-stamp.proposal-status {
+  /* inside the picture's corner, turned clockwise about its top-left corner, so no part of it
+     rises above the cover (where print and small screens would cut it off) */
+  position: absolute; z-index: 2; inset-block-start: 0.5rem; inset-inline-start: 0.5rem;
+  inline-size: max-content; max-inline-size: none; scale: 0.7; transform-origin: 0 0; --sg-stamp-rotate: 4deg;
+  background: color-mix(in oklab, var(--sg-paper-raised, Canvas) 94%, transparent); border-radius: var(--sg-radius-2, 4px);
+}
+.proposal-status > [role="status"] > strong { font-size: var(--sg-step-0, 1rem); }
+@media (max-width: 36rem) { .proposal-cover__art > sg-stamp.proposal-status { scale: 0.52; inset-block-start: 0.35rem; inset-inline-start: 0.35rem; } }
+
+.proposal-meta { display: flex; flex-wrap: wrap; gap: 0.75rem 2.25rem; margin: 0; padding: 0.9rem 0; border-block: var(--sg-hairline, 1px) solid var(--sg-rule-strong, currentColor); }
+.proposal-meta div { min-inline-size: 0; }
+.proposal-meta dt { font: var(--sg-weight-medium, 500) var(--sg-step--1, 0.85rem) / 1.3 var(--sg-font-body, sans-serif); color: var(--sg-text-soft, inherit); letter-spacing: 0.06em; text-transform: uppercase; }
+.proposal-meta dd { margin: 0.15rem 0 0; font: var(--sg-step-0, 1rem) / 1.35 var(--sg-font-display, serif); }
+
+.proposal-lede { font-size: var(--sg-step-1, 1.2rem); line-height: 1.5; color: var(--sg-text-soft, inherit); }
+.proposal-lede p { max-inline-size: 36ch; }
+
+/* ── sections ──────────────────────────────────────────────────────────── */
+
+.proposal-section { counter-increment: section; margin-block-start: var(--sg-space-6, 4rem); }
+.proposal-section > h2 { position: relative; padding-block-start: 1.4rem; }
+/* the rule above each section: a line drawn with a pen */
+.proposal-section > h2::before {
+  content: ''; position: absolute; inset-block-start: 0; inset-inline: 0; block-size: 8px;
+  background: var(--sg-rule-strong, currentColor);
+  -webkit-mask: var(--proposal-ink-rule) center / 100% 100% no-repeat; mask: var(--proposal-ink-rule) center / 100% 100% no-repeat;
+}
+/* the section's number, lettered by hand in the margin of the heading */
+.proposal-section > h2::after {
+  content: counter(section, decimal-leading-zero); position: absolute; inset-block-start: -0.6rem; inset-inline-end: 0;
+  padding-inline-start: 0.5rem; background: var(--sg-paper, Canvas);
+  font: var(--sg-weight-regular, 400) var(--sg-step-1, 1.2rem) / 1 var(--sg-font-hand, cursive); color: var(--sg-accent-text, inherit);
+}
+.proposal-section > p:has(> strong:first-child) > strong:first-child { color: var(--sg-text, inherit); }
+
+/* notes: a sheet of paper laid on the page */
+.proposal .folio-note { margin: var(--sg-space-4, 1.5rem) 0; padding: 1rem 1.2rem; background: var(--sg-surface-raised, Canvas); border: var(--sg-hairline, 1px) solid var(--sg-rule, currentColor); border-inline-start: 3px solid var(--sg-info, currentColor); border-radius: var(--sg-radius-2, 4px); box-shadow: var(--sg-lift, none); }
+.proposal .folio-note[data-tone="warning"] { border-inline-start-color: var(--sg-warning, currentColor); }
+.proposal .folio-note[data-tone="tip"] { border-inline-start-color: var(--sg-accent, currentColor); }
+.proposal .folio-note[data-tone="success"] { border-inline-start-color: var(--sg-success, currentColor); }
+.proposal .folio-note__label { margin: 0 0 0.35rem; font: var(--sg-weight-medium, 500) var(--sg-step--1, 0.85rem) / 1.3 var(--sg-font-body, sans-serif); letter-spacing: 0.06em; text-transform: uppercase; color: var(--sg-text-soft, inherit); }
+.proposal .folio-note > :last-child { margin-block-end: 0; }
+
+/* diagrams: a drawing pinned to the page */
+.proposal sg-diagram { display: block; margin: var(--sg-space-4, 1.5rem) 0; padding: clamp(0.75rem, 3vw, 1.25rem); background: var(--sg-surface-raised, Canvas); border: var(--sg-hairline, 1px) solid var(--sg-rule, currentColor); border-radius: var(--sg-radius-3, 8px); }
+.proposal sg-diagram :is(p, ol, ul) { max-inline-size: none; }
+.proposal sg-diagram figcaption { font: var(--sg-step-0, 1rem) / 1.3 var(--sg-font-display, serif); }
+[data-register="quiet"] .proposal sg-diagram { background: transparent; border-inline: 0; border-radius: 0; padding-inline: 0; }
+
+/* ── tables: scope, costs, who does what ──────────────────────────────── */
+
+.proposal-table { container-type: inline-size; margin: var(--sg-space-4, 1.5rem) 0; }
+.proposal-table table { inline-size: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums lining-nums; }
+.proposal-table :is(th, td) { text-align: start; vertical-align: top; padding: 0.7rem 1rem 0.7rem 0; border-block-end: var(--sg-hairline, 1px) solid var(--sg-rule, currentColor); }
+.proposal-table :is(th, td):last-child { padding-inline-end: 0; }
+.proposal-table thead th { font: var(--sg-weight-medium, 500) var(--sg-step--1, 0.85rem) / 1.3 var(--sg-font-body, sans-serif); color: var(--sg-text-soft, inherit); letter-spacing: 0.06em; text-transform: uppercase; border-block-end-color: var(--sg-rule-strong, currentColor); }
+.proposal-table td > strong:first-child { display: block; font: var(--sg-step-0, 1rem) / 1.3 var(--sg-font-display, serif); font-weight: var(--sg-weight-regular, 400); margin-block-end: 0.2rem; }
+/* two columns, the second a price: the figure sits right, in the display face */
+.proposal-table table[data-cols="2"] th:last-child { text-align: end; }
+.proposal-table table[data-cols="2"] td:last-child { text-align: end; inline-size: 30%; font-family: var(--sg-font-display, serif); }
+/* a first column with no heading holds the row's name */
+.proposal-table table[data-row-heads] td:first-child { font-weight: var(--sg-weight-medium, 500); inline-size: 24%; }
+.proposal-table table[data-row-heads] td:not(:first-child) { inline-size: 38%; }
+
+@container (max-width: 34rem) {
+  .proposal-table thead { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
+  .proposal-table :is(table, tbody, tr, td) { display: block; }
+  .proposal-table tr { padding: 0.8rem 0; border-block-end: var(--sg-hairline, 1px) solid var(--sg-rule-strong, currentColor); }
+  .proposal-table td { border: 0; padding: 0.15rem 0; inline-size: auto !important; text-align: start !important; }
+  .proposal-table td:empty { display: none; } /* a row with nothing for one side says nothing, rather than an empty label */
+  .proposal-table td[data-label]:not([data-label=""])::before { content: attr(data-label); display: block; font-size: var(--sg-step--1, 0.85rem); color: var(--sg-text-soft, inherit); }
+  .proposal-table table[data-row-heads] td:first-child { font: var(--sg-step-0, 1rem) / 1.3 var(--sg-font-display, serif); margin-block-end: 0.3rem; }
+  .proposal-table table[data-cols="2"] td:first-child::before { content: none; } /* the item names itself */
+  .proposal-table table[data-cols="2"] td:last-child { margin-block-start: 0.35rem; }
+  .proposal-table table[data-cols="2"] td:last-child::before { display: inline !important; margin-inline-end: 0.5rem; }
+}
+
+/* ── saying yes: the option, the signature, a copy to keep ─────────────── */
+
+.proposal .folio-signature { display: grid; gap: var(--sg-space-4, 1.5rem); margin: var(--sg-space-4, 1.5rem) 0; padding: clamp(1rem, 4vw, 1.75rem); background: var(--sg-surface-raised, Canvas); border: var(--sg-hairline, 1px) solid var(--sg-rule, currentColor); border-radius: var(--sg-radius-3, 8px); box-shadow: var(--sg-lift, none); }
+.folio-signature__options { margin: 0; padding: 0; border: 0; display: grid; gap: 0.5rem; min-inline-size: 0; }
+.folio-signature__options legend { padding: 0; margin-block-end: 0.5rem; font: var(--sg-weight-medium, 500) var(--sg-step-0, 1rem) / 1.3 var(--sg-font-body, sans-serif); }
+.folio-signature__choice { position: relative; display: flex; align-items: center; gap: 0.75rem; min-block-size: 2.75rem; padding: 0.35rem 0.9rem; border-radius: var(--sg-radius-2, 4px); box-shadow: inset 0 0 0 1px var(--sg-rule-strong, currentColor); }
+.folio-signature__choice:has(:checked) { box-shadow: inset 0 0 0 2px var(--sg-accent, currentColor); background: color-mix(in oklab, var(--sg-accent, currentColor) 7%, transparent); }
+.folio-signature__choice input { position: relative; z-index: 1; inline-size: 1.15rem; block-size: 1.15rem; margin: 0; flex: none; accent-color: var(--sg-accent, AccentColor); cursor: pointer; }
+.folio-signature__choice input:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+.folio-signature__choice label { flex: 1; cursor: pointer; padding-block: 0.3rem; }
+/* the whole row is the target */
+.folio-signature__choice label::after { content: ''; position: absolute; inset: 0; }
+.proposal sg-signature { max-inline-size: none; }
+.proposal .folio-signature__for { margin: 0; font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); }
+/* the signature before, or without, its script: a labelled line to type a name on */
+.proposal sg-signature:not(:defined) { display: grid; gap: 0.3rem; }
+.proposal sg-signature:not(:defined) > input { font: 300 var(--sg-step-2, 1.45rem) / 1.2 var(--sg-font-hand, cursive); min-block-size: 2.75rem; padding: 0.2rem 0.1rem; border: 0; border-block-end: var(--sg-stroke, 1.5px) solid var(--sg-rule-strong, currentColor); background: transparent; color: inherit; }
+.proposal sg-signature:not(:defined) > input:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+
+.proposal-keep { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; margin: 0 0 var(--sg-space-4, 1.5rem); }
+.proposal-keep[hidden] { display: none; }
+.proposal-keep__said { margin: 0 !important; color: var(--sg-text-soft, inherit); font-size: var(--sg-step--1, 0.9rem); flex: 1 1 16rem; }
+.proposal-keep__print { font: var(--sg-weight-medium, 500) var(--sg-step--1, 0.9rem) / 1 var(--sg-font-body, sans-serif); min-block-size: 2.75rem; padding: 0 1.2rem; border: 0; border-radius: var(--sg-radius-2, 4px); background: var(--sg-accent, CanvasText); color: var(--sg-on-accent, Canvas); cursor: pointer; }
+.proposal-keep__print:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+
+/* footnotes: a paragraph that opens with ¹, set small under a short hairline */
+.proposal .proposal-footnote { font-size: var(--sg-step--1, 0.875rem); line-height: 1.5; color: var(--sg-text-soft, inherit); }
+.proposal :not(.proposal-footnote) + .proposal-footnote { margin-block-start: var(--sg-space-4, 1.5rem); }
+.proposal :not(.proposal-footnote) + .proposal-footnote::before { content: ''; display: block; inline-size: 6rem; margin-block-end: 0.75rem; border-block-start: var(--sg-hairline, 1px) solid var(--sg-rule-strong, currentColor); }
+
+/* the last section, where the numbers come from: set small, like notes at the back of a book */
+.proposal-section:last-of-type:has(> ul:last-child) > ul { font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); }
+
+/* ── registers ─────────────────────────────────────────────────────────── */
+
+/* quiet: a formal document. Straight hairlines, no numerals, no lift, the stamp square. */
+[data-register="quiet"] .proposal-section > h2::before { -webkit-mask: none; mask: none; block-size: var(--sg-hairline, 1px); inset-block-start: 3px; }
+[data-register="quiet"] .proposal-section > h2::after { content: none; }
+[data-register="quiet"] .proposal-cover sg-scene,
+[data-register="quiet"] .proposal .folio-note,
+[data-register="quiet"] .proposal .folio-signature { box-shadow: none; }
+[data-register="quiet"] .proposal-cover__art > sg-stamp.proposal-status { --sg-stamp-rotate: 0deg; }
+[data-register="quiet"] .proposal .folio-note { background: transparent; border-block: 0; border-inline-end: 0; border-radius: 0; }
+
+/* playful: colour and motif, calmly, because it is still a document. Each section takes a pigment
+   from the palette in turn (the house's pool, tile, moss and laterite; the sketchbook's indigo and
+   kokum where the casa ones are not defined): its rule, its numeral in a small disc, a tile
+   motif where the rule begins, its list markers and table rules. The stamp leans a little more. */
+[data-register="playful"] .proposal-section { position: relative; --proposal-hue: var(--sg-pool, var(--sg-indigo, currentColor)); }
+[data-register="playful"] .proposal-section:nth-of-type(4n + 2) { --proposal-hue: var(--sg-tile, var(--sg-kokum, currentColor)); }
+[data-register="playful"] .proposal-section:nth-of-type(4n + 3) { --proposal-hue: var(--sg-moss, var(--sg-indigo, currentColor)); }
+[data-register="playful"] .proposal-section:nth-of-type(4n + 4) { --proposal-hue: var(--sg-laterite, var(--sg-kokum, currentColor)); }
+[data-register="playful"] .proposal-section > h2::before { background: var(--proposal-hue); inset-inline-start: 1.6rem; }
+[data-register="playful"] .proposal-section::before {
+  /* a four-petal tile, like the azulejo border on a Goan balcão, where the rule begins */
+  content: ''; position: absolute; inset-block-start: -0.55rem; inset-inline-start: 0; inline-size: 1.2rem; block-size: 1.2rem;
+  background: var(--proposal-hue);
+  -webkit-mask: var(--proposal-tile) center / contain no-repeat; mask: var(--proposal-tile) center / contain no-repeat;
+}
+[data-register="playful"] .proposal {
+  --proposal-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1l11 11-11 11L1 12z' fill='none' stroke='black' stroke-width='1.6'/%3E%3Cpath d='M12 5c2 3 2 4 0 7-2-3-2-4 0-7zM12 19c-2-3-2-4 0-7 2 3 2 4 0 7zM5 12c3-2 4-2 7 0-3 2-4 2-7 0zM19 12c-3 2-4 2-7 0 3-2 4-2 7 0z'/%3E%3C/svg%3E");
+}
+[data-register="playful"] .proposal-section > h2::after {
+  inset-block-start: -1rem; inline-size: 2.1rem; block-size: 2.1rem; padding: 0; display: grid; place-items: center; border-radius: 50%;
+  background: var(--proposal-hue); color: oklch(98% 0.01 90); box-shadow: 0 0 0 0.35rem var(--sg-paper, Canvas); rotate: -6deg;
+}
+[data-register="playful"] .proposal-cover__art > sg-stamp.proposal-status { --sg-stamp-rotate: 7deg; }
+[data-register="playful"] .proposal-section li::marker { color: var(--proposal-hue, var(--sg-info, currentColor)); }
+[data-register="playful"] .proposal-section .proposal-table thead th { border-block-end-color: var(--proposal-hue); border-block-end-width: 2px; }
+[data-register="playful"] .proposal-section .folio-note { border-inline-start-color: var(--proposal-hue); }
+[data-register="playful"] .proposal-section .price-table thead th { border-block-end: 2px solid var(--proposal-hue); }
+[data-register="playful"] .proposal-meta { border-block-width: 2px; border-block-color: var(--sg-pool, var(--sg-indigo, currentColor)); }
+[data-register="playful"] .folio-signature__choice:has(:checked) { box-shadow: inset 0 0 0 2px var(--proposal-hue, var(--sg-info, currentColor)); background: color-mix(in oklab, var(--proposal-hue, var(--sg-info, currentColor)) 8%, transparent); }
+
+/* ── paper ─────────────────────────────────────────────────────────────── */
+
+@media print {
+  .proposal { max-inline-size: none; padding: 0; font-size: 10.5pt; line-height: 1.45; }
+  .proposal :is(p, ul, ol) { max-inline-size: none; }
+  .proposal h1 { font-size: 24pt; }
+  .proposal h2 { font-size: 16pt; }
+  .proposal h3 { font-size: 12pt; margin-block-start: 1.2rem; }
+  .proposal-cover { margin-block-end: 8mm; }
+  .proposal-cover sg-scene { box-shadow: none; inline-size: 100% !important; }
+  .proposal-status { inset-block-start: 0; background: #fff; }
+  .proposal-lede { font-size: 12pt; color: #333; }
+  .proposal-section { margin-block-start: 9mm; }
+  .proposal-section > h2::after { background: #fff; }
+  .proposal-section > h2, .proposal-section > h3 { break-after: avoid; }
+  .proposal .folio-note, .proposal-table tr, .proposal-section > p:has(> strong:first-child) { break-inside: avoid; }
+  .proposal-section > p:has(+ :is(sg-price-table, .proposal-table, sg-timeline, sg-diagram)) { break-inside: avoid; break-after: avoid; } /* "First, four nights in November:" stays with its table */
+  .proposal .folio-note { box-shadow: none; background: none; }
+  .proposal a[href^="http"]::after { content: none; }
+  .proposal-keep { display: none !important; }
+  .proposal sg-diagram { break-inside: avoid; background: none; }
+  .proposal sg-diagram .sg-diagram-stepper { display: none !important; }
+
+  /* signing on paper: the circles to tick, and the line to sign on, stay */
+  .proposal .folio-signature { break-inside: avoid; box-shadow: none; background: none; border-color: #999; }
+  .proposal .folio-signature__choice { box-shadow: none; min-block-size: 0; padding: 0.15rem 0; }
+  .proposal .folio-signature__choice input[type="radio"] { display: inline-block !important; appearance: none; inline-size: 11pt; block-size: 11pt; border: 1pt solid #333; border-radius: 50%; }
+  .proposal .folio-signature__choice input[type="radio"]:checked { background: radial-gradient(#111 45%, transparent 50%); }
+  .proposal sg-signature > :is(label, .sg-signature-help, .sg-signature-tools, .sg-signature-status) { display: none !important; }
+  .proposal sg-signature:not([data-drawn]) .sg-signature-pad { display: none !important; }
+  .proposal sg-signature > input:not([type="hidden"]) { outline: none !important; box-shadow: none !important; caret-color: transparent; display: block !important; inline-size: 100%; min-block-size: 16mm; border: 0; border-block-end: 1pt solid #333; background: none; color: #111; font-size: 18pt; }
+  .proposal sg-signature::before { content: 'Signature'; font-size: 9pt; color: #444; }
+  .proposal .folio-signature::after { content: 'Date signed'; display: block; padding-block-start: 10mm; border-block-end: 1pt solid #333; max-inline-size: 60mm; font-size: 9pt; color: #444; }
+}

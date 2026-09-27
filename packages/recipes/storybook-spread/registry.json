@@ -1,0 +1,37 @@
+{
+  "name": "storybook-spread",
+  "type": "recipe",
+  "title": "The first rain (storybook spread)",
+  "description": "One bilingual (English and Marathi), narrated spread of a Goan children's storybook: text beside the paus scene, word-by-word highlighting, always-present captions, and rain intensity driven by which words are playing, not the clock. Works without JavaScript: the story text and native audio controls and captions are always there.",
+  "version": "0.1.0",
+  "files": [
+    "index.html",
+    "recipe.js",
+    "demo.js",
+    "recipe.css",
+    "build.mjs",
+    "spread.en.wav",
+    "spread.en.vtt",
+    "spread.mr.wav",
+    "spread.mr.vtt",
+    "story/spread.json",
+    "README.md",
+    "recipe.prompt.md"
+  ],
+  "dependencies": [
+    "narration",
+    "player",
+    "scene-paus",
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "recipe.prompt.md",
+  "docs": "README.md"
+}

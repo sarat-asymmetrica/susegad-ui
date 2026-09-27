@@ -1,0 +1,19 @@
+/* The saving footer's own styles, copied with the recipe. The page also needs
+   tokens.css (for the tokens, and .sg-vh on the status line) and the components' stylesheets. */
+
+.saving-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  padding: 10px 18px;
+  border-top: var(--sg-rule-width, 1px) solid var(--sg-rule, currentColor);
+  min-height: 3rem;
+}
+.saving-footer__state { display: flex; align-items: center; min-height: 1.75rem; }
+.saving-footer__picture { display: contents; }
+
+/* the components set their own display, so hidden needs saying outright */
+.saving-footer [hidden] { display: none !important; }
+.saving-footer sg-connecting { font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); }
+.saving-footer__save { margin-inline-start: auto; }

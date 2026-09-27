@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  // ?register=quiet|warm|playful, ?theme=light|dark and ?palette=… set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute(`data-${k}`, v);
+  window.__ready = false; // set once the live card has its answer, so the tools wait for it
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Room details</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="../../components/skeleton/skeleton.css">
+<link rel="stylesheet" href="../../components/badge/badge.css">
+<link rel="stylesheet" href="./recipe.css">
+<style>
+  body { margin: 0; background: var(--sg-paper, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem)/var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 64rem; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font: 600 var(--sg-step-3, 1.6rem)/1.15 var(--sg-font-display, inherit); margin: 0 0 6px; }
+  .lede, .note, .caption { color: var(--sg-text-soft, inherit); }
+  .lede { max-width: var(--sg-measure, 62ch); margin: 0 0 20px; }
+  .section-title { font: 600 var(--sg-step-1, 1.15rem)/1.3 var(--sg-font-display, inherit); margin: 48px 0 12px; }
+  button { font: inherit; padding: 7px 14px; border-radius: var(--sg-radius-1, 4px); border: 1px solid var(--sg-rule-strong, currentColor); background: var(--sg-surface, Canvas); color: inherit; cursor: pointer; }
+  button:disabled { cursor: default; opacity: 0.6; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+
+  .world { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 16px 0 0; }
+  .gallery { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); align-items: start; }
+  .gallery > li { display: grid; gap: 6px; }
+  .gallery .caption { font-size: var(--sg-step--1, 0.9rem); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Room details</h1>
+  <p class="lede">A room card for a homestay. It keeps the card's shape until the details arrive, then shows them; in warm and playful it inks them in. The rate is in rupees with Indian digit grouping, availability is a badge, and if the details can't be loaded it says so and offers to try again.</p>
+
+  <article class="room" id="live" data-room="garden"></article>
+  <div class="world">
+    <button type="button" id="reload">Load it again</button>
+    <button type="button" id="drop">Make the next load fail</button>
+    <span class="note">These buttons stand in for the network, so you can see every path.</span>
+  </div>
+
+  <h2 class="section-title">Every state of the card</h2>
+  <ul class="gallery">
+    <li><span class="caption">Waiting for the details</span><article class="room" data-still='{"phase":"loading"}' data-room="balcao"></article></li>
+    <li><span class="caption">Loaded, two rooms left</span><article class="room" data-still='{"phase":"loaded"}' data-room="balcao" data-left="2"></article></li>
+    <li><span class="caption">Fully booked, with the rate in lakh</span><article class="room" data-still='{"phase":"loaded"}' data-room="house" data-left="0"></article></li>
+    <li><span class="caption">Could not load</span><article class="room" data-still='{"phase":"failed"}' data-room="garden"></article></li>
+  </ul>
+</main>
+<script type="module">
+  import { mountRoomDetails, stillRoom } from './recipe.js';
+  import { createSource, roomFor } from './source.js';
+
+  const q = new URLSearchParams(location.search);
+  const seed = q.get('seed') ?? 1;
+  const source = createSource({ seed });
+  const live = document.getElementById('live');
+  // ?fail=1 makes the first load fail, so the tools can see the error path
+  if (q.get('fail')) source.failNext();
+  const card = mountRoomDetails(live, { source });
+
+  for (const el of document.querySelectorAll('[data-still]')) {
+    const room = roomFor(el.dataset.room, seed);
+    if (el.dataset.left != null) room.left = +el.dataset.left;
+    stillRoom(el, { ...JSON.parse(el.dataset.still), room });
+  }
+
+  document.getElementById('reload').addEventListener('click', () => card.load());
+  document.getElementById('drop').addEventListener('click', () => source.failNext());
+
+  // ready once the live card has an answer (either one) and the components are defined
+  await new Promise(r => live.addEventListener('room-state', e => e.detail.phase !== 'loading' && r(), { once: false }));
+  await Promise.all(['sg-skeleton', 'sg-badge'].map(t => customElements.whenDefined(t)));
+  await document.fonts.ready;
+  setTimeout(() => (window.__ready = true), 600); // let the ink-in finish before the tools take a picture
+</script>
+</body>
+</html>

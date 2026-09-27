@@ -1,0 +1,36 @@
+{
+  "name": "signature",
+  "type": "component",
+  "title": "Signature",
+  "description": "Sign by hand or by typing your name. The native path is a typed-name input that submits and works without JavaScript; with it, a pad takes a finger, pen or mouse, inks the stroke from the pen's pressure and speed, and submits the ink as SVG path data in a hidden input. Undo and start again are real buttons. Quiet is a plain line and a plain pen; warm a broad nib whose fresh ink dries into the paper; playful adds a flourish.",
+  "version": "0.1.0",
+  "files": [
+    "signature.js",
+    "signature.core.js",
+    "signature.css",
+    "skins/paint.js",
+    "skins/marks.js",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "signature.prompt.md",
+    "signature.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "signature.prompt.md",
+  "docs": "signature.docs.md",
+  "budget": {
+    "jsBytes": 39936,
+    "reason": "Decision 0009: behaviour declared at 15 KB (the ink ribbon lives in the element, because the submitted path must be exactly the ink shown), plus 8 KB for each of three skins. Today: behaviour 14.3 KB (signature.js 8.6, signature.core.js 5.7); the skins share a 9.6 KB painter (skins/paint.js 7.2 and skins/marks.js 2.4: baking, drying, grain, the typed name, the flourish), and each skin file is under 0.4 KB. A page loads one skin and the painter, 10.0 KB, which is over the 8 KB per skin; the painter is one piece of work, split no further."
+  }
+}

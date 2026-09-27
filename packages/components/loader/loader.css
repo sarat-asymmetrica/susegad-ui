@@ -1,0 +1,33 @@
+/* <sg-loader>. Without JavaScript it is its words. With a skin, a small
+   aria-hidden drawing sits before them. */
+
+sg-loader[hidden] { display: none; } /* own display rules would otherwise beat the browser's [hidden] */
+
+sg-loader {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sg-space-2, 0.5rem);
+  font: var(--sg-step-0, 1rem) / 1.4 var(--sg-font-body, system-ui, sans-serif);
+  color: var(--sg-text, CanvasText);
+  max-width: 100%;
+}
+.sg-loader__text { overflow-wrap: anywhere; }
+.sg-loader__live {
+  position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+.sg-loader__art { flex: none; display: block; overflow: visible; }
+
+/* quiet: three dots, the size of the text */
+.sg-loader__dots { display: inline-flex; gap: 0.3em; flex: none; }
+.sg-loader__dots i {
+  inline-size: 0.32em;
+  block-size: 0.32em;
+  border-radius: 50%;
+  background: var(--sg-ink-soft, currentColor);
+}
+
+sg-loader[data-skin='warm'] .sg-loader__art { inline-size: 2.6em; block-size: 2.6em; }
+sg-loader[data-skin='playful'] .sg-loader__art { inline-size: 2.5em; block-size: 2.5em; }
+sg-loader[data-skin='playful'] .sg-loader__text { font-family: var(--sg-font-hand, inherit); }

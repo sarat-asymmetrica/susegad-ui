@@ -1,0 +1,34 @@
+{
+  "Castoro": {
+    "local": [
+      "Georgia"
+    ],
+    "measuredAgainst": "georgia.ttf",
+    "size-adjust": "101.26%",
+    "ascent-override": "74.56%",
+    "descent-override": "24.20%",
+    "line-gap-override": "32.59%"
+  },
+  "Mukta": {
+    "local": [
+      "Arial",
+      "ArialMT",
+      "Liberation Sans"
+    ],
+    "measuredAgainst": "arial.ttf",
+    "size-adjust": "95.36%",
+    "ascent-override": "118.50%",
+    "descent-override": "55.79%",
+    "line-gap-override": "0.00%"
+  },
+  "Kalam": {
+    "local": [
+      "Segoe Print"
+    ],
+    "measuredAgainst": "segoepr.ttf",
+    "size-adjust": "83.99%",
+    "ascent-override": "126.56%",
+    "descent-override": "63.22%",
+    "line-gap-override": "0.00%"
+  }
+}

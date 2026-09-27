@@ -1,0 +1,168 @@
+/* Toast. The base rules are the quiet look, and also what a page without
+   JavaScript shows: a plain ruled note in the flow of the page. The element
+   sets data-skin="warm|playful" when that skin is mounted. Tokens only. */
+
+sg-toast {
+  --toast-tone: var(--sg-info);
+  --toast-ground: var(--sg-surface-raised);
+  --toast-ink: var(--sg-text);
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--sg-space-2) var(--sg-space-3);
+  box-sizing: border-box;
+  inline-size: min(100%, 26rem);
+  padding: var(--sg-space-3) var(--sg-space-2) var(--sg-space-3) var(--sg-space-3);
+  background: var(--toast-ground);
+  color: var(--toast-ink);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-inline-start: 3px solid var(--toast-tone);
+  border-radius: var(--sg-radius-1);
+  font: 400 0.9375rem/1.5 var(--sg-font-body);
+  /* the token's shadow: ink by day, near-black at night, so it never glows */
+  --toast-shadow: var(--sg-shadow);
+  box-shadow: 0 1px 0 var(--sg-rule), 0 14px 30px -22px var(--toast-shadow);
+}
+sg-toast[hidden], sg-toast-region[hidden] { display: none; }
+sg-toast[tone="success"] { --toast-tone: var(--sg-success); }
+sg-toast[tone="warning"] { --toast-tone: var(--sg-warning); }
+sg-toast[tone="error"] { --toast-tone: var(--sg-danger); }
+
+/* before JavaScript builds it, the message is the only child */
+sg-toast:not(:defined) { display: block; padding-inline-start: var(--sg-space-3); }
+
+.sg-toast-icon { color: var(--toast-tone); line-height: 0; padding-block-start: 1px; }
+.sg-toast-body { min-width: 0; overflow-wrap: anywhere; }
+.sg-toast-title { font-weight: 600; margin-inline-end: 0.25em; }
+.sg-toast-sr, .sg-toast-live {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+.sg-toast-action {
+  font: 500 0.875rem/1 var(--sg-font-body); color: var(--sg-accent-text); background: none; cursor: pointer;
+  border: 0; border-block-end: var(--sg-hairline) solid currentColor; padding: 0.3em 0 0.15em; margin-inline-start: 0.35em;
+}
+.sg-toast-close {
+  display: grid; place-items: center; inline-size: 2rem; block-size: 2rem; margin: -0.3rem -0.1rem 0 0;
+  color: var(--sg-text-soft); background: none; border: 0; border-radius: var(--sg-radius-1); cursor: pointer;
+}
+.sg-toast-close:hover { color: var(--sg-text); background: color-mix(in oklch, var(--sg-text) 8%, transparent); }
+sg-toast :focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+.sg-toast-deco { display: contents; } /* no box of its own: its pieces sit on the letter, never over the words */
+.sg-toast-deco > * { pointer-events: none; }
+
+/* ── room for the pile (WCAG 2.4.11 focus not obscured) ─────────────
+   The region publishes how far the pile reaches up from the bottom of the
+   viewport. Browsers keep focus that far clear when they scroll it into view,
+   and a spacer at the end of the page lets the last controls scroll clear
+   (a spacer, so the page's own body padding is left alone). */
+html { scroll-padding-block-end: var(--sg-toast-pile, 0px); }
+body::after { content: ""; display: block; block-size: var(--sg-toast-pile, 0px); pointer-events: none; }
+/* folded: focus landed under the pile, so only the front letter shows. The others
+   stay stacked exactly behind it, unseen, so the pile never reaches past the front letter. */
+sg-toast-region[data-folded] .sg-toast-stack { display: grid; gap: 0; }
+sg-toast-region[data-folded] .sg-toast-stack > sg-toast { grid-area: 1 / 1; align-self: end; }
+sg-toast-region[data-folded] .sg-toast-stack > sg-toast:not([data-front]) {
+  visibility: hidden; transform: none; block-size: var(--front-h, auto); overflow: hidden;
+}
+sg-toast-region[data-folded] .sg-toast-more { visibility: hidden; grid-area: 1 / 1; }
+
+/* ── the region: a fixed stack once JavaScript is here ─────────────── */
+sg-toast-region { display: block; }
+.sg-toast-stack[popover] { /* undo the popover defaults: this is a stack, not a box */
+  inset: auto; margin: 0; padding: 0; border: 0; background: transparent; color: inherit; overflow: visible;
+}
+sg-toast-region:defined .sg-toast-stack {
+  position: fixed; z-index: 1000;
+  inset-block-end: max(var(--sg-space-4), env(safe-area-inset-bottom));
+  inset-inline-end: max(var(--sg-space-4), env(safe-area-inset-right));
+  inline-size: min(26rem, calc(100vw - 2 * var(--sg-space-3)));
+  display: flex; flex-direction: column; align-items: stretch; gap: var(--sg-space-2);
+}
+sg-toast-region:defined .sg-toast-stack:not(:popover-open)[popover] { display: none; }
+sg-toast-region:defined .sg-toast-stack sg-toast { inline-size: 100%; }
+
+/* the pile: letters stacked in one cell, the newest in front and the older
+   ones peeking above it; pointing at the pile or moving focus into it lays
+   them out as a list (and stops every clock) */
+sg-toast-region[data-layout="pile"]:not([data-expanded]) .sg-toast-stack { display: grid; gap: 0; }
+sg-toast-region[data-layout="pile"]:not([data-expanded]) .sg-toast-stack > sg-toast {
+  grid-area: 1 / 1; align-self: end;
+  z-index: calc(10 - var(--depth, 0));
+  transform: translateY(calc(var(--depth, 0) * -0.55rem)) scale(calc(1 - var(--depth, 0) * 0.035));
+  transform-origin: 50% 0;
+}
+sg-toast-region[data-layout="pile"]:not([data-expanded]) .sg-toast-stack > sg-toast:not([data-front]) { block-size: var(--front-h, auto); overflow: hidden; }
+sg-toast-region[data-layout="pile"]:not([data-expanded]) .sg-toast-stack > sg-toast:not([data-front]) > :not(.sg-toast-deco) { visibility: hidden; }
+sg-toast-region[data-layout="pile"]:not([data-expanded]) .sg-toast-more { grid-area: 2 / 1; margin-block-start: var(--sg-space-2); }
+sg-toast-region[data-layout="pile"][position^="top"]:not([data-expanded]) .sg-toast-stack > sg-toast {
+  grid-area: 2 / 1; align-self: start; transform: translateY(calc(var(--depth, 0) * 0.55rem)) scale(calc(1 - var(--depth, 0) * 0.035)); transform-origin: 50% 100%;
+}
+sg-toast-region[data-layout="pile"][position^="top"]:not([data-expanded]) .sg-toast-more { grid-area: 1 / 1; margin: 0 0 var(--sg-space-2); }
+sg-toast-region:defined .sg-toast-stack > sg-toast { transition: transform var(--sg-dur-calm) var(--sg-ease-out); }
+sg-toast-region[position="bottom-center"] .sg-toast-stack { inset-inline: 0; margin-inline: auto; }
+sg-toast-region[position="top-end"] .sg-toast-stack { inset-block: max(var(--sg-space-4), env(safe-area-inset-top)) auto; flex-direction: column-reverse; }
+sg-toast-region[position="top-center"] .sg-toast-stack { inset-block: max(var(--sg-space-4), env(safe-area-inset-top)) auto; inset-inline: 0; margin-inline: auto; flex-direction: column-reverse; }
+.sg-toast-more { margin: 0; align-self: end; justify-self: end; font: 400 0.8125rem/1.3 var(--sg-font-body); color: var(--sg-text-soft); padding: 0.2em 0.6em; background: var(--sg-surface); border-radius: var(--sg-radius-pill); }
+.sg-toast-more[hidden] { display: none; }
+@media (max-width: 30rem) {
+  sg-toast-region:defined .sg-toast-stack { inset-inline: var(--sg-space-3); inline-size: auto; margin: 0; }
+}
+
+/* ── warm: an inland letter ─────────────────────────────────────────── */
+sg-toast:is([data-skin="warm"], [data-skin="playful"]) {
+  /* the India Post inland-letter blue by day, a night-blue letter after dark */
+  --toast-ground: light-dark(var(--sg-inland), oklch(28% 0.035 240));
+  --toast-ink: var(--sg-text);
+  --letter-rule: light-dark(oklch(68% 0.05 235), oklch(52% 0.05 235));
+  border: 0;
+  border-radius: 1px;
+  outline: 1px dashed var(--letter-rule);
+  outline-offset: -6px;
+  padding: calc(var(--sg-space-3) + 2px) var(--sg-space-3) calc(var(--sg-space-3) + 2px) calc(var(--sg-space-3) + 2px);
+  box-shadow: 0 1px 0 color-mix(in oklch, var(--toast-shadow) 20%, transparent), 0 18px 34px -24px var(--toast-shadow);
+}
+/* the tone mark becomes the letter's printed stamp: a perforated square with the glyph inside */
+sg-toast:is([data-skin="warm"], [data-skin="playful"]) .sg-toast-icon {
+  display: grid; place-items: center; inline-size: 2.25rem; block-size: 2.5rem; margin-block-start: -2px;
+  background: var(--sg-surface-raised); color: var(--toast-tone);
+  --perf: radial-gradient(circle at 50% 50%, #0000 1.6px, #000 1.8px);
+  -webkit-mask: var(--perf) 50% 0 / 6px 6px round, linear-gradient(#000 0 0) 50% 50% / calc(100% - 6px) calc(100% - 6px) no-repeat;
+  mask: var(--perf) 50% 0 / 6px 6px round, linear-gradient(#000 0 0) 50% 50% / calc(100% - 6px) calc(100% - 6px) no-repeat;
+  box-shadow: inset 0 0 0 4px var(--sg-surface-raised), inset 0 0 0 5px color-mix(in oklch, var(--toast-tone) 45%, transparent);
+}
+sg-toast:is([data-skin="warm"], [data-skin="playful"]) .sg-toast-title {
+  display: block; font: 400 1.125rem/1.25 var(--sg-font-hand); margin: 0 0 0.1em;
+}
+sg-toast:is([data-skin="warm"], [data-skin="playful"]) .sg-toast-close { color: var(--sg-text-soft); }
+/* on the blue letter the accent is under 4.5:1 in some palettes, so the action is ink with an accent underline */
+sg-toast:is([data-skin="warm"], [data-skin="playful"]) .sg-toast-action { color: var(--toast-ink); border-block-end: 2px solid var(--sg-accent); font-weight: 600; }
+/* the creases where the flap was folded: two short lines in from the top corners, drawn on the letter itself */
+sg-toast:is([data-skin="warm"], [data-skin="playful"])::before,
+sg-toast:is([data-skin="warm"], [data-skin="playful"])::after {
+  content: ""; position: absolute; inset-block-start: 0; inline-size: 7%; block-size: 7%; min-block-size: 0.55rem; pointer-events: none; opacity: 0.55;
+  background: linear-gradient(to top right, transparent calc(50% - 0.6px), var(--letter-rule) 50%, transparent calc(50% + 0.6px));
+}
+sg-toast:is([data-skin="warm"], [data-skin="playful"])::before { inset-inline-start: 0; }
+sg-toast:is([data-skin="warm"], [data-skin="playful"])::after { inset-inline-end: 0; transform: scaleX(-1); }
+.sg-toast-flap {
+  position: absolute; inset: 0 0 auto 0; block-size: 46%;
+  background: linear-gradient(color-mix(in oklch, var(--toast-ground) 88%, var(--sg-ink)), var(--toast-ground));
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: 50% 0; backface-visibility: hidden;
+}
+
+/* ── playful: the letter arrives with a postmark ───────────────────── */
+sg-toast[data-skin="playful"] { gap: var(--sg-space-2) calc(var(--sg-space-3) + 6px); }
+sg-toast[data-skin="playful"] .sg-toast-icon { color: var(--toast-tone); }
+.sg-toast-postmark {
+  position: absolute; inline-size: 2.75rem; block-size: 2.75rem; overflow: visible;
+  color: color-mix(in oklch, var(--toast-tone) 78%, var(--sg-ink));
+}
+.sg-toast-postmark text { font: 600 5.6px/1 var(--sg-font-body); letter-spacing: 0.6px; fill: currentColor; }
+.sg-toast-postmark .date { font-size: 6.4px; letter-spacing: 0.2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  sg-toast, sg-toast * { transition: none !important; }
+}

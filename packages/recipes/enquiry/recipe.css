@@ -1,0 +1,65 @@
+/* Ask the house: the page around the form. The form's own parts style
+   themselves (field.css, field-note.css, form.css). Tokens only, so it
+   follows the palette (Casa by default), the theme and the register. */
+
+body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: 400 var(--sg-step-0, 1rem)/var(--sg-leading-body, 1.6) var(--sg-font-body); }
+
+.enquiry {
+  box-sizing: border-box;
+  max-inline-size: 68rem;
+  margin: 0 auto;
+  padding: var(--sg-space-6) var(--sg-space-3) var(--sg-space-7);
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: var(--sg-space-5) var(--sg-space-6);
+  align-items: start;
+}
+.enquiry__head { position: sticky; inset-block-start: var(--sg-space-5); }
+.enquiry__note { margin: 0 0 var(--sg-space-2); font: 400 1.25rem/1.2 var(--sg-font-hand); color: var(--sg-accent-text); }
+[data-register="quiet"] .enquiry__note { font: 600 0.8125rem/1.3 var(--sg-font-body); letter-spacing: 0.12em; text-transform: uppercase; color: var(--sg-text-soft); }
+.enquiry h1 { margin: 0; font: 400 var(--sg-step-4, 2.4rem)/1.08 var(--sg-font-display); text-wrap: balance; }
+.enquiry__sub { margin: var(--sg-space-3) 0 0; color: var(--sg-text-soft); max-inline-size: 34rem; text-wrap: pretty; }
+
+/* The house itself, drawn: the Casa elevation as a still line drawing
+   (facade.svg), used as a mask so it takes the register's ink and follows the
+   palette and theme. Warm and playful only; quiet keeps the page plain. */
+.enquiry__facade {
+  margin-block-start: var(--sg-space-5);
+  inline-size: min(100%, 26rem);
+  aspect-ratio: 1100 / 1000;
+  background: var(--sg-ink);
+  -webkit-mask: url("./facade.svg") center / contain no-repeat;
+  mask: url("./facade.svg") center / contain no-repeat;
+  opacity: 0.85;
+}
+[data-register="playful"] .enquiry__facade { background: var(--sg-accent-text); opacity: 1; }
+[data-register="quiet"] .enquiry__facade { display: none; }
+@media (forced-colors: active) { .enquiry__facade { display: none; } }
+
+.enquiry__form form { display: grid; gap: var(--sg-space-4); }
+.enquiry__row { display: grid; grid-template-columns: 1.4fr 1fr; gap: var(--sg-space-4); align-items: start; }
+.enquiry__hint { margin: 0; font: 400 0.875rem/1.4 var(--sg-font-body); color: var(--sg-text-soft); }
+.enquiry__prototype {
+  margin: 0; padding: var(--sg-space-2) var(--sg-space-3); font: 400 0.9375rem/1.45 var(--sg-font-body); color: var(--sg-text-soft);
+  border-inline-start: 2px solid var(--sg-info); background: color-mix(in oklch, var(--sg-info) 7%, transparent);
+}
+.enquiry__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sg-space-3); }
+.enquiry__send {
+  font: 600 1rem/1 var(--sg-font-body); letter-spacing: 0.02em; color: var(--sg-on-accent); background: var(--sg-accent);
+  border: 0; border-radius: var(--sg-radius-1); padding: 0.85rem 1.6rem; cursor: pointer; min-block-size: 3rem;
+}
+.enquiry__send:hover { background: color-mix(in oklch, var(--sg-accent) 88%, var(--sg-ink)); }
+.enquiry__send:focus-visible, .enquiry a:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+.enquiry a { color: var(--sg-accent-text); }
+.enquiry--sent { display: block; max-inline-size: 40rem; }
+.enquiry--sent p { color: var(--sg-text-soft); }
+
+@media (max-width: 52rem) {
+  .enquiry { grid-template-columns: 1fr; padding-block-start: var(--sg-space-5); }
+  .enquiry__head { position: static; }
+  /* above the form on a phone: small, so the form is never far */
+  .enquiry__facade { inline-size: min(100%, 15rem); margin-block-start: var(--sg-space-4); }
+}
+@media (max-width: 30rem) {
+  .enquiry__row { grid-template-columns: 1fr; }
+}

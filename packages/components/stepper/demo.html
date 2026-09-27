@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stepper</title>
+<!-- linked here too, so the page is styled with JavaScript off -->
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<link rel="stylesheet" href="./stepper.css">
+<style>
+  body { margin: 0; background: var(--sg-paper); color: var(--sg-ink); font: var(--sg-step-0, 1rem)/var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui); }
+  main { max-width: 42rem; margin: 0 auto; padding: var(--sg-space-5, 24px) var(--sg-space-4, 16px) var(--sg-space-7, 64px); }
+  h1 { font: var(--sg-weight-bold, 600) var(--sg-step-3, 1.8rem)/1.2 var(--sg-font-display, inherit); margin: 0 0 var(--sg-space-2, 8px); }
+  .lede, .hint { color: var(--sg-text-soft, var(--sg-ink-soft)); }
+  .lede { margin: 0 0 var(--sg-space-5, 24px); }
+  label { display: grid; gap: 4px; margin: 0 0 var(--sg-space-3, 12px); font-weight: var(--sg-weight-medium, 500); }
+  .row { display: grid; gap: 0 var(--sg-space-4, 16px); grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); }
+  input, select, textarea { font: inherit; font-weight: var(--sg-weight-regular, 400); color: inherit; background: var(--sg-surface, var(--sg-paper)); border: 1px solid var(--sg-rule-strong, var(--sg-ink-soft)); border-radius: var(--sg-radius-1, 4px); padding: 8px 10px; }
+  .hint { font-size: var(--sg-step--1, .9rem); font-weight: var(--sg-weight-regular, 400); }
+  button { font: inherit; padding: 8px 16px; border-radius: var(--sg-radius-2, 4px); border: 1px solid var(--sg-rule-strong, var(--sg-ink-soft)); background: var(--sg-surface, var(--sg-paper)); color: inherit; cursor: pointer; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+  #sent { padding: var(--sg-space-3, 12px) var(--sg-space-4, 16px); border-inline-start: 3px solid var(--sg-success, green); background: var(--sg-surface-sunk); margin: 0 0 var(--sg-space-5, 24px); }
+  #sent:empty { display: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Stepper</h1>
+  <p class="lede">A booking request in three steps. Without JavaScript you see every step at once and send it with one button. With JavaScript you walk it one step at a time, and nothing you type is lost when you go back.</p>
+  <p id="sent" role="status"></p>
+
+  <form action="./demo.html" method="get">
+    <input type="hidden" name="sent" value="1">
+    <sg-stepper data-demo>
+      <fieldset>
+        <legend>Your dates</legend>
+        <div class="row">
+          <label>Arriving <input type="date" name="arrive" required min="2026-10-01" value="2026-10-16"></label>
+          <label>Leaving <input type="date" name="leave" required min="2026-10-02" value="2026-10-19"></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Who is coming</legend>
+        <div class="row">
+          <label>Adults <input type="number" name="adults" required min="1" max="8" value="2"></label>
+          <label>Children <input type="number" name="children" min="0" max="6" value="0"></label>
+        </div>
+        <label>Anything we should know <span class="hint">For example, a cot, or an early arrival</span><textarea name="notes" rows="3"></textarea></label>
+      </fieldset>
+      <fieldset>
+        <legend>Your details</legend>
+        <label>Your name <input name="name" required autocomplete="name"></label>
+        <label>Email <input type="email" name="email" required autocomplete="email"></label>
+        <label>Phone <span class="hint">Only if you'd like a call about the booking</span><input type="tel" name="phone" autocomplete="tel"></label>
+      </fieldset>
+      <button class="demo-button" type="submit">Send the request</button>
+    </sg-stepper>
+  </form>
+</main>
+<script type="module">
+  import './stepper.js';
+  // show what the form sent, so you can see nothing was lost on the way
+  const q = new URLSearchParams(location.search);
+  if (q.get('sent')) document.getElementById('sent').textContent = `The form sent: ${['arrive', 'leave', 'adults', 'children', 'name', 'email'].map(k => `${k} ${q.get(k) || '(empty)'}`).join(', ')}.`;
+</script>
+</body>
+</html>

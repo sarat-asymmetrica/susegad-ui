@@ -1,0 +1,123 @@
+{
+  "_readme": "Kathakar, 25 September 2026, Wave 4. Machine-readable companion to spread.md, for karigar-narration (packages/narration/) and karigar-player. 'beat' ties an English phrase to its Marathi counterpart and to a scene cue, since the two languages don't split into the same number of phrases. Speaker choice is a first guess (see speakers._note) pending a listen test inside Wave 4's small paid-call budget; everything else here is ready to build against.",
+  "story": { "id": "paus-first-rain", "title_en": "The first rain", "title_mr": "पहिला पाऊस", "scene": "paus", "pages": 2 },
+
+  "speakers": {
+    "_note": "docs.sarvam.ai TTS reference and voices pages, read 2026-09-25. bulbul:v3 documents 34-39 named speakers shared across all its languages including en-IN and mr-IN, with almost no descriptive metadata (no warmth/age/style tags), except one explicit warning that 'varun' is a deep, dramatic, villain-suited voice and 'not recommended as a neutral default'. 'shubh' is documented as the v3 default. With nothing else to go on, I'm proposing shubh for both languages, as one narrator telling the same story twice, rather than guessing at a 'warmer' name with no evidence behind it. This must be confirmed by ear, not by name, before it ships — flagged in owner_to_confirm.",
+    "en-IN": { "speaker": "shubh", "model": "bulbul:v3" },
+    "mr-IN": { "speaker": "shubh", "model": "bulbul:v3" }
+  },
+
+  "pronunciation_notes": [
+    { "word": "Aaji", "language": "en-IN", "note": "AA-jee, long first vowel, hard 'j' as in 'jam' (Marathi आजी, grandmother — not 'Ajji', which is Kannada). Likely to trip an English-model TTS reading it as an English word; test first." },
+    { "word": "kadai", "language": "en-IN", "note": "kuh-DYE. A wide, round cooking pan. Common enough as a loanword that bulbul may already say it correctly; test first." },
+    { "word": "papad", "language": "en-IN", "note": "puh-PUHD, stress on the second syllable." },
+    { "word": "laterite", "language": "en-IN", "note": "LAT-er-ite. Standard English geology word, but uncommon; test that it isn't read as three separate mumbled syllables." },
+    { "word": "जांभा", "language": "mr-IN", "note": "JAAM-bhaa. Native Devanagari spelling should be read correctly, but it's a regional (Goan) word rather than standard Marathi, so test it isn't smoothed into something else." }
+  ],
+
+  "en": {
+    "language_code": "en-IN",
+    "pace_base": 0.88,
+    "phrases": [
+      { "beat": "sky-turns",           "page": 1, "text": "The sky turned the colour of an old kadai, all at once,", "pause_after": "short",  "pace": 0.88 },
+      { "beat": "aaji-calls",          "page": 1, "text": "and Aaji called, \"Quick, the papad!\"", "pause_after": "medium", "pace": 0.95, "note": "Aaji's line should sound urgent and fond, not alarmed." },
+      { "beat": "ira-runs",            "page": 1, "text": "Ira ran out to the courtyard,", "pause_after": "short",  "pace": 0.9 },
+      { "beat": "feet-hot",            "page": 1, "text": "laterite hot under her bare feet,", "pause_after": "short",  "pace": 0.85 },
+      { "beat": "catches-first-drop",  "page": 1, "text": "and caught the first drop on her palm before it could catch her.", "pause_after": "medium", "pace": 0.82 },
+      { "beat": "then-another",        "page": 1, "text": "Then another.", "pause_after": "short",  "pace": 0.8 },
+      { "beat": "sky-lets-go",         "page": 1, "text": "Then the whole sky let go.", "pause_after": "long",   "pace": 0.85 },
+      { "beat": "stone-reddens",       "page": 2, "text": "The stone went dark red, drop by drop,", "pause_after": "short",  "pace": 0.85 },
+      { "beat": "too-fast-to-count",   "page": 2, "text": "faster than Ira could count.", "pause_after": "medium", "pace": 0.85 },
+      { "beat": "frog-answers",        "page": 2, "text": "Somewhere near the well, a frog answered the thunder.", "pause_after": "medium", "pace": 0.85 },
+      { "beat": "aaji-laughs",         "page": 2, "text": "Aaji tucked the papad basket under her arm, laughing,", "pause_after": "short",  "pace": 0.88 },
+      { "beat": "rain-in-hair",        "page": 2, "text": "rain already in her hair.", "pause_after": "long",   "pace": 0.82 },
+      { "beat": "ira-stays",           "page": 2, "text": "Ira didn't run inside.", "pause_after": "short",  "pace": 0.82 },
+      { "beat": "not-yet",             "page": 2, "text": "Not yet.", "pause_after": "medium", "pace": 0.75 },
+      { "beat": "smells-earth",        "page": 2, "text": "She wanted to smell the earth wake up.", "pause_after": "long",   "pace": 0.75 }
+    ]
+  },
+
+  "mr": {
+    "language_code": "mr-IN",
+    "pace_base": 0.85,
+    "review_status": "draft, not native-reviewed — see spread.md ‘For the native reviewer’",
+    "phrases": [
+      { "beat": "sky-turns",           "page": 1, "text": "आकाश एकदम जुन्या कढईसारखं झालं,", "pause_after": "short",  "pace": 0.85 },
+      { "beat": "aaji-calls",          "page": 1, "text": "आणि आजीने हाक मारली, \"पटकन, पापड आत घे!\"", "pause_after": "medium", "pace": 0.92, "note": "Same fond urgency as the English line, not alarm." },
+      { "beat": "ira-runs",            "page": 1, "text": "ईरा अंगणात धावली,", "pause_after": "short",  "pace": 0.88 },
+      { "beat": "feet-hot",            "page": 1, "text": "जांभा दगड तिच्या उघड्या पायांखाली गरम होता,", "pause_after": "short",  "pace": 0.8, "note": "जांभा flagged for native review, see spread.md." },
+      { "beat": "catches-first-drop",  "page": 1, "text": "आणि तिने पहिला थेंब तिला भिजवायच्या आधीच आपल्या ओंजळीत पकडला.", "pause_after": "medium", "pace": 0.78 },
+      { "beat": "then-another",        "page": 1, "text": "मग आणखी एक.", "pause_after": "short",  "pace": 0.78 },
+      { "beat": "sky-lets-go",         "page": 1, "text": "मग आख्खं आकाश कोसळलं.", "pause_after": "long",   "pace": 0.82 },
+      { "beat": "stone-reddens",       "page": 2, "text": "दगड एकेक थेंबाने गडद लाल होत गेला,", "pause_after": "short",  "pace": 0.82 },
+      { "beat": "too-fast-to-count",   "page": 2, "text": "ईराला मोजताही येईना इतक्या वेगात.", "pause_after": "medium", "pace": 0.82 },
+      { "beat": "frog-answers",        "page": 2, "text": "विहिरीजवळ कुठेतरी एक बेडूक गडगडाटाला उत्तर देत होता.", "pause_after": "medium", "pace": 0.82 },
+      { "beat": "aaji-laughs",         "page": 2, "text": "आजीने पापडाची टोपली काखेत धरली, हसत हसत,", "pause_after": "short",  "pace": 0.85, "note": "काखेत flagged for native review, see spread.md." },
+      { "beat": "rain-in-hair",        "page": 2, "text": "तिच्या केसांत आधीच पाऊस होता.", "pause_after": "long",   "pace": 0.8 },
+      { "beat": "ira-stays",           "page": 2, "text": "ईरा आत पळाली नाही.", "pause_after": "short",  "pace": 0.8 },
+      { "beat": "not-yet",             "page": 2, "text": "अजून नाही.", "pause_after": "medium", "pace": 0.72 },
+      { "beat": "smells-earth",        "page": 2, "text": "तिला ओल्या मातीचा वास घ्यायचा होता.", "pause_after": "long",   "pace": 0.72 }
+    ]
+  },
+
+  "scene_cues": {
+    "_readme": "The spread sits beside <sg-scene name=\"paus\" register=\"warm\">. Read packages/scenes/paus/model.js before wiring this: params.intensity (0 to ~1.25, default 0.8) scales rain rate, streaks and rings together, and is the only lever this story needs — params.progress is a different, unrelated idea (it clears the fog from the sill up to show a *task's* completion, never moved by time) and doesn't fit a story about rain arriving, so this spread does not use it. Drive params.intensity from the narration highlight driver's cue-enter events (per beat, below), not from wall-clock time or from percent-through-the-audio, so pausing and replaying the narration never desyncs the window from the words.",
+    "register": "warm",
+    "notes_for_scene_and_player": [
+      "Page 1 opens on a still, almost-dry pane (intensity near 0): the sky has only just changed colour and nothing has fallen yet.",
+      "'catches-first-drop' is the one bead that must be visible and unmistakable — the single moment the brief calls 'the first drops land exactly when the text says so.' Don't let the ambient sim add stray drops before this cue fires.",
+      "'sky-lets-go' is the ramp to a full warm rain; hold that level (with small easing) through most of page 2.",
+      "'smells-earth', the closing line, eases intensity down slightly rather than cutting it — the rain doesn't stop, the story just goes quiet.",
+      "The scene's own text-avoidance (calm zones, from its model) should be left on with the spread's text box registered as a calm rect, so drops don't run across the words.",
+      "Reduced motion: show the scene's still() at whatever intensity 'sky-lets-go' would reach, since that's the frame the caption/alt text already describes.",
+      "Optional, not required for the Wave 4 gate: a soft wipe/ghost-hand gesture timed to 'aaji-laughs', echoing Aaji's warmth on the glass. Skip it if it complicates the end-to-end slice."
+    ],
+    "cues": [
+      { "beat": "sky-turns",          "params": { "intensity": 0.0 } },
+      { "beat": "aaji-calls",         "params": { "intensity": 0.0 } },
+      { "beat": "ira-runs",           "params": { "intensity": 0.05 } },
+      { "beat": "feet-hot",           "params": { "intensity": 0.05 } },
+      { "beat": "catches-first-drop","params": { "intensity": 0.15 }, "note": "the one bead" },
+      { "beat": "then-another",       "params": { "intensity": 0.3 } },
+      { "beat": "sky-lets-go",        "params": { "intensity": 0.9 }, "note": "the ramp to full rain" },
+      { "beat": "stone-reddens",      "params": { "intensity": 0.9 } },
+      { "beat": "too-fast-to-count",  "params": { "intensity": 0.9 } },
+      { "beat": "frog-answers",       "params": { "intensity": 0.85 } },
+      { "beat": "aaji-laughs",        "params": { "intensity": 0.75 } },
+      { "beat": "rain-in-hair",       "params": { "intensity": 0.75 } },
+      { "beat": "ira-stays",          "params": { "intensity": 0.7 } },
+      { "beat": "not-yet",            "params": { "intensity": 0.7 } },
+      { "beat": "smells-earth",       "params": { "intensity": 0.55 }, "note": "eases down, doesn't stop" }
+    ]
+  },
+
+  "interface": {
+    "_readme": "Plain, warm, sentence case, no em dashes, per CHARTER.md copy standards and Kathakar A1. Provide both languages for every label; the switch itself is listed once since it names the languages, not the interface.",
+    "play":    { "en": "Play the story",  "mr": "गोष्ट ऐका" },
+    "pause":   { "en": "Pause",           "mr": "थांबवा" },
+    "captions_toggle": { "en": "Captions", "mr": "मथळे" },
+    "language_switch": {
+      "label": { "en": "Language", "mr": "भाषा" },
+      "options": [
+        { "code": "en-IN", "label": "English" },
+        { "code": "mr-IN", "label": "मराठी" }
+      ]
+    },
+    "narration_unavailable": {
+      "en": "The voice isn't available right now. Read the words below instead.",
+      "mr": "आवाज सध्या उपलब्ध नाही. खालचे शब्द वाचा."
+    },
+    "no_javascript": {
+      "en": "This page needs JavaScript to play the story and show its picture. Here it is in words, ready to read.",
+      "mr": "गोष्ट ऐकण्यासाठी आणि चित्र दाखवण्यासाठी या पानाला JavaScript लागतं. गोष्ट खाली शब्दांत आहे, वाचायला तयार."
+    }
+  },
+
+  "owner_to_confirm": [
+    "Speaker: shubh is proposed for both en-IN and mr-IN on no evidence beyond being bulbul:v3's documented default — Sarvam publishes no warmth/age/style metadata per speaker. This needs an actual listen test (within Wave 4's small paid-call budget) before it's treated as chosen, not just a placeholder that happens to work.",
+    "The five Marathi word/register choices and the whole retelling need a native speaker's read-aloud check — listed in spread.md under 'For the native reviewer'.",
+    "The five Goan-life assumptions (papad drying outside, a laterite courtyard, a frog by the well, Aaji as the household's word, and the working choice of a Marathi-speaking Goan family over a Catholic Goan one) need the owner's check — listed in spread.md under 'For the owner'.",
+    "Pronunciation of Aaji, kadai, papad, laterite (en-IN) and जांभा (mr-IN) should be checked against the actual synthesised audio, not assumed from the spelling."
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "progress",
+  "type": "component",
+  "title": "Progress",
+  "description": "Enhances a native progress element. Quiet is the native bar as a pencil hairline; warm is a small kolam drawn exactly as far as the value, closing at 100%; playful is a cutting-chai glass that fills with tea. It moves only when the value moves, and without a value it says in words what is happening.",
+  "version": "0.1.0",
+  "files": [
+    "progress.js",
+    "progress.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "progress.prompt.md",
+    "progress.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "scene-kolam",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "progress.prompt.md",
+  "docs": "progress.docs.md",
+  "budget": {
+    "jsBytes": 15360,
+    "frameMs": 16.7,
+    "reason": "The contract's 12 KB behaviour plus 8 KB per skin, declared as the sum used: behaviour (progress.js) about 4.4 KB, skins about 0.2 KB (quiet), 3.6 KB (warm) and 6.3 KB (playful, including the slosh that never shows more than the value). The warm skin reuses the Kolam scene's geometry rather than carrying its own."
+  }
+}

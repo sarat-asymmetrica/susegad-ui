@@ -1,0 +1,16 @@
+{
+  "about": "A stay the rate card accepts (4 shoulder nights, arriving on a turnover morning), a mobile number confirmed with the code the page shows, and a signature. Read by tools/form-check.mjs.",
+  "values": {
+    "arrival": "2026-11-16",
+    "departure": "2026-11-20",
+    "guests": "4",
+    "from": "Pune",
+    "room": "whole",
+    "name": "Anjali Kamat",
+    "phone": "98220 12345",
+    "code": { "press": ".booking__send", "read": ".booking__code", "match": "is (\\d{3}) (\\d{3})" },
+    "rules": true,
+    "breakfast": true,
+    "signature": "Anjali Kamat"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "engine",
+  "type": "package",
+  "title": "Engine",
+  "description": "The pencil box every scene draws with: seeded randomness and noise, geometry, fields, ink and paper, the stage and loop, the quality governor and a small WebGL helper.",
+  "version": "0.1.0",
+  "files": [
+    "index.js",
+    "src/math.js",
+    "src/rng.js",
+    "src/noise.js",
+    "src/color.js",
+    "src/geom.js",
+    "src/fields.js",
+    "src/governor.js",
+    "src/stage.js",
+    "src/loop.js",
+    "src/pointer.js",
+    "src/paper.js",
+    "src/ink.js",
+    "src/hatch.js",
+    "src/gl.js",
+    "README.md"
+  ],
+  "dependencies": [],
+  "budget": { "jsBytes": 53248 },
+  "docs": "README.md"
+}

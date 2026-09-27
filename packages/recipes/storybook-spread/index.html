@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en" data-register="warm">
+<head>
+<script>
+  // ?register=quiet|warm|playful, ?theme=light|dark and ?palette=… set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute(`data-${k}`, v);
+  window.__ready = false;
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The first rain</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="../../narration/narration.css">
+<link rel="stylesheet" href="../../player/player.css">
+<link rel="stylesheet" href="./recipe.css">
+</head>
+<body>
+<main class="spread" id="spread">
+  <noscript>
+    <p class="spread__noscript">This page needs JavaScript to play the story and show its picture. Here it is in words, ready to read. / गोष्ट ऐकण्यासाठी आणि चित्र दाखवण्यासाठी या पानाला JavaScript लागतं. गोष्ट खाली शब्दांत आहे, वाचायला तयार.</p>
+  </noscript>
+
+  <div class="spread__toolbar">
+    <div class="spread__lang" role="group" aria-label="Language / भाषा" data-lang-switch>
+      <button type="button" data-lang="en" aria-pressed="true">English</button>
+      <button type="button" data-lang="mr" aria-pressed="false">मराठी</button>
+    </div>
+  </div>
+
+  <sg-scene name="paus" register="warm" intensity="0" label="The first rain"></sg-scene>
+
+  <section class="spread__region" data-lang-region="en" lang="en">
+    <h1>The first rain</h1>
+    <sg-narration lang="en-IN">
+      <sg-player label="The first rain, read aloud">
+        <audio controls preload="metadata">
+          <source src="./spread.en.wav" type="audio/wav">
+          <track kind="captions" src="./spread.en.vtt" srclang="en" label="English" default>
+        </audio>
+      </sg-player>
+      <p data-story-text>The sky turned the colour of an old kadai, all at once, and Aaji called, &ldquo;Quick, the papad!&rdquo; Ira ran out to the courtyard, laterite hot under her bare feet, and caught the first drop on her palm before it could catch her. Then another. Then the whole sky let go.</p>
+      <p data-story-text>The stone went dark red, drop by drop, faster than Ira could count. Somewhere near the well, a frog answered the thunder. Aaji tucked the papad basket under her arm, laughing, rain already in her hair.</p>
+      <p data-story-text>Ira didn&rsquo;t run inside. Not yet. She wanted to smell the earth wake up.</p>
+    </sg-narration>
+  </section>
+
+  <section class="spread__region" data-lang-region="mr" lang="mr" hidden>
+    <h1>पहिला पाऊस</h1>
+    <sg-narration lang="mr-IN">
+      <sg-player label="पहिला पाऊस, ऐका">
+        <audio controls preload="metadata">
+          <source src="./spread.mr.wav" type="audio/wav">
+          <track kind="captions" src="./spread.mr.vtt" srclang="mr" label="मराठी" default>
+        </audio>
+      </sg-player>
+      <p data-story-text>आकाश एकदम जुन्या कढईसारखं झालं, आणि आजीने हाक मारली, &ldquo;पटकन, पापड आत घे!&rdquo; ईरा अंगणात धावली, जांभा दगड तिच्या उघड्या पायांखाली गरम होता, आणि तिने पहिला थेंब तिला भिजवायच्या आधीच आपल्या ओंजळीत पकडला. मग आणखी एक. मग आख्खं आकाश कोसळलं.</p>
+      <p data-story-text>दगड एकेक थेंबाने गडद लाल होत गेला, ईराला मोजताही येईना इतक्या वेगात. विहिरीजवळ कुठेतरी एक बेडूक गडगडाटाला उत्तर देत होता. आजीने पापडाची टोपली काखेत धरली, हसत हसत, तिच्या केसांत आधीच पाऊस होता.</p>
+      <p data-story-text>ईरा आत पळाली नाही. अजून नाही. तिला ओल्या मातीचा वास घ्यायचा होता.</p>
+    </sg-narration>
+  </section>
+
+  <p class="spread__fallback" data-narration-unavailable hidden>The voice isn't available right now. Read the words above instead. / आवाज सध्या उपलब्ध नाही. वरचे शब्द वाचा.</p>
+  <p class="spread__prototype">A proof of concept: one spread from a longer storybook. The Marathi text and the narrator's voice are drafts, waiting for a native speaker's review.</p>
+</main>
+
+<script type="module" src="./demo.js"></script>
+</body>
+</html>

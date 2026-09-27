@@ -1,0 +1,9 @@
+{
+  "name": "core",
+  "type": "package",
+  "title": "Core",
+  "description": "Fixture core: defineScene and a minimal <sg-scene> that draws once on a canvas.",
+  "version": "0.1.0",
+  "files": ["index.js", "define-scene.js", "scene-element.js"],
+  "dependencies": ["tokens", "engine"]
+}

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skeleton</title>
+<link rel="stylesheet" href="./skeleton.css">
+<style>
+  body { margin: 0; background: var(--sg-paper); color: var(--sg-ink); font: var(--sg-step-0, 1rem)/var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui); }
+  main { max-width: 60rem; margin: 0 auto; padding: var(--sg-space-5, 24px) var(--sg-space-4, 16px) var(--sg-space-7, 64px); }
+  h1 { font: var(--sg-weight-bold, 600) var(--sg-step-3, 1.8rem)/1.2 var(--sg-font-display, inherit); margin: 0 0 var(--sg-space-2, 8px); }
+  h2 { font: var(--sg-weight-bold, 600) var(--sg-step-1, 1.2rem)/1.3 var(--sg-font-display, inherit); margin: 0 0 var(--sg-space-3, 12px); }
+  .lede { color: var(--sg-text-soft, var(--sg-ink-soft)); max-width: var(--sg-measure, 62ch); margin: 0 0 var(--sg-space-5, 24px); }
+  .grid { display: grid; gap: var(--sg-space-5, 24px); grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
+  section { border: var(--sg-hairline, 1px) solid var(--sg-rule); border-radius: var(--sg-radius-2, 4px); padding: var(--sg-space-4, 16px); background: var(--sg-surface-raised, var(--sg-paper)); }
+  .card img, .card .pic { display: block; width: 100%; aspect-ratio: 2 / 1; max-height: 200px; border-radius: 6px; background: linear-gradient(160deg, var(--sg-sea, #5b8fa8), var(--sg-paddy, #6c8d52)); }
+  .card h3 { margin: 16px 0 8px; font-size: var(--sg-step-1, 1.2rem); }
+  .card p, .text p { margin: 0 0 8px; }
+  .row { display: flex; gap: 16px; align-items: center; margin-bottom: 16px; }
+  .row:last-child { margin-bottom: 0; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--sg-accent); color: var(--sg-on-accent, #fff); display: grid; place-items: center; font-weight: 600; flex: none; }
+  .row b { display: block; }
+  .row span { color: var(--sg-text-soft, var(--sg-ink-soft)); font-size: var(--sg-step--1, .9rem); }
+  .controls { display: flex; gap: var(--sg-space-2, 8px); flex-wrap: wrap; margin: 0 0 var(--sg-space-5, 24px); }
+  button { font: inherit; padding: 8px 14px; border-radius: var(--sg-radius-2, 4px); border: var(--sg-hairline, 1px) solid var(--sg-rule-strong, var(--sg-ink-soft)); background: var(--sg-surface, var(--sg-paper)); color: var(--sg-ink); cursor: pointer; }
+  button:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+  .note { color: var(--sg-text-soft, var(--sg-ink-soft)); font-size: var(--sg-step--1, .9rem); margin: var(--sg-space-3, 12px) 0 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Skeleton</h1>
+  <p class="lede">A placeholder for a region whose content is on its way. Screen readers hear what is loading, and hear once when it has arrived. The drawing only changes when the content does.</p>
+
+  <div class="controls">
+    <button type="button" id="arrive">Content arrives</button>
+    <button type="button" id="again">Start loading again</button>
+  </div>
+
+  <div class="grid">
+    <section>
+      <h2>Card</h2>
+      <sg-skeleton busy shape="card" lines="2" label="the room details" seed="3">
+        <div class="card">
+          <div class="pic" role="img" aria-label="The garden room, looking onto the paddy"></div>
+          <h3>Garden room</h3>
+          <p>A double room on the ground floor with a veranda and a view of the paddy.</p>
+          <p>From ₹3,200 a night.</p>
+        </div>
+      </sg-skeleton>
+    </section>
+
+    <section>
+      <h2>List</h2>
+      <sg-skeleton busy shape="list" lines="3" label="your guests" seed="5">
+        <div class="list">
+          <div class="row"><span class="avatar" aria-hidden="true">AD</span><div><b>Anita D'Souza</b><span>Arrives Friday, two nights</span></div></div>
+          <div class="row"><span class="avatar" aria-hidden="true">RK</span><div><b>Rahul Kamat</b><span>Arrives Saturday, four nights</span></div></div>
+          <div class="row"><span class="avatar" aria-hidden="true">MF</span><div><b>Maria Fernandes</b><span>Arrives Monday, one night</span></div></div>
+        </div>
+      </sg-skeleton>
+    </section>
+
+    <section>
+      <h2>Text</h2>
+      <sg-skeleton busy shape="text" lines="4" label="the house rules" seed="2">
+        <div class="text">
+          <p>Check in from two in the afternoon, check out by eleven.</p>
+          <p>Breakfast is on the veranda from eight. Tell us the night before if you need it earlier.</p>
+        </div>
+      </sg-skeleton>
+    </section>
+
+    <section>
+      <h2>Media</h2>
+      <sg-skeleton busy shape="media" label="the photo" seed="7">
+        <div class="pic" role="img" aria-label="The courtyard after rain"></div>
+      </sg-skeleton>
+    </section>
+
+    <section>
+      <h2>Already loaded</h2>
+      <sg-skeleton shape="text" lines="2" label="the note">
+        <p>This one never waited, so it shows its content and draws nothing.</p>
+      </sg-skeleton>
+    </section>
+  </div>
+  <p class="note">The buttons stand in for the network: the skeletons change only when you press one.</p>
+</main>
+<script type="module">
+  import './skeleton.js';
+  const all = () => document.querySelectorAll('sg-skeleton[label]:not([label="the note"])');
+  document.getElementById('arrive').addEventListener('click', () => all().forEach(s => (s.busy = false)));
+  document.getElementById('again').addEventListener('click', () => all().forEach(s => (s.busy = true)));
+  // ?arrived=1 shows the settled page, for the screenshot matrix
+  if (new URLSearchParams(location.search).get('arrived')) all().forEach(s => (s.busy = false));
+</script>
+</body>
+</html>

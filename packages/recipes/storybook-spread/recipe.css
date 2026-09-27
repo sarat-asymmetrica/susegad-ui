@@ -1,0 +1,111 @@
+/* The storybook spread: text beside a scene, bilingual, narrated. */
+
+body {
+  margin: 0;
+  background: var(--sg-surface);
+  color: var(--sg-text);
+  font: 400 var(--sg-step-0, 1rem)/var(--sg-leading-body, 1.6) var(--sg-font-body);
+}
+
+.spread {
+  max-width: var(--sg-measure, 62ch);
+  margin-inline: auto;
+  padding: var(--sg-space-4, 1rem);
+  display: grid;
+  gap: var(--sg-space-4, 1rem);
+}
+
+.spread__noscript {
+  padding: var(--sg-space-3, 0.75rem);
+  border: 1px solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-2, 0.5rem);
+  color: var(--sg-text);
+  background: var(--sg-surface-raised);
+}
+
+.spread__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sg-space-2, 0.5rem);
+}
+
+.spread__lang {
+  display: inline-flex;
+  gap: var(--sg-space-1, 0.25rem);
+}
+
+.spread__lang button,
+.spread__speak {
+  font: inherit;
+  padding: 0.35em 0.9em;
+  border: 1px solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-pill, 999px);
+  background: var(--sg-surface);
+  color: var(--sg-text);
+  cursor: pointer;
+}
+
+.spread__lang button[aria-pressed='true'] {
+  background: var(--sg-accent);
+  color: var(--sg-on-accent);
+  border-color: var(--sg-accent);
+}
+
+sg-scene[name='paus'] {
+  width: 100%;
+  border-radius: var(--sg-radius-3, 0.75rem);
+  overflow: hidden;
+}
+
+sg-player {
+  margin-block-end: var(--sg-space-3, 0.75rem);
+  border: 1px solid var(--sg-rule);
+  border-radius: var(--sg-radius-2, 0.5rem);
+  overflow: hidden;
+}
+
+/* Captions, one source of truth (recipe.js has the full reasoning): the
+   story paragraph below, highlighted word by word, already carries the
+   full text and is never optional. sg-player's own caption line is built
+   for a video's frame (its CSS positions it "over the bottom of the
+   frame"); for this audio-only player it has no frame to sit over and
+   would show the same sentence a second time, right above the paragraph
+   that already shows it. Hidden here, not in packages/player/ (its
+   default is right for video; this is this page's own choice for audio).
+   The underlying <track> and the CC button both keep working; only this
+   page's rendering of the box is off. */
+sg-player .sg-player__captions {
+  display: none;
+}
+
+.spread__region h1 {
+  font-family: var(--sg-font-display);
+  line-height: var(--sg-leading-tight);
+  margin-block-end: var(--sg-space-3, 0.75rem);
+}
+
+.spread__region[hidden] {
+  display: none;
+}
+
+.spread__region p {
+  font-family: var(--sg-font-body);
+  line-height: var(--sg-leading-body);
+  margin-block-end: var(--sg-space-3, 0.75rem);
+}
+
+.spread__speak {
+  margin-block: var(--sg-space-2, 0.5rem);
+}
+
+.spread__fallback {
+  color: var(--sg-warning);
+  font-weight: 600;
+}
+
+.spread__prototype {
+  color: var(--sg-text-soft);
+  font-size: 0.9em;
+}

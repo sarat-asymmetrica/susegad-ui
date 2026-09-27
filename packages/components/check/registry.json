@@ -1,0 +1,35 @@
+{
+  "name": "check",
+  "type": "component",
+  "title": "Checkbox",
+  "description": "A native checkbox that submits, validates and takes Space with or without JavaScript. Quiet is a hairline box with a crisp tick drawn by CSS; warm sketches the box in four pencil strokes whose corners cross and draws a heavy tick in by hand; playful is a little rubber-stamp block, and stamps a bold tick over its edge, printed through the stamp's ink texture. Indeterminate, and a \"select all\" box that goes checked, mixed or clear with its children. Forced colours bring back the system checkbox.",
+  "version": "0.1.0",
+  "files": [
+    "check.js",
+    "check.core.js",
+    "check.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "check.prompt.md",
+    "check.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens",
+    "stamp"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "check.prompt.md",
+  "docs": "check.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 16519 bytes: behaviour (check.js + check.core.js) 9.5 KB, skins quiet 0.2 KB, warm 2.2 KB, playful 4.2 KB. The playful skin also imports inkMask from stamp.core.js."
+  }
+}

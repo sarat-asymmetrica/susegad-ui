@@ -1,0 +1,39 @@
+/* Palette "casa-photo", made by palette-from-photo from 10 photographs.
+   Every text colour meets WCAG 2.2 AA (4.5:1) on paper, paper-raised and paper-deep, light and dark. */
+[data-palette="casa-photo"] {
+  /* pigments: the photographs' own colours, for decoration */
+  --sg-pigment-1: oklch(66.48% 0.1269 67.1); /* ochre, 2.2% of pixels */
+  --sg-pigment-2: oklch(78.55% 0.1091 213.11); /* blue, 2.3% of pixels */
+  --sg-pigment-3: oklch(63.98% 0.1152 115.32); /* olive, 1.6% of pixels */
+  --sg-pigment-4: oklch(49.08% 0.1143 25.06); /* terracotta, 0.3% of pixels */
+
+  /* grounds and inks */
+  --sg-paper: light-dark(oklch(95% 0.016 88.82), oklch(20.5% 0.0155 86.49));
+  --sg-paper-raised: light-dark(oklch(97.7% 0.008 88.82), oklch(25% 0.0155 86.49));
+  --sg-paper-deep: light-dark(oklch(91.4% 0.022 88.82), oklch(17% 0.0155 86.49));
+  --sg-rule: light-dark(oklch(87.7% 0.025 88.82), oklch(33% 0.0155 86.49));
+  --sg-rule-strong: light-dark(oklch(59.68% 0.0249 86.49), oklch(53.52% 0.025 88.82));
+  --sg-ink: light-dark(oklch(26.14% 0.0249 86.49), oklch(90.33% 0.02 88.82));
+  --sg-ink-soft: light-dark(oklch(44.09% 0.0286 86.49), oklch(72.2% 0.022 88.82));
+  --sg-ink-faint: light-dark(oklch(50.26% 0.0249 86.49), oklch(63.14% 0.025 88.82));
+
+  /* roles */
+  --sg-surface: var(--sg-paper);
+  --sg-surface-raised: var(--sg-paper-raised);
+  --sg-surface-sunk: var(--sg-paper-deep);
+  --sg-text: var(--sg-ink);
+  --sg-text-soft: var(--sg-ink-soft);
+  --sg-text-faint: var(--sg-ink-faint);
+  --sg-accent: light-dark(oklch(54.9% 0.1214 67.1), oklch(61.59% 0.1269 67.1));
+  --sg-on-accent: light-dark(oklch(97.7% 0.008 88.82), oklch(20.5% 0.0155 86.49));
+  --sg-accent-text: light-dark(oklch(50.92% 0.1126 67.1), oklch(63.87% 0.1269 67.1));
+  --sg-success: light-dark(oklch(49.73% 0.1132 115.32), oklch(62.58% 0.1152 115.32)); /* from pigment-3 */
+  --sg-warning: light-dark(oklch(50.92% 0.1126 67.1), oklch(63.87% 0.1269 67.1)); /* from pigment-1 */
+  --sg-danger: light-dark(oklch(51.6% 0.1143 25.06), oklch(64.47% 0.1143 25.06)); /* from pigment-4 */
+  --sg-info: light-dark(oklch(49.46% 0.0867 213.11), oklch(62.15% 0.1089 213.11)); /* from pigment-2 */
+  --sg-focus: light-dark(oklch(57.97% 0.1016 213.11), oklch(60% 0.1051 213.11));
+  --sg-selection: light-dark(oklch(88% 0.06 67.1), oklch(35.22% 0.05 67.1));
+  --sg-scrim: light-dark(oklch(97.7% 0.008 88.82 / 0.9), oklch(20.5% 0.0155 86.49 / 0.9));
+  --sg-shadow: light-dark(oklch(26.14% 0.0249 86.49 / 0.4), oklch(0% 0 0 / 0.6));
+  --sg-lift: 0 1px 0 color-mix(in oklch, var(--sg-shadow) 12%, transparent), 0 22px 44px -28px var(--sg-shadow);
+}

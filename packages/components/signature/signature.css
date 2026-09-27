@@ -1,0 +1,81 @@
+/* <sg-signature>. Without JavaScript this is a label and a typed-name input
+   on a signing line, the name set in the hand face. With JavaScript a pad to
+   sign on sits above it, with undo and start again. */
+
+sg-signature {
+  --sg-signature-ink: var(--sg-ink);
+  display: grid;
+  gap: var(--sg-space-2, 0.5rem);
+  max-width: 36rem;
+  color: var(--sg-text);
+}
+sg-signature[hidden] { display: none; }
+
+sg-signature[data-enhanced] > label { margin-block-start: var(--sg-space-4, 1.5rem); }
+sg-signature > label {
+  font: var(--sg-weight-medium, 500) var(--sg-step-0, 1rem) / var(--sg-leading-snug, 1.3) var(--sg-font-body, sans-serif);
+}
+
+/* the typed name: written on a line, in the hand */
+sg-signature > input:not([type="hidden"]) {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+  padding: 0.2em 0.1em 0.1em;
+  border: 0;
+  border-block-end: var(--sg-stroke, 1.5px) solid var(--sg-rule-strong);
+  border-radius: 0;
+  background: transparent;
+  color: var(--sg-signature-ink);
+  font: 300 var(--sg-step-2, 1.45rem) / 1.2 var(--sg-font-hand, cursive);
+}
+sg-signature > input:not([type="hidden"])::placeholder { color: var(--sg-text-faint); }
+sg-signature > input:not([type="hidden"]):focus-visible {
+  outline: var(--sg-focus-width, 2px) solid var(--sg-focus);
+  outline-offset: var(--sg-focus-offset, 2px);
+}
+sg-signature > input:not([type="hidden"]):disabled { opacity: 0.6; }
+
+sg-signature .sg-signature-help,
+sg-signature .sg-signature-status {
+  margin: 0;
+  font: var(--sg-step--1, 0.875rem) / var(--sg-leading-snug, 1.3) var(--sg-font-body, sans-serif);
+  color: var(--sg-text-soft);
+}
+sg-signature .sg-signature-status:empty { display: none; }
+
+/* the pad: its colour is the ink, its caret colour the signing line (read by the skin) */
+sg-signature .sg-signature-pad {
+  position: relative;
+  color: var(--sg-signature-ink);
+  caret-color: var(--sg-rule-strong);
+  background: var(--sg-surface-raised);
+  border: var(--sg-hairline, 1px) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-2, 4px);
+  overflow: hidden;
+  cursor: crosshair;
+}
+sg-signature:has(> input:disabled) .sg-signature-pad { opacity: 0.6; cursor: not-allowed; }
+
+sg-signature .sg-signature-tools { display: flex; flex-wrap: wrap; gap: var(--sg-space-2, 0.5rem); margin-block-start: var(--sg-space-2, 0.5rem); }
+sg-signature .sg-signature-tools button {
+  font: var(--sg-weight-medium, 500) var(--sg-step--1, 0.875rem) / 1 var(--sg-font-body, sans-serif);
+  min-block-size: 2.75rem;
+  padding: 0 1em;
+  color: var(--sg-accent-text);
+  background: transparent;
+  border: 0;
+  border-radius: var(--sg-radius-2, 4px);
+  box-shadow: inset 0 0 0 var(--sg-hairline, 1px) var(--sg-rule-strong);
+  cursor: pointer;
+}
+sg-signature .sg-signature-tools button:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus); outline-offset: var(--sg-focus-offset, 2px); }
+sg-signature .sg-signature-tools button:disabled { color: var(--sg-text-soft); cursor: default; box-shadow: inset 0 0 0 var(--sg-hairline, 1px) var(--sg-rule); }
+
+/* warm and playful: the pad is a sheet of paper, lifted a little */
+sg-signature:is([data-skin="warm"], [data-skin="playful"]) .sg-signature-pad {
+  border-color: var(--sg-rule);
+  border-radius: var(--sg-radius-3, 8px);
+  box-shadow: var(--sg-lift);
+}
+sg-signature[data-skin="playful"] { --sg-signature-ink: var(--sg-accent-text); }

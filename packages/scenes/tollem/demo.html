@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tollem scene</title>
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .lede { margin: 0 0 20px; color: var(--sg-text-soft, inherit); }
+  sg-scene { border-radius: 6px; }
+  sg-scene h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  sg-scene p { margin: 0; }
+  form { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 20px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  legend { font-weight: 600; float: left; margin-right: 8px; }
+  select, button { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid currentColor; background: none; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  #water { font-size: 0.9rem; opacity: 0.8; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Tollem</h1>
+  <p class="lede">The pool at noon. A dev page for the scene: registers, params, the 2D painting and context loss.</p>
+  <sg-scene id="tollem" name="tollem">
+    <h2>Swim before lunch</h2>
+    <p>The pool is open from seven. Towels are by the steps.</p>
+  </sg-scene>
+  <p id="water" aria-live="polite"></p>
+  <form id="controls">
+    <fieldset>
+      <legend>Register</legend>
+      <label><input type="radio" name="register" value="quiet"> Quiet</label>
+      <label><input type="radio" name="register" value="warm"> Warm</label>
+      <label><input type="radio" name="register" value="playful"> Playful</label>
+    </fieldset>
+    <label><input type="checkbox" id="dark"> Dark</label>
+    <label><input type="checkbox" id="text" checked> Text on the water</label>
+    <label for="swell">Swell</label>
+    <input type="range" id="swell" min="0" max="1" step="0.05" value="0.5">
+    <label><input type="checkbox" id="useProgress"> Show progress</label>
+    <label for="progress">Progress</label>
+    <input type="range" id="progress" min="0" max="1" step="0.01" value="0.4" disabled>
+    <label for="palette">Palette</label>
+    <select id="palette"><option>seed</option><option>aqua</option><option>sky</option><option>celadon</option></select>
+    <label for="renderer">Renderer</label>
+    <select id="renderer"><option>auto</option><option>webgl</option><option>2d</option></select>
+    <button type="button" id="lose">Lose the WebGL context</button>
+    <button type="button" id="replay">Start again</button>
+    <button type="button" id="reseed">New pool</button>
+  </form>
+</main>
+<script type="module">
+  const q = new URLSearchParams(location.search), root = document.documentElement;
+  const el = document.getElementById('tollem');
+  const register = q.get('register') || 'warm';
+  root.dataset.register = register;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+  for (const k of ['seed', 'progress', 'swell', 'palette', 'renderer', 'flowers', 'touch']) if (q.has(k)) el.setAttribute(k, q.get(k));
+  el.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__piece = el;
+  await import('../../core/index.js');
+  await import('./index.js');
+
+  const $ = id => document.getElementById(id), form = $('controls'), content = el.innerHTML;
+  form.register.value = register;
+  $('dark').checked = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  for (const id of ['palette', 'renderer', 'swell']) if (q.has(id)) $(id).value = q.get(id);
+  form.addEventListener('change', e => {
+    const t = e.target;
+    if (t.name === 'register') root.dataset.register = t.value;
+    else if (t.id === 'dark') root.dataset.theme = t.checked ? 'dark' : 'light';
+    else if (t.id === 'text') el.innerHTML = t.checked ? content : '';
+    else if (t.id === 'useProgress') { $('progress').disabled = !t.checked; t.checked ? el.setAttribute('progress', $('progress').value) : el.removeAttribute('progress'); }
+    else if (['palette', 'renderer'].includes(t.id)) el.setAttribute(t.id, t.value);
+  });
+  form.addEventListener('input', e => { if (['swell', 'progress'].includes(e.target.id) && !e.target.disabled) el.setAttribute(e.target.id, e.target.value); });
+  $('replay').addEventListener('click', () => el.replay());
+  $('reseed').addEventListener('click', () => el.reseed());
+  // the shader's canvas is the first one in the stage; losing its context should hand over to the 2D painting
+  let ext = null;
+  $('lose').addEventListener('click', () => {
+    const c = el.shadowRoot.querySelector('.stage canvas');
+    if (ext) { ext.restoreContext(); ext = null; $('lose').textContent = 'Lose the WebGL context'; return; }
+    ext = c.getContext('webgl')?.getExtension('WEBGL_lose_context');
+    if (ext) { ext.loseContext(); $('lose').textContent = 'Restore the WebGL context'; }
+  });
+  const stage = el.shadowRoot.querySelector('.stage');
+  new MutationObserver(() => { $('water').textContent = `Painting the water with: ${stage.dataset.water}`; }).observe(stage, { attributes: true, attributeFilter: ['data-water'] });
+</script>
+</body>
+</html>

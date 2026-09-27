@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Player</title>
+<link rel="stylesheet" href="./player.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem)/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 40rem; margin: 0 auto; padding: 2rem 1rem 3rem; display: grid; gap: 2rem; }
+  h1 { margin: 0; font: 600 1.6rem/1.2 var(--sg-font-display, inherit); }
+  h2 { margin: 0 0 0.75rem; font-size: 1rem; color: var(--sg-text-soft, inherit); font-weight: 600; }
+  section { display: grid; gap: 0.75rem; }
+  p.note { margin: 0; font-size: 0.85rem; color: var(--sg-text-soft, inherit); }
+  :focus-visible { outline: 2px solid var(--sg-focus, Highlight); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Player</h1>
+  <p class="note">The sample clip below is the library's own Kolam scene, exported to WebM by <code>packages/export</code> (see <code>fixtures/generate.mjs</code>): nothing is fetched from the web.</p>
+
+  <section aria-labelledby="h-plain">
+    <h2 id="h-plain">Plain, with a drawing poster and captions</h2>
+    <sg-player id="plain" poster-scene="kolam" label="A kolam being drawn">
+      <video controls preload="metadata">
+        <source src="./fixtures/sample.webm" type="video/webm">
+        <track kind="captions" src="./fixtures/sample.vtt" srclang="en" default>
+      </video>
+    </sg-player>
+  </section>
+
+  <section aria-labelledby="h-ink">
+    <h2 id="h-ink">The ink treatment, with a poster and two annotations</h2>
+    <sg-player id="treated" treatment="ink" poster-scene="kolam" label="A kolam being drawn, in the ink treatment">
+      <video controls preload="metadata">
+        <source src="./fixtures/sample.webm" type="video/webm">
+      </video>
+    </sg-player>
+  </section>
+
+  <section aria-labelledby="h-registers">
+    <h2 id="h-registers">Every register</h2>
+    <div style="display:grid;gap:1.25rem">
+      <sg-player register="quiet" label="Quiet"><video controls preload="metadata"><source src="./fixtures/sample.webm" type="video/webm"></video></sg-player>
+      <sg-player register="warm" label="Warm"><video controls preload="metadata"><source src="./fixtures/sample.webm" type="video/webm"></video></sg-player>
+      <sg-player register="playful" label="Playful"><video controls preload="metadata"><source src="./fixtures/sample.webm" type="video/webm"></video></sg-player>
+    </div>
+  </section>
+</main>
+<script type="module">
+  import './player.js';
+  // poster-scene="kolam" needs the scene's own module imported somewhere on
+  // the page, the same way <sg-scene name="kolam"> does (SKILL.md §5):
+  // rendering a poster only knows a scene once its definition has loaded.
+  import '../scenes/kolam/index.js';
+
+  document.getElementById('treated').annotations = [
+    { type: 'circle', start: 0.3, end: 1.4, x: 0.5, y: 0.5, r: 0.12, label: 'the grid' },
+    { type: 'arrow', start: 1.6, end: 2.8, x: 0.2, y: 0.8, x2: 0.7, y2: 0.3 },
+  ];
+
+  window.__demoReady?.();
+  window.__ready = true;
+</script>
+</body>
+</html>

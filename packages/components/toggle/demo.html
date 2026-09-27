@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toggle</title>
+<link rel="stylesheet" href="./toggle.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 44rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .lede { margin: 0 0 var(--sg-space-5); color: var(--sg-text-soft); max-width: var(--sg-measure); }
+  fieldset { border: var(--sg-hairline) solid var(--sg-rule); border-radius: var(--sg-radius-3); background: var(--sg-surface-raised); padding: var(--sg-space-3) var(--sg-space-4) var(--sg-space-4); margin: 0 0 var(--sg-space-4); display: grid; gap: var(--sg-space-3); }
+  /* inside the card, not across its border, so it sits on one background */
+  legend { float: left; width: 100%; font-weight: var(--sg-weight-medium); padding: 0; margin-bottom: var(--sg-space-1); }
+  output { display: block; margin-top: var(--sg-space-3); font: var(--sg-step--1) / 1.5 var(--sg-font-mono); color: var(--sg-text-soft); overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Toggle</h1>
+  <p class="lede">A native switch: a checkbox that says "switch, on" or "off" and submits with the form on its own. Warm draws the brass bolt from a Goan door; playful lights a diya.</p>
+
+  <form id="form" action="" method="get">
+    <input type="hidden" name="sent" value="1">
+    <fieldset>
+      <legend>During your stay</legend>
+      <sg-toggle><label><input type="checkbox" role="switch" name="breakfast" value="yes" checked> Breakfast on the balcão every morning</label></sg-toggle>
+      <sg-toggle><label><input type="checkbox" role="switch" name="housekeeping" value="daily"> Daily housekeeping, between 11 am and 1 pm</label></sg-toggle>
+      <sg-toggle><label><input type="checkbox" role="switch" name="reminder" value="whatsapp" checked> A WhatsApp reminder the day before you arrive</label></sg-toggle>
+      <sg-toggle><label><input type="checkbox" role="switch" name="pool-heat" value="yes" disabled> Pool heating (not needed until December)</label></sg-toggle>
+    </fieldset>
+
+    <fieldset>
+      <legend>In Marathi, Kannada and Konkani</legend>
+      <!-- These Indian-language strings are drafts awaiting a native speaker's check. -->
+      <sg-toggle lang="mr"><label><input type="checkbox" role="switch" name="mr" value="1" checked> रोज सकाळी न्याहारी</label></sg-toggle>
+      <sg-toggle lang="kn"><label><input type="checkbox" role="switch" name="kn" value="1"> ಪ್ರತಿದಿನ ಬೆಳಗಿನ ಉಪಾಹಾರ</label></sg-toggle>
+      <sg-toggle lang="kok-Latn"><label><input type="checkbox" role="switch" name="kok" value="1"> Dis-dis sokalchem nhastem</label></sg-toggle>
+    </fieldset>
+
+    <button class="demo-button" type="submit">Save</button>
+    <output id="sent" aria-live="polite"></output>
+  </form>
+</main>
+<script type="module">
+  import './toggle.js';
+  const q = new URLSearchParams(location.search);
+  if (q.has('sent')) document.getElementById('sent').textContent = `Saved: ${[...q].filter(([k]) => !['register', 'theme', 'palette', 'sent'].includes(k)).map(([k, v]) => `${k}=${v}`).join(', ') || 'everything off'}`;
+</script>
+</body>
+</html>

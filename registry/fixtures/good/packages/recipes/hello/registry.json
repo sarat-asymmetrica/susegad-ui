@@ -1,0 +1,11 @@
+{
+  "name": "hello",
+  "type": "recipe",
+  "title": "Hello",
+  "description": "Fixture recipe: a greeting beside the dot scene, to prove recipes copy to susegad/recipes/ with their imports intact.",
+  "version": "0.1.0",
+  "files": ["recipe.js", "recipe.css", "index.html", "README.md"],
+  "dependencies": ["scene-dot", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "docs": "README.md"
+}

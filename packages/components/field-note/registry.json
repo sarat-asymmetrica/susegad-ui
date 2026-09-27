@@ -1,0 +1,33 @@
+{
+  "name": "field-note",
+  "type": "component",
+  "title": "Field note",
+  "description": "The note under a form field that says what is wrong and how to fix it. Follows constraint validation with its own wording (or shows a server message), never nags on the first try, wires aria-describedby and aria-invalid, focuses the first problem on submit. Quiet is small danger text with a mark; warm a margin note in the hand with a pencil arrow; playful inks it on and underlines it.",
+  "version": "0.1.0",
+  "files": [
+    "field-note.js",
+    "field-note.core.js",
+    "field-note.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "field-note.prompt.md",
+    "field-note.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "field-note.prompt.md",
+  "docs": "field-note.docs.md",
+  "budget": {
+    "jsBytes": 39936,
+    "reason": "Decision 0009: 15 KB of behaviour (words in the person's terms, dates the way people say them, and a note that never appears mid-click and never repeats itself), plus 8 KB for each of three skins. Today 21939 bytes: behaviour (field-note.js + field-note.core.js) 14.3 KB, skins quiet 0.5 KB, warm 4.3 KB, playful 2.3 KB."
+  }
+}

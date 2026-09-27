@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="/tools/harness/demo.js"></script>
+  <link rel="stylesheet" href="/packages/tokens/fonts.css">
+  <link rel="stylesheet" href="/packages/tokens/tokens.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Form</title>
+  <link rel="stylesheet" href="./form.css">
+  <link rel="stylesheet" href="../field/field.css">
+  <link rel="stylesheet" href="../field-note/field-note.css">
+  <link rel="stylesheet" href="../loader/loader.css">
+  <link rel="stylesheet" href="../stamp/stamp.css">
+  <link rel="stylesheet" href="../toast/toast.css">
+  <style>
+    body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: 400 1rem/1.6 var(--sg-font-body); }
+    main { max-width: 62rem; margin: 0 auto; padding: var(--sg-space-5) var(--sg-space-3) var(--sg-space-6); }
+    h1 { font: 400 2.25rem/1.1 var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+    h2 { font: 400 1.25rem/1.2 var(--sg-font-display); margin: 0 0 var(--sg-space-3); }
+    p.lede { color: var(--sg-text-soft); margin: 0 0 var(--sg-space-5); max-width: 44rem; }
+    .states { display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: var(--sg-space-5) var(--sg-space-4); }
+    form { display: grid; gap: var(--sg-space-3); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Form</h1>
+    <p class="lede">A native form the browser validates, which says what happens when you send it: how many fields to check, then sending, sent, or why it could not send. Without JavaScript it validates and submits on its own.</p>
+
+    <div class="states">
+      <section aria-labelledby="h-idle">
+        <h2 id="h-idle">Ready</h2>
+        <sg-form id="idle"><form action="#" method="post">
+          <sg-field><label for="a-name">Your name</label><input id="a-name" name="name" required autocomplete="name"></sg-field>
+          <button class="demo-button">Send</button>
+        </form></sg-form>
+      </section>
+
+      <section aria-labelledby="h-invalid">
+        <h2 id="h-invalid">Something to fix</h2>
+        <sg-form id="invalid"><form action="#" method="post">
+          <sg-field><label for="b-name">Your name</label><input id="b-name" name="name" required></sg-field>
+          <sg-field><label for="b-email">Email</label><input id="b-email" name="email" type="email" required value="sarat@"></sg-field>
+          <button class="demo-button">Send</button>
+        </form></sg-form>
+      </section>
+
+      <section aria-labelledby="h-sending">
+        <h2 id="h-sending">Sending</h2>
+        <sg-form id="sending"><form action="#" method="post">
+          <sg-field><label for="c-name">Your name</label><input id="c-name" name="name" required value="Sarat"></sg-field>
+          <button class="demo-button">Send</button>
+        </form></sg-form>
+      </section>
+
+      <section aria-labelledby="h-sent">
+        <h2 id="h-sent">Sent</h2>
+        <sg-form id="sent"><form action="#" method="post">
+          <sg-field><label for="d-name">Your name</label><input id="d-name" name="name" required value="Sarat"></sg-field>
+          <button class="demo-button">Send</button>
+        </form></sg-form>
+      </section>
+
+      <section aria-labelledby="h-failed">
+        <h2 id="h-failed">Could not send</h2>
+        <sg-form id="failed"><form action="#" method="post">
+          <sg-field><label for="e-name">Your name</label><input id="e-name" name="name" required value="Sarat"></sg-field>
+          <button class="demo-button">Send</button>
+        </form></sg-form>
+      </section>
+    </div>
+  </main>
+
+  <script type="module">
+    import './form.js';
+    import '../field/field.js';
+    await customElements.whenDefined('sg-form');
+    const $ = id => document.getElementById(id);
+    // each form's "server": a promise, so the form shows only what really happens
+    const never = new Promise(() => {});
+    const handlers = {
+      idle: () => Promise.resolve({ message: 'Sent. We will write back within a day.' }),
+      invalid: () => Promise.resolve({}),
+      sending: () => never,
+      sent: () => Promise.resolve({ message: 'Sent. We will write back within a day.' }),
+      failed: () => Promise.reject(new Error("the house's inbox is not answering")),
+    };
+    for (const [id, fn] of Object.entries(handlers)) $(id).addEventListener('sg-submit', e => e.detail.respondWith(fn()));
+    // put each form into its state, as if someone had pressed Send
+    for (const id of ['invalid', 'sending', 'sent', 'failed']) $(id).form.requestSubmit();
+    await new Promise(r => setTimeout(r, 400));
+    document.activeElement?.blur?.();
+    window.__demoReady?.();
+  </script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="/tools/harness/demo.js"></script>
+  <link rel="stylesheet" href="/packages/tokens/fonts.css">
+  <link rel="stylesheet" href="/packages/tokens/tokens.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Field</title>
+  <link rel="stylesheet" href="./field.css">
+  <link rel="stylesheet" href="../field-note/field-note.css">
+  <style>
+    body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: 400 1rem/1.6 var(--sg-font-body); }
+    main { max-width: 46rem; margin: 0 auto; padding: var(--sg-space-5) var(--sg-space-3) var(--sg-space-6); }
+    h1 { font: 400 2.25rem/1.1 var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+    h2 { font: 400 1.375rem/1.2 var(--sg-font-display); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+    p.lede { color: var(--sg-text-soft); margin: 0; max-width: 40rem; }
+    .grid { display: grid; gap: var(--sg-space-4); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sg-space-4); }
+    @media (max-width: 34rem) { .row { grid-template-columns: 1fr; } }
+    .hint { font-size: 0.875rem; color: var(--sg-text-soft); margin: 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Field</h1>
+    <p class="lede">A label over a ruled line. In warm, the line inks under your words as you type; in playful, the ink wobbles while you write and settles when you stop. Without JavaScript it is the same label and ruled line, and it submits with the form.</p>
+
+    <h2>A line of text</h2>
+    <form class="grid" action="/tools/harness/blank.html" method="get">
+      <div class="row">
+        <sg-field>
+          <label for="name">Your name</label>
+          <input id="name" name="name" autocomplete="name" value="Sarat Chandran">
+        </sg-field>
+        <sg-field>
+          <label for="town">Town</label>
+          <input id="town" name="town" placeholder="e.g. Aldona">
+        </sg-field>
+      </div>
+      <sg-field>
+        <label for="contact">Phone or email</label>
+        <input id="contact" name="contact" required value="sarat@">
+        <sg-field-note for="contact">Enter a phone number or an email address, like 98220 12345 or name@example.com.</sg-field-note>
+      </sg-field>
+      <sg-field>
+        <label for="code">Booking code</label>
+        <p class="hint" id="code-hint">It is on your confirmation, like VQ-2026-10.</p>
+        <input id="code" name="code" maxlength="12" aria-describedby="code-hint" value="VQ-2026-10">
+      </sg-field>
+      <button type="submit" class="demo-button">Check these</button>
+    </form>
+
+    <h2>A longer message</h2>
+    <form class="grid" action="/tools/harness/blank.html" method="get">
+      <sg-field>
+        <label for="msg">Anything else</label>
+        <textarea id="msg" name="message" rows="5">We are four adults and a nine-year-old who loves swimming. Is the pool shallow at one end?
+We would like to arrive after lunch.</textarea>
+      </sg-field>
+      <button type="submit" class="demo-button">Send</button>
+    </form>
+  </main>
+
+  <script type="module">
+    import './field.js';
+    import '../field-note/field-note.js';
+    await customElements.whenDefined('sg-field');
+    await new Promise(r => setTimeout(r, 50));
+    window.__demoReady?.();
+  </script>
+</body>
+</html>

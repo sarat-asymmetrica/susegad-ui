@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Rampon, with the koel soundscape on</title>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<style>body { margin: 0; background: var(--sg-surface); } sg-scene { display: block; width: min(1100px, 100%); margin: 0 auto; }</style>
+</head>
+<body>
+<!-- For tools/perf.mjs --url, compared against --baseline paus (the same paus scene, unrelated
+     to this page): this measures Rampon's own frame cost with the koel attached and the switch
+     on, which is what matters since the koel is a timer, not a per-frame hook like Paus's rain. -->
+<script type="module">
+  await import('/packages/core/index.js');
+  await import('/packages/scenes/rampon/index.js');
+  const { attachRamponKoel } = await import('/packages/sound/scapes/rampon-koel.js');
+  const { setSoundOn } = await import('/packages/sound/index.js');
+
+  const el = document.createElement('sg-scene');
+  el.setAttribute('name', 'rampon');
+  el.setAttribute('register', 'playful');
+  document.body.append(el);
+  await new Promise(r => el.addEventListener('sg-ready', r, { once: true }));
+
+  attachRamponKoel(el);
+  setSoundOn(true);
+
+  window.__ready = true;
+</script>
+</body>
+</html>

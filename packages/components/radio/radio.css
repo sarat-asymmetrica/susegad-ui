@@ -1,0 +1,119 @@
+/* <sg-radio-group>. Without JavaScript, and in the quiet register, these are
+   the native radios as hairline circles with a crisp dot, drawn with CSS only.
+   Warm and playful lay an aria-hidden drawing over each circle; the native
+   radios stay underneath and keep the arrow keys. In forced-colours mode the
+   native radios come back, in the system's colours. */
+
+sg-radio-group[hidden] { display: none; } /* our display rule would otherwise beat the browser's [hidden] */
+
+sg-radio-group {
+  display: block;
+  color: var(--sg-text, CanvasText);
+  font: var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif);
+}
+sg-radio-group > fieldset {
+  display: grid;
+  gap: var(--sg-space-2, 0.5rem);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+sg-radio-group > fieldset > legend {
+  padding: 0;
+  margin-bottom: var(--sg-space-2, 0.5rem);
+  font-weight: var(--sg-weight-medium, 500);
+}
+sg-radio-group[orientation="row"] > fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--sg-space-4, 1.5rem);
+}
+sg-radio-group[orientation="row"] > fieldset > legend { flex-basis: 100%; }
+
+/* Each circle sits in column one of its label, level with the first line of the words. */
+sg-radio-group label:has(> input[type="radio"]) {
+  display: inline-grid;
+  grid-template-columns: 1.15em minmax(0, 1fr);
+  column-gap: 0.6em;
+  align-items: start;
+  cursor: pointer;
+}
+sg-radio-group input[type="radio"],
+sg-radio-group .sg-radio-art { grid-area: 1 / 1; }
+
+sg-radio-group input[type="radio"] {
+  appearance: none;
+  box-sizing: border-box;
+  display: grid;
+  place-content: center;
+  width: 1.15em;
+  height: 1.15em;
+  margin: calc((1lh - 1.15em) / 2) 0 0;
+  font: inherit;
+  border: var(--sg-stroke, 1.5px) solid var(--sg-rule-strong, CanvasText);
+  border-radius: 50%;
+  background: var(--sg-surface-raised, Canvas);
+  cursor: pointer;
+}
+sg-radio-group input[type="radio"]::before {
+  content: "";
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: var(--sg-accent-text, CanvasText);
+  transform: scale(0);
+  transition: transform var(--sg-dur-quick, 120ms) var(--sg-ease-out, ease-out);
+}
+sg-radio-group input[type="radio"]:checked::before { transform: scale(1); }
+sg-radio-group input[type="radio"]:checked { border-color: var(--sg-accent-text, CanvasText); }
+sg-radio-group input[type="radio"]:focus-visible {
+  outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight);
+  outline-offset: var(--sg-focus-offset, 2px);
+}
+sg-radio-group input[type="radio"]:user-invalid { border-color: var(--sg-danger, CanvasText); }
+sg-radio-group label:has(input:disabled) { color: var(--sg-text-soft, GrayText); cursor: not-allowed; }
+sg-radio-group input[type="radio"]:disabled { border-style: dashed; background: var(--sg-surface-sunk, Canvas); cursor: not-allowed; }
+
+/* ── warm and playful: the drawing replaces the look, not the control ─── */
+
+sg-radio-group .sg-radio-art {
+  width: 1.15em;
+  height: 1.15em;
+  margin-top: calc((1lh - 1.15em) / 2);
+  overflow: visible;
+  pointer-events: none;
+}
+sg-radio-group:is([data-skin="warm"], [data-skin="playful"]) input[type="radio"] {
+  border-color: transparent;
+  background: transparent;
+}
+sg-radio-group:is([data-skin="warm"], [data-skin="playful"]) input[type="radio"]::before { visibility: hidden; }
+
+sg-radio-group .sg-radio-pencil { fill: none; stroke: var(--sg-text-soft, CanvasText); stroke-width: 1.3; stroke-linecap: round; }
+sg-radio-group .sg-radio-ink { fill: none; stroke: var(--sg-accent-text, CanvasText); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+sg-radio-group .sg-radio-dot { fill: var(--sg-accent-text, CanvasText); }
+sg-radio-group input:user-invalid ~ .sg-radio-art .sg-radio-pencil { stroke: var(--sg-danger, CanvasText); }
+sg-radio-group input:disabled ~ .sg-radio-art .sg-radio-pencil { stroke-dasharray: 1.6 1.6; }
+
+/* playful: an inked circle, and for the chosen one a kolam flower in its place:
+   four round petals in ink with notches between, and the pulli left as paper. */
+sg-radio-group .sg-radio-ring { fill: none; stroke: var(--sg-accent-text, CanvasText); stroke-width: 1.9; stroke-linecap: round; }
+sg-radio-group input:user-invalid ~ .sg-radio-art .sg-radio-ring { stroke: var(--sg-danger, CanvasText); }
+sg-radio-group input:disabled ~ .sg-radio-art .sg-radio-ring { stroke: var(--sg-text-soft, GrayText); stroke-dasharray: 1.6 1.6; }
+sg-radio-group .sg-radio-kolam { transform-box: view-box; transform-origin: 50% 50%; }
+sg-radio-group .sg-radio-kolam path { fill: var(--sg-accent-text, CanvasText); fill-opacity: 0.88; stroke: var(--sg-accent-text, CanvasText); stroke-width: 0.9; stroke-linejoin: round; }
+sg-radio-group .sg-radio-kolam circle { fill: var(--sg-surface-raised, Canvas); } /* the pulli, left as paper */
+
+/* ── forced colours: the system's own radios, in the system's colours ── */
+@media (forced-colors: active) {
+  sg-radio-group input[type="radio"] {
+    appearance: auto !important;
+    width: auto !important;
+    height: auto !important;
+    border: revert !important;
+    background: revert !important;
+  }
+  sg-radio-group input[type="radio"]::before,
+  sg-radio-group .sg-radio-art { display: none !important; }
+}

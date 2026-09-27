@@ -1,0 +1,507 @@
+/* Susegad UI tokens.
+
+   Generated from tokens.js by tools/build-css.mjs. Edit tokens.js, then run
+     node packages/tokens/tools/build-css.mjs
+   tokens.test.js checks the two agree and that every text role meets WCAG 2.2 AA.
+
+   Selectors, all usable on :root or any element:
+     data-palette="susegad|casa"   colour palette (default susegad)
+     data-theme="light|dark"          absent: follow prefers-color-scheme
+     data-register="quiet|warm|playful" (or register="...")  default warm
+
+   Components read the roles (--sg-surface, --sg-text, --sg-accent ...), never
+   the pigments. A nested data-theme changes color-scheme, so an element
+   inside it must read the tokens itself (color: var(--sg-text)) rather than
+   inherit an already-resolved colour from outside. */
+
+:root {
+  color-scheme: light dark;
+
+  /* type: Latin, Devanagari and Kannada, each with system fallbacks */
+  --sg-font-display: 'Castoro', 'Tiro Devanagari Marathi', 'Tiro Kannada', 'Castoro Fallback', 'Iowan Old Style', Georgia, 'Noto Serif Devanagari', 'Noto Serif Kannada', 'Kohinoor Devanagari', 'Devanagari Sangam MN', 'Noto Sans Devanagari', 'Nirmala UI', Mangal, 'Kannada Sangam MN', Tunga, serif;
+  --sg-font-body: 'Mukta', 'Noto Sans Kannada', 'Mukta Fallback', 'Segoe UI', system-ui, 'Kohinoor Devanagari', 'Devanagari Sangam MN', 'Noto Sans Devanagari', 'Nirmala UI', Mangal, 'Kannada Sangam MN', Tunga, sans-serif;
+  --sg-font-hand: 'Kalam', 'Kalam Fallback', 'Segoe Print', 'Bradley Hand', 'Noto Sans Kannada', 'Kohinoor Devanagari', 'Devanagari Sangam MN', 'Noto Sans Devanagari', 'Nirmala UI', Mangal, 'Kannada Sangam MN', Tunga, cursive;
+  --sg-font-mono: ui-monospace, 'Cascadia Mono', 'SF Mono', Menlo, Consolas, 'Noto Sans Mono', 'Kohinoor Devanagari', 'Devanagari Sangam MN', 'Noto Sans Devanagari', 'Nirmala UI', Mangal, 'Kannada Sangam MN', Tunga, monospace;
+  --sg-weight-light: 300;
+  --sg-weight-regular: 400;
+  --sg-weight-medium: 500;
+  --sg-weight-bold: 600;
+  --sg-step--1: clamp(0.8475rem, 0.8269rem + 0.0914vw, 0.9rem);
+  --sg-step-0: clamp(1rem, 0.9511rem + 0.2174vw, 1.125rem);
+  --sg-step-1: clamp(1.18rem, 1.0915rem + 0.3935vw, 1.4063rem);
+  --sg-step-2: clamp(1.3924rem, 1.2494rem + 0.6355vw, 1.7578rem);
+  --sg-step-3: clamp(1.643rem, 1.4262rem + 0.9639vw, 2.1973rem);
+  --sg-step-4: clamp(1.9388rem, 1.6227rem + 1.4049vw, 2.7466rem);
+  --sg-step-5: clamp(2.2878rem, 1.8395rem + 1.9921vw, 3.4332rem);
+  --sg-leading-tight: 1.12;
+  --sg-leading-snug: 1.3;
+  --sg-leading-body: 1.6;
+  --sg-leading-loose: 1.8;
+  --sg-measure: 62ch;
+  --sg-measure-narrow: 42ch;
+  --sg-content: 1180px;
+
+  /* space, radii and lines */
+  --sg-space-1: 0.25rem;
+  --sg-space-2: 0.5rem;
+  --sg-space-3: 1rem;
+  --sg-space-4: 1.5rem;
+  --sg-space-5: 2.5rem;
+  --sg-space-6: 4rem;
+  --sg-space-7: 6rem;
+  --sg-space-8: 9rem;
+  --sg-radius-0: 0;
+  --sg-radius-1: 2px;
+  --sg-radius-2: 4px;
+  --sg-radius-3: 8px;
+  --sg-radius-4: 14px;
+  --sg-radius-pill: 999px;
+  --sg-hairline: 1px;
+  --sg-rule-width: 1px;
+  --sg-stroke: 1.5px;
+  --sg-stroke-bold: 2px;
+  --sg-focus-width: 2px;
+  --sg-focus-offset: 2px;
+
+  /* motion: easings; durations come with the register below */
+  --sg-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --sg-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --sg-ease-ink: cubic-bezier(0.45, 0.05, 0.25, 1);
+
+  /* sound: names of synth patches; the sound layer plays them, off by default */
+  --sg-sound-tick: "tick";
+  --sg-sound-confirm: "confirm";
+  --sg-sound-complete: "complete";
+  --sg-sound-error: "error";
+
+  /* the register: warm unless a data-register says otherwise */
+  --sg-register: warm;
+  --sg-ornament: 1;
+  --sg-motion-scale: 1;
+  --sg-wobble: 0.6;
+  --sg-overshoot: 0.038;
+  --sg-sound-vocabulary: "soft";
+  --sg-dur-instant: 70ms;
+  --sg-dur-quick: 140ms;
+  --sg-dur-calm: 280ms;
+  --sg-dur-slow: 560ms;
+  --sg-dur-ambient: 9000ms;
+  --sg-dur-fade: 180ms;
+  --sg-ease-spring: linear(0, 0.043, 0.147, 0.282, 0.424, 0.561, 0.682, 0.785, 0.867, 0.93, 0.975, 1.006, 1.025, 1.035, 1.038, 1.037, 1.034, 1.029, 1.024, 1.018, 1.013, 1.009, 1.006, 1.003, 1.001, 1, 0.999, 0.999, 1);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* ── palette: Susegad. The sketchbook: monsoon-indigo ink on handmade cream paper, with the pigments the plates were drawn in.
+   Source: asymmetrica-web/explorations/susegad (index.html and pieces/*.js) */
+
+:root, [data-palette="susegad"] {
+  /* pigments: for drawing and decoration, the same in both themes */
+  --sg-laterite: oklch(56.24% 0.1283 37.47); /* Chiro: the red stone Goa is built from */
+  --sg-indigo: oklch(35.34% 0.0899 266.89); /* Kairi and Neel: block-print indigo */
+  --sg-kokum: oklch(39.5% 0.142 356.54); /* Vel: the bougainvillea stroke, the colour of kokum */
+  --sg-mango: oklch(79.05% 0.1312 82.45); /* Mankurad and the gallery haldi */
+  --sg-paddy: oklch(58.38% 0.1228 134.51); /* Shet: rice at its lushest */
+  --sg-sea: oklch(65.54% 0.0507 224.04); /* Ghat: the sea under monsoon cloud */
+  --sg-inland: oklch(90.81% 0.0169 230.92); /* The inland-letter card the prompts are written on */
+
+  /* grounds and inks, light and dark */
+  --sg-paper: light-dark(oklch(94.67% 0.0127 86.83), oklch(20.93% 0.0389 269.55)); /* handmade cream; at night, monsoon sky */
+  --sg-paper-raised: light-dark(oklch(97.05% 0.0098 87.47), oklch(25.19% 0.0413 269.26)); /* the mount a plate sits on */
+  --sg-paper-deep: light-dark(oklch(91.2% 0.017 84), oklch(17% 0.035 270)); /* a sunk well: inputs, code, table stripes */
+  --sg-rule: light-dark(oklch(85.59% 0.0054 83.48), oklch(32.63% 0.026 271.71)); /* ink at 15% on paper, a pencil hairline */
+  --sg-rule-strong: light-dark(oklch(58.15% 0.0348 271.38), oklch(55% 0.02 95)); /* 3:1 or more on every ground: control borders */
+  --sg-ink: light-dark(oklch(27.78% 0.0521 267.56), oklch(92.25% 0.021 88.72)); /* monsoon-indigo ink; 11.4:1 or more */
+  --sg-ink-soft: light-dark(oklch(44.15% 0.048 269.17), oklch(78.02% 0.0219 88.75)); /* secondary text; 6:1 or more */
+  --sg-ink-faint: light-dark(oklch(50.18% 0.0348 271.38), oklch(63.91% 0.0178 95.34)); /* captions and labels; 4.5:1 or more on every ground */
+
+  /* roles: what components read */
+  --sg-surface: var(--sg-paper);
+  --sg-surface-raised: var(--sg-paper-raised);
+  --sg-surface-sunk: var(--sg-paper-deep);
+  --sg-text: var(--sg-ink);
+  --sg-text-soft: var(--sg-ink-soft);
+  --sg-text-faint: var(--sg-ink-faint);
+  --sg-accent: light-dark(oklch(55.09% 0.1283 37.47), oklch(70% 0.13 40)); /* laterite: the primary act, as a fill */
+  --sg-on-accent: light-dark(oklch(97.05% 0.0098 87.47), oklch(20.93% 0.0389 269.55)); /* text on an accent fill */
+  --sg-accent-text: light-dark(oklch(51.46% 0.1283 37.47), oklch(64.52% 0.1283 37.47)); /* laterite as text: links, the active tab */
+  --sg-success: light-dark(oklch(49.06% 0.1228 134.51), oklch(62.13% 0.1228 134.51)); /* paddy green */
+  --sg-warning: light-dark(oklch(50.55% 0.1066 75.03), oklch(79.05% 0.1312 82.45)); /* haldi, darkened to read */
+  --sg-danger: light-dark(oklch(39.5% 0.142 356.54), oklch(65.01% 0.14 0)); /* kokum, far enough from laterite in hue to tell apart */
+  --sg-info: light-dark(oklch(49.71% 0.0507 224.04), oklch(65.54% 0.0507 224.04)); /* the monsoon sea */
+  --sg-focus: light-dark(oklch(50% 0.16 262), oklch(72% 0.13 250)); /* a clear indigo ring, 3:1 or more on every ground */
+  --sg-selection: light-dark(oklch(88% 0.085 86), oklch(36% 0.07 266)); /* a haldi highlighter; indigo wash at night */
+  --sg-pencil: light-dark(oklch(64% 0.028 271.38), oklch(47% 0.018 95.34)); /* drawing only: pencil strokes and construction lines, fainter than any text; never text */
+  --sg-scrim: light-dark(oklch(94.67% 0.0127 86.83 / 0.86), oklch(20.93% 0.0389 269.55 / 0.9)); /* a paper wash behind text on scenes */
+  --sg-shadow: light-dark(oklch(27.78% 0.0521 267.56 / 0.45), oklch(0% 0 0 / 0.6)); /* the lift shadow colour at full strength: ink by day, near-black at night (ink is light at night and would glow) */
+  --sg-lift: 0 1px 0 color-mix(in oklch, var(--sg-shadow) 12%, transparent), 0 22px 44px -28px var(--sg-shadow);
+}
+
+/* ── palette: Casa. A Goan house palette, sampled from its photographs and adjusted for WCAG by hand. Ported exactly: every light value is the original hex.
+   Source: a villa redesign's tokens.css */
+
+[data-palette="casa"] {
+  /* pigments: for drawing and decoration, the same in both themes */
+  --sg-teak: oklch(50.73% 0.0737 75.04); /* price, the primary act (#7E5F32, 5.17:1 on paper) */
+  --sg-tile: oklch(49% 0.1066 50.79); /* peak season, careful, unconfirmed (#8F4C20, 5.73:1) */
+  --sg-pool: oklch(51.9% 0.0831 217.42); /* available, yours to take: the one true chroma (#1F7488, 4.72:1) */
+  --sg-moss: oklch(44.84% 0.0418 132.54); /* verified, confirmed (#4C5A42, 6.48:1) */
+  --sg-pool-bright: oklch(74.26% 0.0764 210.99); /* decoration only, never text on paper (#6FB9C7) */
+  --sg-teak-bright: oklch(68.07% 0.08 76.15); /* decoration only, never text on paper (#B5925F) */
+  --sg-laterite: oklch(51.2% 0.1319 35.75); /* the nameplate niche and the spiral stair (#A4452C) */
+  --sg-lime: oklch(95.12% 0.011 211.04); /* lime plaster in full sun (#E7F1F3) */
+  --sg-night: oklch(20.08% 0.0124 270.73); /* the one dark chapter (#14161C) */
+  --sg-night-ink: oklch(91.42% 0.0174 84.59); /* ink for the night chapter (#E8E2D6) */
+  --sg-casa-faint: oklch(63.46% 0.0249 78.12); /* the original ink-faint (#93897A): 3.03:1, large text and decoration only */
+
+  /* grounds and inks, light and dark */
+  --sg-paper: light-dark(oklch(95.55% 0.014 88.68), oklch(20.08% 0.0124 270.73)); /* lime plaster in shade, warmed (#F4F0E6); at night, the night chapter */
+  --sg-paper-raised: light-dark(oklch(98.23% 0.0069 88.64), oklch(24.5% 0.013 268)); /* #FBF9F4 */
+  --sg-paper-deep: light-dark(oklch(91.98% 0.0198 87.52), oklch(16.5% 0.011 270)); /* #EAE4D6 */
+  --sg-rule: light-dark(oklch(88.26% 0.0225 89.81), oklch(31.98% 0.0063 274.66)); /* #DED8C8 */
+  --sg-rule-strong: light-dark(oklch(60.16% 0.0249 78.12), oklch(53.22% 0.02 80)); /* ink-faint deepened to 3:1 on every ground: control borders */
+  --sg-ink: light-dark(oklch(26.85% 0.0245 69.16), oklch(91.42% 0.0174 84.59)); /* the architect's pen (#2E2419), 13.35:1 on paper */
+  --sg-ink-soft: light-dark(oklch(49.1% 0.0296 78.67), oklch(76% 0.02 82)); /* #6A5F4E, 5.49:1 on paper */
+  --sg-ink-faint: light-dark(oklch(50.72% 0.0249 78.12), oklch(63.46% 0.0249 78.12)); /* the original #93897A is 3.03:1, labels only at 13px and up; deepened to 4.5:1 so it can carry any text. The original stays as the pigment --sg-casa-faint */
+
+  /* roles: what components read */
+  --sg-surface: var(--sg-paper);
+  --sg-surface-raised: var(--sg-paper-raised);
+  --sg-surface-sunk: var(--sg-paper-deep);
+  --sg-text: var(--sg-ink);
+  --sg-text-soft: var(--sg-ink-soft);
+  --sg-text-faint: var(--sg-ink-faint);
+  --sg-accent: light-dark(oklch(50.73% 0.0737 75.04), oklch(68.07% 0.08 76.15)); /* teak: price, the primary act */
+  --sg-on-accent: light-dark(oklch(98.23% 0.0069 88.64), oklch(20.08% 0.0124 270.73)); /* paper on teak, 5.59:1; night on bright teak at night */
+  --sg-accent-text: light-dark(oklch(50.73% 0.0737 75.04), oklch(68.07% 0.08 76.15)); /* teak as text */
+  --sg-success: light-dark(oklch(44.84% 0.0418 132.54), oklch(62.25% 0.06 132)); /* moss: verified, confirmed */
+  --sg-warning: light-dark(oklch(49% 0.1066 50.79), oklch(63.7% 0.11 51)); /* tile: peak season, careful, unconfirmed */
+  --sg-danger: light-dark(oklch(51.2% 0.1319 35.75), oklch(64.15% 0.13 36)); /* laterite; the house kept it for decoration, and at 4.78:1 on the deepest ground it also reads as text */
+  --sg-info: light-dark(oklch(49.97% 0.0831 217.42), oklch(74.26% 0.0764 210.99)); /* pool, deepened a touch: the original #1F7488 is 4.23:1 on paper-deep */
+  --sg-focus: light-dark(oklch(51.9% 0.0831 217.42), oklch(74.26% 0.0764 210.99)); /* pool */
+  --sg-selection: light-dark(oklch(91% 0.05 211), oklch(36% 0.05 215)); /* a pool-bright wash, light enough for ink-soft */
+  --sg-pencil: light-dark(oklch(63.46% 0.0249 78.12), oklch(48% 0.02 80)); /* drawing only: the redesign's pencil (#93897A), for strokes that need no text contrast; never text */
+  --sg-scrim: light-dark(oklch(98.23% 0.0069 88.64 / 0.9), oklch(24.5% 0.013 268 / 0.9)); /* a sunlit-plaster wash behind text on scenes; ink-soft stays AA over the darkest drawing */
+  --sg-shadow: light-dark(oklch(26.85% 0.0245 69.16 / 0.4), oklch(0% 0 0 / 0.6)); /* the lift shadow colour at full strength: ink by day, near-black at night (ink is light at night and would glow) */
+  --sg-lift: 0 1px 0 color-mix(in oklch, var(--sg-shadow) 12%, transparent), 0 22px 44px -28px var(--sg-shadow);
+}
+
+/* Browsers without light-dark(): the same palettes in hex, on :root only. */
+@supports not (color: light-dark(#000, #fff)) {
+  :root {
+    --sg-laterite: #B3563A;
+    --sg-indigo: #26386A;
+    --sg-kokum: #7C1648;
+    --sg-mango: #E4B24C;
+    --sg-paddy: #5B8B3B;
+    --sg-sea: #6F98A8;
+    --sg-inland: #D6E3EA;
+    --sg-paper: #F1EDE4;
+    --sg-paper-raised: #F8F5EE;
+    --sg-paper-deep: #E7E1D6;
+    --sg-rule: #D1CFCC;
+    --sg-rule-strong: #737A90;
+    --sg-ink: #1D2742;
+    --sg-ink-soft: #48526E;
+    --sg-ink-faint: #5C6378;
+    --sg-accent: #AF5337;
+    --sg-on-accent: #F8F5EE;
+    --sg-accent-text: #A3482C;
+    --sg-success: #416F1D;
+    --sg-warning: #885A00;
+    --sg-danger: #7C1648;
+    --sg-info: #416978;
+    --sg-focus: #2C5DBD;
+    --sg-selection: #F1D496;
+    --sg-pencil: #868C9E;
+    --sg-scrim: rgb(241 237 228 / 0.86);
+    --sg-shadow: rgb(29 39 66 / 0.45);
+  }
+  :root[data-palette="casa"] {
+    --sg-teak: #7E5F32;
+    --sg-tile: #8F4C20;
+    --sg-pool: #1F7488;
+    --sg-moss: #4C5A42;
+    --sg-pool-bright: #6FB9C7;
+    --sg-teak-bright: #B5925F;
+    --sg-laterite: #A4452C;
+    --sg-lime: #E7F1F3;
+    --sg-night: #14161C;
+    --sg-night-ink: #E8E2D6;
+    --sg-casa-faint: #93897A;
+    --sg-paper: #F4F0E6;
+    --sg-paper-raised: #FBF9F4;
+    --sg-paper-deep: #EAE4D6;
+    --sg-rule: #DED8C8;
+    --sg-rule-strong: #897F70;
+    --sg-ink: #2E2419;
+    --sg-ink-soft: #6A5F4E;
+    --sg-ink-faint: #6D6456;
+    --sg-accent: #7E5F32;
+    --sg-on-accent: #FBF9F4;
+    --sg-accent-text: #7E5F32;
+    --sg-success: #4C5A42;
+    --sg-warning: #8F4C20;
+    --sg-danger: #A4452C;
+    --sg-info: #166E82;
+    --sg-focus: #1F7488;
+    --sg-selection: #BCEBF4;
+    --sg-pencil: #93897A;
+    --sg-scrim: rgb(251 249 244 / 0.9);
+    --sg-shadow: rgb(46 36 25 / 0.4);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --sg-laterite: #B3563A;
+      --sg-indigo: #26386A;
+      --sg-kokum: #7C1648;
+      --sg-mango: #E4B24C;
+      --sg-paddy: #5B8B3B;
+      --sg-sea: #6F98A8;
+      --sg-inland: #D6E3EA;
+      --sg-paper: #11172A;
+      --sg-paper-raised: #1A2136;
+      --sg-paper-deep: #090E1F;
+      --sg-rule: #303442;
+      --sg-rule-strong: #757265;
+      --sg-ink: #EBE5D6;
+      --sg-ink-soft: #BDB7A8;
+      --sg-ink-faint: #8F8C80;
+      --sg-accent: #E2805E;
+      --sg-on-accent: #11172A;
+      --sg-accent-text: #CF6F52;
+      --sg-success: #669746;
+      --sg-warning: #E4B24C;
+      --sg-danger: #D2678C;
+      --sg-info: #6F98A8;
+      --sg-focus: #60AAF3;
+      --sg-selection: #2C3C62;
+      --sg-pencil: #5E5B50;
+      --sg-scrim: rgb(17 23 42 / 0.9);
+      --sg-shadow: rgb(0 0 0 / 0.6);
+    }
+    :root[data-palette="casa"]:not([data-theme="light"]) {
+      --sg-teak: #7E5F32;
+      --sg-tile: #8F4C20;
+      --sg-pool: #1F7488;
+      --sg-moss: #4C5A42;
+      --sg-pool-bright: #6FB9C7;
+      --sg-teak-bright: #B5925F;
+      --sg-laterite: #A4452C;
+      --sg-lime: #E7F1F3;
+      --sg-night: #14161C;
+      --sg-night-ink: #E8E2D6;
+      --sg-casa-faint: #93897A;
+      --sg-paper: #14161C;
+      --sg-paper-raised: #1E2027;
+      --sg-paper-deep: #0C0E13;
+      --sg-rule: #323336;
+      --sg-rule-strong: #736B60;
+      --sg-ink: #E8E2D6;
+      --sg-ink-soft: #B7B0A3;
+      --sg-ink-faint: #93897A;
+      --sg-accent: #B5925F;
+      --sg-on-accent: #14161C;
+      --sg-accent-text: #B5925F;
+      --sg-success: #7A8F69;
+      --sg-warning: #C0764A;
+      --sg-danger: #CF6D53;
+      --sg-info: #6FB9C7;
+      --sg-focus: #6FB9C7;
+      --sg-selection: #18444D;
+      --sg-pencil: #645D51;
+      --sg-scrim: rgb(30 32 39 / 0.9);
+      --sg-shadow: rgb(0 0 0 / 0.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    --sg-laterite: #B3563A;
+    --sg-indigo: #26386A;
+    --sg-kokum: #7C1648;
+    --sg-mango: #E4B24C;
+    --sg-paddy: #5B8B3B;
+    --sg-sea: #6F98A8;
+    --sg-inland: #D6E3EA;
+    --sg-paper: #11172A;
+    --sg-paper-raised: #1A2136;
+    --sg-paper-deep: #090E1F;
+    --sg-rule: #303442;
+    --sg-rule-strong: #757265;
+    --sg-ink: #EBE5D6;
+    --sg-ink-soft: #BDB7A8;
+    --sg-ink-faint: #8F8C80;
+    --sg-accent: #E2805E;
+    --sg-on-accent: #11172A;
+    --sg-accent-text: #CF6F52;
+    --sg-success: #669746;
+    --sg-warning: #E4B24C;
+    --sg-danger: #D2678C;
+    --sg-info: #6F98A8;
+    --sg-focus: #60AAF3;
+    --sg-selection: #2C3C62;
+    --sg-pencil: #5E5B50;
+    --sg-scrim: rgb(17 23 42 / 0.9);
+    --sg-shadow: rgb(0 0 0 / 0.6);
+  }
+  :root[data-palette="casa"][data-theme="dark"] {
+    --sg-teak: #7E5F32;
+    --sg-tile: #8F4C20;
+    --sg-pool: #1F7488;
+    --sg-moss: #4C5A42;
+    --sg-pool-bright: #6FB9C7;
+    --sg-teak-bright: #B5925F;
+    --sg-laterite: #A4452C;
+    --sg-lime: #E7F1F3;
+    --sg-night: #14161C;
+    --sg-night-ink: #E8E2D6;
+    --sg-casa-faint: #93897A;
+    --sg-paper: #14161C;
+    --sg-paper-raised: #1E2027;
+    --sg-paper-deep: #0C0E13;
+    --sg-rule: #323336;
+    --sg-rule-strong: #736B60;
+    --sg-ink: #E8E2D6;
+    --sg-ink-soft: #B7B0A3;
+    --sg-ink-faint: #93897A;
+    --sg-accent: #B5925F;
+    --sg-on-accent: #14161C;
+    --sg-accent-text: #B5925F;
+    --sg-success: #7A8F69;
+    --sg-warning: #C0764A;
+    --sg-danger: #CF6D53;
+    --sg-info: #6FB9C7;
+    --sg-focus: #6FB9C7;
+    --sg-selection: #18444D;
+    --sg-pencil: #645D51;
+    --sg-scrim: rgb(30 32 39 / 0.9);
+    --sg-shadow: rgb(0 0 0 / 0.6);
+  }
+}
+
+/* ── the register */
+
+[data-register="quiet"], [register="quiet"] {
+  --sg-register: quiet;
+  --sg-ornament: 0;
+  --sg-motion-scale: 0.6;
+  --sg-wobble: 0;
+  --sg-overshoot: 0;
+  --sg-sound-vocabulary: "confirmations";
+  --sg-dur-instant: 50ms;
+  --sg-dur-quick: 100ms;
+  --sg-dur-calm: 160ms;
+  --sg-dur-slow: 190ms;
+  --sg-dur-ambient: 0ms;
+  --sg-dur-fade: 120ms;
+  --sg-ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-register="warm"], [register="warm"] {
+  --sg-register: warm;
+  --sg-ornament: 1;
+  --sg-motion-scale: 1;
+  --sg-wobble: 0.6;
+  --sg-overshoot: 0.038;
+  --sg-sound-vocabulary: "soft";
+  --sg-dur-instant: 70ms;
+  --sg-dur-quick: 140ms;
+  --sg-dur-calm: 280ms;
+  --sg-dur-slow: 560ms;
+  --sg-dur-ambient: 9000ms;
+  --sg-dur-fade: 180ms;
+  --sg-ease-spring: linear(0, 0.043, 0.147, 0.282, 0.424, 0.561, 0.682, 0.785, 0.867, 0.93, 0.975, 1.006, 1.025, 1.035, 1.038, 1.037, 1.034, 1.029, 1.024, 1.018, 1.013, 1.009, 1.006, 1.003, 1.001, 1, 0.999, 0.999, 1);
+}
+
+[data-register="playful"], [register="playful"] {
+  --sg-register: playful;
+  --sg-ornament: 2;
+  --sg-motion-scale: 1.2;
+  --sg-wobble: 1.4;
+  --sg-overshoot: 0.179;
+  --sg-sound-vocabulary: "full";
+  --sg-dur-instant: 80ms;
+  --sg-dur-quick: 170ms;
+  --sg-dur-calm: 340ms;
+  --sg-dur-slow: 700ms;
+  --sg-dur-ambient: 7000ms;
+  --sg-dur-fade: 200ms;
+  --sg-ease-spring: linear(0, 0.096, 0.318, 0.581, 0.822, 1.006, 1.122, 1.173, 1.175, 1.145, 1.1, 1.053, 1.015, 0.987, 0.972, 0.968, 0.971, 0.978, 0.986, 0.994, 1, 1.004, 1.006, 1.006, 1.005, 1.003, 1.002, 1.001, 1);
+}
+
+/* Browsers without linear(): a cubic-bezier with a small overshoot. */
+@supports not (animation-timing-function: linear(0, 1)) {
+  :root, [data-register="warm"], [register="warm"], [data-register="playful"], [register="playful"] {
+    --sg-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+}
+
+/* Reduced motion wins over every register: movement is instant, opacity may
+   still fade, ambient loops do not run. */
+@media (prefers-reduced-motion: reduce) {
+  :root, [data-register], [register] {
+    --sg-dur-instant: 0.01ms;
+    --sg-dur-quick: 0.01ms;
+    --sg-dur-calm: 0.01ms;
+    --sg-dur-slow: 0.01ms;
+    --sg-dur-ambient: 0ms;
+    --sg-dur-fade: 150ms;
+    --sg-motion-scale: 0;
+    --sg-ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+/* Indic scripts carry matras above and below the line. Konkani in Romi is Latin. */
+:lang(hi), :lang(mr), :lang(kok), :lang(kn), :lang(sa), :lang(ne) {
+  --sg-leading-tight: 1.3;
+  --sg-leading-snug: 1.45;
+  --sg-leading-body: 1.75;
+  --sg-leading-loose: 1.9;
+}
+:lang(kok-Latn) {
+  --sg-leading-tight: 1.12;
+  --sg-leading-snug: 1.3;
+  --sg-leading-body: 1.6;
+  --sg-leading-loose: 1.8;
+}
+
+/* A true pencil hairline on dense screens. */
+@media (min-resolution: 2dppx) {
+  :root {
+    --sg-hairline: 0.5px;
+  }
+}
+
+/* ── utilities: classes every component and recipe may rely on */
+
+.sg-vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.sg-vh-focusable:focus-visible {
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: var(--sg-space-2) var(--sg-space-3);
+  overflow: visible;
+  clip-path: none;
+  white-space: normal;
+  z-index: 100;
+  background: var(--sg-surface-raised);
+  color: var(--sg-text);
+  outline: var(--sg-focus-width) solid var(--sg-focus);
+  outline-offset: var(--sg-focus-offset);
+}

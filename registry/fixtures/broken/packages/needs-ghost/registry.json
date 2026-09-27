@@ -1,0 +1,1 @@
+{ "name": "needs-ghost", "type": "package", "files": ["n.js"], "dependencies": ["ghost"] }
