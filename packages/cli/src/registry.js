@@ -20,10 +20,15 @@ export function locateIndex(location = defaultRegistry, cwd = process.cwd()) {
   return p;
 }
 
+/** Is this --registry value a URL the CLI should fetch, rather than a local path? */
+export function isHttpUrl(location) {
+  return typeof location === 'string' && /^https?:\/\//i.test(location);
+}
+
 /**
- * @returns {{ file: string, root: string, index: object, items: Map<string, object> }}
+ * @returns {{ file: string, root: string, index: object, items: Map<string, object>, remote: boolean }}
  */
-export function loadRegistry(location, cwd) {
+function loadLocalRegistry(location, cwd) {
   const file = locateIndex(location, cwd);
   if (!existsSync(file)) {
     throw new CliError(
@@ -41,7 +46,43 @@ export function loadRegistry(location, cwd) {
     throw new CliError(`${file} does not look like a Susegad UI registry index. Rebuild it with node registry/build.mjs.`);
   }
   const root = resolve(dirname(file), index.base ?? '..');
-  return { file, root, index, items: new Map(index.items.map(i => [i.name, i])) };
+  return { file, root, index, items: new Map(index.items.map(i => [i.name, i])), remote: false };
+}
+
+/**
+ * The same shape as loadLocalRegistry, fetched instead of read: rung 8 of
+ * docs/requests/2026-09-28-open-the-door.md, "the registry over HTTP". Node
+ * 22's global fetch, no dependency, same integrity shape as a local index.
+ * `root` is the index's own base URL, resolved from `index.base` the same
+ * way the local path is, for display and for a future file-fetching add/diff
+ * to join a file's repo-relative path against.
+ */
+async function loadRemoteRegistry(url) {
+  let res;
+  try {
+    res = await fetch(url);
+  } catch (err) {
+    throw new CliError(`I could not reach ${url} (${err.message}). Check the URL and your network.`);
+  }
+  if (!res.ok) throw new CliError(`${url} answered ${res.status} ${res.statusText}. Check the URL.`);
+  let index;
+  try {
+    index = await res.json();
+  } catch (err) {
+    throw new CliError(`${url} did not answer with valid JSON (${err.message}).`);
+  }
+  if (index.format !== 1 || !Array.isArray(index.items)) {
+    throw new CliError(`${url} does not look like a Susegad UI registry index.`);
+  }
+  const root = new URL(index.base ?? '..', url).href;
+  return { file: url, root, index, items: new Map(index.items.map(i => [i.name, i])), remote: true };
+}
+
+/**
+ * @returns {Promise<{ file: string, root: string, index: object, items: Map<string, object>, remote: boolean }>}
+ */
+export async function loadRegistry(location, cwd) {
+  return isHttpUrl(location) ? loadRemoteRegistry(location) : loadLocalRegistry(location, cwd);
 }
 
 /** The closest known name, for "did you mean". */

@@ -1,6 +1,7 @@
 {
   "name": "radio",
   "type": "component",
+  "stability": "experimental",
   "title": "Radio group",
   "description": "A real fieldset of native radios: arrow keys, one choice per name, required and submitting all stay the browser's, with or without JavaScript. Quiet is hairline circles drawn by CSS; warm draws pencil circles and circles the choice in ink, a leaning oval that runs past its start; playful turns the choice into a four-petalled kolam flower. Forced colours bring back the system radios.",
   "version": "0.1.0",

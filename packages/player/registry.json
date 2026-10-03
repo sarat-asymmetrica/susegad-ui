@@ -1,6 +1,7 @@
 {
   "name": "player",
   "type": "component",
+  "stability": "experimental",
   "title": "Player",
   "description": "The Susegad player: enhances a native video or audio element with a drawn scrubber, captions in our type, a poster that is a scene's still, WebGL video treatments (ink, halftone, duotone, riso) and timed ink annotations on the moving frame. Content sound plays only on its own play press.",
   "version": "0.1.0",

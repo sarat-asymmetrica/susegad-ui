@@ -1,9 +1,10 @@
 {
   "name": "engine",
   "type": "package",
+  "stability": "experimental",
   "title": "Engine",
-  "description": "The pencil box every scene draws with: seeded randomness and noise, geometry, fields, ink and paper, the stage and loop, the quality governor and a small WebGL helper.",
-  "version": "0.1.0",
+  "description": "The pencil box every scene draws with: seeded randomness and noise, geometry, fields, ink and paper, the stage and loop, the quality governor, the sun and what it casts, things that lag and ring, fronts that cross a field, and a small WebGL helper.",
+  "version": "0.2.0",
   "files": [
     "index.js",
     "src/math.js",
@@ -13,6 +14,9 @@
     "src/geom.js",
     "src/fields.js",
     "src/governor.js",
+    "src/light.js",
+    "src/motion.js",
+    "src/wave.js",
     "src/stage.js",
     "src/loop.js",
     "src/pointer.js",
@@ -23,6 +27,9 @@
     "README.md"
   ],
   "dependencies": [],
-  "budget": { "jsBytes": 53248 },
+  "budget": {
+    "jsBytes": 81920,
+    "reason": "Raised from 53,248 for light.js, motion.js and wave.js. All three are opt-in by import, so a scene pays only for what it names: mithagar draws on rng, math and color, 4,483 B of it. This figure is the whole pencil box, not a per-scene cost."
+  },
   "docs": "README.md"
 }

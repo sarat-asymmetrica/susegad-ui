@@ -1,0 +1,39 @@
+{
+  "name": "voice-note",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Voice note",
+  "description": "A voice message the way a phone shows it: a play button, a waveform you can seek along, the length, and the transcript always on show. It enhances a native audio element and plays only when its own button is pressed. The waveform comes from real loudness measured at build time, or is a seeded stand-in marked as one. Quiet is a hairline row with square bars; warm has pencil bars and an inked ring; playful is a bright pill whose button springs.",
+  "version": "0.1.0",
+  "files": [
+    "voice-note.js",
+    "voice-note.core.js",
+    "voice-note.css",
+    "peaks.mjs",
+    "skins/bars.js",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "voice-note.prompt.md",
+    "voice-note.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens",
+    "player",
+    "narration"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "voice-note.prompt.md",
+  "docs": "voice-note.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today about 17.3 KB: element 5.9 KB, pure core 4.6 KB, the build-time peaks tool 2.7 KB, skins share bars.js 2.5 KB (one shared helper counts as one skin, decision 0010) with quiet 0.2 KB, warm 0.3 KB, playful 0.8 KB. The time maths, cue lookup, VTT parser and WAV reader are reused from player and narration, not copied."
+  }
+}

@@ -9,11 +9,11 @@
 // page follows without a reload; the drawing follows in warm and playful;
 // reduced motion holds it still; forced colours bring back the native control.
 
-import { chromium } from 'playwright';
+import { pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const browser = await pickEngine().launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const demo = `${server.url}/packages/components/sound-switch/demo.html`;

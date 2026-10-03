@@ -1,0 +1,14 @@
+{
+  "name": "scene-prahar",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["background","hero"],
+  "title": "Prahar",
+  "description": "A day over a Goan river village in the eight watches of raga time: the sky blended in OKLab, every land layer tinted to the light, the sun and moon on their arcs, lamps after dusk, and a ruler of the eight prahars with each raga in English and Devanagari. Set hour from the page's own clock for a theme that follows the viewer's day; in playful, drag the ruler. The raga-to-hour mapping is one common reckoning; traditions differ.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "prahar.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "prahar.prompt.md",
+  "budget": { "jsBytes": 40960 }
+}

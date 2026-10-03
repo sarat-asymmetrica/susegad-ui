@@ -1,0 +1,37 @@
+{
+  "name": "wa-order",
+  "type": "component",
+  "stability": "experimental",
+  "title": "WhatsApp order",
+  "description": "The order composer for a small food business: it turns a menu selection into a pre-written WhatsApp message. It asks for the day (respecting a notice in hours), a time of day, delivery or pickup, the area, a name and any notes, shows the exact message (\"This is what we'll send\") and keeps the Send link's wa.me address equal to it. The plain wa.me link stays in the markup, so with no script it still opens WhatsApp. It never says an order is placed: the person sends the message themselves. Quiet is ruled fields, a plain bordered message and one ink-filled button; warm sets the message on ruled paper in the hand; playful is a speech bubble and a button that presses.",
+  "version": "0.1.0",
+  "files": [
+    "wa-order.js",
+    "wa-order.core.js",
+    "wa-order.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "wa-order.prompt.md",
+    "wa-order.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "field",
+    "menu",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "wa-order.prompt.md",
+  "docs": "wa-order.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 29534 bytes with comments (22252 as code): element 11 KB, pure core 15 KB (numbers, dates, the message, shortening), skins small."
+  }
+}

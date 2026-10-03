@@ -1,6 +1,7 @@
 {
   "name": "sound-scape-paus-rain",
   "type": "package",
+  "stability": "experimental",
   "title": "Paus rain",
   "description": "Each visible raindrop on Paus's glass becomes an audible tick, seeded like the drawing itself. Voice-limited and pooled (never more than a handful of oscillators at once, however hard it is raining), panned by where each drop sits and pitched a little higher for a smaller one. Only runs with the sound switch on, and stops when the scene leaves the viewport or the tab is hidden. attachPausRain(sceneEl) wires it to a live <sg-scene name=\"paus\">.",
   "version": "0.1.0",

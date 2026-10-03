@@ -1,0 +1,14 @@
+{
+  "name": "scene-tinto",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["hero","background"],
+  "title": "Tinto",
+  "description": "A crowded Goan village square at half past ten, where every figure has a line: the poder on his round, a fish seller and her cat, a card game under the tree, the bus to Mapusa. Point at anyone to read their line; every line is also real text for screen readers. Quiet is a still, warm an easy morning with a slow round of captions, playful the full square with a keyboard hand. For empty states and 404s (focus pins one line). With words=\"world\", the page’s words are chalked on a board outside the Taverna and each shop hangs its hours on a plaque that opens its detail; quiet and small screens keep them flat.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "words.js", "meta.js", "tinto.prompt.md"],
+  "dependencies": ["core", "engine", "tokens", "type"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "tinto.prompt.md",
+  "budget": { "jsBytes": 63488, "reason": "Seventeen vignettes ported line for line from the plate, and words in the world: the chalkboard, the plaques and the lazy type tier (the tier and Pretext are counted apart)." }
+}

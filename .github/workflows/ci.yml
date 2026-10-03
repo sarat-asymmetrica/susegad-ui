@@ -1,0 +1,51 @@
+name: CI
+
+# This file lives at tools/publish/overlay/.github/workflows/ci.yml in the
+# private repo; node registry/build.mjs's export (tools/publish/export.mjs)
+# lays the overlay/ folder over the public snapshot, so this is the file
+# that actually reaches GitHub. Steps mirror the README's "Run it here" and
+# docs/RELEASING.md's release checklist: keep them in sync by hand.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # Everything except the browser checks: fast, and a hard gate.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm test
+      - run: node registry/build.mjs --check
+      - run: node tools/cem.mjs --check
+      - run: node tools/check-skill-coverage.mjs
+      - run: node tools/skill-inventory.mjs --check
+
+  # One job per engine, so a Firefox failure does not stop WebKit or Chromium
+  # from running or being reported. Chromium is a hard gate (58/58, see
+  # docs/BROWSERS.md); WebKit and Firefox are not yet -- both have real,
+  # triaged, documented gaps left (also in docs/BROWSERS.md) that are not
+  # this workflow's job to hide with continue-on-error forever. Move an
+  # engine off continue-on-error once its docs/BROWSERS.md entry says 0 open
+  # findings for it.
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, webkit, firefox]
+    continue-on-error: ${{ matrix.engine != 'chromium' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npx playwright install --with-deps ${{ matrix.engine }}
+      - run: node tools/checks.mjs --engine=${{ matrix.engine }}

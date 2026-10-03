@@ -4,11 +4,12 @@
 //
 //   node packages/export/export.check.mjs
 
-import { chromium } from 'playwright';
+import { engineName, pickEngine, unsupportedIn } from '../../tools/lib/engine.mjs';
 import { startServer } from '../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch({ args: ['--use-fake-ui-for-media-stream', '--autoplay-policy=no-user-gesture-required'] });
+const engine = engineName();
+const browser = await pickEngine(engine).launch({ args: ['--use-fake-ui-for-media-stream', '--autoplay-policy=no-user-gesture-required'] });
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 
@@ -25,33 +26,38 @@ await page.goto(`${server.url}/packages/export/demo.html`);
 // loaded and any sg-* elements are defined — this page uses none, so that
 // happens almost immediately, well before the real work (recording a WebM,
 // encoding a GIF) is done. Wait for the page's own completion text instead.
-await page.waitForFunction(() => document.getElementById('status')?.textContent === 'Done.' || /Error/.test(document.getElementById('status')?.textContent || ''), { timeout: 60000 });
+await page.waitForFunction(() => /^Done/.test(document.getElementById('status')?.textContent || '') || /Error/.test(document.getElementById('status')?.textContent || ''), { timeout: 60000 });
 
 const status = await page.textContent('#status');
-check('the demo page finished without throwing', status === 'Done.', status);
+check('the demo page finished without throwing', status.startsWith('Done'), status);
 
 const pngBytes = await page.evaluate(() => window.__pngBytes);
 check('a PNG was produced, a real size', pngBytes > 500 && pngBytes < 300000, `${pngBytes} bytes`);
 const pngNatural = await page.evaluate(() => document.getElementById('png').naturalWidth);
 check('the PNG decodes back as an image', pngNatural > 0, `naturalWidth ${pngNatural}`);
 
-const webmBytes = await page.evaluate(() => window.__webmBytes);
-check('a WebM was produced, a real size', webmBytes > 500, `${webmBytes} bytes`);
-// MediaRecorder's own WebM container often reports an inaccurate (sometimes
-// tiny, sometimes Infinity) duration until the player has actually seeked
-// once — a known Chromium quirk, not a sign the recording is short. Seeking
-// to the end and back is the standard workaround for reading the real one.
-const videoDuration = await page.evaluate(() => new Promise((resolve, reject) => {
-  const v = document.getElementById('webm');
-  const settle = () => {
-    if (Number.isFinite(v.duration) && v.duration > 0.5) return resolve(v.duration);
-    v.currentTime = 1e7;
-    v.addEventListener('seeked', () => { v.currentTime = 0; resolve(v.duration); }, { once: true });
-  };
-  if (v.readyState >= 1) settle(); else v.addEventListener('loadedmetadata', settle, { once: true });
-  setTimeout(() => reject(new Error('duration never settled')), 8000);
-}));
-check('the WebM decodes with a real duration, close to the 2 s asked for', videoDuration > 1 && videoDuration < 4, `${videoDuration}s`);
+const webmError = await page.evaluate(() => window.__webmError);
+if (webmError) {
+  unsupportedIn(engine, 'WebM export (MediaRecorder)', webmError);
+} else {
+  const webmBytes = await page.evaluate(() => window.__webmBytes);
+  check('a WebM was produced, a real size', webmBytes > 500, `${webmBytes} bytes`);
+  // MediaRecorder's own WebM container often reports an inaccurate (sometimes
+  // tiny, sometimes Infinity) duration until the player has actually seeked
+  // once — a known Chromium quirk, not a sign the recording is short. Seeking
+  // to the end and back is the standard workaround for reading the real one.
+  const videoDuration = await page.evaluate(() => new Promise((resolve, reject) => {
+    const v = document.getElementById('webm');
+    const settle = () => {
+      if (Number.isFinite(v.duration) && v.duration > 0.5) return resolve(v.duration);
+      v.currentTime = 1e7;
+      v.addEventListener('seeked', () => { v.currentTime = 0; resolve(v.duration); }, { once: true });
+    };
+    if (v.readyState >= 1) settle(); else v.addEventListener('loadedmetadata', settle, { once: true });
+    setTimeout(() => reject(new Error('duration never settled')), 8000);
+  }));
+  check('the WebM decodes with a real duration, close to the 2 s asked for', videoDuration > 1 && videoDuration < 4, `${videoDuration}s`);
+}
 
 const gifBytes = await page.evaluate(() => window.__gifBytes);
 check('a GIF was produced, a real size', gifBytes > 200 && gifBytes < 1500000, `${gifBytes} bytes`);

@@ -1,6 +1,7 @@
 {
   "name": "engine",
   "type": "package",
+  "stability": "experimental",
   "title": "Engine",
   "description": "Fixture engine: one drawing helper, in a src/ folder to prove the tree is kept.",
   "version": "0.1.0",

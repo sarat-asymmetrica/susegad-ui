@@ -8,11 +8,11 @@
 // AudioContext exists and the oscillator pool never grows past its cap even
 // under playful's heaviest rain; turning the switch off stops new voices.
 
-import { chromium } from 'playwright';
+import { pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const browser = await pickEngine().launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const page = `${server.url}/tools/harness/scene.html?name=paus&register=playful&intensity=1`;
@@ -30,6 +30,10 @@ await p.addInitScript(() => {
   // 'ended', which would otherwise make voices look like they never free up.
   window.__acCount = 0; window.__peakVoices = 0; window.__liveOsc = 0;
   const AC = window.AudioContext;
+  // WebKit's automated (no real audio device) context does not always expose
+  // window.AudioContext at addInitScript time; without a real constructor to
+  // wrap, leave it as it is rather than handing Proxy a non-object target.
+  if (!AC) return;
   window.AudioContext = new Proxy(AC, {
     construct(t, a) {
       window.__acCount++;

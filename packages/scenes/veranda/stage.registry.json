@@ -1,0 +1,38 @@
+{
+  "name": "veranda-stage",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Veranda stage",
+  "description": "<sg-veranda-stage>: the drawn veranda staged in 3D through <sg-depth-photo>, with the page's words on a frosted pane inside it. The words stay real text; drag the grip (core's movable) to move the pane across the picture, PageUp and PageDown or the wheel to bring it forward or send it back, and things in front of it, read from the exact depth map, hide it. Focus follows the pane's depth, and the pane keeps itself readable and clear of every other set of words (the notes, the pot's pane) on release and whenever the camera, the lens or a note changes what is in front. Three.js loads only when the picture will move, from the smaller vendored build. In playful the pane becomes a lens on the veranda in the monsoon or at dusk. Notes stick to places (the door, the seat, the lamp), follow the camera and are found by the depth map under a drop; scrolling can walk the camera down the veranda, stopping at each note. A paragraph marked data-flow sits on its own glass pane at a clay pot that three.js turns on the balcao, the lines set round the pot's silhouette (a still on the 2D tier). Quiet and narrow screens keep the words flat.",
+  "version": "0.1.0",
+  "files": [
+    "stage-element.js",
+    "pane.core.js",
+    "matka-view.js",
+    "matka.core.js",
+    "veranda-stage.prompt.md",
+    "veranda-stage.docs.md"
+  ],
+  "dependencies": [
+    "core",
+    "core-movable",
+    "core-orient",
+    "depth-photo",
+    "scene-veranda",
+    "stage3d",
+    "three-named",
+    "tokens",
+    "type"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "budget": {
+    "jsBytes": 90112,
+    "reason": "83 KB of source with comments across four files: the element 47 KB (the pane, its depth mask made for the camera as it stands, the settle that keeps the words clear of other words, the lens, the notes and the walk), matka-view.js 13 KB (three.js pot, its glass pane and the flowing paragraph, loaded only when a data-flow paragraph is present), and two pure cores, pane.core.js 18 KB and matka.core.js 4 KB, tested in Node and budgeted apart per decision 0010. It was 65,536 before the fix round that made the words never sit over other words and never hide while the camera moves (+17 KB, 11 KB of it the pure core, which the comments explain at length because three of the bugs it prevents were found only by looking at pixels); raised by the worker so the build passes, and flagged: the element is well over what a component usually declares, and the lens, notes and walk could move into a lazily loaded file, which is for the Sutradhar to decide. three.js is recorded apart (decision 0017): 135,588 B gzipped in the vendored build."
+  },
+  "prompt": "veranda-stage.prompt.md",
+  "docs": "veranda-stage.docs.md"
+}

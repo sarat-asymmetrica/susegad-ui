@@ -1,0 +1,30 @@
+/* <sg-depth-photo>: the <img> is the picture, and stays underneath; the canvas
+   lays the live or 2D drawing over it once its first frame is drawn. */
+sg-depth-photo {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: var(--sg-surface-sunk);
+}
+sg-depth-photo > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--sg-depth-keep, 50% 50%);
+}
+sg-depth-photo > img[data-treatment="drawn"],
+sg-depth-photo > canvas[data-treatment="drawn"] { display: none; }
+sg-depth-photo > .sg-depth-photo-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity var(--sg-dur-quick, 160ms) linear;
+}
+sg-depth-photo[data-drawn] > .sg-depth-photo-canvas { opacity: 1; }
+@media (forced-colors: active) {
+  sg-depth-photo > .sg-depth-photo-canvas { display: none; }
+}

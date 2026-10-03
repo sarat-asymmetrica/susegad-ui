@@ -27,3 +27,6 @@ stories/*/source/
 
 # Wrangler local state
 .wrangler/
+
+# Build caches (posters for the docs site: apps/docs/posters.mjs), always rebuildable
+.cache/

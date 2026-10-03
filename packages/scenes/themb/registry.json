@@ -1,0 +1,14 @@
+{
+  "name": "scene-themb",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["divider","background"],
+  "title": "Themb",
+  "description": "Rain on a taro leaf seen from above: a WebGL shader draws the velvet leaf, its inked veins and the beads as signed distance fields joined by a smooth minimum, each a lens over the leaf; a full 2D painting takes over when WebGL is missing, lost or too slow. Beads roll, merge keeping their area, gather in the cup, and the leaf pours them off its tip. Quiet is the still after a shower; warm an easier rain; playful tilts under the pointer or arrow keys, and Enter pours.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "themb.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "themb.prompt.md",
+  "budget": { "jsBytes": 45056, "reason": "Two complete renderers: the WebGL shader and a full 2D fallback, with the plate's physics." }
+}

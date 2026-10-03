@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tile band</title>
+<link rel="stylesheet" href="./tile-band.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 80rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .page h2.reg { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: 0 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-5); }
+  .band-label { margin: var(--sg-space-4) 0 var(--sg-space-2); font: var(--sg-weight-medium) var(--sg-step--1) / 1.3 var(--sg-font-body); font-variant-caps: all-small-caps; letter-spacing: 0.08em; color: var(--sg-text-soft); }
+  .edge { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--sg-space-4); margin-top: var(--sg-space-4); align-items: stretch; }
+  .edge > div { align-self: center; max-width: 34rem; }
+  .edge h3 { margin: 0 0 var(--sg-space-2); font: 400 var(--sg-step-2) / var(--sg-leading-tight) var(--sg-font-display); }
+  .edge p { margin: 0 0 var(--sg-space-3); }
+  .page > section + section { margin-top: var(--sg-space-6); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Tile band</h1>
+  <p class="lede">A band of hand-painted tiles for a border or a divider: Goan azulejo, the blue-and-white tiles of the old houses and churches, and its majolica cousin in cobalt, lemon and leaf green. Painted once and kept, so nothing is drawn while the page sits still.</p>
+  <div class="page" id="page">
+    <div class="set">
+      <p class="band-label">Azulejo, as a border</p>
+      <sg-tile-band seed="azulejo"></sg-tile-band>
+      <p class="band-label">Majolica</p>
+      <sg-tile-band tones="majolica" seed="majolica"></sg-tile-band>
+      <div class="edge">
+        <sg-tile-band orientation="vertical" tones="majolica" seed="edge" style="min-height: 15rem"></sg-tile-band>
+        <div>
+          <h3>Down the side of a page</h3>
+          <p>The same band runs down the page as an edge: it turns every motif a quarter so the vines climb, and fits whole tiles to the height.</p>
+          <sg-tile-band seed="divider"><hr></sg-tile-band>
+          <p class="band-label">A divider: the hr is the separator</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="note">Each band is laid from a seed, so the same page paints the same tiles every time. Add <code>?register=quiet</code>, <code>warm</code> or <code>playful</code> to see one register on its own, and <code>?palette=azulejo</code> for the page in the azulejo palette. In playful, pass the pointer over a tile, or tap one, and it turns a quarter and settles.</p>
+</main>
+<script>
+  // With no ?register, show the three registers one under the other (a copy for each).
+  if (!new URLSearchParams(location.search).has('register')) {
+    const page = document.getElementById('page'), set = page.querySelector('.set');
+    const names = { quiet: 'Quiet: a cobalt hairline on the page, flat', warm: 'Warm: hand-painted glaze, brush variation, crackle', playful: 'Playful: a tile turns a quarter when you touch it' };
+    page.replaceChildren(...Object.entries(names).map(([r, label]) => {
+      const sec = document.createElement('section');
+      sec.dataset.register = r; sec.setAttribute('aria-labelledby', `h-${r}`);
+      const h = document.createElement('h2'); h.id = `h-${r}`; h.className = 'reg'; h.textContent = label;
+      sec.append(h, set.cloneNode(true));
+      return sec;
+    }));
+  }
+</script>
+<script type="module">
+  import './tile-band.js';
+</script>
+</body>
+</html>

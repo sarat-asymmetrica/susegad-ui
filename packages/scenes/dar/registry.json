@@ -1,0 +1,14 @@
+{
+  "name": "scene-dar",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["hero","empty-state"],
+  "title": "Dar",
+  "description": "Yours to keep: a Goan house front in elevation, with a laterite wall under lime plaster, a painted door in a lime-white surround, a window of oyster-shell panes and bougainvillea. A key on a ring with a wooden tag swings in, catches on the brass hook by the door and sways to rest, and the tower bolt slides home. Quiet is a hairline elevation; playful swings the key and slides the bolt.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "dar.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "dar.prompt.md",
+  "budget": { "jsBytes": 40960 }
+}

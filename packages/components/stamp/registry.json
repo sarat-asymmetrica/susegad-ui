@@ -1,6 +1,7 @@
 {
   "name": "stamp",
   "type": "component",
+  "stability": "experimental",
   "title": "Stamp",
   "description": "A mark that something real has happened: held, received, paid. The words are text in a role=\"status\" region, announced once when it lands. Quiet is a ruled rectangle; warm is a tilted block print with seeded ink starvation and an off-register ghost; playful presses down and the ink spreads.",
   "version": "0.1.0",

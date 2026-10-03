@@ -1,6 +1,7 @@
 {
   "name": "combobox",
   "type": "component",
+  "stability": "experimental",
   "title": "Combobox",
   "description": "An input with suggestions. Without JavaScript it is the browser's own input list and datalist; with it, the ARIA APG editable combobox with a listbox popover, full keyboard support, and matching that finds places however people type them: without accents, by an older name, in another script, or spelled as heard. Warm writes it on the paper over the field's pencil rule, with a list ruled in pencil; playful is a stamped box with stamped chips.",
   "version": "0.1.0",

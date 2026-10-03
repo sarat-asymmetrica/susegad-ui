@@ -4,8 +4,8 @@
 //   node apps/docs/check.mjs --built    out/docs, served under a /docs/ base path
 //
 // For each register × theme × width: a screenshot, axe, console errors and
-// horizontal overflow. Then reduced motion, Look closer (focus in, Escape,
-// focus back) and the switches persisting across a reload.
+// horizontal overflow. Then reduced motion and the switches persisting across
+// a reload. (Every other page, and Look closer, is site.check.mjs's.)
 // Screenshots go to .shots/docs/ (or .shots/docs-built/).
 
 import fs from 'node:fs';
@@ -80,10 +80,8 @@ for (const register of ['quiet', 'warm', 'playful']) {
       const info = await page.evaluate(() => ({
         fonts: [...document.fonts].filter(f => f.status === 'loaded').map(f => `${f.family.replace(/"/g, '')} ${f.weight}`).sort().join(', '),
         castoro: document.fonts.check('400 64px Castoro', 'Susegad'),
-        stops: [...document.querySelectorAll('.plate')].map(p =>
-          [...p.querySelectorAll('a[href], button, input, select, textarea, [tabindex]')].filter(el => el.tabIndex >= 0 && el.getClientRects().length).length),
         register: document.documentElement.dataset.register,
-        scenes: [...document.querySelectorAll('.plate')].map(p => p.id),
+        doors: document.querySelectorAll('.doors .door').length,
         ready: [...document.querySelectorAll('sg-scene')].filter(s => s.shadowRoot?.querySelector('.stage canvas, .stage svg')).length,
       }));
       await page.screenshot({ path: path.join(outDir, `${tag}-top.png`) });
@@ -95,10 +93,11 @@ for (const register of ['quiet', 'warm', 'playful']) {
       const run = { tag, ...info, violations, overflow: ov.over, errors };
       results.runs.push(run);
       if (tag === 'warm-light-1280') console.log(`fonts loaded: ${info.fonts}`);
-      if (info.stops.some(n => n > 14)) problem(`${tag} a plate has ${Math.max(...info.stops)} tab stops`);
-      if (tag === 'warm-light-1280') console.log(`tab stops per plate: ${info.stops.join(', ')}`);
+      // the home page runs one drawing (the masthead tiatr) and opens every kind by a door
+      if (info.ready !== 1) problem(`${tag} the masthead tiatr is not drawn (drawn: ${info.ready})`);
+      if (info.doors < 5) problem(`${tag} only ${info.doors} doors into the library`);
       if (!info.castoro) problem(`${tag} Castoro did not load for the masthead`);
-      console.log(`${tag}: scenes=${info.scenes.join(',') || 'none'} drawn=${info.ready} axe=${violations.length} overflow=${ov.over}px errors=${errors.length}`);
+      console.log(`${tag}: doors=${info.doors} drawn=${info.ready} axe=${violations.length} overflow=${ov.over}px errors=${errors.length}`);
       violations.forEach(v => problem(`${tag} axe ${v.id} (${v.impact}) x${v.nodes}: ${v.targets.join(' | ')}`));
       if (ov.over > 0) problem(`${tag} overflows by ${ov.over}px: ${ov.wide.join(', ')}`);
       errors.forEach(e => problem(`${tag} console: ${e}`));
@@ -112,52 +111,14 @@ for (const register of ['quiet', 'warm', 'playful']) {
 {
   const { context, page, errors } = await openPage({ reduced: true });
   await page.screenshot({ path: path.join(outDir, 'reduced-warm-light-1280-top.png') });
-  await page.locator('.plate').first().scrollIntoViewIfNeeded().catch(() => {});
-  await page.waitForTimeout(600);
-  await page.screenshot({ path: path.join(outDir, 'reduced-warm-light-1280-plate.png') });
-  const live = await page.locator('.plate .live').first().textContent().catch(() => null);
-  console.log(`reduced motion: first plate says "${live}"`);
+  const drawn = await page.evaluate(() => !!document.querySelector('#mast-stage')?.shadowRoot?.querySelector('.stage canvas, .stage svg'));
+  console.log(`reduced motion: masthead tiatr drawn=${drawn}`);
+  if (!drawn) problem('reduced motion: the masthead tiatr did not draw its still');
   errors.forEach(e => problem(`reduced console: ${e}`));
   await context.close();
 }
 
-// ── look closer: focus in, Escape, focus back ────────────────────────
-for (const reduced of [false, true]) {
-  const { context, page, errors } = await openPage({ reduced });
-  const trigger = page.getByRole('button', { name: 'Look closer' }).first();
-  if (await trigger.count()) {
-    await trigger.scrollIntoViewIfNeeded();
-    await trigger.focus();
-    // remember the scene's own canvas, to prove the move does not rebuild it
-    await page.evaluate(() => { window.__canvas = document.querySelector('.plate sg-scene')?.shadowRoot?.querySelector('.stage canvas, .stage svg'); });
-    await page.keyboard.press('Enter');
-    await page.waitForTimeout(800);
-    const inside = await page.evaluate(() => ({
-      open: document.getElementById('closer').open,
-      focus: document.activeElement?.id,
-      moved: !!document.querySelector('#closer-slot sg-scene'),
-    }));
-    if (!reduced) await page.screenshot({ path: path.join(outDir, 'closer-open-1280.png') });
-    const violations = await axe(page);
-    violations.forEach(v => problem(`closer axe ${v.id}: ${v.targets.join(' | ')}`));
-    await page.keyboard.press('Escape');
-    await page.waitForTimeout(800);
-    const after = await page.evaluate(() => ({
-      open: document.getElementById('closer').open,
-      focus: document.activeElement?.textContent,
-      home: !document.querySelector('#closer-slot sg-scene') && !document.querySelector('.stage-hold'),
-      same: window.__canvas === document.querySelector('.plate sg-scene')?.shadowRoot?.querySelector('.stage canvas, .stage svg'),
-    }));
-    console.log(`look closer${reduced ? ' (reduced)' : ''}: open=${inside.open} focus=${inside.focus} moved=${inside.moved} | after Escape open=${after.open} focus="${after.focus}" home=${after.home} sameCanvas=${after.same}`);
-    if (!inside.open || inside.focus !== 'closer-close' || !inside.moved) problem('Look closer did not open with focus on Close');
-    if (after.open || after.focus !== 'Look closer' || !after.home) problem('Escape did not close Look closer and return focus');
-    if (!after.same) problem('Look closer rebuilt the scene instead of moving it');
-  } else {
-    console.log('look closer: no scenes, skipped');
-  }
-  errors.forEach(e => problem(`closer console: ${e}`));
-  await context.close();
-}
+// Look closer lives on a scene page now; site.check.mjs checks it there (focus in, Escape, focus back, the same canvas).
 
 // ── the switches persist ─────────────────────────────────────────────
 {

@@ -1,0 +1,14 @@
+{
+  "name": "scene-ferry",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["divider","section-break"],
+  "title": "Ferry",
+  "description": "Four stops across the Mandovi: a river ferry in ballpoint hatching, with a small jetty on the far side, two channel posts and a big jetty on the near bank, each with a lamp. The step attribute sails it to a stop; absent, it idles at the first and never moves on by itself. Quiet is a hairline still; playful advances a stop on a click and a kite circles.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "ferry.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "ferry.prompt.md",
+  "budget": { "jsBytes": 47104, "reason": "a whole river view drawn by hand: far bank, jetties, posts, near bank, a canoe and the ferry, in ink and in hairline" }
+}

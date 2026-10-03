@@ -1,0 +1,33 @@
+{
+  "name": "scroll-section",
+  "type": "component",
+  "title": "Scroll section",
+  "description": "A section whose content -- most often a child <sg-scene>'s progress -- advances as it travels through the viewport, following the Ghat plate's scroll arithmetic. An IntersectionObserver plus a scroll-event safety net (for a fast jump that could skip the observer's near zone) drive the numeric progress a scene needs, since only JavaScript can set an attribute; a genuinely CSS-only reveal layer (.sg-scroll-reveal) uses native animation-timeline: view() where the browser has it, with no JavaScript at all. Quiet and reduced motion never scrub: the section hands its scene straight back to the scene's own still.",
+  "version": "0.1.0",
+  "files": [
+    "scroll-section.js",
+    "scroll-section.core.js",
+    "scroll-section.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "scroll-section.prompt.md",
+    "scroll-section.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "scroll-section.prompt.md",
+  "docs": "scroll-section.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005/0010: 12 KB behaviour (scroll-section.js + scroll-section.core.js) plus 8 KB for each of three skins. Today 9679 bytes: behaviour 8.5 KB, skins quiet 0.3 KB, warm 0.5 KB, playful 0.3 KB."
+  }
+}

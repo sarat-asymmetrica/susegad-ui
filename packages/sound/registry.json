@@ -1,6 +1,7 @@
 {
   "name": "sound",
   "type": "package",
+  "stability": "experimental",
   "title": "Sound",
   "description": "The synthesised UI vocabulary (tick, confirm, complete, gentle error) with Web Audio, no audio files. One global switch, off by default and remembered per viewer, that never sounds before a user gesture even when remembered on. Paired haptics on the same rules. Soundscapes live in sound/scapes/ and are added separately by the scene that uses them.",
   "version": "0.1.0",

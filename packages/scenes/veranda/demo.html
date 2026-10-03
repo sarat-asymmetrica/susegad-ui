@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The veranda scene</title>
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .lede { margin: 0 0 20px; color: var(--sg-text-soft, inherit); }
+  sg-scene { border-radius: 6px; }
+  sg-scene h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  sg-scene p { margin: 0; }
+  form { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 20px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  legend { font-weight: 600; float: left; margin-right: 8px; }
+  button { font: inherit; padding: 6px 14px; border-radius: 6px; border: 1px solid currentColor; background: none; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  #sorted { font-size: 0.95rem; color: var(--sg-text-soft, inherit); }
+</style>
+</head>
+<body>
+<main>
+  <h1>The veranda</h1>
+  <p class="lede">A Goan veranda, drawn. A dev page for the scene: in playful, your hand moves the sun and the pillars' shadows follow.</p>
+  <p class="lede">In depth: <a href="stage.html">the veranda staged</a>, <a href="words.html">words in the veranda</a> and <a href="walk.html">a walk down the veranda</a>.</p>
+  <sg-scene id="veranda" name="veranda">
+    <h2>Come and sit</h2>
+    <p>The lamp is on at six.</p>
+  </sg-scene>
+  <p id="how">In playful, move across the drawing to move the sun; Enter or Space puts it back.</p>
+  <form id="controls">
+    <fieldset>
+      <legend>Register</legend>
+      <label><input type="radio" name="register" value="quiet"> Quiet</label>
+      <label><input type="radio" name="register" value="warm"> Warm</label>
+      <label><input type="radio" name="register" value="playful"> Playful</label>
+    </fieldset>
+    <label><input type="checkbox" id="dark"> Dark</label>
+    <button type="button" id="replay">Sun back where it was</button>
+  </form>
+</main>
+<script type="module">
+  const q = new URLSearchParams(location.search), root = document.documentElement;
+  const el = document.getElementById('veranda');
+  const register = q.get('register') || 'warm';
+  root.dataset.register = register;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+  if (q.has('seed')) el.setAttribute('seed', q.get('seed'));
+  el.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__piece = el;
+  await import('./index.js');
+  const form = document.getElementById('controls'), dark = document.getElementById('dark');
+  form.register.value = register;
+  dark.checked = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  form.addEventListener('change', e => {
+    if (e.target.name === 'register') root.dataset.register = form.register.value;
+    if (e.target === dark) root.dataset.theme = dark.checked ? 'dark' : 'light';
+  });
+  document.getElementById('replay').onclick = () => el.set({ sun: 0.35 });
+</script>
+</body>
+</html>

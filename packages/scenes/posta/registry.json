@@ -1,0 +1,36 @@
+{
+  "name": "scene-posta",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": [
+    "hero",
+    "empty-state",
+    "progress"
+  ],
+  "title": "Posta",
+  "description": "The Old Post Office in Fontainhas: a vintage rosewood sorting desk beneath an oyster shell carepa window with sunbeams, wooden cubbies holding jute-tied letter bundles, a crimson postbox with brass flap, and a brass balance scale.",
+  "version": "0.1.0",
+  "files": [
+    "index.js",
+    "model.js",
+    "render.js",
+    "meta.js",
+    "posta.prompt.md"
+  ],
+  "dependencies": [
+    "core",
+    "engine",
+    "tokens",
+    "sound"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "posta.prompt.md",
+  "budget": {
+    "jsBytes": 57344,
+    "reason": "The room now carries a customer at the window and a beam that swings and narrows with the day, and the three contact sounds are shaped per voice instead of being one beep. Under the 64 KB ceiling in decision 0003."
+  }
+}

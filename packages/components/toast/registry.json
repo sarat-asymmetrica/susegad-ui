@@ -1,6 +1,7 @@
 {
   "name": "toast",
   "type": "component",
+  "stability": "experimental",
   "title": "Toast",
   "description": "Short messages that never take focus. A region holds two live regions (polite, and alert for errors) and a pile of letters: the newest in front, the rest peeking above, fanning out when pointed at or focused. Timing follows WCAG 2.2.1: reading time, no timeout for errors or actions, pause on hover, focus and hidden tab. Quiet is a ruled note; warm an inland letter that unfolds; playful adds a postmark that lands.",
   "version": "0.1.0",

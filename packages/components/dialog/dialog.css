@@ -1,0 +1,77 @@
+/* Dialog. Base rules are the quiet look: an own-sized, centred native
+   dialog with a plain dimmed backdrop — also what a page without
+   JavaScript shows, since showModal() and ::backdrop are both native.
+   The element restructures its content into .sg-dialog-scrim (empty until
+   a skin mounts Carepa into it) and .sg-dialog-card; both exist in every
+   register so the CSS need not care whether JavaScript ran. */
+
+sg-dialog { display: contents; }
+sg-dialog dialog {
+  box-sizing: border-box;
+  max-inline-size: min(34rem, calc(100vw - 2 * var(--sg-space-4)));
+  max-block-size: min(85vh, 48rem);
+  margin: auto;
+  padding: 0;
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-2);
+  background: var(--sg-surface-raised);
+  color: var(--sg-text);
+  box-shadow: 0 24px 60px -30px var(--sg-shadow);
+}
+sg-dialog dialog::backdrop {
+  background: var(--sg-scrim, color-mix(in oklab, Canvas 55%, transparent));
+}
+sg-dialog dialog:not([open]) { display: none; }
+sg-dialog .sg-dialog-scrim { display: none; }
+sg-dialog .sg-dialog-card {
+  padding: var(--sg-space-4);
+  display: flow-root;
+}
+sg-dialog .sg-dialog-card h2, sg-dialog .sg-dialog-card h3 {
+  font: 400 1.5rem/1.2 var(--sg-font-display); margin: 0 0 var(--sg-space-2);
+}
+sg-dialog .sg-dialog-card menu, sg-dialog .sg-dialog-card form menu {
+  display: flex; gap: var(--sg-space-2); justify-content: flex-end; margin: var(--sg-space-4) 0 0; padding: 0; list-style: none;
+}
+sg-dialog .sg-dialog-card button {
+  font: 500 0.9375rem/1 var(--sg-font-body); color: var(--sg-text); background: var(--sg-surface);
+  border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-pill); padding: 0.6em 1.1em; cursor: pointer;
+}
+sg-dialog .sg-dialog-card button[value="ok"], sg-dialog .sg-dialog-card button:last-child {
+  background: var(--sg-accent); color: var(--sg-on-accent); border-color: transparent;
+}
+sg-dialog :focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+
+/* ── warm and playful: full-bleed, Carepa behind a floating card ───────
+   [open] is required on every rule here that sets `display`: a closed
+   dialog must stay display:none (the base :not([open]) rule above), or a
+   dialog with equal selector specificity later in the file wins by source
+   order and a *closed* full-bleed dialog would render fullscreen and eat
+   clicks meant for the page under it. Found by dialog.check.mjs. */
+sg-dialog[data-skin="warm"] dialog[open],
+sg-dialog[data-skin="playful"] dialog[open] {
+  inset: 0; margin: 0; padding: 0; border: 0; border-radius: 0;
+  max-inline-size: none; max-block-size: none; inline-size: 100%; block-size: 100%;
+  background: transparent; box-shadow: none;
+  display: grid; place-items: center;
+}
+sg-dialog[data-skin="warm"] dialog::backdrop,
+sg-dialog[data-skin="playful"] dialog::backdrop { background: transparent; }
+sg-dialog[data-skin="warm"] .sg-dialog-scrim,
+sg-dialog[data-skin="playful"] .sg-dialog-scrim {
+  display: block; position: absolute; inset: 0; z-index: 0;
+}
+sg-dialog[data-skin="warm"] .sg-dialog-card,
+sg-dialog[data-skin="playful"] .sg-dialog-card {
+  position: relative; z-index: 1;
+  inline-size: min(34rem, calc(100vw - 2 * var(--sg-space-4)));
+  max-block-size: min(85vh, 48rem); overflow: auto;
+  padding: var(--sg-space-4);
+  border-radius: var(--sg-radius-2);
+  background: color-mix(in oklab, var(--sg-surface-raised) 96%, transparent);
+  box-shadow: 0 30px 70px -30px var(--sg-shadow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  sg-dialog dialog, sg-dialog .sg-dialog-card { animation: none !important; transition: none !important; }
+}

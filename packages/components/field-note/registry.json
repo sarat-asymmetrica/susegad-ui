@@ -1,6 +1,7 @@
 {
   "name": "field-note",
   "type": "component",
+  "stability": "experimental",
   "title": "Field note",
   "description": "The note under a form field that says what is wrong and how to fix it. Follows constraint validation with its own wording (or shows a server message), never nags on the first try, wires aria-describedby and aria-invalid, focuses the first problem on submit. Quiet is small danger text with a mark; warm a margin note in the hand with a pencil arrow; playful inks it on and underlines it.",
   "version": "0.1.0",

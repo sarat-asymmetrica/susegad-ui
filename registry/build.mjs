@@ -32,6 +32,31 @@ const JS = /\.(m?js)$/;
 const MANIFEST = /^([a-z0-9-]+\.)?registry\.json$/;
 // Decision 0003: scenes default to 40 KB of source and may declare up to 64 KB with a reason.
 export const SCENE_BUDGET = { default: 40 * 1024, max: 64 * 1024 };
+// Decision 0020: a scape is gated on what the reader waits for, its first sight (at most 64 KB of
+// code, comments stripped as in codeBytes: amended 28 September), and may total up to 256 KB of raw
+// source with a reason (0002); everything past first sight loads lazily.
+export const SCAPE_BUDGET = { firstSight: 64 * 1024, max: 256 * 1024 };
+
+// Static imports only: `import x from './a.js'`, `export … from './a.js'`, `import './a.js'`. A dynamic
+// import() is the seam a scape loads lazily across, so it is not followed.
+const STATIC = [/\b(?:import|export)\s[^'"`;()]*?\bfrom\s*(['"])(\.{1,2}\/[^'"]+)\1/g, /\bimport\s+(['"])(\.{1,2}\/[^'"]+)\1/g];
+
+/**
+ * The item's own files a first sight needs: the entry files and every own
+ * file they reach by static imports. Returns the paths, sorted.
+ */
+export function firstSightFiles(root, item, entry) {
+  const own = new Set(item.files.map(f => f.path)), seen = new Set(), queue = [...entry];
+  while (queue.length) {
+    const p = queue.shift();
+    if (seen.has(p) || !own.has(p)) continue;
+    seen.add(p);
+    if (!JS.test(p)) continue;
+    const text = stripComments(readFileSync(join(root, p), 'utf8'));
+    for (const re of STATIC) for (const m of text.matchAll(re)) queue.push(toPosix(join(dirname(p), m[2])));
+  }
+  return [...seen].sort();
+}
 
 /** Every packages/**\/registry.json and *.registry.json under root, repo-rooted and sorted. */
 export function findManifests(root) {
@@ -71,6 +96,7 @@ export function buildRegistry({ root, out = join(root, 'registry', 'registry.jso
   const errors = [], warnings = [], notes = [];
   const soft = strict ? errors : warnings;
   const exists = p => { try { return statSync(join(root, p)).isFile(); } catch { return false; } };
+  const libraryDeps = existsSync(join(root, 'package.json')) ? JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).dependencies ?? {} : {};
 
   const items = new Map();
   const owners = new Map(); // file -> item that lists it
@@ -120,11 +146,16 @@ export function buildRegistry({ root, out = join(root, 'registry', 'registry.jso
       title: manifest.title ?? '',
       description: manifest.description ?? '',
       version: manifest.version ?? '0.0.0',
+      stability: manifest.stability ?? 'experimental',
       manifest: manifestPath,
       files,
       dependencies: [...(manifest.dependencies ?? [])].sort(),
+      ...(manifest.npmDependencies && { npmDependencies: Object.fromEntries(Object.entries(manifest.npmDependencies).sort(([a], [b]) => a.localeCompare(b))) }),
       registers: ['quiet', 'warm', 'playful'].filter(r => manifest.registers?.includes(r)),
     };
+    if (manifest.stabilityReason) item.stabilityReason = manifest.stabilityReason;
+    if (manifest.useFor?.length) item.useFor = [...manifest.useFor].sort();
+    if (manifest.motif) item.motif = { ...manifest.motif };
     if (manifest.budget) item.budget = { ...manifest.budget };
     if (item.type === 'scene' && item.budget?.jsBytes === undefined) item.budget = { ...item.budget, jsBytes: SCENE_BUDGET.default };
     for (const field of ['docs', 'prompt']) {
@@ -135,16 +166,51 @@ export function buildRegistry({ root, out = join(root, 'registry', 'registry.jso
     item.jsBytes = js.reduce((n, f) => n + f.bytes, 0);
     item.codeBytes = js.reduce((n, f) => n + Buffer.byteLength(stripComments(readFileSync(join(root, f.path), 'utf8'))), 0);
 
-    const absent = ['title', 'description', 'version'].filter(f => !manifest[f]);
+    const absent = ['title', 'description', 'version', 'stability'].filter(f => !manifest[f]);
     if (absent.length) {
       const said = absent.length === 1 ? absent[0] : `${absent.slice(0, -1).join(', ')} or ${absent.at(-1)}`;
-      soft.push(`${manifestPath}: has no ${said}${absent.includes('version') ? ' (listed as 0.0.0 for now)' : ''}`);
+      const notes = [];
+      if (absent.includes('version')) notes.push('listed as 0.0.0 for now');
+      if (absent.includes('stability')) notes.push('listed as experimental for now');
+      soft.push(`${manifestPath}: has no ${said}${notes.length ? ` (${notes.join('; ')})` : ''}`);
     }
+    // Decision 0017: the CLI hands these pins to the consumer, so they must be the pins the library runs on.
+    for (const [pkg, pin] of Object.entries(item.npmDependencies ?? {})) {
+      const runs = libraryDeps[pkg];
+      if (runs !== pin) errors.push(`${manifestPath}: npmDependencies: ${pkg} is pinned at ${pin} here but the library runs ${runs ?? 'none'} (package.json dependencies); make them agree`);
+    }
+    // A surface is a backdrop some registers choose not to use (Carepa: quiet keeps a plain dim), so it is exempt (decision 0016).
     if ((item.type === 'scene' || item.type === 'component') && item.registers.length < 3) {
       soft.push(`${manifestPath}: a ${item.type} should list all three registers, this one lists ${item.registers.join(', ') || 'none'}`);
     }
+    if (item.stability !== 'experimental' && !manifest.stabilityReason) {
+      errors.push(`${manifestPath}: is "${item.stability}", which needs a one-line stabilityReason saying why`);
+    }
     const declared = manifest.budget?.jsBytes;
-    if (item.type === 'scene' && declared > SCENE_BUDGET.max) {
+    const scape = manifest.tier === 'scape';
+    if (scape) {
+      item.tier = 'scape';
+      if (item.type !== 'scene') errors.push(`${manifestPath}: only a scene can be a scape (decision 0020)`);
+      const entry = (manifest.entry ?? []).map(p => place(p, 'entry')).filter(Boolean);
+      const stray = entry.filter(p => !files.some(f => f.path === p));
+      if (!entry.length) errors.push(`${manifestPath}: a scape lists its entry, the files its first sight loads from (decision 0020)`);
+      if (stray.length) errors.push(`${manifestPath}: entry ${stray.join(', ')} is not one of its files`);
+      item.entry = entry.sort();
+      const first = firstSightFiles(root, item, entry);
+      // code bytes, comments stripped (0020 as amended): comments stay beside the code and do not slow the still
+      item.firstSightBytes = first.filter(p => JS.test(p)).reduce((n, p) => n + Buffer.byteLength(stripComments(readFileSync(join(root, p), 'utf8'))), 0);
+      const firstBudget = manifest.budget?.firstSightBytes;
+      if (firstBudget === undefined) errors.push(`${manifestPath}: a scape declares budget.firstSightBytes, at most ${SCAPE_BUDGET.firstSight} (decision 0020)`);
+      else if (firstBudget > SCAPE_BUDGET.firstSight) errors.push(`${manifestPath}: declares a first sight of ${firstBudget} JS bytes, and a scape may declare at most ${SCAPE_BUDGET.firstSight} (decision 0020)`);
+      if (item.firstSightBytes > Math.min(firstBudget ?? Infinity, SCAPE_BUDGET.firstSight)) {
+        errors.push(`${manifestPath}: its first sight is ${item.firstSightBytes} bytes of code (${first.join(', ')}), over ${Math.min(firstBudget ?? Infinity, SCAPE_BUDGET.firstSight)}. Load what the finished still does not need with a dynamic import()`);
+      }
+      if (declared > SCAPE_BUDGET.max) errors.push(`${manifestPath}: declares a total of ${declared} JS bytes, and a scape may declare at most ${SCAPE_BUDGET.max} (decision 0020)`);
+      else if (!manifest.budget?.reason) errors.push(`${manifestPath}: a scape needs a one-line budget.reason for its total (decision 0020)`);
+    } else if (manifest.entry || manifest.budget?.firstSightBytes !== undefined) {
+      errors.push(`${manifestPath}: entry and budget.firstSightBytes belong to a scape ("tier": "scape", decision 0020)`);
+    }
+    if (scape) { /* the scape's own gates above replace decision 0003's ceiling */ } else if (item.type === 'scene' && declared > SCENE_BUDGET.max) {
       errors.push(`${manifestPath}: declares a budget of ${declared} JS bytes, and a scene may declare at most ${SCENE_BUDGET.max} (decision 0003)`);
     } else if (item.type === 'scene' && declared > SCENE_BUDGET.default && !manifest.budget.reason) {
       errors.push(`${manifestPath}: declares ${declared} JS bytes, over the ${SCENE_BUDGET.default} default, so it needs a one-line budget.reason (decision 0003)`);
@@ -194,6 +260,7 @@ export function buildRegistry({ root, out = join(root, 'registry', 'registry.jso
   for (const item of sorted) {
     item.hash = hashParts([
       item.name, item.version, item.dependencies.join(','),
+      ...(item.npmDependencies ? [Object.entries(item.npmDependencies).map(([n, v]) => `${n}@${v}`).join(',')] : []),
       ...item.files.map(f => `${f.path}\0${f.hash}`),
     ]);
   }
@@ -245,7 +312,8 @@ function main(argv) {
   console.log(`  ${'item'.padEnd(16)}${'type'.padEnd(10)}${'files'.padStart(5)}  ${'JS bytes / budget'.padStart(19)}  ${'code'.padStart(7)}  ${'all bytes'.padStart(9)}`);
   for (const item of index.items) {
     const budget = item.budget?.jsBytes !== undefined ? ` / ${String(item.budget.jsBytes).padStart(6)}` : ' '.repeat(9);
-    console.log(`  ${item.name.padEnd(16)}${item.type.padEnd(10)}${String(item.files.length).padStart(5)}  ${String(item.jsBytes).padStart(10)}${budget}  ${String(item.codeBytes).padStart(7)}  ${String(item.bytes).padStart(9)}`);
+    const first = item.tier === 'scape' ? `  scape: first sight ${item.firstSightBytes} / ${item.budget.firstSightBytes}` : '';
+    console.log(`  ${item.name.padEnd(16)}${item.type.padEnd(10)}${String(item.files.length).padStart(5)}  ${String(item.jsBytes).padStart(10)}${budget}  ${String(item.codeBytes).padStart(7)}  ${String(item.bytes).padStart(9)}${first}`);
   }
   console.log('  JS bytes are the .js and .mjs files the budget counts; code is the same without comments; all bytes include prompts, CSS and fonts.');
   return 0;

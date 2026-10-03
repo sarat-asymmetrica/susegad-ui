@@ -12,7 +12,7 @@ import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { chromium } from 'playwright';
+import { contextOptions, engineName, pickEngine } from '../../../tools/lib/engine.mjs';
 import { buildProposal } from './build.mjs';
 import { verify } from '../../folio/build/seal.mjs';
 
@@ -34,9 +34,10 @@ const i = text.indexOf('Where things stand', text.indexOf('<body')) + 2;
 check('one byte changed in the body breaks the seal', !verify(text.slice(0, i) + (text[i] === 'e' ? 'a' : 'e') + text.slice(i + 1)).ok);
 
 const url = pathToFileURL(out).href;
-const browser = await chromium.launch();
+const engine = engineName();
+const browser = await pickEngine(engine).launch();
 const open = async (opts = {}) => {
-  const ctx = await browser.newContext({ viewport: { width: 1100, height: 900 }, ...opts });
+  const ctx = await browser.newContext(contextOptions(engine, { viewport: { width: 1100, height: 900 }, ...opts }));
   const requests = [], errors = [];
   await ctx.route('**/*', route => { if (route.request().url() === url) return route.continue(); requests.push(route.request().url()); return route.abort(); });
   const page = await ctx.newPage();

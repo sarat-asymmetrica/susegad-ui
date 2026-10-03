@@ -1,0 +1,44 @@
+/* Page transitions: cross-document View Transitions for every same-origin
+   navigation, with a shared cross-fade and two persistent elements (the
+   header, the scene). No JavaScript is needed for this file to work.
+
+   Give the elements that should carry across a navigation, rather than
+   cross-fade, a data-vt attribute:
+     <header data-vt="header">…</header>
+     <sg-scene data-vt="scene" name="paus">…</sg-scene>
+   The browser matches old and new pages by that shared
+   view-transition-name and animates its size and position between them
+   instead of fading it out and back in. Everything else on the page
+   (everything with no view-transition-name) is captured as one group,
+   ::view-transition-old(root) / ::view-transition-new(root), and cross-fades. */
+
+@view-transition {
+  navigation: auto;
+}
+
+[data-vt="header"] { view-transition-name: sg-page-header; }
+[data-vt="scene"] { view-transition-name: sg-page-scene; }
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--sg-dur-calm, 280ms);
+  animation-timing-function: var(--sg-ease-in-out, ease);
+}
+::view-transition-old(sg-page-header),
+::view-transition-new(sg-page-header),
+::view-transition-old(sg-page-scene),
+::view-transition-new(sg-page-scene) {
+  animation-duration: var(--sg-dur-slow, 560ms);
+  animation-timing-function: var(--sg-ease-ink, ease);
+}
+
+/* Reduced motion: the transition still runs (old and new snapshots are
+   still captured, so nothing breaks), but nothing animates, so the swap
+   reads as instant either way. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

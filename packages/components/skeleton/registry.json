@@ -1,6 +1,7 @@
 {
   "name": "skeleton",
   "type": "component",
+  "stability": "experimental",
   "title": "Skeleton",
   "description": "A placeholder for a region whose content is on its way. The region is aria-busy and says what is loading, then announces the arrival once. Quiet is flat sunk blocks; warm is a pencil sketch whose outlines ink in when the content arrives; playful adds colour washes and a wobble on twos while waiting.",
   "version": "0.1.0",

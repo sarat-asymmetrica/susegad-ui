@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 import {
-  palettes, themes, textRoles, surfaceRoles, resolveRoles, registers, motion, type, sound, space,
+  palettes, themes, textRoles, surfaceRoles, resolveRoles, registers, motion, tala, talaBeats, talaDelay, type, sound, space,
   fluidStep, springEasing, contrast, oklchToCss, hexToOklch, roundOklch, oklchToHex, oklchToRgb, rgbToOklch,
   parseOklch, over, utilities, roleHex,
 } from './tokens.js';
@@ -89,6 +89,21 @@ test('the Casa house palette is ported exactly', () => {
   assert.equal(v.pigments['casa-faint'].hex, '#93897A');
   assert.equal(v.themed.paper.dark.hex, '#14161C', 'the dark ground is the night chapter');
   assert.equal(v.themed.ink.dark.hex, '#E8E2D6', 'the dark ink is the night ink');
+});
+
+// ── the Azulejo palette ──────────────────────────────────────────────────
+
+test('the Azulejo palette: cream glaze, cobalt ink, lemon and leaf, and a night of its own', () => {
+  const v = palettes.azulejo;
+  for (const name of ['cobalt', 'cobalt-bright', 'lemon', 'leaf', 'glaze', 'wash']) assert.ok(v.pigments[name], `pigment ${name}`);
+  assert.equal(v.pigments.cobalt.hex, '#1B4A9B');
+  assert.equal(v.pigments.lemon.hex, '#F2C94C');
+  const light = resolveRoles('azulejo', 'light'), dark = resolveRoles('azulejo', 'dark');
+  assert.ok(contrast(painted(light.accent), painted(light.surface)) >= 4.5, 'cobalt on cream reads as text');
+  assert.ok(contrast(painted(dark.accent), painted(dark.surface)) >= 4.5, 'bright cobalt on the night ground reads as text');
+  assert.ok(contrast(painted(v.pigments.lemon), painted(light.surface)) < 3, 'lemon is for drawing: it is not offered as text on cream');
+  assert.notEqual(light.surface.hex, dark.surface.hex);
+  assert.ok(dark.surface.l < 0.3 && light.surface.l > 0.9, 'cream by day, deep cobalt by night');
 });
 
 // ── the contrast gate ───────────────────────────────────────────────────────
@@ -225,6 +240,7 @@ test('css ↔ js: type, space, motion, sound and the register', () => {
   for (const [k, v] of Object.entries(space)) assert.equal(root[`--sg-space-${k}`], v);
   for (const [k, v] of Object.entries(motion.easings)) if (k !== 'spring') assert.equal(root[`--sg-ease-${k}`], v, k);
   for (const [k, v] of Object.entries(sound)) assert.equal(root[`--sg-sound-${k}`], `"${v}"`);
+  assert.equal(root['--sg-tala-beat'], `${tala.beatMs}ms`);
   assert.equal(root['--sg-register'], 'warm');
   assert.equal(root['--sg-measure'], type.measure);
   for (const [name, r] of Object.entries(registers)) {
@@ -234,7 +250,14 @@ test('css ↔ js: type, space, motion, sound and the register', () => {
     assert.equal(+d['--sg-wobble'], r.wobble);
     assert.equal(d['--sg-ease-spring'], r.easeSpring);
     for (const [k, v] of Object.entries(r.durations)) assert.equal(d[`--sg-dur-${k}`], `${v}ms`, `${name} ${k}`);
+    assert.equal(d['--sg-glass-blur'], `${r.glass.blur}px`, `${name} glass blur`);
+    assert.equal(d['--sg-glass-tint'], `${r.glass.tint}%`, `${name} glass tint`);
   }
+  // quiet's plate is opaque and unblurred; warm and playful frost, and playful lets more of the drawing through
+  assert.equal(registers.quiet.glass.blur, 0);
+  assert.equal(registers.quiet.glass.tint, 100);
+  assert.ok(registers.warm.glass.blur > 0 && registers.playful.glass.blur > registers.warm.glass.blur);
+  assert.ok(registers.playful.glass.tint < registers.warm.glass.tint && registers.warm.glass.tint < 100);
   const reduced = rule(':root, [data-register], [register]', '@media (prefers-reduced-motion: reduce)');
   for (const [k, v] of Object.entries(motion.reduced)) assert.equal(reduced[`--sg-dur-${k}`], `${v}ms`, k);
 });
@@ -281,6 +304,48 @@ test('springs start at 0, end at 1, and playful overshoots more than warm', () =
   assert.ok(registers.playful.overshoot > registers.warm.overshoot);
   assert.ok(registers.warm.overshoot > 0 && registers.warm.overshoot < 0.06);
   assert.ok(Math.max(...vals(springEasing(0.48))) - 1 > 0.1);
+});
+
+// ── teental: the sixteen-beat stagger ───────────────────────────────────────
+
+test('talaBeats lists the cycle without its khali beats, in order', () => {
+  const active = talaBeats();
+  assert.equal(active.length, tala.beats - tala.khali.length);
+  for (const k of tala.khali) assert.ok(!active.includes(k), `beat ${k} is khali`);
+  assert.deepEqual(active, [...active].sort((a, b) => a - b));
+  assert.deepEqual(talaBeats(8, [2, 3]), [0, 1, 4, 5, 6, 7]);
+});
+
+test('talaDelay is pure: same index and options, same delay, every time', () => {
+  for (const i of [0, 1, 5, 12, 40]) assert.equal(talaDelay(i), talaDelay(i));
+});
+
+test('talaDelay never lands an entrance on a khali beat', () => {
+  const active = talaBeats();
+  for (let i = 0; i < 64; i++) {
+    const raw = talaDelay(i) === tala.maxDelayMs ? null : talaDelay(i) / tala.beatMs;
+    if (raw === null) continue; // capped: which beat it would have been no longer shows
+    const beatOfCycle = Math.round(raw) % tala.beats;
+    assert.ok(active.includes(beatOfCycle), `item ${i} landed on beat ${beatOfCycle}`);
+  }
+});
+
+test('talaDelay caps at 600ms, so the last item of a long list never waits longer', () => {
+  for (const i of [0, 3, 10, 50, 500]) assert.ok(talaDelay(i) <= tala.maxDelayMs, `item ${i}: ${talaDelay(i)}ms`);
+  assert.equal(talaDelay(500), tala.maxDelayMs);
+  assert.ok(talaDelay(0) < tala.maxDelayMs, 'the first item is not itself capped');
+});
+
+test('talaDelay is non-decreasing across a cycle, so items still enter in list order', () => {
+  let last = -1;
+  for (let i = 0; i < tala.beats * 2; i++) { const d = talaDelay(i); assert.ok(d >= last, `item ${i}: ${d} < ${last}`); last = d; }
+});
+
+test('a custom beat length and khali still hold the same guarantees', () => {
+  const opts = { beats: 8, khali: [3], beat: 50 };
+  const active = talaBeats(opts.beats, opts.khali);
+  assert.equal(talaDelay(0, opts), active[0] * opts.beat);
+  assert.equal(talaDelay(active.length, opts), Math.min((opts.beats + active[0]) * opts.beat, tala.maxDelayMs));
 });
 
 test('the fluid type scale grows step by step at both ends', () => {

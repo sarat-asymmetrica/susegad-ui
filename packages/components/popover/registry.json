@@ -1,0 +1,33 @@
+{
+  "name": "popover",
+  "type": "component",
+  "title": "Popover",
+  "description": "A trigger and a native [popover], unchanged: popovertarget opens, closes, focuses and light-dismisses it with or without JavaScript. Quiet is a hairline card; warm is an inland-letter card with a folded corner; playful adds a dashed postmark. Placement uses CSS anchor positioning where supported, and a pure, tested fallback elsewhere.",
+  "version": "0.1.0",
+  "files": [
+    "popover.js",
+    "popover.core.js",
+    "popover.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "popover.prompt.md",
+    "popover.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "popover.prompt.md",
+  "docs": "popover.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today about 5.5 KB: behaviour (popover.js + popover.core.js) 4.7 KB; skins quiet, warm and playful are each a no-op mount (about 0.2 KB each), because the look is entirely in popover.css keyed off [data-skin]."
+  }
+}

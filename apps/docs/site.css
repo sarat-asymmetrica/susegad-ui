@@ -1,0 +1,218 @@
+/* The site map: index pages, a page per piece, the home page's doors.
+   Reuses docs.css's tokens and register cascade (--r-*); adds only what the
+   new pages need. Classes: s- (index pages), scene-, item-, door. */
+
+/* ── the top bar says where you are ───────────────────────────────── */
+.nav a[aria-current="page"] { color: var(--ink); border-bottom-color: currentColor; }
+
+/* ── index pages ──────────────────────────────────────────────────── */
+.s-head { padding-block: 28px 8px; }
+.s-title { font-family: var(--display); font-size: clamp(44px, 6.4vw, 80px); line-height: 0.95; letter-spacing: -0.01em; }
+[data-register="quiet"] .s-title { font-size: clamp(38px, 5vw, 60px); }
+.s-head .lede { margin-top: 14px; }
+.s-tools { display: flex; flex-wrap: wrap; align-items: end; gap: 10px 24px; margin-top: 22px; }
+.g-search { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1 1 260px; max-width: 420px; }
+.g-search span { font-size: 11.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.g-search input {
+  font: inherit; font-size: 15px; padding: 9px 12px; border-radius: 6px;
+  border: 1px solid var(--rule-strong); background: var(--mount); color: var(--ink);
+}
+.g-search input:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.g-count { margin: 0 0 10px; color: var(--ink-3); font-size: 14px; }
+.g-empty { color: var(--ink-3); font-family: var(--r-hand); padding-block: 8px; }
+
+.s-group { border-top: var(--r-rule) solid var(--ink); padding-block: 22px 8px; margin-top: 18px; }
+.s-group-title { font-family: var(--display); font-weight: 400; font-size: clamp(22px, 2.4vw, 30px); line-height: 1.15; }
+.s-group-note { font-family: var(--r-hand); font-weight: var(--r-hand-weight); font-size: calc(17px * var(--r-hand-scale)); color: var(--ink-2); margin-left: 10px; }
+
+.s-grid {
+  list-style: none; padding: 0; margin: 18px 0 clamp(24px, 4vw, 40px);
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 232px), 1fr)); gap: 22px 20px;
+}
+.s-card { position: relative; min-width: 0; display: flex; flex-direction: column; }
+.s-card[hidden] { display: none; }
+.s-poster {
+  aspect-ratio: 16 / 10; overflow: hidden; border-radius: 3px; margin-bottom: 10px;
+  background: color-mix(in oklab, var(--ink) 5%, var(--paper));
+  box-shadow: var(--r-lift); border: var(--r-mount-edge);
+  transition: transform var(--r-dur) var(--r-ease), box-shadow var(--r-dur) var(--r-ease);
+}
+.s-poster img, .door-art img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+.s-card:hover .s-poster { transform: translateY(var(--r-lift-hover)); }
+.s-card-no { font-family: var(--r-hand); font-size: calc(14px * var(--r-hand-scale)); color: var(--r-number); margin: 0 0 2px; }
+[data-register="quiet"] .s-card-no { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; }
+.s-card-title { font-family: var(--display); font-weight: 400; font-size: 19px; line-height: 1.2; margin: 0; }
+.s-card-title a { color: var(--ink); text-decoration: none; }
+/* the whole card is the link's target; the title stays the one link a reader tabs to */
+.s-card-title a::after { content: ""; position: absolute; inset: 0; }
+.s-card-title a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.s-card:focus-within .s-poster { outline: 2px solid var(--focus); outline-offset: 3px; }
+.s-card-line { margin: 4px 0 0; font-size: 14px; line-height: 1.45; color: var(--ink-2); }
+/* a piece with nothing to show (a foundation) is a compact card of words */
+.s-card-plain { border-top: 1px solid var(--rule); padding-top: 12px; }
+
+/* ── the home page: doors into each kind, the newest pieces ───────── */
+.library, .newest { border-top: var(--r-rule) solid var(--ink); padding-block: 28px 8px; }
+.doors {
+  list-style: none; padding: 0; margin: 22px 0 clamp(28px, 4vw, 44px);
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px clamp(16px, 2vw, 28px);
+}
+/* four doors with pictures across; the pencil box, which has none, takes the row below as words.
+   A door with one picture (foundations) keeps the height of one with three, so the titles line up. */
+.door { position: relative; min-width: 0; }
+.door-art {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+  overflow: hidden; border-radius: 3px; margin-bottom: 12px;
+  box-shadow: var(--r-lift); border: var(--r-mount-edge); background: color-mix(in oklab, var(--ink) 5%, var(--paper));
+}
+/* every cell takes the posters' own 16:10 shape, so nothing is cropped but a sliver of a scene's bottom edge */
+.door-art img { height: auto; aspect-ratio: 16 / 10; }
+.door-art img:first-child, .door-art img:nth-child(2):last-child { grid-column: 1 / 3; }
+.door-art:has(> img:only-child) { aspect-ratio: 1.05; align-content: center; }
+.door-art-plain { display: none; }
+.door-title { font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.15; margin: 0; }
+.door-title a { color: var(--ink); text-decoration: none; }
+.door-title a::after { content: ""; position: absolute; inset: 0; }
+.door-title a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.door:focus-within .door-art { outline: 2px solid var(--focus); outline-offset: 3px; }
+.door-count { font-family: var(--r-hand); font-size: calc(18px * var(--r-hand-scale)); color: var(--r-number); margin-left: 4px; }
+.door-line { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+/* the door without a picture (the pencil box) is one row of words */
+.door:has(.door-art-plain) { border-top: 1px solid var(--rule); padding-top: 14px; grid-column: 1 / -1; }
+
+.new-list { list-style: none; padding: 0; margin: 18px 0 clamp(28px, 4vw, 44px); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px clamp(20px, 3vw, 40px); }
+.new-item { border-top: 1px solid var(--rule); padding-top: 12px; min-width: 0; }
+.new-title { font-family: var(--display); font-weight: 400; font-size: 21px; line-height: 1.2; margin: 0; }
+.new-title a { color: var(--ink); }
+.new-item p { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+
+/* ── a scene's page ───────────────────────────────────────────────── */
+.scene-page {
+  display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 56px); padding-block: clamp(24px, 3.5vw, 44px) 12px; align-items: start;
+}
+.scene-art { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); min-width: 0; }
+.scene-mount {
+  position: relative; background: var(--mount); padding: var(--r-mount-pad); box-shadow: var(--r-lift);
+  border: var(--r-mount-edge); box-sizing: content-box;
+}
+.scene-mount .stage { display: block; width: 100%; background: var(--paper); }
+/* the still sits exactly over the stage until the drawing's first frame */
+.scene-still { position: absolute; inset: var(--r-mount-pad); width: calc(100% - 2 * var(--r-mount-pad)); height: calc(100% - 2 * var(--r-mount-pad)); object-fit: cover; }
+.scene-still[hidden] { display: none; }
+.scene-art .stage::part(toggle) { display: none; }
+.controls[hidden] { display: none; }
+.scene-text { min-width: 0; }
+.scene-text .plate-title { font-family: var(--display); font-weight: 400; text-wrap: balance; margin: 0; font-size: clamp(32px, 3.4vw, 46px); line-height: 1.05; }
+.crumbs { margin: 0 0 12px; font-size: 14px; color: var(--ink-3); }
+.crumbs a { color: var(--ink-2); }
+
+/* a fold: the prompt, the word map. Closed by default, one click away */
+.fold { margin: 18px 0 0; border-top: 1px solid var(--rule); }
+.fold > summary {
+  cursor: pointer; list-style: none; padding: 12px 0 10px; display: flex; align-items: center; gap: 10px;
+  font-family: var(--r-hand); font-weight: var(--r-hand-weight); font-size: calc(19px * var(--r-hand-scale)); color: var(--ink);
+}
+[data-register="quiet"] .fold > summary { font-family: var(--body); font-size: 15px; font-weight: 600; }
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary::before {
+  content: ""; width: 8px; height: 8px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg); transition: transform var(--r-dur) var(--r-ease); flex: none;
+}
+.fold[open] > summary::before { transform: rotate(45deg); }
+.fold > summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.fold .letter { margin-top: 4px; margin-bottom: 12px; }
+.fold .map { margin: 4px 0 14px; }
+.letter-title { font-family: var(--r-hand); font-size: calc(19px * var(--r-hand-scale)); font-weight: 400; margin: 0; }
+[data-register="quiet"] .letter-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-family: var(--body); }
+.letter-body > :first-child { margin-top: 10px; }
+.letter-body p, .letter-body li { font-size: 15.5px; line-height: 1.62; }
+.letter-body h3, .letter-body h4 { font-family: var(--r-hand); font-weight: 400; font-size: calc(18px * var(--r-hand-scale)); margin: 16px 0 0; }
+.letter-body code { font-family: var(--mono); font-size: 0.9em; }
+.letter-body pre { overflow-x: auto; white-space: pre-wrap; font-size: 13.5px; }
+.map dl, dl.map { display: grid; gap: 14px; margin-top: 4px; }
+dl.map dt { font-family: var(--r-hand); font-weight: var(--r-hand-weight); font-size: calc(17px * var(--r-hand-scale)); line-height: 1.4; }
+dl.map dt::before { content: "\201C"; color: var(--r-number); }
+dl.map dt::after { content: "\201D"; color: var(--r-number); }
+dl.map dd { margin: 3px 0 0; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
+dl.map dd .term { font-weight: 500; color: var(--ink); margin-right: 0.4em; }
+dl.map dd .term::after { content: ":"; }
+
+.scene-more { margin-top: 18px; border-top: 1px solid var(--rule); padding-top: 12px; }
+.more-title { font-family: var(--r-hand); font-weight: 400; font-size: calc(18px * var(--r-hand-scale)); margin: 0; }
+[data-register="quiet"] .more-title { font-family: var(--body); font-size: 15px; font-weight: 600; }
+.scene-more ul { margin: 6px 0 0; padding-left: 18px; }
+.scene-more li { margin-top: 4px; }
+.install { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 18px 0 0; font-size: 14px; }
+.install code { font-family: var(--mono); font-size: 13.5px; padding: 4px 8px; border-radius: 4px; background: color-mix(in oklab, var(--ink) 6%, transparent); color: var(--ink); overflow-wrap: anywhere; }
+.install .copy { border-color: var(--rule-strong); }
+
+/* prev and next, like turning a page */
+.pn { display: flex; justify-content: space-between; gap: 16px; border-top: 1px solid var(--rule); padding-block: 16px 8px; margin-top: 16px; }
+.pn a { display: flex; flex-direction: column; text-decoration: none; color: var(--ink); max-width: 48%; }
+.pn-next { text-align: right; margin-left: auto; }
+.pn-word { font-family: var(--r-hand); font-size: calc(14px * var(--r-hand-scale)); color: var(--r-number); }
+[data-register="quiet"] .pn-word { font-family: var(--body); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; }
+.pn-title { font-family: var(--display); font-size: 19px; line-height: 1.2; }
+.pn a:hover .pn-title { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── a piece's page ───────────────────────────────────────────────── */
+.item-page { padding-block: clamp(24px, 3.5vw, 44px) 8px; max-width: 1080px; }
+.item-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); gap: clamp(20px, 4vw, 48px); align-items: start; }
+.item-head:not(:has(.item-poster)) { grid-template-columns: minmax(0, 1fr); }
+.item-title { font-family: var(--display); font-weight: 400; font-size: clamp(38px, 5vw, 64px); line-height: 1; letter-spacing: -0.01em; }
+.item-head .lede { font-size: 17px; margin-top: 14px; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; }
+.fact { font-size: 11px; line-height: 1; padding: 4px 8px; border-radius: var(--r-pill); border: var(--r-tag-edge); color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.06em; }
+.item-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin: 18px 0 0; }
+.item-actions .install { margin: 0; }
+.btn-solid { background: var(--ink); color: var(--paper); text-decoration: none; display: inline-block; }
+.btn-solid:hover { background: transparent; color: var(--ink); }
+.deps { margin: 14px 0 0; font-size: 14.5px; color: var(--ink-2); }
+.deps b { font-weight: 600; color: var(--ink); }
+.item-poster { display: block; border-radius: 3px; overflow: hidden; box-shadow: var(--r-lift); border: var(--r-mount-edge); }
+.item-poster img { display: block; width: 100%; height: auto; }
+.item-page > .fold { max-width: 74ch; margin-top: 26px; }
+
+/* the docs, rendered from Markdown */
+.prose { max-width: 74ch; margin-top: 18px; border-top: 1px solid var(--rule); padding-top: 4px; }
+.prose h2 { font-family: var(--display); font-weight: 400; font-size: 27px; line-height: 1.2; margin: 30px 0 0; }
+.prose h3 { font-family: var(--display); font-weight: 400; font-size: 21px; margin: 22px 0 0; }
+.prose h4 { font-size: 16px; font-weight: 600; margin: 18px 0 0; }
+.prose p, .prose li { font-size: 16px; line-height: 1.65; color: var(--ink-2); }
+.prose p { margin: 12px 0 0; }
+.prose a { color: var(--ink); }
+.prose code { font-family: var(--mono); font-size: 0.88em; padding: 1px 4px; border-radius: 3px; background: color-mix(in oklab, var(--ink) 6%, transparent); color: var(--ink); }
+/* code wraps rather than scrolls: nothing to reach by keyboard, nothing hidden at 390 px */
+.prose pre { margin: 14px 0 0; padding: 14px 16px; border-radius: 6px; white-space: pre-wrap; overflow-wrap: anywhere; background: color-mix(in oklab, var(--ink) 5%, var(--mount)); border: 1px solid var(--rule); }
+.prose pre code { padding: 0; background: none; font-size: 13.5px; line-height: 1.55; }
+.table-wrap { overflow-x: auto; max-width: 100%; margin: 14px 0 0; }
+.table-wrap:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.prose table { border-collapse: collapse; font-size: 14.5px; }
+.prose th, .prose td { text-align: left; vertical-align: top; padding: 7px 12px 7px 0; border-bottom: 1px solid var(--rule); color: var(--ink-2); }
+.prose th { color: var(--ink); font-weight: 600; border-bottom-color: var(--rule-strong); }
+.prose blockquote { margin: 14px 0 0; padding-left: 14px; border-left: 2px solid var(--rule); }
+
+/* ── narrow screens ────────────────────────────────────────────────── */
+@media (max-width: 980px) {
+  .doors { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) {
+  .scene-page, .item-head { grid-template-columns: 1fr; }
+  .scene-art { position: static; }
+  .new-list { grid-template-columns: 1fr; }
+}
+@media (max-width: 620px) {
+  .s-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 14px; }
+  .s-card-title { font-size: 17px; }
+  .s-card-line { font-size: 13px; }
+  .doors { grid-template-columns: 1fr 1fr; gap: 16px 14px; }
+  .door-title { font-size: 20px; }
+  .door-line { font-size: 13.5px; }
+  .s-tools { flex-direction: column; align-items: stretch; }
+  .g-search { flex-basis: auto; max-width: none; }
+  .pn-title { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .s-poster { transition: none; }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "menu",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Menu",
+  "description": "A menu and price list a small food business can run on a phone. The page's own semantic list (sections of dishes, each with a name, price in rupees, unit, sauce line, tags as words and an available, sold-out or ask-first status) reads fine with no script; with it, `orderable` adds a quantity stepper per dish (native buttons, one polite live total) and an sg-change event with the lines and the total. Quiet is a typeset price list with leader dots and tabular figures; warm a menu card with a hand-ruled double frame and script section heads; playful price pills and chips where the count settles once when a dish is added.",
+  "version": "0.1.0",
+  "files": [
+    "menu.js",
+    "menu.core.js",
+    "menu.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "menu.prompt.md",
+    "menu.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "field",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "menu.prompt.md",
+  "docs": "menu.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 26533 bytes with comments (19083 as code): element, pure core and three skins (warm 3 KB for the ruled frame, playful 1 KB)."
+  }
+}

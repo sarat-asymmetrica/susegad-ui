@@ -1,6 +1,7 @@
 {
   "name": "otp",
   "type": "component",
+  "stability": "experimental",
   "title": "One-time code",
   "description": "A one-time code entry. The native path is one input with autocomplete=\"one-time-code\" and the number pad, which submits, takes SMS autofill and works without JavaScript. With JavaScript the same input lies transparently over a row of aria-hidden boxes: typing over a box replaces it, backspace works back across them, and a paste keeps just the digits. Quiet is plain boxes; warm stamp boxes that ink each digit; playful a stamp per digit.",
   "version": "0.1.0",

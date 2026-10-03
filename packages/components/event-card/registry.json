@@ -1,0 +1,35 @@
+{
+  "name": "event-card",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Event card",
+  "description": "One workshop, class, supper club or pop-up: the kind, the title, the date and time, the venue, what you'll do and eat, the price per person and a booking link. It reads the clock in the venue's own time zone and says whether the event is coming up, today, on now or over; a seats line shows only when seats-left is given, sold out only when it is 0, and a finished event stops offering its booking link and says why. Quiet is a ruled card; warm is a ticket with a stub on a perforated line; playful is the same ticket, and the stub tears away a little when you point at it.",
+  "version": "0.1.0",
+  "files": [
+    "event-card.js",
+    "event.core.js",
+    "event-card.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "event-card.prompt.md",
+    "event-card.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "event-card.prompt.md",
+  "docs": "event-card.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins; the pure core is budgeted apart (0010). Today 21,972 bytes: element 7.5 KB, pure core 11.3 KB (zones, the clock, the words, the calendar, the perforation), skins quiet 0.1 KB, warm 2.7 KB, playful 0.3 KB (it reuses warm's ticket)."
+  }
+}

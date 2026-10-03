@@ -1,0 +1,14 @@
+{
+  "name": "scene-neel",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["background","divider"],
+  "title": "Neel",
+  "description": "Hand block printing on khadi cotton: a carved buti block generated from the seed is pressed one impression at a time, indigo outlines first, then a second colour off register, every impression a little starved and turned. Quiet is the finished length; warm prints it at an unhurried pace and rests; playful prints faster and presses where you click or press Enter. Set progress and exactly that share is printed: a loader that shows real work.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "neel.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "neel.prompt.md",
+  "budget": { "jsBytes": 40960 }
+}

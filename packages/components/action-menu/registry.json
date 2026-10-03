@@ -1,0 +1,33 @@
+{
+  "name": "action-menu",
+  "type": "component",
+  "title": "Action menu",
+  "description": "A button with popovertarget and a popover list of real links and buttons: a click already opens, closes and activates items with no script. With JavaScript this adds the ARIA APG menu button keyboard model (roving tabindex, arrow keys, Home/End, typeahead) and a teental-staggered entrance. Quiet is a ruled list; warm is ink-ruled; playful is stamped.",
+  "version": "0.1.0",
+  "files": [
+    "action-menu.js",
+    "action-menu.core.js",
+    "action-menu.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "action-menu.prompt.md",
+    "action-menu.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "action-menu.prompt.md",
+  "docs": "action-menu.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today about 7.0 KB: behaviour (action-menu.js + action-menu.core.js) 6.7 KB; skins quiet, warm and playful are each a no-op mount (about 0.2 KB each), because the look is entirely in action-menu.css keyed off [data-skin]/[data-open]."
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "dialog",
+  "type": "component",
+  "title": "Dialog",
+  "version": "0.1.0",
+  "description": "A modal on the native <dialog>: showModal() traps focus and blocks the page, Escape closes it, focus returns to the opener. Any element with data-sg-dialog opens it; without JavaScript that element is a real link to a real page. Quiet is a plain dimmed backdrop; warm and playful are full-bleed with the Carepa surface behind a floating card, mounted only while open.",
+  "files": [
+    "dialog.js",
+    "dialog.core.js",
+    "dialog.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "dialog.prompt.md",
+    "dialog.docs.md"
+  ],
+  "dependencies": ["core-component", "core", "tokens", "surface-carepa"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "dialog.prompt.md",
+  "docs": "dialog.docs.md",
+  "budget": {
+    "jsBytes": 14336,
+    "reason": "0010: element (dialog.js) + core (dialog.core.js) together, since the pure core here is small (openersFor, isDismiss, STRINGS) and not worth a separate 12 KB allowance. Today 5781 bytes for behaviour, plus three skins (quiet 0.3 KB, warm 0.8 KB, playful 1.2 KB); Carepa itself is a separate registry item."
+  }
+}

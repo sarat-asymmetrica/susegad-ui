@@ -1,0 +1,19 @@
+{
+  "name": "kantar-curtain",
+  "type": "package",
+  "title": "The tiatr curtain",
+  "description": "The tiatr's red velvet curtain, drawn once: a tiled velvet strip with a slow sideways drift, a soft shadow under the pelmet, a gold fringe along a hem whose shape the caller supplies. The Kantar scene and the Kantar interlude both draw it from here, so there is one curtain in the library, not two. curtainEdge is pure and tested in Node; drawCurtain is the canvas side. It draws no text.",
+  "version": "0.1.0",
+  "files": [
+    "curtain.js",
+    "curtain.prompt.md"
+  ],
+  "dependencies": [
+    "engine"
+  ],
+  "prompt": "curtain.prompt.md",
+  "budget": {
+    "jsBytes": 6144,
+    "reason": "One small drawing module shared by the Kantar scene and the Kantar interlude; the velvet strip, the pelmet shadow and the fringe, with the hem supplied by the caller."
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "scene-maun",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["background","section-break"],
+  "title": "Maun",
+  "description": "A colour field that paints itself in thin veils, rolled on and scraped back so a warm ground glows through, then rests with only a slow breath of light. Four palettes (turmeric, monsoon, kokum, indigo on lime); the same seed is always the same painting. A quiet background for words and a document cover; in playful, a click scrapes a band back. After V. S. Gaitonde's method, not his pictures.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "maun.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "maun.prompt.md",
+  "budget": { "jsBytes": 40960 }
+}

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tabs</title>
+<link rel="stylesheet" href="./tabs.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 60rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-3); }
+  sg-tabs { display: block; margin-top: var(--sg-space-3); }
+  sg-tabs + sg-tabs { margin-top: var(--sg-space-6); }
+  .narrow { max-width: 20rem; border: var(--sg-hairline) solid var(--sg-rule); border-radius: var(--sg-radius-2); padding: var(--sg-space-3); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Tabs</h1>
+  <p class="lede">Without JavaScript this is a table of contents: every section shows, and each link jumps to its heading. With JavaScript it becomes the ARIA APG tabs pattern, automatic activation: the arrow keys move focus and select together, Home and End jump to the ends, and the underline travels to the chosen tab.</p>
+
+  <h2>A room's details</h2>
+  <sg-tabs id="room">
+    <nav aria-label="Room details">
+      <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#amenities">Amenities</a></li>
+        <li><a href="#rules">House rules</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+      </ul>
+    </nav>
+    <section id="overview">
+      <h2>Overview</h2>
+      <p>A first-floor room with a private balcão, looking out over the paddy to the river. Sleeps two, with a fan and cross-ventilation, no air conditioning.</p>
+    </section>
+    <section id="amenities">
+      <h2>Amenities</h2>
+      <p>An attached bathroom with a bucket-and-mug option beside the shower, filtered drinking water on the landing, and a writing table by the window.</p>
+    </section>
+    <section id="rules">
+      <h2>House rules</h2>
+      <p>Quiet after 10 pm. No smoking indoors. Guests are asked to close the balcão shutters before the evening rain.</p>
+    </section>
+    <section id="reviews">
+      <h2>Reviews</h2>
+      <p>"Woke up to the koels every morning and the smell of the neighbour's woodfire chai." — a guest, September 2026.</p>
+    </section>
+  </sg-tabs>
+
+  <h2>A second, independent tablist on the same page</h2>
+  <p class="note">Two &lt;sg-tabs&gt; on one page never fight over the same View Transition name; each names its own panel.</p>
+  <div class="narrow">
+    <sg-tabs id="dates">
+      <nav aria-label="Your dates">
+        <ul>
+          <li><a href="#arrival">Arrival</a></li>
+          <li><a href="#departure">Departure</a></li>
+        </ul>
+      </nav>
+      <section id="arrival"><h2>Arrival</h2><p>Check-in from 2 pm.</p></section>
+      <section id="departure"><h2>Departure</h2><p>Check-out by 11 am.</p></section>
+    </sg-tabs>
+  </div>
+</main>
+<script type="module">import './tabs.js';</script>
+</body>
+</html>

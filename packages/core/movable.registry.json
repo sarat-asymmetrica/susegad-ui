@@ -1,0 +1,11 @@
+{
+  "name": "core-movable",
+  "type": "package",
+  "stability": "experimental",
+  "title": "Core: movable words",
+  "description": "<sg-scene movable>: a grip on the reading panel that moves the words by drag or by arrow keys, clamped inside the stage, on frosted glass in warm and playful. The scene makes room live. Off in quiet and when the words sit below the picture. The page remembers the place: sg-words-moved out, words-at in.",
+  "version": "0.1.0",
+  "files": ["movable.js", "movable.core.js"],
+  "dependencies": [],
+  "budget": { "jsBytes": 16384, "reason": "Decision 0021: the element side (grip, pointer capture, keys, status, glass) and its pure geometry (movable.core.js, tested in Node, counted apart per decision 0010)." }
+}

@@ -1,6 +1,7 @@
 {
   "name": "select",
   "type": "component",
+  "stability": "experimental",
   "title": "Select",
   "description": "The browser's own select, kept native: its keyboard, its screen-reader role and its place in the form are untouched. Where customizable select is supported, CSS draws the button, the caret and the picker: a hairline box and list in quiet; in warm the select is written on the paper, over the field's pencil rule, with a caret of two pencil strokes and ink over the rule under a chosen value; in playful a stamped box with an accent caret, and stamped chips.",
   "version": "0.1.0",

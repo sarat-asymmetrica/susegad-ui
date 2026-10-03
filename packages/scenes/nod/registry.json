@@ -1,0 +1,14 @@
+{
+  "name": "scene-nod",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["story"],
+  "title": "Nod",
+  "description": "The helper that asks first: a cutting chai steams beside a phone on a marble café table; a message arrives, a helper drafts a reply in a dashed card with an empty tick, and it goes out only when a person nods. Warm plays one exchange with a finger's tap; playful waits for your click or Enter; quiet is the draft, waiting.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "nod.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "nod.prompt.md",
+  "budget": { "jsBytes": 40960 }
+}

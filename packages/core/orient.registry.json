@@ -1,0 +1,22 @@
+{
+  "name": "core-orient",
+  "type": "package",
+  "stability": "experimental",
+  "title": "Core: words in the world",
+  "description": "Words on a plane that turns a little toward the reader and settles. The register sets the model, not the colour: quiet leaves the words flat and still, warm allows 6 degrees of tilt with a 0.9 s settle, playful 16 degrees with 0.45 s, and a touch screen or Save-Data steps one register down. The turn is one composited transform on the layer, so the text stays real and the layout never moves; quat.core.js is the maths (unit quaternions, shortest-path slerp, a frame-rate-independent damp), orient.core.js is the policy (the readability cone the plane is projected back onto, the seeded sway, the polite status line), orient.js is the only part that touches the DOM. unproject() hands a rect measured through the turn back to the flat plane, so a scene can keep judging occlusion in the plane's own space.",
+  "version": "0.1.0",
+  "files": [
+    "orient.js",
+    "quat.core.js",
+    "orient.core.js",
+    "orient.prompt.md",
+    "orient.docs.md"
+  ],
+  "dependencies": [],
+  "prompt": "orient.prompt.md",
+  "docs": "orient.docs.md",
+  "budget": {
+    "jsBytes": 24576,
+    "reason": "The element side (decision 0009, 12 KB) and the two pure cores counted apart (decision 0010, 12 KB together), so 24576. Today 23.2 KB: orient.js 11.9 KB, quat.core.js 5.6 KB, orient.core.js 5.1 KB. The check (orient.check.mjs) and the demo are not counted, as with every other piece."
+  }
+}

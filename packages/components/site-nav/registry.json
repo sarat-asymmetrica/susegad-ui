@@ -1,0 +1,35 @@
+{
+  "name": "site-nav",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Site nav",
+  "description": "A site header that works with no JavaScript: the page links sit in a native details, a Menu button on narrow screens and a row on wide ones, with the current page in aria-current. No dialog or drawer. Quiet is plain links over a hairline rule; warm writes them in the hand with a pencil line under the current page; playful makes them stamped tabs.",
+  "version": "0.1.0",
+  "files": [
+    "site-nav.js",
+    "site-nav.core.js",
+    "site-nav.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "site-nav.prompt.md",
+    "site-nav.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "site-nav.prompt.md",
+  "docs": "site-nav.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 8623 bytes: element 3.7 KB, pure core 2.5 KB, skins quiet 0.2 KB, warm 1.6 KB, playful 0.6 KB."
+  }
+}

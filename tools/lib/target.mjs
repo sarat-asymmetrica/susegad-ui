@@ -7,6 +7,7 @@ export const THEMES = ['light', 'dark'];
 /** Scenes that live in tools/fixtures rather than packages/scenes. */
 export const FIXTURES = {
   fixture: { module: '/tools/fixtures/fixture-scene/index.js', element: 'sg-fixture-scene' },
+  motion: { module: '/tools/fixtures/motion-scene/index.js', element: 'sg-motion-scene' },
 };
 
 /**

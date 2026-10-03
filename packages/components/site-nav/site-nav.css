@@ -1,0 +1,144 @@
+/* <sg-site-nav>. Works with no JavaScript. The links live in a native
+   <details>: on a narrow screen its summary is the menu button; from 40rem
+   the summary hides and ::details-content shows the links as a row. */
+
+sg-site-nav {
+  display: block;
+  container-type: inline-size;
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-snug) var(--sg-font-body);
+}
+sg-site-nav[hidden] { display: none; }
+
+sg-site-nav nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sg-space-2) var(--sg-space-4);
+  padding-block: var(--sg-space-3);
+  border-bottom: var(--sg-hairline) solid var(--sg-rule-strong);
+}
+sg-site-nav .sg-site-nav-home {
+  font: 400 var(--sg-step-2) / 1.1 var(--sg-font-display);
+  color: var(--sg-text);
+  text-decoration: none;
+  padding-block: var(--sg-space-1);
+}
+sg-site-nav a:focus-visible,
+sg-site-nav summary:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); border-radius: var(--sg-radius-1); }
+
+sg-site-nav details { flex: 0 1 auto; }
+sg-site-nav summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 2.75rem;
+  padding: 0 var(--sg-space-3);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-2);
+  cursor: pointer;
+  list-style: none;
+  font-weight: var(--sg-weight-medium);
+}
+sg-site-nav summary::-webkit-details-marker { display: none; }
+sg-site-nav summary::before {
+  content: "";
+  width: 1em;
+  height: 0.8em;
+  background: linear-gradient(currentColor, currentColor) 0 0 / 100% 2px no-repeat, linear-gradient(currentColor, currentColor) 0 50% / 100% 2px no-repeat, linear-gradient(currentColor, currentColor) 0 100% / 100% 2px no-repeat;
+}
+sg-site-nav details[open] > summary::before {
+  background: linear-gradient(currentColor, currentColor) 0 50% / 100% 2px no-repeat;
+}
+
+sg-site-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: var(--sg-space-2) 0 0;
+  display: grid;
+  gap: 0;
+}
+sg-site-nav ul a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding-inline: var(--sg-space-2);
+  color: var(--sg-text);
+  text-decoration: none;
+}
+sg-site-nav ul a:hover { text-decoration: underline; text-decoration-thickness: var(--sg-hairline); text-underline-offset: 0.25em; }
+sg-site-nav ul a[aria-current] { font-weight: var(--sg-weight-medium); text-decoration: underline; text-decoration-thickness: var(--sg-stroke-bold); text-underline-offset: 0.3em; }
+
+/* Narrow and open: the list drops below the brand, full width. */
+@container (max-width: 39.99rem) {
+  sg-site-nav details[open] { flex-basis: 100%; order: 1; }
+  sg-site-nav details[open] > summary { margin-inline-start: auto; display: flex; width: fit-content; }
+}
+
+/* Wide: the row, no summary. The summary hides only where ::details-content
+   can show the links; elsewhere the element opens the disclosure and sets
+   data-wide, and without either the summary stays, one press from the links. */
+@container (min-width: 40rem) {
+  @supports selector(::details-content) {
+    sg-site-nav summary { display: none; }
+    sg-site-nav details::details-content { content-visibility: visible; display: block; }
+  }
+  sg-site-nav ul { display: flex; flex-wrap: wrap; gap: var(--sg-space-1) var(--sg-space-3); padding: 0; }
+}
+sg-site-nav[data-wide] summary { display: none; }
+
+/* ── warm: written on the paper, a pencil line under the current page ── */
+sg-site-nav[data-skin="warm"] nav { border-bottom-color: transparent; background: linear-gradient(var(--sg-pencil), var(--sg-pencil)) 0 100% / 100% 1px no-repeat; }
+sg-site-nav[data-skin="warm"] ul a { font: var(--sg-step-1) / 1.2 var(--sg-font-hand); }
+sg-site-nav[data-skin="warm"] ul a[aria-current] { text-decoration: none; font-weight: 400; }
+sg-site-nav[data-skin="warm"] summary { font-family: var(--sg-font-hand); font-weight: 400; font-size: var(--sg-step-1); border-color: var(--sg-pencil); border-radius: 46% 54% 50% 50% / 20% 20% 24% 22%; }
+sg-site-nav .sg-site-nav-pencil {
+  position: absolute;
+  left: var(--sg-space-2);
+  right: var(--sg-space-2);
+  bottom: 0.35rem;
+  width: calc(100% - 2 * var(--sg-space-2));
+  height: 8px;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--sg-accent-text);
+  stroke-linecap: round;
+}
+sg-site-nav .sg-site-nav-pencil path:first-child { stroke-width: 1.8; }
+sg-site-nav .sg-site-nav-pencil path:last-child { stroke-width: 0.9; opacity: 0.55; }
+
+/* ── playful: stamped tabs ── */
+sg-site-nav[data-skin="playful"] nav { border-bottom: var(--sg-stroke-bold) solid var(--sg-text); padding-bottom: 0; align-items: end; }
+sg-site-nav[data-skin="playful"] .sg-site-nav-home { font-family: var(--sg-font-hand); padding-bottom: var(--sg-space-2); }
+sg-site-nav[data-skin="playful"] ul { gap: var(--sg-space-2); padding-bottom: var(--sg-space-2); }
+sg-site-nav[data-skin="playful"] ul a {
+  padding-inline: var(--sg-space-3);
+  border: var(--sg-stroke-bold) solid var(--sg-text);
+  border-radius: var(--sg-radius-2);
+  box-shadow: inset 0 0 0 2px var(--sg-surface), inset 0 0 0 3px var(--sg-text);
+  background: var(--sg-surface-raised);
+  font: var(--sg-weight-bold) var(--sg-step--1) / 1 var(--sg-font-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: rotate(var(--sg-nav-tilt, 0deg));
+}
+sg-site-nav[data-skin="playful"] ul a[aria-current] {
+  background: var(--sg-accent);
+  color: var(--sg-on-accent);
+  border-color: var(--sg-accent);
+  box-shadow: inset 0 0 0 2px var(--sg-accent), inset 0 0 0 3px var(--sg-on-accent);
+  text-decoration: none;
+}
+sg-site-nav[data-skin="playful"] summary { border-width: var(--sg-stroke-bold); border-color: var(--sg-text); font-weight: var(--sg-weight-bold); margin-bottom: var(--sg-space-2); }
+@container (min-width: 40rem) {
+  sg-site-nav[data-skin="playful"] ul { padding-bottom: 0; }
+  sg-site-nav[data-skin="playful"] ul a { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-width: 0; margin-bottom: -1px; transform-origin: 50% 100%; }
+}
+
+@media (forced-colors: active) {
+  sg-site-nav .sg-site-nav-pencil { stroke: LinkText; }
+  sg-site-nav ul a[aria-current] { border: 2px solid LinkText; }
+}

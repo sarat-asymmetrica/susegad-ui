@@ -1,0 +1,274 @@
+/* <sg-chat-thread>. Without JavaScript this is the quiet look: a ruled
+   transcript like a court record. Warm puts each message in a hand-inked
+   bubble on paper; playful uses bright bubbles that bounce in. The words,
+   names and times are always the builder's own text. */
+
+sg-chat-thread {
+  display: block;
+  container-type: inline-size;
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body);
+}
+sg-chat-thread[hidden] { display: none; }
+
+sg-chat-thread > :is(ol, ul) {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+sg-chat-thread li { margin: 0; }
+sg-chat-thread .sg-chat-text { margin: 0; overflow-wrap: anywhere; }
+sg-chat-thread .sg-chat-text + .sg-chat-text { margin-top: var(--sg-space-2); }
+
+/* ── quiet: the ruled transcript ─────────────────────────────────────── */
+
+sg-chat-thread li:not(.sg-chat-day) {
+  display: grid;
+  grid-template-columns: minmax(7rem, 12rem) minmax(0, 1fr) auto;
+  column-gap: var(--sg-space-3);
+  align-items: baseline;
+  padding-block: var(--sg-space-2);
+  border-bottom: var(--sg-hairline) solid var(--sg-rule);
+}
+sg-chat-thread li:not(.sg-chat-day) > * { grid-column: 2; }
+sg-chat-thread li:not(.sg-chat-day) > .sg-chat-who { grid-column: 1; grid-row: 1; }
+sg-chat-thread li:not(.sg-chat-day) > .sg-chat-time { grid-column: 3; grid-row: 1; }
+sg-chat-thread .sg-chat-who {
+  font-weight: var(--sg-weight-medium);
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.04em;
+  color: var(--sg-text-soft);
+}
+sg-chat-thread li[data-from="me"] > .sg-chat-who { color: var(--sg-accent-text); }
+sg-chat-thread .sg-chat-time {
+  font-size: var(--sg-step--1);
+  color: var(--sg-text-faint);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@container (max-width: 30rem) {
+  sg-chat-thread li:not(.sg-chat-day) { grid-template-columns: minmax(0, 1fr) auto; }
+  sg-chat-thread li:not(.sg-chat-day) > * { grid-column: 1 / -1; }
+  sg-chat-thread li:not(.sg-chat-day) > .sg-chat-who { grid-column: 1; }
+  sg-chat-thread li:not(.sg-chat-day) > .sg-chat-time { grid-column: 2; }
+}
+
+/* the date divider: a small-capitals date between two hairlines */
+sg-chat-thread li.sg-chat-day {
+  display: flex;
+  align-items: center;
+  gap: var(--sg-space-3);
+  margin-block: var(--sg-space-3) var(--sg-space-2);
+  font-size: var(--sg-step--1);
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.06em;
+  color: var(--sg-text-soft);
+}
+sg-chat-thread li.sg-chat-day::before,
+sg-chat-thread li.sg-chat-day::after {
+  content: "";
+  flex: 1;
+  border-top: var(--sg-hairline) solid var(--sg-rule);
+}
+
+/* Delivered and read ticks: decoration only, a mask on an empty pseudo-element. */
+sg-chat-thread li[data-status] > .sg-chat-time::after {
+  content: "";
+  display: inline-block;
+  width: 1.15em;
+  height: 0.8em;
+  margin-inline-start: 0.3em;
+  vertical-align: -0.02em;
+  background: currentColor;
+  -webkit-mask: var(--sg-chat-tick) center / contain no-repeat;
+  mask: var(--sg-chat-tick) center / contain no-repeat;
+  --sg-chat-tick: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 12'%3E%3Cpath d='M2 6.6l1.3-1.3 2.4 2.4 5.6-5.6 1.3 1.3-6.9 6.9z'/%3E%3C/svg%3E");
+}
+sg-chat-thread li:is([data-status="delivered"], [data-status="read"]) > .sg-chat-time::after {
+  --sg-chat-tick: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 12'%3E%3Cpath d='M1 6.6l1.3-1.3 2.4 2.4 5.6-5.6 1.3 1.3-6.9 6.9zM7.6 8.1l1.3-1.3.6.6 5.6-5.6 1.3 1.3-6.9 6.9z'/%3E%3C/svg%3E");
+}
+sg-chat-thread li[data-status="read"] > .sg-chat-time::after { background: var(--sg-info); }
+
+/* Redacted: a solid bar that says what was taken out. The original text is
+   not here at all; it was removed before the HTML was written. */
+sg-chat-thread .sg-redacted,
+.sg-redacted {
+  display: inline-block;
+  padding: 0 0.45em;
+  border-radius: var(--sg-radius-1);
+  background: var(--sg-text);
+  color: var(--sg-surface);
+  font-size: 0.86em;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+/* ── warm and playful: bubbles ───────────────────────────────────────── */
+
+sg-chat-thread:is([data-skin="warm"], [data-skin="playful"]) > :is(ol, ul) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sg-space-3);
+}
+sg-chat-thread:is([data-skin="warm"], [data-skin="playful"]) li:not(.sg-chat-day) {
+  display: block;
+  position: relative;
+  isolation: isolate;
+  width: fit-content;
+  min-width: 6rem;
+  max-width: min(85%, 34rem);
+  padding: 0.5em 0.9em 0.45em;
+  border-bottom: 0;
+  align-self: flex-start;
+  margin-inline-start: 10px;
+}
+sg-chat-thread:is([data-skin="warm"], [data-skin="playful"]) li[data-from="me"] {
+  align-self: flex-end;
+  margin-inline: 0 10px;
+}
+sg-chat-thread:is([data-skin="warm"], [data-skin="playful"]) li[data-run="continue"] { margin-top: calc(var(--sg-space-2) - var(--sg-space-3)); }
+sg-chat-thread:is([data-skin="warm"], [data-skin="playful"]) .sg-chat-who {
+  display: block;
+  font-size: var(--sg-step--1);
+  font-variant-caps: normal;
+  letter-spacing: 0;
+}
+/* A run of messages from one person names them once to the eye, every time to a screen reader. */
+sg-chat-thread:is([data-skin="warm"], [data-skin="playful"]) li[data-run="continue"] > .sg-chat-who {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+sg-chat-thread:is([data-skin="warm"], [data-skin="playful"]) .sg-chat-time {
+  display: block;
+  text-align: end;
+  margin-top: 0.1em;
+  line-height: 1.3;
+}
+
+/* warm: speech on paper, inside an inked outline */
+sg-chat-thread[data-skin="warm"] li:not(.sg-chat-day) { background: transparent; }
+sg-chat-thread[data-skin="warm"] .sg-chat-who { font-family: var(--sg-font-hand); font-size: var(--sg-step-0); line-height: 1.3; }
+sg-chat-thread .sg-chat-ink {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  stroke: var(--sg-text-soft);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+sg-chat-thread .sg-chat-ink path:first-child { stroke-width: 1.4; fill: var(--sg-surface-raised); }
+sg-chat-thread .sg-chat-ink path:last-child { stroke-width: 0.8; fill: none; opacity: 0.5; }
+sg-chat-thread li[data-from="me"] .sg-chat-ink { stroke: var(--sg-accent-text); }
+sg-chat-thread li[data-from="me"] .sg-chat-ink path:first-child { fill: var(--sg-surface-sunk); }
+
+/* playful: bright bubbles */
+sg-chat-thread[data-skin="playful"] li:not(.sg-chat-day) {
+  background: var(--sg-selection);
+  border-radius: 4px 18px 18px 18px;
+  box-shadow: 0 2px 0 var(--sg-rule-strong);
+}
+sg-chat-thread[data-skin="playful"] li:not(.sg-chat-day) > .sg-chat-who { color: var(--sg-text); font-weight: var(--sg-weight-bold); }
+sg-chat-thread[data-skin="playful"] li:not(.sg-chat-day) > .sg-chat-time { color: var(--sg-text-soft); }
+sg-chat-thread[data-skin="playful"] li[data-from="me"] {
+  background: var(--sg-accent);
+  color: var(--sg-on-accent);
+  border-radius: 18px 4px 18px 18px;
+}
+sg-chat-thread[data-skin="playful"] li[data-from="me"] :is(.sg-chat-who, .sg-chat-time) { color: var(--sg-on-accent); }
+sg-chat-thread[data-skin="playful"] li[data-from="me"] a { color: inherit; }
+sg-chat-thread[data-skin="playful"] li[data-status="read"] > .sg-chat-time::after { background: currentColor; }
+sg-chat-thread[data-skin="playful"] li[data-from="me"] .sg-redacted { background: var(--sg-on-accent); color: var(--sg-accent); }
+sg-chat-thread[data-skin="playful"] li.sg-chat-day { font-family: var(--sg-font-hand); font-variant-caps: normal; letter-spacing: 0; font-size: var(--sg-step-0); }
+
+/* ── replies and reactions ─────────────────────────────────────────── */
+
+/* Words for assistive technology only ("Replying to:"). */
+sg-chat-thread .sg-chat-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* A quoted reply. Quiet: an indented, ruled quote. */
+sg-chat-thread .sg-chat-reply {
+  position: relative;
+  margin: 0.15em 0 0.35em;
+  padding: 0.1em 0 0.1em var(--sg-space-3);
+  border-inline-start: var(--sg-stroke) solid var(--sg-rule-strong);
+  font-size: var(--sg-step--1);
+  line-height: var(--sg-leading-snug);
+  color: var(--sg-text-soft);
+}
+sg-chat-thread .sg-chat-reply-who { display: block; font-weight: var(--sg-weight-medium); color: var(--sg-text-soft); }
+/* Two lines of the quoted message are enough to recognise it; all of it is still read aloud. */
+sg-chat-thread .sg-chat-reply-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
+
+/* A reaction: one emoji, read as "Reacted with a heart". Quiet: a small chip under the words. */
+sg-chat-thread .sg-chat-reaction {
+  justify-self: start;
+  display: inline-block;
+  width: fit-content;
+  margin-top: var(--sg-space-1);
+  padding: 0 0.4em;
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-pill);
+  background: var(--sg-surface-raised);
+  font-size: var(--sg-step--1);
+  line-height: 1.6;
+}
+
+/* warm and playful: the reaction sits on the bubble's lower edge, on the speaker's side */
+sg-chat-thread:is([data-skin="warm"], [data-skin="playful"]) li:has(> .sg-chat-reaction) { margin-bottom: 0.9rem; }
+sg-chat-thread:is([data-skin="warm"], [data-skin="playful"]) .sg-chat-reaction {
+  position: absolute;
+  z-index: 1;
+  bottom: -1.05rem;
+  inset-inline-start: 0.8em;
+  margin: 0;
+  box-shadow: 0 1px 2px var(--sg-shadow);
+}
+sg-chat-thread:is([data-skin="warm"], [data-skin="playful"]) li[data-from="me"] > .sg-chat-reaction { inset-inline: auto 0.8em; }
+
+/* warm: the reply as a snippet in a pencil bracket */
+sg-chat-thread[data-skin="warm"] .sg-chat-reply {
+  border: var(--sg-stroke) solid var(--sg-pencil);
+  border-inline-end: 0;
+  border-radius: 4px 0 0 4px;
+  padding: 0.2em 0 0.2em var(--sg-space-2);
+  font-style: italic;
+}
+sg-chat-thread[data-skin="warm"] .sg-chat-reply-who { font: 400 var(--sg-step-0) / 1.2 var(--sg-font-hand); font-style: normal; }
+
+/* playful: a tinted inset with a bar in the accent colour */
+sg-chat-thread[data-skin="playful"] .sg-chat-reply {
+  border-inline-start: 4px solid var(--sg-accent);
+  border-radius: var(--sg-radius-2);
+  padding: 0.3em 0.6em;
+  background: var(--sg-surface-raised);
+  color: var(--sg-text-soft);
+}
+sg-chat-thread[data-skin="playful"] .sg-chat-reply-who { color: var(--sg-accent-text); font-weight: var(--sg-weight-bold); }
+sg-chat-thread[data-skin="playful"] li[data-from="me"] .sg-chat-reply { border-inline-start-color: var(--sg-on-accent); }
+sg-chat-thread[data-skin="playful"] li[data-from="me"] .sg-chat-reply :is(.sg-chat-reply-who, .sg-chat-reply-text) { color: var(--sg-text); }
+
+@media (forced-colors: active) {
+  sg-chat-thread .sg-chat-reply { border-color: CanvasText; }
+  sg-chat-thread .sg-chat-reaction { border-color: CanvasText; }
+  sg-chat-thread li[data-status] > .sg-chat-time::after { forced-color-adjust: none; background: CanvasText; }
+  sg-chat-thread:is([data-skin="warm"], [data-skin="playful"]) li:not(.sg-chat-day) { border: 1px solid CanvasText; }
+  .sg-redacted { border: 1px solid CanvasText; }
+}

@@ -1,6 +1,7 @@
 {
   "name": "field",
   "type": "component",
+  "stability": "experimental",
   "title": "Field (TextField, TextArea)",
   "description": "A label over a ruled line, for a line of text or a longer message, wrapping a native input or textarea that types, autofills, validates and submits without JavaScript. Quiet is the hairline rule under a writing well; warm writes on the paper itself, over a seeded pencil rule that inks from left to right on focus and under your words as you type, with a laterite exercise-book margin down a textarea; playful draws the same in accent ink with a thicker nib and wobbles on twos while you type. Counts characters near a maxlength, aloud only at 20, 10 and 0.",
   "version": "0.1.0",

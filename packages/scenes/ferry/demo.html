@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ferry scene</title>
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .lede { margin: 0 0 20px; color: var(--sg-text-soft, inherit); }
+  sg-scene { border-radius: 6px; }
+  sg-scene h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  sg-scene p { margin: 0; }
+  form { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 20px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  legend { font-weight: 600; float: left; margin-right: 8px; }
+  button { font: inherit; padding: 6px 14px; border-radius: 6px; border: 1px solid currentColor; background: none; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  #where { font-size: 0.95rem; color: var(--sg-text-soft, inherit); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Ferry</h1>
+  <p class="lede">Four stops across the river. A dev page for the scene: the steps live in the list below, and the ferry follows them.</p>
+  <sg-scene id="ferry" name="ferry" label="How it goes"></sg-scene>
+  <ol id="steps">
+    <li>We chat</li>
+    <li>I dig in</li>
+    <li>I build the lean version</li>
+    <li>It's yours</li>
+  </ol>
+  <form id="controls">
+    <fieldset>
+      <legend>Register</legend>
+      <label><input type="radio" name="register" value="quiet"> Quiet</label>
+      <label><input type="radio" name="register" value="warm"> Warm</label>
+      <label><input type="radio" name="register" value="playful"> Playful</label>
+    </fieldset>
+    <label><input type="checkbox" id="dark"> Dark</label>
+    <button type="button" id="back">Previous step</button>
+    <button type="button" id="next">Next step</button>
+    <button type="button" id="clear">No step</button>
+  </form>
+</main>
+<script type="module">
+  const q = new URLSearchParams(location.search), root = document.documentElement;
+  const el = document.getElementById('ferry');
+  const register = q.get('register') || 'warm';
+  root.dataset.register = register;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+  for (const k of ['seed', 'step']) if (q.has(k)) el.setAttribute(k, q.get(k));
+  el.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__piece = el;
+  await import('./index.js');
+
+  const form = document.getElementById('controls'), dark = document.getElementById('dark'), items = [...document.querySelectorAll('#steps li')];
+  form.register.value = register;
+  dark.checked = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  const mark = () => { const n = el.params.step; items.forEach((li, i) => (n === i + 1 ? li.setAttribute('aria-current', 'step') : li.removeAttribute('aria-current'))); };
+  const go = n => { n === null ? el.removeAttribute('step') : el.setAttribute('step', String(n)); requestAnimationFrame(mark); };
+  form.addEventListener('change', e => {
+    if (e.target.name === 'register') root.dataset.register = form.register.value;
+    if (e.target === dark) root.dataset.theme = dark.checked ? 'dark' : 'light';
+  });
+  document.getElementById('next').onclick = () => go(Math.min(4, (el.params.step ?? 1) + 1));
+  document.getElementById('back').onclick = () => go(Math.max(1, (el.params.step ?? 1) - 1));
+  document.getElementById('clear').onclick = () => go(null);
+  // in playful the drawing itself can move the ferry on; keep the list in step with it
+  el.addEventListener('keyup', mark); el.addEventListener('click', () => requestAnimationFrame(mark));
+  mark();
+</script>
+<style>#steps li[aria-current] { font-weight: 600; } #steps li[aria-current]::after { content: " (here now)"; font-weight: 400; color: var(--sg-text-soft, inherit); }</style>
+</body>
+</html>

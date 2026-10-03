@@ -4,11 +4,12 @@
 //
 //   node packages/components/select/select.check.mjs
 
-import { chromium } from 'playwright';
+import { engineName, pickEngine, unsupportedIn } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const engine = engineName();
+const browser = await pickEngine(engine).launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const url = `${server.url}/packages/components/select/demo.html`;
@@ -54,17 +55,33 @@ async function open({ js = true, register = 'warm', reduced = false } = {}) {
   await page.keyboard.press(' ');
   await wait(200);
   check('Space opens the picker', await page.evaluate(() => document.querySelector('#room').matches(':open')));
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.press('Enter');
-  await wait(200);
-  check('the arrows and Enter choose, and the picker closes', await page.inputValue('#room') !== '' && !(await page.evaluate(() => document.querySelector('#room').matches(':open'))), await page.inputValue('#room'));
-  check('focus comes back to the select', await page.evaluate(() => document.activeElement.id) === 'room');
-  await page.keyboard.press(' ');
-  await wait(150);
-  await page.keyboard.press('Escape');
-  await wait(150);
-  check('Escape closes the picker without changing the choice', !(await page.evaluate(() => document.querySelector('#room').matches(':open'))) && await page.inputValue('#room') !== '');
+  if (engine === 'firefox') {
+    // Confirmed directly, 2026-09-28: Firefox opens the native picker on
+    // Space (the check above passes), but ArrowDown/Enter inside it neither
+    // move the selection nor close it -- focus stays on the <select> itself,
+    // value stays empty. A real gap in Firefox's support for keyboard
+    // navigation inside an open, CSS-customised native <select> (the
+    // Customizable Select feature), not a Susegad bug: the select is
+    // entirely native here. The rest of this block still needs a chosen
+    // value to test the drawing and the form, so it's set with
+    // selectOption() (a real, if not keyboard, interaction) instead.
+    unsupportedIn(engine, 'arrow-key navigation inside an open native <select> picker', 'ArrowDown/Enter do not move the selection or close the popover');
+    await page.keyboard.press('Escape');
+    await wait(150);
+    await page.selectOption('#room', { index: 1 });
+  } else {
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    await wait(200);
+    check('the arrows and Enter choose, and the picker closes', await page.inputValue('#room') !== '' && !(await page.evaluate(() => document.querySelector('#room').matches(':open'))), await page.inputValue('#room'));
+    check('focus comes back to the select', await page.evaluate(() => document.activeElement.id) === 'room');
+    await page.keyboard.press(' ');
+    await wait(150);
+    await page.keyboard.press('Escape');
+    await wait(150);
+    check('Escape closes the picker without changing the choice', !(await page.evaluate(() => document.querySelector('#room').matches(':open'))) && await page.inputValue('#room') !== '');
+  }
   const warm = await page.evaluate(() => {
     const at = id => document.querySelector(`#${id}`).closest('sg-select');
     const shown = id => getComputedStyle(at(id).querySelector('.sg-rule__ink')).display !== 'none';
@@ -82,12 +99,19 @@ async function open({ js = true, register = 'warm', reduced = false } = {}) {
 for (const register of ['quiet', 'warm', 'playful']) {
   const { page, ctx, errors } = await open({ register, reduced: true });
   await page.focus('#guests');
-  await page.keyboard.press(' ');
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.press('Enter');
-  await wait(150);
-  const closed = await page.evaluate(() => [...document.querySelectorAll('select')].every(s => !s.matches(':open')));
-  check(`${register}, reduced motion: choose by keyboard, every other picker stays closed`, await page.inputValue('#guests') === '3' && closed && errors.length === 0, errors.join(' | '));
+  if (engine === 'firefox') {
+    unsupportedIn(engine, 'arrow-key navigation inside an open native <select> picker', 'see the with-JavaScript block above');
+    await page.selectOption('#guests', '3');
+    const closed = await page.evaluate(() => [...document.querySelectorAll('select')].every(s => !s.matches(':open')));
+    check(`${register}, reduced motion: choose (via selectOption, not the keyboard), every other picker stays closed`, await page.inputValue('#guests') === '3' && closed && errors.length === 0, errors.join(' | '));
+  } else {
+    await page.keyboard.press(' ');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    await wait(150);
+    const closed = await page.evaluate(() => [...document.querySelectorAll('select')].every(s => !s.matches(':open')));
+    check(`${register}, reduced motion: choose by keyboard, every other picker stays closed`, await page.inputValue('#guests') === '3' && closed && errors.length === 0, errors.join(' | '));
+  }
   await ctx.close();
 }
 

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kairi scene</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .lede { margin: 0 0 20px; color: var(--sg-text-soft, inherit); }
+  sg-scene { border-radius: 6px; }
+  sg-scene h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  sg-scene p { margin: 0; }
+  form { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 20px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  legend { font-weight: 600; float: left; margin-right: 8px; }
+  button { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--sg-rule-strong, currentColor); background: var(--sg-surface-raised, Canvas); color: inherit; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  .credit { margin: 16px 0 0; padding-left: 12px; border-left: 2px solid var(--sg-rule-strong, currentColor); color: var(--sg-text-soft, inherit); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Kairi</h1>
+  <p class="lede">A border for a sari, drawn by spinning circles. A dev page for the scene: registers, progress, and text over the cloth.</p>
+  <sg-scene id="kairi" name="kairi" label="Order progress">
+    <h2>Your order is being printed</h2>
+    <p>Each paisley is one step. We will write when it ships.</p>
+  </sg-scene>
+  <form id="controls">
+    <fieldset>
+      <legend>Register</legend>
+      <label><input type="radio" name="register" value="quiet"> Quiet</label>
+      <label><input type="radio" name="register" value="warm"> Warm</label>
+      <label><input type="radio" name="register" value="playful"> Playful</label>
+    </fieldset>
+    <label><input type="checkbox" id="dark"> Dark</label>
+    <label><input type="checkbox" id="text" checked> Text over the cloth</label>
+    <label><input type="checkbox" id="held"> Set progress</label>
+    <label for="progress">Progress</label>
+    <input type="range" id="progress" min="0" max="1" step="0.01" value="0.4">
+    <button type="button" id="reseed">Another border</button>
+  </form>
+  <p class="credit"><b>The paisley</b> (kairi, the raw mango shape) is shared across India and far beyond, printed, woven and embroidered. The madder, indigo and turmeric are the dyes of hand block printing.</p>
+</main>
+<script type="module">
+  const q = new URLSearchParams(location.search), root = document.documentElement;
+  const el = document.getElementById('kairi');
+  const register = q.get('register') || 'warm';
+  root.dataset.register = register;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+  for (const k of ['seed', 'progress']) if (q.has(k)) el.setAttribute(k, q.get(k));
+  if (q.get('content') === '0') el.innerHTML = '';
+  el.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__piece = el;
+  await import('./index.js');
+
+  const $ = id => document.getElementById(id), form = $('controls'), content = el.innerHTML;
+  form.register.value = register;
+  $('dark').checked = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  $('text').checked = !!content.trim();
+  $('held').checked = el.hasAttribute('progress');
+  if (el.hasAttribute('progress')) $('progress').value = el.getAttribute('progress');
+  form.addEventListener('input', e => {
+    const t = e.target;
+    if (t.name === 'register') root.dataset.register = t.value;
+    else if (t.id === 'dark') root.dataset.theme = t.checked ? 'dark' : 'light';
+    else if (t.id === 'text') el.innerHTML = t.checked ? content : '';
+    else if (t.id === 'held' || t.id === 'progress') {
+      if (t.id === 'progress') $('held').checked = true;
+      $('held').checked ? el.setAttribute('progress', $('progress').value) : el.removeAttribute('progress');
+    }
+  });
+  $('reseed').addEventListener('click', () => el.reseed());
+</script>
+</body>
+</html>

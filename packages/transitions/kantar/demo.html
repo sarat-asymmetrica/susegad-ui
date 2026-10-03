@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<link rel="stylesheet" href="./kantar.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kantar interlude</title>
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 44rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .lede { max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .stage { position: relative; margin-top: var(--sg-space-4); height: 20rem; border-radius: var(--sg-radius-3); border: var(--sg-hairline) solid var(--sg-rule); overflow: hidden; }
+  .step { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--sg-space-4); text-align: center; }
+  .step h2 { font: 400 var(--sg-step-2) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .row { display: flex; gap: var(--sg-space-3); margin-top: var(--sg-space-4); flex-wrap: wrap; }
+  button.trigger { padding: 0.6em 1.2em; border-radius: var(--sg-radius-2); border: var(--sg-hairline) solid var(--sg-rule-strong); background: var(--sg-accent); color: var(--sg-on-accent); font: var(--sg-weight-medium) var(--sg-step-0) var(--sg-font-body); cursor: pointer; }
+  #log { margin-top: var(--sg-space-4); font-size: var(--sg-step--1); color: var(--sg-text-soft); white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Kantar interlude</h1>
+  <p class="lede">The curtain drops, a line plays while the real work happens (however long it actually takes), and the curtain rises on the next step. Quiet and reduced motion fall back to a plain status line; a skip control is always there.</p>
+
+  <div class="stage" id="stage">
+    <div id="step-slot">
+      <div class="step" id="step-1">
+        <div>
+          <h2>Step 1 of 2</h2>
+          <p>Your dates: 12 to 15 October.</p>
+          <button class="trigger" id="go" type="button">Confirm and continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <button class="trigger" id="go-slow" type="button">Run again, with a 3s wait</button>
+    <button class="trigger" id="go-fast" type="button">Run again, instant work</button>
+  </div>
+  <div id="log" role="log"></div>
+</main>
+<script type="module">
+  import { runKantar } from './kantar.js';
+
+  const stage = document.getElementById('stage');
+  const log = document.getElementById('log');
+  const say = s => { log.textContent += `${s}\n`; };
+  const register = new URLSearchParams(location.search).get('register') || 'warm';
+
+  function step2() {
+    const slot = document.getElementById('step-slot');
+    slot.replaceChildren();
+    const d = document.createElement('div');
+    d.className = 'step';
+    d.id = 'step-2';
+    d.innerHTML = '<div><h2 tabindex="-1">Step 2 of 2</h2><p>Held for 20 minutes. Enter your details to finish.</p></div>';
+    slot.append(d);
+    // The usual step-flow pattern: move focus to the new step's heading, so
+    // a screen reader announces the change the moment it happens, even
+    // while the curtain (purely decorative, aria-hidden) is still visually
+    // down for another ~300ms. The heading is behind the curtain but real,
+    // focusable and announced regardless of what is painted over it.
+    d.querySelector('h2').focus();
+  }
+
+  async function run(delayMs) {
+    log.textContent = '';
+    const work = new Promise(res => setTimeout(res, delayMs));
+    const result = await runKantar(stage, {
+      work,
+      lines: ['Checking the calendar for 12 to 15 October…', 'Holding your dates…'],
+      swap: step2,
+      register,
+      label: 'Holding your dates',
+    });
+    say(`done: ${JSON.stringify(result)}`);
+  }
+
+  document.getElementById('go').addEventListener('click', () => run(1200));
+  document.getElementById('go-slow').addEventListener('click', () => run(3000));
+  document.getElementById('go-fast').addEventListener('click', () => run(0));
+</script>
+</body>
+</html>

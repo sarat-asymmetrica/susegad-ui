@@ -1,8 +1,8 @@
 // Shared browser plumbing: launch, open a target with its errors captured, wait for it.
 
-import { chromium } from 'playwright';
 import { startServer } from '../serve.mjs';
 import { targetPath } from './target.mjs';
+import { contextOptions, engineName, pickEngine } from './engine.mjs';
 
 export const PHONE = { width: 390, height: 844, dpr: 3, touch: true };
 export const DESKTOP = { width: 1280, height: 900, dpr: 1, touch: false };
@@ -11,11 +11,17 @@ export const DESKTOP = { width: 1280, height: 900, dpr: 1, touch: false };
  * Installed before any page script: lets a capture hold every requestAnimationFrame loop
  * without touching the piece's own state or UI (a paused scene would show its play toggle).
  * While held, new rAF callbacks queue instead of running; release() schedules them again.
+ * step(n) is for the strip and onion tools: while held, it plays n frames by hand. Each frame runs
+ * the queued callbacks with a fresh timestamp (the harness clock's wrapper counts one virtual
+ * frame per new timestamp, so one step is one 1/60 s tick of that clock) and then lets every
+ * promise and message settle, so a scene that awaits a frame sees every one. No vsync wait.
  */
 const HOLD_SCRIPT = `(() => {
   const raf = window.requestAnimationFrame.bind(window), caf = window.cancelAnimationFrame.bind(window);
   const queued = new Map();
-  let holding = false, nextId = 1e9;
+  let holding = false, nextId = 1e9, fakeTs = 1e6;
+  const port = new MessageChannel();
+  const settle = () => new Promise(r => { port.port1.onmessage = () => r(); port.port2.postMessage(0); });
   window.requestAnimationFrame = cb => {
     if (!holding) return raf(cb);
     const id = nextId++;
@@ -24,7 +30,18 @@ const HOLD_SCRIPT = `(() => {
   };
   window.cancelAnimationFrame = id => { if (!queued.delete(id)) caf(id); };
   Object.defineProperty(window, '__tools', { value: Object.freeze({
+    get held() { return holding; },
     hold() { holding = true; },
+    async step(n = 1) {
+      if (!holding) throw new Error('__tools.step needs __tools.hold() first');
+      for (let i = 0; i < n; i++) {
+        const cbs = [...queued.values()];
+        queued.clear();
+        fakeTs += 1000 / 60;
+        for (const cb of cbs) { try { cb(fakeTs); } catch (e) { setTimeout(() => { throw e; }); } }
+        await settle();
+      }
+    },
     release() {
       holding = false;
       const cbs = [...queued.values()];
@@ -37,9 +54,10 @@ const HOLD_SCRIPT = `(() => {
 /** Start the server and the browser together; `done()` closes both. */
 export async function session({ headed = false, args = [] } = {}) {
   const server = await startServer({ quiet: true });
-  const browser = await chromium.launch({ headless: !headed, args });
+  const engine = engineName();
+  const browser = await pickEngine(engine).launch({ headless: !headed, args });
   return {
-    server, browser, base: server.url,
+    server, browser, engine, base: server.url,
     version: browser.version(),
     async done() { await browser.close(); await server.close(); },
   };
@@ -50,11 +68,17 @@ export async function session({ headed = false, args = [] } = {}) {
  * console errors, console warnings, page errors and failed requests.
  * @param {Awaited<ReturnType<typeof session>>} s
  * @param {object} t target (see target.mjs) plus freeze
- * @param {{ width?: number, height?: number, dpr?: number, touch?: boolean, reduced?: boolean }} view
+ * @param {{ width?: number, height?: number, dpr?: number, touch?: boolean, reduced?: boolean, hold?: boolean }} view
+ *   hold: every rAF loop is held from the first script
+ *   holdAtReady: the page loads as it normally would, and every rAF loop is held at the moment the
+ *     scene fires sg-ready (in the same task, so the frame count there is the scene's own). The
+ *     strip and onion tools then step it by hand. Holding from the first script instead changes
+ *     the order in which a scene's real events and frame callbacks run, and Tinto's glass then
+ *     settled a few pixels apart from load to load.
  */
 export async function openTarget(s, t, view = {}) {
-  const { width = DESKTOP.width, height = DESKTOP.height, dpr = 1, touch = false, reduced = false } = view;
-  const context = await s.browser.newContext({
+  const { width = DESKTOP.width, height = DESKTOP.height, dpr = 1, touch = false, reduced = false, hold = false, holdAtReady = false } = view;
+  const context = await s.browser.newContext(contextOptions(s.engine, {
     viewport: { width, height },
     deviceScaleFactor: dpr,
     hasTouch: touch,
@@ -64,8 +88,10 @@ export async function openTarget(s, t, view = {}) {
     // --no-js: the page as a browser without JavaScript builds it. <noscript> renders, no page
     // script runs. The tools' own page.evaluate calls still work, but timers and rAF do not.
     javaScriptEnabled: !t.noJs,
-  });
+  }));
   await context.addInitScript(HOLD_SCRIPT);
+  if (hold) await context.addInitScript('window.__tools.hold();');
+  if (holdAtReady) await context.addInitScript("document.addEventListener('sg-ready', () => window.__tools.hold(), { capture: true, once: true });");
   const page = await context.newPage();
   const log = { consoleErrors: [], warnings: [], pageErrors: [], failedRequests: [] };
   page.on('console', m => {
@@ -169,12 +195,14 @@ export async function shoot(page, selector, file) {
   // compositor. The piece is not paused, so its UI (the play/pause toggle) shows its real state.
   // One in-flight frame may still land, so wait a little after holding.
   // The wait is on the Node side: in-page timers never fire with --no-js.
-  const held = await page.evaluate(() => {
+  // A page already held by the caller (the strip tool stepping it) stays held afterwards.
+  const already = await page.evaluate(() => !!window.__tools?.held);
+  const held = already || await page.evaluate(() => {
     if (!window.__tools) return false;
     window.__tools.hold();
     return true;
   });
-  if (held) await page.waitForTimeout(40);
+  if (held && !already) await page.waitForTimeout(40);
   try {
     try { return await page.screenshot(opts); }
     catch (e) {
@@ -182,7 +210,7 @@ export async function shoot(page, selector, file) {
       return await page.screenshot(opts); // one retry: heavy load can stall a single capture
     }
   } finally {
-    if (held) await page.evaluate(() => window.__tools.release());
+    if (held && !already) await page.evaluate(() => window.__tools.release());
   }
 }
 
@@ -221,10 +249,10 @@ export async function openNoJsSnapshot(s, t, view = {}) {
   });
   await first.context.close();
   const { width = DESKTOP.width, height = DESKTOP.height, dpr = 1, touch = false, reduced = false } = view;
-  const context = await s.browser.newContext({
+  const context = await s.browser.newContext(contextOptions(s.engine, {
     viewport: { width, height }, deviceScaleFactor: dpr, hasTouch: touch, isMobile: touch,
     reducedMotion: reduced ? 'reduce' : 'no-preference', colorScheme: t.theme === 'dark' ? 'dark' : 'light',
-  });
+  }));
   const page = await context.newPage();
   await page.route(first.url, r => r.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: html }));
   await page.goto(first.url, { waitUntil: 'load' });

@@ -1,6 +1,8 @@
 {
   "name": "scene-kolam",
   "type": "scene",
+  "stability": "experimental",
+  "useFor": ["loader","hero"],
   "title": "Kolam",
   "description": "One unbroken line of rice flour around a grid of dots, found with the mirror-curve method. Hairline ink in quiet, drawn once at a hand's pace in warm, poured by your hand with rangoli colour and ants in playful. The progress attribute draws it exactly that far.",
   "version": "0.1.0",

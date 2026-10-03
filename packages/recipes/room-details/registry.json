@@ -1,6 +1,7 @@
 {
   "name": "room-details",
   "type": "recipe",
+  "stability": "experimental",
   "title": "Room details",
   "description": "A guest-facing room card for a homestay. A skeleton stands in until the room's details really arrive, then inks them in: a painted view, name, beds, the rate in rupees with Indian digit grouping, what is included, and availability as a badge. If the details cannot be loaded it says so plainly, with Try again. Driven by a pure, seeded fake source you swap for your own.",
   "version": "0.1.0",

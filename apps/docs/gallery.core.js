@@ -1,7 +1,7 @@
 // The Components gallery's pure core: registry.json -> groups and cards.
 //
-// Runs in Node (tested by gallery.core.test.js) and in the browser (gallery.js
-// imports it to filter and re-render). Takes no DOM, no fetch, no fs: whatever
+// Runs in Node (tested by gallery.core.test.js; pages.mjs builds the item pages
+// from its cards). Takes no DOM, no fetch, no fs: whatever
 // needs a disk read (does a demo file exist?) is passed in as `fileExists`,
 // so the same code is tested against a fixture and run against the real tree.
 
@@ -81,11 +81,19 @@ export function toCard(item, fileExists, isPlated = () => false) {
     previewKind = 'scene';
   }
 
+  // a scape (decision 0020) is labelled with both figures: what the reader waits for, and the whole year
+  const kb = n => `${Math.round(n / 1024)} KB`;
+  const tierNote = item.tier === 'scape' ? `scape: ${kb(item.firstSightBytes)} at first sight, ${kb(item.jsBytes)} in all` : null;
+
   return {
     name: item.name,
     type: item.type,
+    tierNote,
     title: item.title || item.name,
     description: trim(item.description),
+    stability: item.stability || 'experimental',
+    stabilityReason: item.stabilityReason || null,
+    useFor: (item.useFor || []).slice(),
     registers: (item.registers || []).slice(),
     demoUrl,
     docsUrl: item.docs ? `/${item.docs}` : null,

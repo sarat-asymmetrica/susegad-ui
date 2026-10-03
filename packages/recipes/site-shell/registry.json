@@ -1,0 +1,39 @@
+{
+  "name": "site-shell",
+  "type": "recipe",
+  "title": "Site shell",
+  "description": "Proves Wave 5's pieces work together on one page for a fictional homestay, Casa Aldona: a header with Tabs (Overview, Rooms, Book) and a Menu (Account), a Dialog (\"Ask the house\"), a Drawer (the rooms), a scroll section driving the Paus scene by real scroll, and a Kantar interlude between two steps of a small booking flow. Every piece is a plain library part; this recipe adds no new theatre of its own, only the composition and a tiny two-step flow state (site-shell.core.js). Without JavaScript every section shows and Dialog/Drawer's openers are real links to a real page.",
+  "version": "0.1.0",
+  "files": [
+    "recipe.js",
+    "site-shell.core.js",
+    "recipe.css",
+    "index.html",
+    "no-js.html",
+    "README.md",
+    "recipe.prompt.md"
+  ],
+  "dependencies": [
+    "tabs",
+    "action-menu",
+    "button",
+    "link",
+    "dialog",
+    "drawer",
+    "scroll-section",
+    "transitions",
+    "kantar-interlude",
+    "scene-paus",
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "recipe.prompt.md",
+  "docs": "README.md"
+}

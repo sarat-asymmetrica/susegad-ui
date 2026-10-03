@@ -1,0 +1,87 @@
+/* The Kantar interlude. Only mounted in warm and playful (kantar.js falls
+   back to .sg-kantar-plain, a status line, in quiet and under reduced
+   motion — see kantar.js). --sg-kantar-curtain (0 open .. 1 closed) and
+   --sg-kantar-spot (0 or 1) drive the CSS side (the spotlight text's
+   opacity); the curtain's own drawing — folds, the hem that ripples when
+   it lands, the pelmet, the spotlight pool, the singer's silhouette in
+   playful — is a <canvas> kantar.js paints every frame from the pure
+   core's geometry (foldSway, hemWave, spotIntensity, singerSilhouette).
+   This file only sizes and positions that canvas and the DOM text above
+   it (Sutradhar review, 25 Sep, KS1: an earlier draft was a flat coloured
+   box with no folds, ripple, spot or figure — the harvest's whole point). */
+
+.sg-kantar {
+  --sg-kantar-curtain: 0;
+  --sg-kantar-spot: 0;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--sg-surface);
+}
+
+.sg-kantar-curtain {
+  position: absolute;
+  inset: 0;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+.sg-kantar-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.sg-kantar-spot {
+  /* A caption band below the stage floor, not a centred overlay: Rasika's
+     Wave 5 review, S3. Centring the line on the box centred the singer's
+     silhouette too (both landing on the same 50%-height anchor by
+     construction), so the line crossed the figure's head every time in
+     playful. The line now sits low, under the singer's feet, in both
+     registers — warm never had a figure to clash with, but one shared
+     layout is simpler than a register-conditional one and reads well
+     either way. */
+  position: relative;
+  align-self: end;
+  justify-self: center;
+  margin-bottom: var(--sg-space-4, 1rem);
+  max-width: min(32rem, 86%);
+  padding: var(--sg-space-3, 0.75rem) var(--sg-space-5, 1.5rem);
+  text-align: center;
+  opacity: var(--sg-kantar-spot);
+  transition: opacity var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease);
+}
+.sg-kantar-line {
+  margin: 0;
+  color: #f6e7c4;
+  font: 400 var(--sg-step-1, 1.1rem) / var(--sg-leading-body, 1.5) var(--sg-font-hand, cursive);
+}
+
+.sg-kantar-skip {
+  position: absolute;
+  right: var(--sg-space-3, 0.75rem);
+  bottom: var(--sg-space-3, 0.75rem);
+  z-index: 1;
+  padding: 0.4em 0.9em;
+  border: var(--sg-hairline) solid rgba(246, 231, 196, 0.6);
+  border-radius: var(--sg-radius-pill, 999px);
+  background: rgba(0, 0, 0, 0.25);
+  color: #f6e7c4;
+  font: var(--sg-weight-medium, 500) var(--sg-step--1, 0.85rem) / 1 var(--sg-font-body, sans-serif);
+  cursor: pointer;
+}
+.sg-kantar-skip:hover { background: rgba(0, 0, 0, 0.4); }
+.sg-kantar-skip:focus-visible {
+  outline: var(--sg-focus-width) solid var(--sg-focus, #fff);
+  outline-offset: var(--sg-focus-offset);
+}
+
+/* the plain fallback: quiet and reduced motion */
+.sg-kantar-plain {
+  margin: 0;
+  padding: var(--sg-space-4, 1rem);
+  text-align: center;
+  color: var(--sg-text);
+  background: var(--sg-surface);
+}

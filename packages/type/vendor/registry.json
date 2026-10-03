@@ -1,0 +1,11 @@
+{
+  "name": "pretext",
+  "type": "package",
+  "title": "Pretext (vendored)",
+  "description": "Cheng Lou's Pretext, an ESM build of main at e73081f (MIT): multiline text measured and laid out by arithmetic over cached widths, with each browser's own line breaker. Used only through the type tier, and loaded only when a scene sets words in the world. Its bytes are recorded apart from ours (decision 0019).",
+  "version": "0.0.9-e73081f",
+  "files": ["pretext.js", "PROVENANCE.md", "LICENSE"],
+  "dependencies": [],
+  "budget": { "jsBytes": 112443, "reason": "Vendored and never edited: the exact bytes of the pinned build, so any change to it fails the build until it is recorded (decision 0019)." },
+  "docs": "PROVENANCE.md"
+}

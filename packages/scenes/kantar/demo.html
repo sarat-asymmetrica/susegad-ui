@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kantar: The Tiatr Stage &amp; Curtain</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  body {
+    margin: 0;
+    background: var(--sg-surface, Canvas);
+    color: var(--sg-text, CanvasText);
+    font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif);
+  }
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+  }
+  h1 { font-size: 1.5rem; margin: 0 0 6px; }
+  .lede { margin: 0 0 20px; color: var(--sg-text-soft, inherit); }
+  sg-scene {
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+  }
+  .lyrics-panel h2 {
+    margin: 0 0 4px;
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+  .lyrics-panel p {
+    margin: 0;
+    font-style: italic;
+    font-size: 1.05rem;
+  }
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+    align-items: center;
+    margin-top: 24px;
+    padding: 16px;
+    background: var(--sg-surface-raised, rgba(0, 0, 0, 0.03));
+    border-radius: 8px;
+  }
+  fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+  legend {
+    font-weight: 600;
+    float: left;
+    margin-right: 8px;
+  }
+  label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  select, button, input[type="range"] {
+    font: inherit;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--sg-rule-strong, currentColor);
+    background: var(--sg-surface, Canvas);
+    color: inherit;
+  }
+  button {
+    cursor: pointer;
+    font-weight: 500;
+  }
+  button:hover {
+    background: var(--sg-surface-raised, rgba(0, 0, 0, 0.08));
+  }
+  :focus-visible {
+    outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight);
+    outline-offset: 2px;
+  }
+  .songs-list {
+    margin-top: 24px;
+    padding-left: 1.2em;
+    color: var(--sg-text-soft, inherit);
+  }
+  .songs-list li { margin-bottom: 6px; }
+  .songs-list b { color: var(--sg-text, inherit); }
+  .note {
+    margin: 20px 0 0;
+    padding-left: 12px;
+    border-left: 2px solid var(--sg-rule-strong, currentColor);
+    color: var(--sg-text-soft, inherit);
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Kantar</h1>
+  <p class="lede">The Tiatr Stage &amp; Curtain. A song sung between scenes while the set changes behind. Click or tap the stage in playful to advance the show.</p>
+
+  <sg-scene id="kantar" name="kantar" register="warm">
+    <div class="lyrics-panel">
+      <h2 id="lyric-scene">Scene one: the church square</h2>
+      <p id="lyric-song">Susegad: the unhurried contentment of a Goan afternoon</p>
+    </div>
+  </sg-scene>
+
+  <form id="controls">
+    <fieldset>
+      <legend>Register</legend>
+      <label><input type="radio" name="register" value="quiet"> Quiet</label>
+      <label><input type="radio" name="register" value="warm" checked> Warm</label>
+      <label><input type="radio" name="register" value="playful"> Playful</label>
+    </fieldset>
+
+    <label><input type="checkbox" id="dark"> Dark theme</label>
+
+    <label for="set-select">Backdrop</label>
+    <select id="set-select">
+      <option value="">Show timeline</option>
+      <option value="0">0: Church square</option>
+      <option value="1">1: Beach at dusk</option>
+      <option value="2">2: Balcão at night</option>
+    </select>
+
+    <label for="curtain-range">Curtain</label>
+    <input type="range" id="curtain-range" min="0" max="1" step="0.01" value="0">
+    <label><input type="checkbox" id="curtain-auto" checked> Auto</label>
+
+    <button type="button" id="btn-next">Next phase</button>
+  </form>
+
+  <div class="note">
+    <b>Scene Contract v2.</b> In Quiet, the curtain is open, the set is lit and still, and the scene is settled. In Warm, on load the curtain rises once (under 2s) and settles with subtle footlight flicker. In Playful, the show cycles through scenes, curtain drops, kantar songs in the spotlight, and curtain rises.
+  </div>
+
+  <h2>Songs from the pit</h2>
+  <ol class="songs-list">
+    <li><b>Hero:</b> Susegad: the unhurried contentment of a Goan afternoon</li>
+    <li><b>Interlude one:</b> The bus to Mapusa waits for no one, except when the driver is having his tea</li>
+    <li><b>Interlude two:</b> Rain on the roof tiles, fish in the curry, and my cousin in Dubai asks what is new</li>
+  </ol>
+</main>
+
+<script type="module">
+  const q = new URLSearchParams(location.search);
+  const root = document.documentElement;
+  const el = document.getElementById('kantar');
+
+  const initialRegister = q.get('register') || 'warm';
+  root.dataset.register = initialRegister;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+
+  const { SCENES, SONGS } = await import('./index.js');
+
+  const form = document.getElementById('controls');
+  const darkCheck = document.getElementById('dark');
+  const setSelect = document.getElementById('set-select');
+  const curtainRange = document.getElementById('curtain-range');
+  const curtainAuto = document.getElementById('curtain-auto');
+  const btnNext = document.getElementById('btn-next');
+
+  form.register.value = initialRegister;
+  darkCheck.checked = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+
+  form.addEventListener('change', e => {
+    const t = e.target;
+    if (t.name === 'register') {
+      root.dataset.register = t.value;
+    } else if (t.id === 'dark') {
+      root.dataset.theme = t.checked ? 'dark' : 'light';
+    } else if (t.id === 'set-select') {
+      if (t.value !== '') {
+        el.setAttribute('set', t.value);
+      } else {
+        el.removeAttribute('set');
+      }
+    } else if (t.id === 'curtain-auto') {
+      if (t.checked) {
+        el.removeAttribute('progress');
+      } else {
+        el.setAttribute('progress', curtainRange.value);
+      }
+    }
+  });
+
+  curtainRange.addEventListener('input', () => {
+    curtainAuto.checked = false;
+    el.setAttribute('progress', curtainRange.value);
+  });
+
+  btnNext.addEventListener('click', () => {
+    // Skip to next phase if in playful
+    root.dataset.register = 'playful';
+    form.register.value = 'playful';
+    el.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+  });
+</script>
+</body>
+</html>

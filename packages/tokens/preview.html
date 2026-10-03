@@ -108,8 +108,8 @@
     document.head.append(link);
   });
 
-  const show = params.get('palettes')?.split(',') ?? ['susegad', 'casa', 'casa-photo'];
-  const labels = { susegad: 'Susegad', casa: 'Casa', 'casa-photo': 'Casa, from its photographs' };
+  const show = params.get('palettes')?.split(',') ?? ['susegad', 'casa', 'casa-photo', 'azulejo'];
+  const labels = { susegad: 'Susegad', casa: 'Casa', 'casa-photo': 'Casa, from its photographs', azulejo: 'Azulejo' };
   const el = (tag, attrs = {}, ...kids) => {
     const n = document.createElement(tag);
     for (const [k, v] of Object.entries(attrs)) k === 'class' ? (n.className = v) : n.setAttribute(k, v);

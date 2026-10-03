@@ -1,0 +1,14 @@
+{
+  "name": "scene-mosaico",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["background","divider"],
+  "title": "Mosaico",
+  "description": "The cement-tile floor of an old Goan balcão, seen from above: one Truchet tile laid in two turns, so the oxide-red bands join into long winding ribbons, worn and chipped under late window light. Now and then a tile lifts and turns and the ribbons re-route, and a small ant walks the pale line down one ribbon, following the new way. In playful, hover or Enter turns a tile and a click re-lays a patch. Dark pages get the same floor at night.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "mosaico.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "mosaico.prompt.md",
+  "budget": { "jsBytes": 40960 }
+}

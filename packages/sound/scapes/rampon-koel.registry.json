@@ -1,6 +1,7 @@
 {
   "name": "sound-scape-rampon-koel",
   "type": "package",
+  "stability": "experimental",
   "title": "Rampon koel",
   "description": "A rising three-note \"ku-oo\" call in a bout of three that speeds up, then quiet, then another bout, the way a real koel calls. Only in playful, only with the switch on, and only while a bird is actually visible on screen, read from the same birdX() the scene draws its birds from. attachRamponKoel(sceneEl) wires it to a live <sg-scene name=\"rampon\">.",
   "version": "0.1.0",

@@ -1,0 +1,14 @@
+{
+  "name": "scene-vad",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["hero","background"],
+  "title": "Vad",
+  "description": "A banyan grows in pen and ink by space colonisation: branch tips reach for the nearest points of an umbrella canopy, limbs thicken by the pipe model, leaf masses are hatched over a green wash, and aerial roots drop and thicken into pillar trunks round a stone platform. Quiet is the grown tree; warm grows it slowly and lets the ink boil; playful grows a new one on Enter. Set progress and the tree grows exactly as far as the work has. With words=\"world\", the page’s words are written in the sky beside the tree, each line ending where the canopy begins, and make room for it four times as it grows.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "vad.prompt.md"],
+  "dependencies": ["core", "engine", "tokens", "type"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "vad.prompt.md",
+  "budget": { "jsBytes": 40960 }
+}

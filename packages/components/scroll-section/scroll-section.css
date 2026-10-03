@@ -1,0 +1,45 @@
+/* <sg-scroll-section>. Without JavaScript this is a plain <section>: its
+   content shows at rest. --sg-scroll-progress (0..1) is set by scroll-
+   section.js every frame the section is near the viewport, in every
+   register except quiet and reduced motion (where it is fixed at 1, the
+   section's own finished state — the charter's register table: quiet
+   scenes show a still).
+
+   Setting an element's attribute (to drive a child <sg-scene progress>)
+   inherently needs JavaScript — CSS cannot write an attribute — so that
+   path is scroll-section.js's IntersectionObserver + rAF loop, following
+   the Ghat plate's own scroll arithmetic (scroll-section.core.js). Where a
+   scroll effect is purely visual and needs no attribute, this file drives
+   it natively instead: give a child `.sg-scroll-reveal` layer, and it
+   scrubs its own opacity and lift from `animation-timeline: view()` with
+   no JavaScript at all, where the browser supports it. */
+
+sg-scroll-section {
+  --sg-scroll-progress: 0;
+  display: block;
+  position: relative;
+}
+
+@supports (animation-timeline: view()) {
+  sg-scroll-section .sg-scroll-reveal {
+    animation: sg-scroll-reveal-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 40%;
+  }
+  @keyframes sg-scroll-reveal-in {
+    from { opacity: 0; transform: translateY(var(--sg-space-4, 1rem)); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* warm and playful: a subtle parallax on the scene, driven by the same
+   --sg-scroll-progress the JS loop sets (the skins turn this on; quiet
+   does not, to keep the register plain). */
+sg-scroll-section[data-scroll-parallax] sg-scene {
+  transform: translateY(calc((var(--sg-scroll-progress) - 0.5) * var(--sg-scroll-parallax, 0) * -24px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  sg-scroll-section .sg-scroll-reveal { animation: none; opacity: 1; transform: none; }
+  sg-scroll-section[data-scroll-parallax] sg-scene { transform: none; }
+}

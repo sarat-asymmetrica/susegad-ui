@@ -1,0 +1,14 @@
+{
+  "name": "scene-pahat",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["hero","background"],
+  "title": "Pahat",
+  "description": "The desk at dawn: a barred window at half past four over a laptop and a steel tumbler. The sky goes from indigo to first light, the stars fade, the morning star holds on, the room comes out of the dark and a few birds cross; then it rests. Quiet is a hairline still; in playful your hand moves the dawn.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "pahat.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "pahat.prompt.md",
+  "budget": { "jsBytes": 40960 }
+}

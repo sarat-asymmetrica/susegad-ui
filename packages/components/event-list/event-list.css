@@ -1,0 +1,65 @@
+/* <sg-event-list>. Without JavaScript the cards stack in the order written. With
+   it, what is to come is on top, what has happened is in a closed "Before"
+   drawer, and an empty calendar says so. Warm draws the empty state as a ticket
+   with nothing printed on it yet; playful lets its hand show. */
+
+sg-event-list { display: block; max-width: 46rem; color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+sg-event-list[hidden], sg-event-list [hidden] { display: none !important; }
+sg-event-list > :is(h1, h2, h3) { margin: 0 0 var(--sg-space-3); font: 400 var(--sg-step-3) / var(--sg-leading-tight) var(--sg-font-display); }
+sg-event-list > :is(.sg-event-upcoming) { display: grid; gap: var(--sg-space-4); }
+sg-event-list > .sg-event-upcoming { margin: 0; }
+/* with no JavaScript the cards are direct children: give them the same gap */
+sg-event-list:not([data-empty]) { display: grid; gap: var(--sg-space-4); }
+sg-event-list:not([data-empty]) > :is(h1, h2, h3) { margin-bottom: 0; }
+sg-event-list sg-event-card { max-width: none; }
+
+/* nothing to come: the line stays hidden until the element has looked at the clock */
+sg-event-list:not([data-empty]) > .sg-event-empty { display: none; }
+sg-event-list > .sg-event-empty {
+  margin: 0; padding: var(--sg-space-4);
+  font: 400 var(--sg-step-1) / var(--sg-leading-snug) var(--sg-font-display);
+  border: var(--sg-hairline) solid var(--sg-rule-strong); border-top: var(--sg-stroke-bold) solid var(--sg-text);
+  background: var(--sg-surface-raised);
+}
+sg-event-list > .sg-event-ask { margin: var(--sg-space-3) 0 0; }
+sg-event-list > .sg-event-ask a {
+  display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0 var(--sg-space-3);
+  background: var(--sg-accent); color: var(--sg-on-accent); border-radius: var(--sg-radius-2);
+  font-weight: var(--sg-weight-medium); text-decoration: none;
+}
+sg-event-list > .sg-event-ask a:hover { text-decoration: underline; text-underline-offset: 0.2em; }
+sg-event-list > .sg-event-ask a:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: 3px; }
+sg-event-list:not([data-skin="warm"], [data-skin="playful"]) > .sg-event-ask a { background: transparent; color: var(--sg-text); border: var(--sg-hairline) solid var(--sg-rule-strong); }
+
+/* the drawer of what has happened */
+sg-event-list > .sg-event-before { margin-top: var(--sg-space-4); border-top: var(--sg-hairline) solid var(--sg-rule-strong); }
+sg-event-list > .sg-event-before > summary {
+  display: flex; align-items: center; gap: var(--sg-space-2); min-height: 2.75rem; padding: var(--sg-space-2) 0;
+  font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); cursor: pointer; list-style: none;
+}
+sg-event-list > .sg-event-before > summary::-webkit-details-marker { display: none; }
+sg-event-list > .sg-event-before > summary::before {
+  content: ""; flex: none; width: 0.55em; height: 0.55em; border: solid currentColor; border-width: 0 var(--sg-stroke-bold) var(--sg-stroke-bold) 0;
+  rotate: -45deg; transition: rotate var(--sg-dur-quick) var(--sg-ease-out);
+}
+sg-event-list > .sg-event-before[open] > summary::before { rotate: 45deg; }
+sg-event-list > .sg-event-before > summary:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); border-radius: 2px; }
+sg-event-list .sg-event-past { display: grid; gap: var(--sg-space-4); padding-block: var(--sg-space-3) var(--sg-space-2); }
+
+/* ── warm: the empty state is a ticket with nothing printed on it yet ── */
+sg-event-list[data-skin="warm"] > .sg-event-empty, sg-event-list[data-skin="playful"] > .sg-event-empty {
+  position: relative; border: var(--sg-stroke-bold) dashed var(--sg-rule-strong); border-radius: var(--sg-radius-3);
+  background: color-mix(in oklch, var(--sg-accent) 6%, var(--sg-surface-raised));
+  padding: var(--sg-space-5) var(--sg-space-4); text-wrap: balance;
+}
+sg-event-list[data-skin="warm"] > .sg-event-before > summary, sg-event-list[data-skin="playful"] > .sg-event-before > summary { font-family: var(--sg-font-body); }
+sg-event-list[data-skin="playful"] > .sg-event-empty { font-family: var(--sg-font-hand); font-size: var(--sg-step-2); rotate: -0.6deg; }
+sg-event-list[data-skin="playful"] > :is(h1, h2, h3) { font-family: var(--sg-font-hand); }
+
+@media (prefers-reduced-motion: reduce) {
+  sg-event-list > .sg-event-before > summary::before { transition: none; }
+}
+@media (forced-colors: active) {
+  sg-event-list > .sg-event-empty { border: 2px solid CanvasText; }
+  sg-event-list > .sg-event-ask a { border: 1px solid ButtonText; }
+}

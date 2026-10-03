@@ -1,6 +1,7 @@
 {
   "name": "folio",
   "type": "package",
+  "stability": "experimental",
   "title": "Folio",
   "description": "The document layer's pieces that travel with a document: Markdown with directives (scene, diagram, price-table, timeline, signature, note), rendered to HTML by a pure parser with line-numbered errors; the print sheet and the script that makes scenes print their still; the seal (the policy, the hash and verify) and the in-page check that lets a reader hash their own copy. The builder that inlines, subsets, seals and prints (build/, bin/) is a Node dev tool with npm dependencies (esbuild, subset-font, Playwright), so it stays in the repo and is not copied.",
   "version": "0.1.0",

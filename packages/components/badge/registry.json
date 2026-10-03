@@ -1,6 +1,7 @@
 {
   "name": "badge",
   "type": "component",
+  "stability": "experimental",
   "title": "Badge",
   "description": "A word or two of status. The text is the meaning, a distinct shape per tone backs it up, colour comes last. Quiet is text with a hairline rule; warm is a hand-inked outline in the tone's ink; playful is a chip of colour with a kolam flower on the corner. Busy badges breathe or turn, never in quiet or under reduced motion.",
   "version": "0.1.0",

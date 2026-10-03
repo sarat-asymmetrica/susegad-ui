@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="/tools/harness/demo.js"></script>
+  <link rel="stylesheet" href="/packages/tokens/fonts.css">
+  <link rel="stylesheet" href="/packages/tokens/tokens.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dialog</title>
+  <link rel="stylesheet" href="./dialog.css">
+  <style>
+    body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: 400 1rem/1.6 var(--sg-font-body); }
+    main { max-width: 44rem; margin: 0 auto; padding: var(--sg-space-5) var(--sg-space-3) 10rem; }
+    h1 { font: 400 2.25rem/1.1 var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+    p.lede { color: var(--sg-text-soft); max-width: 42rem; }
+    p.body-copy { max-width: 42rem; }
+    a.opener, button.opener {
+      display: inline-block; font: 500 0.9375rem/1 var(--sg-font-body); color: var(--sg-text); text-decoration: none;
+      background: var(--sg-surface-raised); border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-pill);
+      padding: 0.6em 1.1em; margin: 0 var(--sg-space-2) var(--sg-space-2) 0; cursor: pointer;
+    }
+    a.opener:focus-visible, button.opener:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Dialog</h1>
+    <p class="lede">A modal on the native &lt;dialog&gt;: showModal() traps focus and blocks the page, Escape closes, and the browser gives focus back to whichever opener you used. Without JavaScript, every opener below is a real link to a real page.</p>
+
+    <p class="body-copy">This paragraph of body copy sits behind every dialog on this page. It exists so a screenshot can show, in every register and theme, that the scrim keeps it present but never legible as text through it: read this sentence, then open a dialog and try to read it again through the backdrop. The house at Balcão has eleven rooms, a courtyard well and a mango tree older than the family's own memory of when it was planted, and none of that should be readable once the dialog is open.</p>
+
+    <a class="opener" href="./no-js.html" data-sg-dialog="ask">Ask the house</a>
+    <a class="opener" href="./no-js.html" data-sg-dialog="confirm">Confirm a hold</a>
+
+    <sg-dialog id="ask">
+      <dialog>
+        <h2>Ask the house</h2>
+        <p>Tell us your dates and how many are coming, and we will write back within a day.</p>
+        <form method="dialog">
+          <label for="msg">Your question</label><br>
+          <textarea id="msg" name="msg" rows="3" style="width:100%;box-sizing:border-box;margin-block:0.4em"></textarea>
+          <menu>
+            <button type="submit" value="dismiss">Cancel</button>
+            <button type="submit" value="ok">Send</button>
+          </menu>
+        </form>
+      </dialog>
+    </sg-dialog>
+
+    <sg-dialog id="confirm">
+      <dialog>
+        <h2>Confirm a hold</h2>
+        <p>We will hold 12 to 15 October for 20 minutes while you decide.</p>
+        <form method="dialog">
+          <menu>
+            <button type="submit" value="dismiss">Not yet</button>
+            <button type="submit" value="ok">Hold the dates</button>
+          </menu>
+        </form>
+      </dialog>
+    </sg-dialog>
+  </main>
+  <script type="module">
+    import '/packages/core/index.js';
+    import '/packages/components/dialog/dialog.js';
+    await customElements.whenDefined('sg-dialog');
+    window.__demoReady();
+  </script>
+</body>
+</html>

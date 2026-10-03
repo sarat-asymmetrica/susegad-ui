@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Link</title>
+<link rel="stylesheet" href="./link.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 44rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .lede { margin: 0 0 var(--sg-space-5); color: var(--sg-text-soft); max-width: var(--sg-measure); }
+  section { display: grid; gap: var(--sg-space-3); margin-bottom: var(--sg-space-5); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-1) / var(--sg-leading-tight) var(--sg-font-body); margin: 0; }
+  .row { display: flex; flex-wrap: wrap; gap: var(--sg-space-4); align-items: center; }
+  p.prose { max-width: var(--sg-measure); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Link</h1>
+  <p class="lede">A native &lt;a href&gt;, unchanged: it takes the keyboard and navigates with or without JavaScript. The register draws the underline.</p>
+
+  <section>
+    <h2>On its own</h2>
+    <div class="row">
+      <sg-link><a href="#rooms" id="see-rooms">See the rooms</a></sg-link>
+      <sg-link><a href="#book" id="book-now">Book now, for the monsoon rate</a></sg-link>
+    </div>
+  </section>
+
+  <section>
+    <h2>In a sentence</h2>
+    <p class="prose">Our lowest rate runs June to September; <sg-link><a href="#rooms">see the rooms</a></sg-link> that are open, or <sg-link><a href="#contact">write to us on WhatsApp</a></sg-link> with your dates.</p>
+  </section>
+
+  <section>
+    <h2>Visited</h2>
+    <div class="row">
+      <sg-link><a href="#seen">A link already visited</a></sg-link>
+    </div>
+  </section>
+
+  <section>
+    <h2>In Marathi, Kannada and Konkani</h2>
+    <!-- These Indian-language labels are drafts awaiting a native speaker's check. -->
+    <div class="row">
+      <sg-link><a href="#rooms" lang="mr">खोल्या पहा</a></sg-link>
+      <sg-link><a href="#rooms" lang="kn">ಕೊಠಡಿಗಳನ್ನು ನೋಡಿ</a></sg-link>
+      <sg-link><a href="#rooms" lang="kok-Latn">Quart polleak</a></sg-link>
+    </div>
+  </section>
+</main>
+<script type="module">
+  import './link.js';
+</script>
+</body>
+</html>

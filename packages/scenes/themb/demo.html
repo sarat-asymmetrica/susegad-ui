@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Themb scene</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .lede { margin: 0 0 20px; color: var(--sg-text-soft, inherit); }
+  sg-scene { border-radius: 6px; }
+  sg-scene h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  sg-scene p { margin: 0; }
+  form { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 20px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  legend { font-weight: 600; float: left; margin-right: 8px; }
+  select, button { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--sg-rule-strong, currentColor); background: var(--sg-surface-raised, Canvas); color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  #leaf { font-size: 0.9rem; color: var(--sg-text-soft, inherit); }
+  .note { margin: 16px 0 0; padding-left: 12px; border-left: 2px solid var(--sg-rule-strong, currentColor); color: var(--sg-text-soft, inherit); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Themb</h1>
+  <p class="lede">Rain on a taro leaf. A dev page for the scene: registers, the 2D painting, context loss, and words on the leaf.</p>
+  <sg-scene id="themb" name="themb">
+    <h2>Monsoon stays</h2>
+    <p>From June to September, the garden is at its greenest.</p>
+  </sg-scene>
+  <p id="leaf" aria-live="polite"></p>
+  <form id="controls">
+    <fieldset>
+      <legend>Register</legend>
+      <label><input type="radio" name="register" value="quiet"> Quiet</label>
+      <label><input type="radio" name="register" value="warm"> Warm</label>
+      <label><input type="radio" name="register" value="playful"> Playful</label>
+    </fieldset>
+    <label><input type="checkbox" id="dark"> Dark</label>
+    <label><input type="checkbox" id="text" checked> Words on the leaf</label>
+    <label for="renderer">Renderer</label>
+    <select id="renderer"><option>auto</option><option>webgl</option><option>2d</option></select>
+    <button type="button" id="lose">Lose the WebGL context</button>
+    <button type="button" id="replay">Start again</button>
+  </form>
+  <p class="note">Alu (taro) leaves shed rain as beads. In playful, tilt the leaf with the pointer or the arrow keys; Enter pours the cup off the tip.</p>
+</main>
+<script type="module">
+  const q = new URLSearchParams(location.search), root = document.documentElement;
+  const el = document.getElementById('themb');
+  const register = q.get('register') || 'warm';
+  root.dataset.register = register;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+  for (const k of ['seed', 'renderer']) if (q.has(k)) el.setAttribute(k, q.get(k));
+  if (q.get('content') === '0') el.innerHTML = '';
+  el.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__piece = el;
+  await import('./index.js');
+
+  const $ = id => document.getElementById(id), form = $('controls'), content = el.innerHTML;
+  form.register.value = register;
+  $('dark').checked = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  $('text').checked = !!content.trim();
+  if (q.has('renderer')) $('renderer').value = q.get('renderer');
+  form.addEventListener('change', e => {
+    const t = e.target;
+    if (t.name === 'register') root.dataset.register = t.value;
+    else if (t.id === 'dark') root.dataset.theme = t.checked ? 'dark' : 'light';
+    else if (t.id === 'text') el.innerHTML = t.checked ? content || '<h2>Monsoon stays</h2><p>From June to September, the garden is at its greenest.</p>' : '';
+    else if (t.id === 'renderer') el.setAttribute('renderer', t.value);
+  });
+  $('replay').addEventListener('click', () => el.replay());
+  // the shader's canvas is the first one in the stage; losing its context hands the leaf to the 2D painting
+  let ext = null;
+  $('lose').addEventListener('click', () => {
+    const c = el.shadowRoot.querySelector('.stage canvas');
+    if (ext) { ext.restoreContext(); ext = null; $('lose').textContent = 'Lose the WebGL context'; return; }
+    ext = c.getContext('webgl')?.getExtension('WEBGL_lose_context');
+    if (ext) { ext.loseContext(); $('lose').textContent = 'Restore the WebGL context'; }
+  });
+  const stage = el.shadowRoot.querySelector('.stage');
+  const say = { webgl: 'the shader', '2d': 'the 2D painting', slow: 'the 2D painting (frames were too slow for the shader)' };
+  new MutationObserver(() => { $('leaf').textContent = `Painting the leaf with ${say[stage.dataset.leaf] || stage.dataset.leaf}.`; }).observe(stage, { attributes: true, attributeFilter: ['data-leaf'] });
+</script>
+</body>
+</html>

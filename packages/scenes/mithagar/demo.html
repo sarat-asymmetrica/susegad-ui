@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mithagar scene</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .lede { margin: 0 0 20px; color: var(--sg-text-soft, inherit); }
+  sg-scene { border-radius: 6px; --sg-reading-place: start start; }
+  sg-scene h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  sg-scene p { margin: 0; }
+  form { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 20px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  legend { font-weight: 600; float: left; margin-right: 8px; }
+  button { font: inherit; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--sg-rule-strong, currentColor); background: var(--sg-surface-raised, Canvas); color: inherit; cursor: pointer; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  .slider-group { display: flex; align-items: center; gap: 8px; }
+  .note { margin: 16px 0 0; padding-left: 12px; border-left: 2px solid var(--sg-rule-strong, currentColor); color: var(--sg-text-soft, inherit); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Mithagar</h1>
+  <p class="lede">The Ribandar salt pans at dawn. A dev page for the scene: registers, progress as crystallization, time of day, and raked salt pyramids.</p>
+
+  <sg-scene id="mithagar" name="mithagar">
+    <h2>The White Fields of Ribandar</h2>
+    <p>Tidal salt harvested at the river mouth.</p>
+  </sg-scene>
+
+  <form id="controls">
+    <fieldset>
+      <legend>Register</legend>
+      <label><input type="radio" name="register" value="quiet"> Quiet</label>
+      <label><input type="radio" name="register" value="warm" checked> Warm</label>
+      <label><input type="radio" name="register" value="playful"> Playful</label>
+    </fieldset>
+
+    <label><input type="checkbox" id="dark"> Dark</label>
+    <label><input type="checkbox" id="text" checked> Slotted words</label>
+
+    <div class="slider-group">
+      <label><input type="checkbox" id="useProgress"> Set progress</label>
+      <input type="range" id="progress" min="0" max="1" step="0.01" value="0.65" disabled>
+    </div>
+
+    <div class="slider-group">
+      <label for="timeOfDay">Time of day</label>
+      <input type="range" id="timeOfDay" min="0" max="1" step="0.01" value="0">
+    </div>
+
+    <button type="button" id="reseed">A new morning</button>
+  </form>
+
+  <p class="note">In playful, focus the scene and use arrow keys to navigate the salt pans, then press Enter or Space to rake a salt pyramid. As progress advances, water recedes, white salt crusts nucleate along clay edges, and pyramidal salt heaps grow.</p>
+</main>
+
+<script type="module">
+  const q = new URLSearchParams(location.search);
+  const root = document.documentElement;
+  const el = document.getElementById('mithagar');
+  const register = q.get('register') || 'warm';
+
+  root.dataset.register = register;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+  for (const k of ['seed', 'progress', 'time-of-day']) {
+    if (q.has(k)) el.setAttribute(k, q.get(k));
+  }
+  if (q.get('content') === '0') el.innerHTML = '';
+
+  el.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__piece = el;
+
+  await import('./index.js');
+
+  const $ = id => document.getElementById(id);
+  const form = $('controls');
+  const savedContent = el.innerHTML;
+
+  form.register.value = register;
+  $('dark').checked = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  $('text').checked = !!savedContent.trim();
+
+  if (q.has('progress')) {
+    $('useProgress').checked = true;
+    $('progress').disabled = false;
+    $('progress').value = q.get('progress');
+  }
+
+  if (q.has('time-of-day')) {
+    $('timeOfDay').value = q.get('time-of-day');
+  }
+
+  form.addEventListener('change', e => {
+    const t = e.target;
+    if (t.name === 'register') {
+      root.dataset.register = t.value;
+    } else if (t.id === 'dark') {
+      root.dataset.theme = t.checked ? 'dark' : 'light';
+    } else if (t.id === 'text') {
+      el.innerHTML = t.checked ? savedContent || '<h2>The White Fields of Ribandar</h2><p>Tidal salt harvested at the river mouth.</p>' : '';
+    } else if (t.id === 'useProgress') {
+      $('progress').disabled = !t.checked;
+      if (t.checked) el.setAttribute('progress', $('progress').value);
+      else el.removeAttribute('progress');
+    }
+  });
+
+  $('progress').addEventListener('input', e => {
+    if (!e.target.disabled) el.setAttribute('progress', e.target.value);
+  });
+
+  $('timeOfDay').addEventListener('input', e => {
+    el.setAttribute('time-of-day', e.target.value);
+  });
+
+  $('reseed').addEventListener('click', () => el.reseed());
+</script>
+</body>
+</html>

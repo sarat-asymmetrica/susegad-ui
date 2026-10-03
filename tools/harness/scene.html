@@ -71,7 +71,7 @@
 </main>
 <script type="module">
   const q = new URLSearchParams(location.search);
-  const RESERVED = new Set(['name', 'register', 'theme', 'palette', 'seed', 'content', 'freeze', 'module', 'element']);
+  const RESERVED = new Set(['name', 'register', 'theme', 'palette', 'seed', 'content', 'freeze', 'module', 'element', 'readyTimeout']);
   const name = q.get('name');
   const element = q.get('element') || 'sg-scene';
   const status = document.getElementById('status');
@@ -124,9 +124,19 @@
       el.innerHTML = '<h2>Come for the rain</h2><p>Our lowest rate, June to September. The veranda stays dry and the paddy turns green.</p>';
     }
 
+    // A scene that stills by simulating in requestAnimationFrame slices (abri,
+    // chiro, shet: see each render.js's own `ready` promise) needs several
+    // real frames to finish, and WebKit's headless frame rate here runs at a
+    // fraction of Chromium's -- confirmed directly, 2026-09-28: the same
+    // scene, isolated from this harness's own 10 s cap, took about 15 s to
+    // fire sg-ready in WebKit alone, and checks.mjs's own concurrent load
+    // (three engines running at once) makes that worse, not better. 30 s
+    // covers that with margin; a slow check can ask for more with
+    // ?readyTimeout=<ms>.
+    const readyTimeout = Math.max(1000, Number(q.get('readyTimeout')) || 30000);
     const ready = new Promise((resolve, reject) => {
       el.addEventListener('sg-ready', resolve, { once: true });
-      setTimeout(() => reject(new Error('no sg-ready within 10 s')), 10000);
+      setTimeout(() => reject(new Error(`no sg-ready within ${readyTimeout / 1000} s`)), readyTimeout);
     });
     window.__clock?.start();
     document.getElementById('box').append(el);

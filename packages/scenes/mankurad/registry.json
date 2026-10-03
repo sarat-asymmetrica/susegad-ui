@@ -1,0 +1,14 @@
+{
+  "name": "scene-mankurad",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["story"],
+  "title": "Mankurad",
+  "description": "A short story about a mango in coloured pencil: it ripens in the May heat while a koel calls, clouds come in, the first monsoon rain falls, and it drops into a puddle on red laterite. Hatched tone, boiling outlines, a noise-driven pendulum. Quiet is the plate's still; warm tells the story at an easy pace; playful tells it again on Enter. Set progress and the story holds at that beat, a gentle order or delivery tracker.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "mankurad.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "mankurad.prompt.md",
+  "budget": { "jsBytes": 49152, "reason": "The plate's painters and sprite cache for a whole short story, ported line for line." }
+}

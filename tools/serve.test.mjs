@@ -70,3 +70,24 @@ test('notFoundHtml mimics Workers\' not_found_handling: "404-page" (the body at 
     fs.rmSync(root, { recursive: true, force: true });
   }
 });
+
+test('serves byte ranges, so media can seek', async () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'sg-serve-'));
+  fs.writeFileSync(path.join(root, 'a.bin'), '0123456789');
+  const s = await startServer({ root, quiet: true });
+  try {
+    let r = await fetch(`${s.url}/a.bin`, { headers: { range: 'bytes=2-5' } });
+    assert.equal(r.status, 206);
+    assert.equal(r.headers.get('content-range'), 'bytes 2-5/10');
+    assert.equal(await r.text(), '2345');
+    r = await fetch(`${s.url}/a.bin`, { headers: { range: 'bytes=7-' } });
+    assert.equal(await r.text(), '789');
+    r = await fetch(`${s.url}/a.bin`, { headers: { range: 'bytes=-3' } });
+    assert.equal(await r.text(), '789');
+    r = await fetch(`${s.url}/a.bin`, { headers: { range: 'bytes=20-' } });
+    assert.equal(r.status, 416);
+    r = await fetch(`${s.url}/a.bin`);
+    assert.equal(r.headers.get('accept-ranges'), 'bytes');
+    assert.equal(await r.text(), '0123456789');
+  } finally { await s.close(); }
+});

@@ -168,6 +168,8 @@ code { font-family: var(--mono); font-size: 0.88em; }
 .nav { display: flex; gap: 4px 18px; flex-wrap: wrap; }
 .nav a { font-size: 15px; text-decoration: none; color: var(--ink-2); border-bottom: 1px solid transparent; padding-block: 2px; }
 .nav a:hover { color: var(--ink); border-bottom-color: currentColor; }
+.bar .src { font-size: 14px; text-decoration: none; color: var(--ink-2); border: 1px solid var(--rule-strong); border-radius: var(--r-pill); padding: 3px 11px; white-space: nowrap; }
+.bar .src:hover { color: var(--ink); border-color: var(--ink); }
 .prefs { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-left: auto; align-items: end; }
 html:not(.js) .prefs { display: none; }
 .seg { border: 0; margin: 0; padding: 0; min-width: 0; }
@@ -203,21 +205,27 @@ html:not(.js) .prefs { display: none; }
 }
 .kicker { font-family: var(--r-hand); font-size: calc(20px * var(--r-hand-scale)); color: var(--r-kicker); margin: 0 0 6px; }
 [data-register="quiet"] .kicker { text-transform: uppercase; letter-spacing: 0.12em; font-size: 13px; font-weight: 600; }
-h1 { font-family: var(--display); font-size: clamp(64px, 11vw, 150px); line-height: 0.86; letter-spacing: -0.012em; }
+h1 { font-family: var(--display); font-size: clamp(56px, 8.6vw, 124px); line-height: 0.86; letter-spacing: -0.012em; }
 .h1-ui { font-family: var(--body); font-weight: 600; font-size: 0.24em; letter-spacing: 0.16em; vertical-align: 0.28em; color: var(--r-kicker); }
 [data-register="quiet"] h1 { font-size: clamp(52px, 8vw, 104px); }
 .gloss { font-family: var(--r-hand); font-weight: var(--r-hand-weight); font-size: calc(19px * var(--r-hand-scale)); color: var(--ink-2); margin: 18px 0 0; max-width: 46ch; }
 .gloss i { font-style: normal; border-bottom: 1px solid var(--rule); }
 .lede { font-size: 19px; line-height: 1.6; color: var(--ink-2); max-width: 60ch; margin: 22px 0 0; }
-.mast-art { margin: 0; justify-self: end; width: 100%; max-width: 440px; }
+.mast-art { margin: 0; justify-self: end; width: 100%; max-width: 640px; }
 .mast-art[hidden] { display: none; }
-.mast-frame { aspect-ratio: 1; }
-.mast-kolam { display: block; width: 100%; aspect-ratio: 1; }
-.mast-note { font-family: var(--r-hand); font-weight: var(--r-hand-weight); font-size: calc(16px * var(--r-hand-scale)); color: var(--ink-3); text-align: center; margin: 8px 0 0; }
+/* The frame is the seam for a later border: --mast-frame-pad is the room it leaves the stage, and .mast-border is where it draws. Empty, it costs nothing. */
+.mast-frame { position: relative; padding: var(--mast-frame-pad, 0); }
+.mast-border { position: absolute; inset: 0; pointer-events: none; }
+.mast-stage { position: relative; display: block; width: 100%; aspect-ratio: 3 / 2; }
+.mast-line { font-family: var(--r-hand); font-weight: var(--r-hand-weight); font-size: calc(19px * var(--r-hand-scale)); line-height: 1.35; color: var(--ink-2); text-align: center; margin: 10px 0 0; }
+[data-register="quiet"] .mast-line { font-size: 15px; letter-spacing: 0.01em; }
 [data-register="quiet"] .mast-frame { border: 1px solid var(--rule); }
-/* the caption only says the kolam is drawing while it is: quiet and reduced motion show a still */
-[data-register="quiet"] .if-moving { display: none; }
-@media (prefers-reduced-motion: reduce) { .if-moving { display: none; } }
+/* the line lights up word by word once, as the curtain rises: a marker stroke grows under each word, so the text colour never changes and contrast holds at every moment; quiet and reduced motion show the line plain */
+.mast-line span { background: linear-gradient(var(--mark), var(--mark)) no-repeat 0 88% / 0 0.34em; --mark: color-mix(in oklab, var(--r-kicker) 34%, transparent); }
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-register="quiet"]) .mast-line span { animation: line-lit 0.6s var(--ease-settle, ease-out) both; animation-delay: calc(1.1s + var(--i, 0) * 0.14s); }
+}
+@keyframes line-lit { to { background-size: 100% 0.34em; } }
 
 /* ── section heads ─────────────────────────────────────────────────── */
 .ideas, .scenes, .box { border-top: var(--r-rule) solid var(--ink); padding-block: 28px 8px; }
@@ -278,7 +286,7 @@ h1 { font-family: var(--display); font-size: clamp(64px, 11vw, 150px); line-heig
   gap: clamp(24px, 4.5vw, 64px); padding-block: clamp(40px, 6vw, 88px); border-top: 1px solid var(--rule);
   scroll-margin-top: 12px;
 }
-.plate:first-child { border-top: 0; }
+.plate:first-child, .volume-head + .plate { border-top: 0; }
 .plate.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); }
 .plate.flip .art { order: 2; }
 .art { align-self: start; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 20px); min-width: 0; }
@@ -298,12 +306,20 @@ h1 { font-family: var(--display); font-size: clamp(64px, 11vw, 150px); line-heig
 .text { min-width: 0; }
 .plate-no { font-family: var(--r-hand); font-size: calc(17px * var(--r-hand-scale)); color: var(--r-number); margin: 0 0 4px; }
 [data-register="quiet"] .plate-no { font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; }
-.plate h3 { font-family: var(--display); font-size: clamp(32px, 3.6vw, 48px); line-height: 1.04; }
+.plate .plate-title { font-family: var(--display); font-weight: 400; text-wrap: balance; margin: 0; font-size: clamp(32px, 3.6vw, 48px); line-height: 1.04; }
+/* the sketchbook's volumes: a hand-lettered head over each run of plates */
+.volume + .volume { margin-top: clamp(24px, 4vw, 48px); }
+.volume-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; padding-top: clamp(24px, 4vw, 40px); border-top: 2px solid var(--rule); }
+.volume-head h3 { font-family: var(--display); font-weight: 400; font-size: clamp(22px, 2.4vw, 30px); margin: 0; }
+.volume-note { margin: 0; font-family: var(--r-hand); font-size: calc(17px * var(--r-hand-scale)); color: var(--ink-2); }
 .word { font-family: var(--r-hand); font-weight: var(--r-hand-weight); font-size: calc(18px * var(--r-hand-scale)); line-height: 1.45; color: var(--ink-2); margin: 12px 0 0; }
 .word b { font-weight: 400; color: var(--ink); }
 [data-register="quiet"] .word b { font-weight: 600; }
 .caption { margin: 16px 0 0; }
 .credit { margin: 10px 0 0; font-size: 14.5px; line-height: 1.55; color: var(--ink-3); padding-left: 12px; border-left: 2px solid var(--rule); }
+/* a Volume III plate's lineage note (HOMAGE.md): who it is after, what we took, what we left */
+.after { margin: 12px 0 0; font-size: 15px; line-height: 1.55; color: var(--ink-2); padding-left: 12px; border-left: 2px solid var(--sg-mango, var(--rule)); }
+.after b { font-weight: 600; color: var(--ink); }
 .tags { display: flex; flex-wrap: wrap; gap: 6px 14px; list-style: none; padding: 0; margin: 16px 0 0; }
 .tags a {
   font-size: 13.5px; font-weight: 500; letter-spacing: 0.04em; color: var(--r-chip-ink); text-decoration: none;
@@ -324,8 +340,8 @@ h1 { font-family: var(--display); font-size: clamp(64px, 11vw, 150px); line-heig
 }
 [data-register="quiet"] .letter { background: transparent; color: var(--ink); border: 1px solid var(--rule); }
 .letter-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.letter-head h4, .map h4 { font-family: var(--r-hand); font-size: calc(19px * var(--r-hand-scale)); font-weight: 400; margin: 0; }
-[data-register="quiet"] .letter-head h4, [data-register="quiet"] .map h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; }
+.letter-head h5, .map h5 { font-family: var(--r-hand); font-size: calc(19px * var(--r-hand-scale)); font-weight: 400; margin: 0; }
+[data-register="quiet"] .letter-head h5, [data-register="quiet"] .map h5 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; }
 .copy {
   font: 500 12.5px/1 var(--body); letter-spacing: 0.05em; text-transform: uppercase; color: inherit;
   background: transparent; border: 1px solid var(--inland-rule); border-radius: var(--r-pill); padding: 7px 12px 6px; cursor: pointer;
@@ -410,7 +426,7 @@ h1 { font-family: var(--display); font-size: clamp(64px, 11vw, 150px); line-heig
 }
 @media (max-width: 860px) {
   .mast { grid-template-columns: 1fr; }
-  .mast-art { justify-self: center; max-width: 340px; }
+  .mast-art { justify-self: center; max-width: 560px; }
   .plate, .plate.flip { grid-template-columns: 1fr; }
   .plate.flip .art { order: 0; }
   .art { position: static; }

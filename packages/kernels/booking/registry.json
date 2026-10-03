@@ -1,6 +1,7 @@
 {
   "name": "kernels-booking",
   "type": "package",
+  "stability": "experimental",
   "title": "Kernels: booking",
   "description": "Pure booking kernels from the Casa Exemplo redesign: ISO day arithmetic with no timezone drift, a rate card that keeps its provisional flags, quotes with every night, GST on its own line and the deposit, and availability with same-day turnover. No dependencies; runs in Node.",
   "version": "0.1.0",

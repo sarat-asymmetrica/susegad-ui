@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  // ?register=quiet|warm|playful, ?theme=light|dark and ?palette=… set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute(`data-${k}`, v);
+  window.__ready = false; // set once every piece has upgraded, so the tools wait for it
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Casa Aldona</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="../../transitions/page.css">
+<link rel="stylesheet" href="../../components/tabs/tabs.css">
+<link rel="stylesheet" href="../../components/action-menu/action-menu.css">
+<link rel="stylesheet" href="../../components/button/button.css">
+<link rel="stylesheet" href="../../components/link/link.css">
+<link rel="stylesheet" href="../../components/dialog/dialog.css">
+<link rel="stylesheet" href="../../components/drawer/drawer.css">
+<link rel="stylesheet" href="../../components/scroll-section/scroll-section.css">
+<link rel="stylesheet" href="../../transitions/kantar/kantar.css">
+<link rel="stylesheet" href="./recipe.css">
+</head>
+<body>
+
+<header class="shell-header" data-vt="header">
+  <a class="shell-brand" href="#top">Casa Aldona</a>
+  <sg-tabs id="nav">
+    <nav aria-label="Casa Aldona">
+      <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#rooms">Rooms</a></li>
+        <li><a href="#book">Book</a></li>
+      </ul>
+    </nav>
+  </sg-tabs>
+  <sg-action-menu class="shell-account">
+    <sg-button><button type="button" popovertarget="account-menu">Account</button></sg-button>
+    <ul id="account-menu" popover role="menu">
+      <li role="none"><a href="./no-js.html" role="menuitem">Your stays</a></li>
+      <li role="none"><button type="button" role="menuitem">Sign out</button></li>
+    </ul>
+  </sg-action-menu>
+</header>
+
+<main>
+  <section id="overview">
+    <h1 id="top">A house above the paddy, in Aldona</h1>
+    <p class="lede">Four rooms, a pool at noon and a window that watches the monsoon arrive. Six kilometres from Mapusa, on the north bank of the Mandovi.</p>
+
+    <a class="opener" href="./no-js.html" data-sg-dialog="ask">Ask the house</a>
+
+    <h2>Come for the rain</h2>
+    <div class="overview-scene">
+      <sg-scroll-section>
+        <sg-scene name="paus" register="warm" wipe="false" data-vt="scene"></sg-scene>
+      </sg-scroll-section>
+    </div>
+    <div style="height: 70vh"></div>
+    <p class="lede">The fog on this window clears in step with how far its section has travelled through your screen, driven by real scroll (Wave 5's scroll section), never a timer.</p>
+    <div style="height: 40vh"></div>
+  </section>
+  <section id="rooms">
+    <h1>The rooms</h1>
+    <p class="lede">Four rooms, each with its own balcão.</p>
+    <ul class="room-list">
+      <li><h3>Garden room</h3><p>Ground floor, two singles, looks over the courtyard.</p></li>
+      <li><h3>River room</h3><p>First floor, one double, a private balcão over the paddy.</p></li>
+    </ul>
+    <a class="opener" href="./no-js.html" data-sg-drawer="rooms-drawer">See all four rooms</a>
+  </section>
+  <section id="book">
+    <h1>Book your stay</h1>
+    <p class="lede">A two-step version of the Wave 2 booking flow, to show the Kantar interlude sitting between two real steps.</p>
+    <div class="booking-stage" id="booking-stage">
+      <div id="booking-step-slot">
+        <div class="booking-step" id="booking-step-1">
+          <h3>Your dates</h3>
+          <p>12 to 16 November, 2 guests.</p>
+          <button type="button" id="booking-confirm">Confirm and hold</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<sg-dialog id="ask">
+  <dialog>
+    <h2>Ask the house</h2>
+    <p>Tell us your dates and how many are coming, and we will write back within a day.</p>
+    <form method="dialog">
+      <menu>
+        <button type="submit" value="dismiss">Cancel</button>
+        <button type="submit" value="ok">Send</button>
+      </menu>
+    </form>
+  </dialog>
+</sg-dialog>
+
+<sg-drawer id="rooms-drawer" edge="end">
+  <dialog>
+    <h2>The rooms</h2>
+    <ul class="room-list">
+      <li><h3>Garden room</h3><p>Ground floor, two singles, looks over the courtyard.</p></li>
+      <li><h3>River room</h3><p>First floor, one double, a private balcão over the paddy.</p></li>
+      <li><h3>Pool room</h3><p>Ground floor, one double, steps out onto the pool deck.</p></li>
+      <li><h3>Top room</h3><p>Second floor, one double, the widest view of the paddy.</p></li>
+    </ul>
+    <form method="dialog"><button type="submit" value="dismiss">Close</button></form>
+  </dialog>
+</sg-drawer>
+
+<script type="module">
+  import { mountSiteShell } from './recipe.js';
+  mountSiteShell(document.body);
+
+  const tags = new Set([...document.querySelectorAll('*')].map(e => e.localName).filter(n => n.startsWith('sg-')));
+  Promise.all([...tags].map(t => customElements.whenDefined(t))).then(async () => {
+    try { await document.fonts.ready; } catch {}
+    setTimeout(() => { window.__ready = true; }, 50);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tinto scene</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  h2 { font-size: 1.1rem; margin: 28px 0 8px; }
+  .lede { margin: 0 0 20px; color: var(--sg-text-soft, inherit); }
+  sg-scene { border-radius: 6px; }
+  sg-scene h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  sg-scene p { margin: 0; }
+  form { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 20px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  legend { font-weight: 600; float: left; margin-right: 8px; }
+  select, button { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--sg-rule-strong, currentColor); background: var(--sg-surface-raised, Canvas); color: inherit; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  .lines { padding-left: 1.2em; color: var(--sg-text-soft, inherit); }
+  .lines b { color: var(--sg-text, inherit); font-weight: 600; }
+  .after { margin: 16px 0 0; padding-left: 12px; border-left: 2px solid var(--sg-rule-strong, currentColor); color: var(--sg-text-soft, inherit); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Tinto</h1>
+  <p class="lede">Everyone in the square. A dev page for the scene: registers, the pinned line, text over the square, and every line written out.</p>
+  <p class="lede"><a href="world.html">Words in the world</a>: this Tinto beside one whose words are chalked on a board outside the Taverna, with the shops' hours on plaques.</p>
+  <sg-scene id="tinto" name="tinto" label="A village square where everyone has a line">
+    <h2>This page isn't here</h2>
+    <p>Try the menu above, or go back to the start.</p>
+  </sg-scene>
+  <form id="controls">
+    <fieldset>
+      <legend>Register</legend>
+      <label><input type="radio" name="register" value="quiet"> Quiet</label>
+      <label><input type="radio" name="register" value="warm"> Warm</label>
+      <label><input type="radio" name="register" value="playful"> Playful</label>
+    </fieldset>
+    <label><input type="checkbox" id="dark"> Dark</label>
+    <label><input type="checkbox" id="text" checked> Text over the square</label>
+    <label for="focus">Pinned line</label>
+    <select id="focus"><option value="">None: the round</option></select>
+    <label><input type="checkbox" id="lines" checked> Caption cards</label>
+  </form>
+  <p class="after"><b>After Mario Miranda.</b> Taken: density that rewards looking, and affection for everyone in the frame. Left: his drawings, his people and his line; these figures are our own round little folk.</p>
+  <h2>Who is in the square</h2>
+  <ol class="lines" id="lines-list"></ol>
+</main>
+<script type="module">
+  const q = new URLSearchParams(location.search), root = document.documentElement;
+  const el = document.getElementById('tinto');
+  const register = q.get('register') || 'warm';
+  root.dataset.register = register;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+  for (const k of ['seed', 'focus', 'lines']) if (q.has(k)) el.setAttribute(k, q.get(k));
+  if (q.get('content') === '0') el.innerHTML = '';
+  el.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__piece = el;
+  const { VIGNETTES } = await import('./index.js');
+
+  const $ = id => document.getElementById(id), form = $('controls'), content = el.innerHTML;
+  for (const v of VIGNETTES) {
+    $('focus').append(new Option(v.who, v.id));
+    const li = document.createElement('li'), b = document.createElement('b');
+    b.textContent = `${v.who}.`; li.append(b, ` ${v.line}`); $('lines-list').append(li);
+  }
+  form.register.value = register;
+  $('dark').checked = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  $('text').checked = !!content.trim();
+  $('focus').value = el.getAttribute('focus') || '';
+  $('lines').checked = el.getAttribute('lines') !== 'false';
+  form.addEventListener('change', e => {
+    const t = e.target;
+    if (t.name === 'register') root.dataset.register = t.value;
+    else if (t.id === 'dark') root.dataset.theme = t.checked ? 'dark' : 'light';
+    else if (t.id === 'text') el.innerHTML = t.checked ? content || '<h2>This page isn\'t here</h2><p>Try the menu above.</p>' : '';
+    else if (t.id === 'focus') t.value ? el.setAttribute('focus', t.value) : el.removeAttribute('focus');
+    else if (t.id === 'lines') el.setAttribute('lines', String(t.checked));
+  });
+</script>
+</body>
+</html>

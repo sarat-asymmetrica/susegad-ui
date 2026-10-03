@@ -8,11 +8,11 @@
 // quiet even with the switch on; and once on, in playful, with a bird
 // actually on screen, a call happens within the schedule's own window.
 
-import { chromium } from 'playwright';
+import { pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const browser = await pickEngine().launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 
@@ -25,6 +25,9 @@ async function withScene(register, fn) {
   await p.addInitScript(() => {
     window.__acCount = 0; window.__calls = 0;
     const AC = window.AudioContext;
+    // See paus-rain.check.mjs: without a real AudioContext constructor to wrap
+    // (WebKit, no audio device), leave window.AudioContext as it is.
+    if (!AC) return;
     window.AudioContext = new Proxy(AC, {
       construct(t, a) {
         window.__acCount++;
@@ -87,7 +90,7 @@ async function withScene(register, fn) {
 {
   const ctx = await browser.newContext();
   const p = await ctx.newPage();
-  await p.addInitScript(() => { window.__calls = 0; const AC = window.AudioContext; window.AudioContext = new Proxy(AC, { construct(t, a) { const inst = new t(...a); const co = inst.createOscillator.bind(inst); inst.createOscillator = (...x) => { window.__calls++; return co(...x); }; return inst; } }); });
+  await p.addInitScript(() => { window.__calls = 0; const AC = window.AudioContext; if (!AC) return; window.AudioContext = new Proxy(AC, { construct(t, a) { const inst = new t(...a); const co = inst.createOscillator.bind(inst); inst.createOscillator = (...x) => { window.__calls++; return co(...x); }; return inst; } }); });
   await p.goto(`${server.url}/tools/harness/scene.html?name=rampon&register=playful&seed=1`);
   await p.waitForFunction(() => window.__ready);
   await p.evaluate(async () => { const { attachRamponKoel } = await import('/packages/sound/scapes/rampon-koel.js'); window.__detach = attachRamponKoel(window.__piece); });

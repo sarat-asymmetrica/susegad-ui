@@ -6,13 +6,15 @@
 <link rel="stylesheet" href="/packages/tokens/tokens.css">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="demo-ready" content="manual">
 <title>Export</title>
 <style>
   body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem)/1.5 var(--sg-font-body, system-ui, sans-serif); }
   main { max-width: 40rem; margin: 0 auto; padding: 2rem 1rem 3rem; display: grid; gap: 1.5rem; }
   h1 { margin: 0; font: 600 1.6rem/1.2 var(--sg-font-display, inherit); }
-  figure { margin: 0; display: grid; gap: 0.4rem; }
-  img, video { max-width: 16rem; border: 1px solid var(--sg-rule, currentColor); border-radius: var(--sg-radius-2, 6px); }
+  .formats { display: flex; gap: 1rem; flex-wrap: wrap; }
+  figure { margin: 0; display: grid; gap: 0.4rem; flex: 1 1 9rem; min-width: 0; align-content: start; }
+  img, video { width: 100%; aspect-ratio: 1; object-fit: cover; border: 1px solid var(--sg-rule, currentColor); border-radius: var(--sg-radius-2, 6px); }
   figcaption { font-size: 0.85rem; color: var(--sg-text-soft, inherit); }
   #status { font-size: 0.85rem; }
 </style>
@@ -21,7 +23,7 @@
 <main>
   <h1>Export</h1>
   <p id="status">Rendering the Kolam scene to PNG, WebM and GIF…</p>
-  <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
+  <div class="formats">
     <figure><img id="png" alt="A PNG still of the Kolam scene"><figcaption id="png-caption">PNG</figcaption></figure>
     <figure><video id="webm" controls muted playsinline></video><figcaption id="webm-caption">WebM</figcaption></figure>
     <figure><img id="gif" alt="An animated GIF of the Kolam scene"><figcaption id="gif-caption">GIF</figcaption></figure>
@@ -45,20 +47,32 @@
     const pngBlob = await canvasToPng(canvas);
     document.getElementById('png').src = URL.createObjectURL(pngBlob);
     document.getElementById('png-caption').textContent = `PNG, ${(pngBlob.size / 1024).toFixed(1)} KB`;
+    window.__pngBytes = pngBlob.size;
     renderer.destroy(); host.remove();
 
-    const webmBlob = await recordSceneToWebm(kolam, { register: 'warm', seed: 7, durationSec: 2, fps: 20 });
-    document.getElementById('webm').src = URL.createObjectURL(webmBlob);
-    document.getElementById('webm-caption').textContent = `WebM, ${(webmBlob.size / 1024).toFixed(1)} KB`;
+    // WebM needs MediaRecorder, which not every engine's automated build has
+    // (WebKit 26.6 headless: none). That is a real, named limit of the
+    // engine, not this page failing, so it is caught on its own: the PNG
+    // above already rendered, and the GIF below does not depend on it.
+    try {
+      const webmBlob = await recordSceneToWebm(kolam, { register: 'warm', seed: 7, durationSec: 2, fps: 20, startSec: 6 });
+      const video = document.getElementById('webm');
+      video.src = URL.createObjectURL(webmBlob);
+      // ready means the player has its first frame, not that it was handed a file
+      await new Promise(res => { video.addEventListener('loadeddata', res, { once: true }); setTimeout(res, 4000); });
+      document.getElementById('webm-caption').textContent = `WebM, ${(webmBlob.size / 1024).toFixed(1)} KB`;
+      window.__webmBytes = webmBlob.size;
+    } catch (err) {
+      document.getElementById('webm-caption').textContent = `WebM not available here: ${err.message}`;
+      window.__webmError = err.message;
+    }
 
-    const gifBlob = await recordSceneToGif(kolam, { register: 'warm', seed: 7, durationSec: 2, fps: 8, width: 260, height: 260 });
+    const gifBlob = await recordSceneToGif(kolam, { register: 'warm', seed: 7, durationSec: 2, fps: 8, width: 260, height: 260, startSec: 6 });
     document.getElementById('gif').src = URL.createObjectURL(gifBlob);
     document.getElementById('gif-caption').textContent = `GIF, ${(gifBlob.size / 1024).toFixed(1)} KB`;
-
-    document.getElementById('status').textContent = 'Done.';
-    window.__pngBytes = pngBlob.size;
-    window.__webmBytes = webmBlob.size;
     window.__gifBytes = gifBlob.size;
+
+    document.getElementById('status').textContent = window.__webmError ? `Done (WebM not available here: ${window.__webmError}).` : 'Done.';
     window.__demoReady?.();
     window.__ready = true;
   }

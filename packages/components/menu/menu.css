@@ -1,0 +1,300 @@
+/* <sg-menu>. Without JavaScript this is the quiet look: a typeset price list,
+   a name, dots, and a price on each line, the unit and the sauce beneath. The
+   steppers and the total are JavaScript's, so a page with none shows a plain
+   list. Tokens only. */
+
+sg-menu {
+  display: block;
+  position: relative;
+  max-inline-size: 40rem;
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body);
+  container-type: inline-size;
+  --menu-pad: 0px;
+}
+sg-menu[hidden] { display: none; }
+
+/* a section: its head, a note, and the dishes */
+sg-menu .sg-menu-section { margin: 0 0 var(--sg-space-5); }
+sg-menu .sg-menu-section:last-of-type { margin-block-end: var(--sg-space-3); }
+sg-menu .sg-menu-section-title {
+  position: relative;
+  margin: 0 0 var(--sg-space-2);
+  padding-block-end: var(--sg-space-2);
+  border-block-end: var(--sg-hairline) solid var(--sg-rule-strong);
+  font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body);
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.08em;
+  color: var(--sg-text-soft);
+}
+sg-menu .sg-menu-section-note { margin: 0 0 var(--sg-space-2); font-size: var(--sg-step--1); color: var(--sg-text-soft); }
+sg-menu .sg-menu-items { list-style: none; margin: 0; padding: 0; }
+
+/* a dish: name ........ price, the sauce under the name, the unit under the
+   price, then tags and status, then (with JavaScript) the stepper */
+sg-menu .sg-menu-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--sg-space-3);
+  align-items: start;
+  padding-block: var(--sg-space-2);
+}
+sg-menu .sg-menu-name {
+  grid-column: 1; grid-row: 1;
+  display: flex;
+  align-items: baseline;
+  font-weight: var(--sg-weight-medium);
+  overflow-wrap: anywhere;
+}
+/* the leader dots: they run from the name to the price, and are not there if there is no price */
+sg-menu .sg-menu-name::after {
+  content: "";
+  flex: 1 1 1rem;
+  min-inline-size: 1rem;
+  margin-inline: 0.5rem 0;
+  border-block-end: 2px dotted var(--sg-rule-strong);
+  transform: translateY(-0.28em);
+}
+sg-menu .sg-menu-name:not(:has(+ .sg-menu-price))::after { display: none; }
+sg-menu .sg-menu-price {
+  grid-column: 2; grid-row: 1 / span 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: end;
+  font-weight: var(--sg-weight-medium);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  white-space: nowrap;
+}
+sg-menu .sg-menu-price data { font: inherit; }
+sg-menu .sg-menu-unit {
+  font-size: var(--sg-step--1);
+  font-weight: var(--sg-weight-regular);
+  color: var(--sg-text-soft);
+}
+sg-menu .sg-menu-line { grid-column: 1; grid-row: 2; color: var(--sg-text-soft); text-wrap: pretty; }
+sg-menu .sg-menu-meta {
+  grid-column: 1; grid-row: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sg-space-1) var(--sg-space-3);
+  margin-block-start: var(--sg-space-1);
+  font-size: var(--sg-step--1);
+}
+sg-menu .sg-menu-tags { display: contents; list-style: none; margin: 0; padding: 0; }
+sg-menu .sg-menu-tag { display: inline-flex; align-items: center; gap: 0.4em; color: var(--sg-text-soft); }
+sg-menu .sg-menu-status {
+  font-weight: var(--sg-weight-medium);
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.06em;
+  color: var(--sg-text);
+}
+/* a dish that cannot be ordered reads quieter, and its price is struck through */
+sg-menu .sg-menu-item:is([data-availability="sold-out"], [data-availability="ask"]) :is(.sg-menu-name, .sg-menu-line) { color: var(--sg-text-soft); }
+sg-menu .sg-menu-item[data-availability="sold-out"] .sg-menu-price data { text-decoration: line-through; text-decoration-thickness: 1px; }
+
+/* the glyphs: one small shape before a tag's words, only when asked for. The
+   words are always there; a shape never stands in for them. */
+sg-menu[glyphs] .sg-menu-tag::before {
+  content: "";
+  flex: none;
+  inline-size: 0.7em;
+  block-size: 0.7em;
+  color: var(--sg-text-soft);
+  box-sizing: border-box;
+}
+sg-menu[glyphs] .sg-menu-tag[data-tag="veg"]::before { color: var(--sg-success); border: 1.5px solid currentColor; border-radius: 2px; background: radial-gradient(circle, currentColor 0 30%, transparent 34%); }
+sg-menu[glyphs] .sg-menu-tag[data-tag="vegan"]::before { color: var(--sg-success); background: currentColor; border-radius: 0 100% 0 100%; }
+sg-menu[glyphs] .sg-menu-tag[data-tag="egg-less"]::before { border: 1.5px solid currentColor; border-radius: 50%; background: linear-gradient(135deg, transparent 44%, currentColor 44% 58%, transparent 58%); }
+sg-menu[glyphs] .sg-menu-tag[data-tag="nuts"]::before { color: var(--sg-warning); background: currentColor; transform: rotate(45deg) scale(0.85); }
+sg-menu[glyphs] .sg-menu-tag[data-tag="spicy"]::before { color: var(--sg-danger); background: currentColor; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+sg-menu[glyphs] .sg-menu-tag:not([data-tag="veg"], [data-tag="vegan"], [data-tag="egg-less"], [data-tag="nuts"], [data-tag="spicy"])::before { display: none; }
+
+/* ── with JavaScript and `orderable`: the stepper ── */
+sg-menu .sg-menu-qty {
+  grid-column: 2; grid-row: 3;
+  justify-self: end;
+  align-self: end;
+  display: inline-flex;
+  align-items: center;
+  margin-block-start: var(--sg-space-1);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-2);
+  background: var(--sg-surface);
+}
+sg-menu .sg-menu-qty button {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  inline-size: 2.75rem;
+  block-size: 2.75rem; /* a 44 px target */
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--sg-radius-2) - 1px);
+  background: transparent;
+  color: var(--sg-text);
+  font: var(--sg-weight-medium) var(--sg-step-1) / 1 var(--sg-font-body);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+sg-menu .sg-menu-qty button[aria-disabled="true"] { color: var(--sg-text-faint); cursor: default; }
+sg-menu .sg-menu-qty button:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); position: relative; z-index: 1; }
+sg-menu .sg-menu-count {
+  min-inline-size: 2.25rem;
+  text-align: center;
+  font-weight: var(--sg-weight-medium);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+sg-menu .sg-menu-count[data-zero] { color: var(--sg-text-soft); }
+sg-menu .sg-menu-item[data-picked] .sg-menu-name { color: var(--sg-accent-text); }
+
+/* the total, and the way on to the order: stays at the foot of the screen
+   while the menu is on it, so a long list never loses it */
+sg-menu .sg-menu-bar {
+  position: sticky;
+  inset-block-end: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sg-space-2) var(--sg-space-3);
+  margin-block-start: var(--sg-space-3);
+  padding: var(--sg-space-3) var(--sg-space-3);
+  background: var(--sg-surface-raised);
+  border-block-start: var(--sg-hairline) solid var(--sg-rule-strong);
+}
+sg-menu .sg-menu-total { flex: 1 1 11rem; margin: 0; font-weight: var(--sg-weight-medium); font-variant-numeric: tabular-nums; }
+sg-menu .sg-menu-bar[data-empty] .sg-menu-total { color: var(--sg-text-soft); font-weight: var(--sg-weight-regular); }
+sg-menu .sg-menu-clear {
+  min-block-size: 2.75rem;
+  padding: 0 var(--sg-space-2);
+  border: 0;
+  background: transparent;
+  color: var(--sg-text);
+  font: var(--sg-weight-regular) var(--sg-step--1) / 1 var(--sg-font-body);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+sg-menu .sg-menu-continue {
+  display: inline-grid;
+  place-items: center;
+  min-block-size: 2.75rem;
+  padding: 0 var(--sg-space-3);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-2);
+  background: transparent;
+  color: var(--sg-text);
+  font: var(--sg-weight-medium) var(--sg-step-0) / 1 var(--sg-font-body);
+  text-decoration: none;
+}
+sg-menu .sg-menu-clear[aria-disabled="true"] { color: var(--sg-text-faint); text-decoration: none; cursor: default; }
+sg-menu :is(.sg-menu-clear, .sg-menu-continue):focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+sg-menu .sg-menu-bar :is([hidden]) { display: none; }
+sg-menu .sg-menu-sr { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* on a phone the stepper takes its own row, so the sauce under a name never has to wrap around it */
+@container (max-width: 30rem) {
+  sg-menu .sg-menu-qty { grid-column: 1 / -1; grid-row: 4; }
+}
+@container (max-width: 20rem) {
+  sg-menu .sg-menu-item { column-gap: var(--sg-space-2); }
+  sg-menu .sg-menu-qty { justify-self: stretch; justify-content: space-between; }
+  sg-menu .sg-menu-qty button { flex: 0 0 3.5rem; }
+  sg-menu .sg-menu-count { flex: 1; }
+}
+
+/* ── warm: a menu card ── a raised sheet with a double frame ruled in pencil
+   (the skin draws it), the section heads in the hand, the dishes in the display face */
+sg-menu[data-skin="warm"] {
+  --menu-pad: var(--sg-space-5);
+  padding: var(--sg-space-6) var(--sg-space-5) var(--sg-space-4);
+  background: var(--sg-surface-raised);
+  border-radius: 2px;
+  box-shadow: 0 1px 2px var(--sg-shadow), 0 8px 24px -12px var(--sg-shadow);
+}
+sg-menu .sg-menu-frame { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; pointer-events: none; }
+sg-menu .sg-menu-frame path { fill: var(--sg-text-soft); }
+sg-menu .sg-menu-frame .sg-menu-underline { fill: var(--sg-accent-text); }
+sg-menu[data-skin="warm"] .sg-menu-section-title {
+  border: 0;
+  padding-block-end: var(--sg-space-2);
+  margin-block-end: var(--sg-space-3);
+  font: 400 var(--sg-step-3) / 1.1 var(--sg-font-hand);
+  font-variant-caps: normal;
+  letter-spacing: 0;
+  color: var(--sg-accent-text);
+}
+sg-menu[data-skin="warm"] .sg-menu-section-note { font-family: var(--sg-font-hand); font-size: var(--sg-step-0); }
+sg-menu[data-skin="warm"] .sg-menu-name { font: 400 var(--sg-step-1) / 1.25 var(--sg-font-display); }
+sg-menu[data-skin="warm"] .sg-menu-name::after { border-block-end: 1.5px dotted var(--sg-rule-strong); }
+sg-menu[data-skin="warm"] .sg-menu-item { padding-block: var(--sg-space-2) var(--sg-space-3); }
+sg-menu[data-skin="warm"] .sg-menu-line { font-style: italic; }
+sg-menu[data-skin="warm"] .sg-menu-qty { border-radius: var(--sg-radius-pill, 999px); }
+sg-menu[data-skin="warm"] .sg-menu-qty .sg-menu-plus { background: var(--sg-accent); color: var(--sg-on-accent); border-radius: var(--sg-radius-pill, 999px); }
+sg-menu[data-skin="warm"] .sg-menu-qty .sg-menu-plus[aria-disabled="true"] { background: var(--sg-surface-sunk); color: var(--sg-text-faint); }
+sg-menu[data-skin="warm"] .sg-menu-bar { padding-inline: var(--sg-space-3); border-radius: 2px; box-shadow: 0 -6px 14px -10px var(--sg-shadow); }
+sg-menu[data-skin="warm"] .sg-menu-continue { background: var(--sg-accent); color: var(--sg-on-accent); border-color: var(--sg-accent); }
+
+/* ── playful: a chalkboard-cheerful list. Prices in pills, tags as chips, a
+   sold-out dish stamped. The count settles when you add a dish. ── */
+sg-menu[data-skin="playful"] .sg-menu-section-title {
+  display: inline-block;
+  padding: 0.05em 0.6em 0.1em;
+  margin-block-end: var(--sg-space-3);
+  border: 0;
+  border-radius: var(--sg-radius-pill, 999px);
+  background: var(--sg-accent);
+  color: var(--sg-on-accent);
+  font: 400 var(--sg-step-2) / 1.2 var(--sg-font-hand);
+  font-variant-caps: normal;
+  letter-spacing: 0;
+  transform: rotate(-1.5deg);
+}
+sg-menu[data-skin="playful"] .sg-menu-section-note { font-family: var(--sg-font-hand); }
+sg-menu[data-skin="playful"] .sg-menu-item {
+  padding: var(--sg-space-3);
+  margin-block-end: var(--sg-space-2);
+  background: var(--sg-surface-raised);
+  border: 2px solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-2);
+}
+sg-menu[data-skin="playful"] .sg-menu-item[data-picked] { border-color: var(--sg-accent); }
+sg-menu[data-skin="playful"] .sg-menu-name { font: 400 var(--sg-step-1) / 1.25 var(--sg-font-display); }
+sg-menu[data-skin="playful"] .sg-menu-name::after { display: none; }
+sg-menu[data-skin="playful"] .sg-menu-price data {
+  display: inline-block;
+  padding: 0 0.6em;
+  border-radius: var(--sg-radius-pill, 999px);
+  background: var(--sg-surface-sunk);
+  border: 1.5px solid var(--sg-rule-strong);
+}
+sg-menu[data-skin="playful"] .sg-menu-tag { padding: 0 0.6em; border: 1.5px solid var(--sg-rule-strong); border-radius: var(--sg-radius-pill, 999px); color: var(--sg-text); }
+sg-menu[data-skin="playful"] .sg-menu-status {
+  display: inline-block;
+  padding: 0.05em 0.6em;
+  border: 2px solid currentColor;
+  border-radius: 4px;
+  color: var(--sg-danger);
+  font-variant-caps: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transform: rotate(-3deg);
+}
+sg-menu[data-skin="playful"] .sg-menu-qty { border-width: 2px; border-radius: var(--sg-radius-pill, 999px); }
+sg-menu[data-skin="playful"] .sg-menu-qty .sg-menu-plus { background: var(--sg-accent); color: var(--sg-on-accent); border-radius: var(--sg-radius-pill, 999px); }
+sg-menu[data-skin="playful"] .sg-menu-qty .sg-menu-plus[aria-disabled="true"] { background: var(--sg-surface-sunk); color: var(--sg-text-faint); }
+sg-menu[data-skin="playful"] .sg-menu-count { display: inline-block; font: 400 var(--sg-step-1) / 1 var(--sg-font-hand); }
+sg-menu[data-skin="playful"] .sg-menu-bar { border: 2px solid var(--sg-accent); border-radius: var(--sg-radius-2); background: var(--sg-surface-raised); }
+sg-menu[data-skin="playful"] .sg-menu-continue { background: var(--sg-accent); color: var(--sg-on-accent); border-color: var(--sg-accent); border-radius: var(--sg-radius-pill, 999px); }
+
+@media (forced-colors: active) {
+  sg-menu .sg-menu-frame { display: none; }
+  sg-menu .sg-menu-qty, sg-menu .sg-menu-qty button, sg-menu .sg-menu-continue { border: 1px solid ButtonText; }
+  sg-menu .sg-menu-name::after { border-color: CanvasText; }
+}

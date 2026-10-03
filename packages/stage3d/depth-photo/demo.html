@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Depth photo</title>
+<script type="importmap">{ "imports": { "three": "/packages/stage3d/vendor/three.named.js" } }</script>
+<link rel="stylesheet" href="./depth-photo.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 60rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  p { line-height: var(--sg-leading-body); }
+  .lede { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .demo { display: grid; gap: var(--sg-space-4); grid-template-columns: minmax(0, 24rem) minmax(0, 1fr); align-items: start; }
+  @media (max-width: 720px) { .demo { grid-template-columns: minmax(0, 1fr); } }
+  sg-depth-photo { border-radius: var(--sg-radius-3); box-shadow: var(--sg-lift); }
+  .controls { display: grid; gap: var(--sg-space-3); }
+  label { display: grid; gap: 4px; font-size: var(--sg-step--1); color: var(--sg-text-soft); }
+  input[type="range"] { width: 100%; accent-color: var(--sg-accent); }
+  output { color: var(--sg-text); font-variant-numeric: tabular-nums; }
+  .row { display: flex; flex-wrap: wrap; gap: var(--sg-space-2); }
+  .note { font-size: var(--sg-step--1); color: var(--sg-text-soft); max-width: var(--sg-measure); margin: 0; }
+  .wide { aspect-ratio: 16 / 9; max-width: 36rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Depth photo</h1>
+  <p class="lede">A picture with a depth map, seen through a camera. The focus racks by depth, the camera can move in, and the water moves inside its mask. Without WebGL, in quiet, or with reduced motion, it draws the same frame in 2D and holds still.</p>
+
+  <h2>Rack focus and dolly</h2>
+  <div class="demo">
+    <sg-depth-photo id="dp" depth="./fixtures/depth.png" layers="./fixtures/layers.png"
+      horizon="0.334" shore="0.478" keep="0.46 0.56" focus="0.21" dolly-path="0 -0.05 0.3 -3">
+      <img src="./fixtures/drawing.png" width="384" height="512"
+        alt="An ink and wash drawing of a plate of golden puffs on a red laterite ledge, with a grey-green sea, whitecaps and dark rocks behind it.">
+    </sg-depth-photo>
+    <div class="controls">
+      <div class="row">
+        <button type="button" id="far" class="demo-button">Focus on the sea</button>
+        <button type="button" id="near" class="demo-button">Focus on the plate</button>
+      </div>
+      <label>Focus depth <input id="focus" type="range" min="0" max="1" step="0.01" value="0.21"> <output id="focus-out" for="focus">0.21</output></label>
+      <label>Camera in <input id="dolly" type="range" min="0" max="1" step="0.01" value="0"> <output id="dolly-out" for="dolly">0</output></label>
+      <p class="note" id="tier" aria-live="polite">Choosing how to draw.</p>
+      <p class="note">The picture is a small made-up drawing, painted by <code>fixtures/make.mjs</code>: a plate on a ledge above a sea, with a hand-set depth map. The veranda scene is the real thing.</p>
+    </div>
+  </div>
+
+  <h2>The same picture in a wide frame</h2>
+  <sg-depth-photo class="wide" depth="./fixtures/depth.png" layers="./fixtures/layers.png"
+    horizon="0.334" shore="0.478" keep="0.46 0.45" focus="0.874">
+    <img src="./fixtures/drawing.png" width="384" height="512" alt="The same drawing, cropped wide, with the plate in focus and the sea soft behind it.">
+  </sg-depth-photo>
+  <p class="note">The element covers any frame like <code>object-fit: cover</code>, keeping the point in <code>keep</code> in view.</p>
+</main>
+<script type="module">
+  import './depth-photo.js';
+  // the eased rack from the story's focus model (a pure helper, kept here because only this demo uses it)
+  const rack = (from, to, p) => { const x = Math.min(1, Math.max(0, p)), e = x * x * x * (x * (x * 6 - 15) + 10); return from * (1 - e) + to * e; };
+  const dp = document.getElementById('dp');
+  const focus = document.getElementById('focus'), dolly = document.getElementById('dolly');
+  const show = () => { document.getElementById('focus-out').value = (+focus.value).toFixed(2); document.getElementById('dolly-out').value = (+dolly.value).toFixed(2); };
+  focus.addEventListener('input', () => { dp.set({ focus: +focus.value }); show(); });
+  dolly.addEventListener('input', () => { dp.set({ dolly: +dolly.value }); show(); });
+  // a rack focus: honest to the button press, 1.2 s, or at once under reduced motion
+  const pull = to => {
+    const from = +focus.value, t0 = performance.now(), still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const step = now => {
+      const p = still ? 1 : Math.min(1, (now - t0) / 1200);
+      const f = rack(from, to, p);
+      focus.value = f; dp.set({ focus: f }); show();
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  document.getElementById('far').addEventListener('click', () => pull(0.21));
+  document.getElementById('near').addEventListener('click', () => pull(0.874));
+  const words = { live: 'Drawing with three.js, live.', '2d': 'Drawing in 2D, holding still', still: 'Showing the picture only' };
+  dp.addEventListener('sg-tier', e => { document.getElementById('tier').textContent = `${words[e.detail.tier]}${e.detail.tier === 'live' ? '' : ` (${e.detail.reason}).`}`; });
+  Promise.all([...document.querySelectorAll('sg-depth-photo')].map(el => new Promise(r => el.addEventListener('sg-ready', r, { once: true })))).then(() => window.__demoReady());
+</script>
+</body>
+</html>

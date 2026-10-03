@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="demo-ready" content="manual">
+<title>Menu</title>
+<link rel="stylesheet" href="./menu.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 80rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2.demo { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-5); }
+  .wrap { display: grid; grid-template-columns: minmax(0, 40rem) minmax(0, 1fr); gap: var(--sg-space-5); align-items: start; }
+  .readout { position: sticky; top: var(--sg-space-3); margin: 0; padding: var(--sg-space-3); border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-2); background: var(--sg-surface-sunk); }
+  .readout h3 { margin: 0 0 var(--sg-space-2); font: var(--sg-weight-medium) var(--sg-step--1) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); }
+  .readout pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: var(--sg-step--1) / 1.5 var(--sg-font-mono); }
+  #after:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+  @media (max-width: 62rem) { .wrap { grid-template-columns: minmax(0, 1fr); } .readout { position: static; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Menu</h1>
+  <p class="lede">A menu and price list a small food business can run on a phone. This page is a plain list that reads fine with no script; with it, each dish you can order gets a quantity stepper and a running total.</p>
+  <h2 class="demo">Orderable, from the page's own list</h2>
+  <div class="wrap">
+    <sg-menu id="menu" orderable glyphs seed="sample-studio" continue="#after">
+      <section class="sg-menu-section"><h3 class="sg-menu-section-title">Fresh pasta</h3><p class="sg-menu-section-note">Made to order. Rolled and cut the morning we cook it.</p><ul class="sg-menu-items">
+          <li class="sg-menu-item" data-id="fettuccine" data-availability="available"><span class="sg-menu-name">Fresh fettuccine</span><span class="sg-menu-price"><data value="450">₹450</data> <span class="sg-menu-unit">10 pieces</span></span><span class="sg-menu-line">Plain wheat, rolled thin</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="egg-less">Egg-less</li><li class="sg-menu-tag" data-tag="veg">Veg</li></ul></div></li>
+          <li class="sg-menu-item" data-id="ravioli" data-availability="available"><span class="sg-menu-name">Spinach ravioli</span><span class="sg-menu-price"><data value="520">₹520</data> <span class="sg-menu-unit">serves 2</span></span><span class="sg-menu-line">Ricotta, lemon and nutmeg</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="veg">Veg</li></ul></div></li>
+          <li class="sg-menu-item" data-id="gnocchi" data-availability="available"><span class="sg-menu-name">Beetroot gnocchi</span><span class="sg-menu-price"><data value="480">₹480</data> <span class="sg-menu-unit">serves 2</span></span><span class="sg-menu-line">Soft, with sage butter</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="egg-less">Egg-less</li><li class="sg-menu-tag" data-tag="veg">Veg</li></ul></div></li>
+          <li class="sg-menu-item" data-id="tagliolini" data-availability="sold-out"><span class="sg-menu-name">Squid ink tagliolini</span><span class="sg-menu-price"><data value="640">₹640</data> <span class="sg-menu-unit">serves 2</span></span><span class="sg-menu-line">Back when the squid is in</span><div class="sg-menu-meta"><span class="sg-menu-status">Sold out</span></div></li>
+        </ul></section>
+      <section class="sg-menu-section"><h3 class="sg-menu-section-title">Sauces</h3><p class="sg-menu-section-note">By the jar. Keeps four days in the fridge.</p><ul class="sg-menu-items">
+          <li class="sg-menu-item" data-id="tomato" data-availability="available"><span class="sg-menu-name">Tomato and basil</span><span class="sg-menu-price"><data value="260">₹260</data> <span class="sg-menu-unit">1 jar</span></span><span class="sg-menu-line">Slow cooked, nothing else</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="vegan">Vegan</li><li class="sg-menu-tag" data-tag="egg-less">Egg-less</li></ul></div></li>
+          <li class="sg-menu-item" data-id="pesto" data-availability="available"><span class="sg-menu-name">Walnut pesto</span><span class="sg-menu-price"><data value="340">₹340</data> <span class="sg-menu-unit">1 jar</span></span><span class="sg-menu-line">Green and a little bitter</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="veg">Veg</li><li class="sg-menu-tag" data-tag="nuts">Contains nuts</li></ul></div></li>
+          <li class="sg-menu-item" data-id="arrabbiata" data-availability="available"><span class="sg-menu-name">Arrabbiata</span><span class="sg-menu-price"><data value="280">₹280</data> <span class="sg-menu-unit">1 jar</span></span><span class="sg-menu-line">Slow, then sharp</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="vegan">Vegan</li><li class="sg-menu-tag" data-tag="spicy">Spicy</li></ul></div></li>
+          <li class="sg-menu-item" data-id="chilli-oil" data-availability="ask"><span class="sg-menu-name">Chilli oil</span><span class="sg-menu-line">Small batch, when the chillies are good</span><div class="sg-menu-meta"><span class="sg-menu-status">Ask first</span></div></li>
+        </ul></section>
+      <section class="sg-menu-section"><h3 class="sg-menu-section-title">For a crowd</h3><ul class="sg-menu-items">
+          <li class="sg-menu-item" data-id="festival" data-availability="ask"><span class="sg-menu-name">Festival table</span><span class="sg-menu-price"><data value="123450">₹1,23,450</data> <span class="sg-menu-unit">serves 100</span></span><span class="sg-menu-line">Three pastas and two sauces, cooked and carried</span><div class="sg-menu-meta"><span class="sg-menu-status">Ask first</span></div></li>
+        </ul></section>
+    </sg-menu>
+    <aside class="readout" aria-labelledby="readout-h">
+      <h3 id="readout-h">What the page hears (sg-change)</h3>
+      <pre id="readout">Nothing yet.</pre>
+    </aside>
+  </div>
+  <p id="after" class="note" tabindex="-1">The order goes on from here. The food-order recipe puts a composer after the menu that writes it as a WhatsApp message.</p>
+
+  <h2 class="demo">A price list only, written from data (<code>menu.items = [...]</code>)</h2>
+  <sg-menu id="list" glyphs></sg-menu>
+
+  <p class="note">A made-up sample studio, made-up dishes and prices. Every price is for one unit: 520 for a "serves 2" dish is 520 for the dish. Underneath, everything is a native list, button or link.</p>
+</main>
+<script type="module">
+  import './menu.js';
+  const menu = document.getElementById('menu');
+  const out = document.getElementById('readout');
+  menu.addEventListener('sg-change', e => { out.textContent = JSON.stringify({ lines: e.detail.lines.map(l => `${l.qty} x ${l.name}`), total: e.detail.total }, null, 2); });
+  document.getElementById('list').items = [
+    { title: 'Workshops', note: 'Small groups, flour on the floor.', items: [
+      { name: 'Pasta by hand', line: 'Two hours, three shapes, lunch included', price: 2500, unit: 'per person', tags: ['veg'] },
+      { name: 'Supper club', line: 'A long table, five courses', price: 3200, unit: 'per seat', availability: 'sold out' },
+    ] },
+  ];
+  // ready once every menu has its skin (it loads after the element upgrades)
+  const menus = [...document.querySelectorAll('sg-menu')];
+  Promise.all(menus.map(m => customElements.whenDefined('sg-menu').then(() => m.skin ? 0 : new Promise(r => m.addEventListener('sg-skin', r, { once: true })))))
+    .then(() => document.fonts.ready).then(() => setTimeout(() => window.__demoReady(), 80));
+</script>
+</body>
+</html>

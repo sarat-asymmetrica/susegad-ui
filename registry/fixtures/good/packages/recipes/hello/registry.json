@@ -1,6 +1,7 @@
 {
   "name": "hello",
   "type": "recipe",
+  "stability": "experimental",
   "title": "Hello",
   "description": "Fixture recipe: a greeting beside the dot scene, to prove recipes copy to susegad/recipes/ with their imports intact.",
   "version": "0.1.0",

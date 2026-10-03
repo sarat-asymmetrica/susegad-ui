@@ -1,11 +1,13 @@
 {
   "name": "core",
   "type": "package",
+  "stability": "beta",
+  "stabilityReason": "The scene contract and <sg-scene> have run every scene in the registry since the soft launch, with no breaking change yet.",
   "title": "Core",
   "description": "The register (quiet, warm, playful) and its cascade, the scene contract as defineScene, and the sg-scene element that runs any scene with its still, scrim, calm rects, toggle and status text.",
   "version": "0.1.0",
   "files": ["index.js", "register.js", "define-scene.js", "scene-element.js", "colors.js", "README.md"],
-  "dependencies": ["engine"],
-  "budget": { "jsBytes": 28672 },
+  "dependencies": ["engine", "core-movable"],
+  "budget": { "jsBytes": 31744, "reason": "Decision 0021: the open keep-away list, the reading-place watcher and the movable hook (the movable behaviour itself is its own item)." },
   "docs": "README.md"
 }

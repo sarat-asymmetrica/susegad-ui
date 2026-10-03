@@ -1,0 +1,115 @@
+/* <sg-voice-note>. Without JavaScript: the browser's own audio controls and
+   the transcript as text. With it: a play button, a waveform you can seek
+   along, the time, and the transcript, which always shows. */
+
+sg-voice-note {
+  display: block;
+  max-width: 32rem;
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body);
+}
+sg-voice-note[hidden] { display: none; }
+sg-voice-note > audio { display: block; width: 100%; max-width: 100%; }
+sg-voice-note[data-enhanced] > audio { display: none; }
+
+sg-voice-note .sg-voice-transcript { margin: var(--sg-space-2) 0 0; overflow-wrap: anywhere; }
+sg-voice-note .sg-voice-cue { border-radius: var(--sg-radius-1); transition: background-color var(--sg-dur-quick) var(--sg-ease-out); }
+sg-voice-note .sg-voice-cue[data-current] { background: var(--sg-selection); }
+
+sg-voice-note .sg-voice-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sg-space-3);
+  padding: var(--sg-space-2) var(--sg-space-3) var(--sg-space-2) var(--sg-space-2);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-2);
+  background: var(--sg-surface-raised);
+}
+
+sg-voice-note .sg-voice-play {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-radius: 50%;
+  background: var(--sg-surface);
+  color: var(--sg-text);
+  cursor: pointer;
+}
+sg-voice-note .sg-voice-play::before {
+  content: "";
+  width: 0.95rem;
+  height: 0.95rem;
+  background: currentColor;
+  -webkit-mask: var(--sg-voice-icon) center / contain no-repeat;
+  mask: var(--sg-voice-icon) center / contain no-repeat;
+  --sg-voice-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 1.2l7.4 4.8L3 10.8z'/%3E%3C/svg%3E");
+}
+sg-voice-note .sg-voice-play[data-state="playing"]::before {
+  --sg-voice-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 1.4h2.6v9.2H2.4zM7 1.4h2.6v9.2H7z'/%3E%3C/svg%3E");
+}
+sg-voice-note .sg-voice-play:focus-visible,
+sg-voice-note .sg-voice-wave:has(input:focus-visible) {
+  outline: var(--sg-focus-width) solid var(--sg-focus);
+  outline-offset: var(--sg-focus-offset);
+}
+
+sg-voice-note .sg-voice-wave {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 2.25rem;
+  border-radius: var(--sg-radius-1);
+}
+sg-voice-note .sg-voice-bars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  stroke: var(--sg-rule-strong);
+}
+sg-voice-note .sg-voice-bars .sg-played { stroke: var(--sg-text); }
+/* The seek control is a native range over the waveform: every key and screen
+   reader works, and the bars under it are the only thing drawn. */
+sg-voice-note .sg-voice-wave input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+sg-voice-note .sg-voice-time {
+  flex: none;
+  min-width: 2.6em;
+  text-align: end;
+  font-size: var(--sg-step--1);
+  font-variant-numeric: tabular-nums;
+  color: var(--sg-text-soft);
+}
+
+/* ── warm: pencil on paper ── */
+sg-voice-note[data-skin="warm"] .sg-voice-bar { border-color: transparent; border-radius: var(--sg-radius-3); box-shadow: inset 0 0 0 var(--sg-hairline) var(--sg-rule); }
+sg-voice-note[data-skin="warm"] .sg-voice-play { border: var(--sg-stroke) solid var(--sg-accent-text); color: var(--sg-accent-text); border-radius: 48% 52% 50% 50% / 52% 48% 52% 48%; }
+sg-voice-note[data-skin="warm"] .sg-voice-bars { stroke: var(--sg-pencil); }
+sg-voice-note[data-skin="warm"] .sg-voice-bars .sg-played { stroke: var(--sg-accent-text); }
+sg-voice-note[data-skin="warm"] .sg-voice-transcript { padding-inline-start: var(--sg-space-3); border-inline-start: var(--sg-stroke) solid var(--sg-rule); font-style: italic; }
+
+/* ── playful: a bright pill ── */
+sg-voice-note[data-skin="playful"] .sg-voice-bar { border: 0; border-radius: var(--sg-radius-pill); background: var(--sg-selection); padding-inline-end: var(--sg-space-4); }
+sg-voice-note[data-skin="playful"] .sg-voice-play { border: 0; background: var(--sg-accent); color: var(--sg-on-accent); }
+sg-voice-note[data-skin="playful"] .sg-voice-bars { stroke: var(--sg-text-soft); }
+sg-voice-note[data-skin="playful"] .sg-voice-bars .sg-played { stroke: var(--sg-accent-text); }
+sg-voice-note[data-skin="playful"] .sg-voice-time { color: var(--sg-text); }
+
+@media (forced-colors: active) {
+  sg-voice-note .sg-voice-play::before { forced-color-adjust: none; background: ButtonText; }
+  sg-voice-note .sg-voice-bars { stroke: GrayText; }
+  sg-voice-note .sg-voice-bars .sg-played { stroke: Highlight; }
+  sg-voice-note .sg-voice-bar { border: 1px solid CanvasText; }
+}

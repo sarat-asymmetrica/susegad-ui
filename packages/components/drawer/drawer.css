@@ -1,0 +1,122 @@
+/* Drawer. Base rules are the quiet look: a hairline panel pinned to its edge
+   (default: the inline-end, a right-hand drawer in English), full height,
+   sliding in with a plain slide. A page without JavaScript still gets a
+   working native <dialog> (its own-box default position), since the edge
+   layout below only applies once the element has upgraded.
+
+   In quiet, the <dialog> itself IS the panel (simplest structure; no Carepa
+   to host). In warm/playful the <dialog> becomes full-bleed instead, so the
+   Carepa scrim covers the whole viewport like Dialog's does — not just the
+   panel's own box — and .sg-drawer-card is placed and animated at the edge
+   inside it. Rasika OB1: an edge-sized dialog only dimmed the rest of the
+   page instead of hiding it; the page's own body text stayed legible next
+   to the panel. */
+
+sg-drawer { display: contents; }
+sg-drawer dialog {
+  box-sizing: border-box;
+  position: fixed;
+  inset: 0 0 0 auto;
+  margin: 0;
+  max-inline-size: min(26rem, 92vw);
+  inline-size: min(26rem, 92vw);
+  block-size: 100%;
+  max-block-size: none;
+  padding: 0;
+  border: 0;
+  border-inline-start: var(--sg-hairline) solid var(--sg-rule-strong);
+  background: var(--sg-surface-raised);
+  color: var(--sg-text);
+  box-shadow: -24px 0 60px -30px var(--sg-shadow);
+}
+sg-drawer dialog::backdrop { background: var(--sg-scrim, color-mix(in oklab, Canvas 55%, transparent)); }
+sg-drawer dialog:not([open]) { display: none; }
+sg-drawer .sg-drawer-scrim { display: none; }
+/* Rasika S4: .sg-drawer-card stays overflow: visible (its default) so the
+   deckled ::before, drawn 1px outside its own border box, is never clipped.
+   Scrolling, padding and block-size live on .sg-drawer-content instead — a
+   plain inner wrapper with no decoration of its own. */
+sg-drawer .sg-drawer-card { position: relative; block-size: 100%; box-sizing: border-box; }
+sg-drawer .sg-drawer-content { padding: var(--sg-space-4); display: flow-root; block-size: 100%; box-sizing: border-box; overflow: auto; }
+sg-drawer .sg-drawer-card h2, sg-drawer .sg-drawer-card h3 { font: 400 1.375rem/1.2 var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+sg-drawer :focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+/* actions: the same styling as Dialog's card buttons (Rasika OP1) */
+sg-drawer .sg-drawer-card menu, sg-drawer .sg-drawer-card form menu {
+  display: flex; gap: var(--sg-space-2); justify-content: flex-end; margin: var(--sg-space-4) 0 0; padding: 0; list-style: none;
+}
+sg-drawer .sg-drawer-card button {
+  font: 500 0.9375rem/1 var(--sg-font-body); color: var(--sg-text); background: var(--sg-surface);
+  border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-pill); padding: 0.6em 1.1em; cursor: pointer;
+}
+sg-drawer .sg-drawer-card button[value="ok"] {
+  background: var(--sg-accent); color: var(--sg-on-accent); border-color: transparent;
+}
+
+/* the four edges (logical: start/end flip in a right-to-left page), quiet's own-box panel */
+sg-drawer[data-edge="start"] dialog { inset: 0 auto 0 0; border-inline: 0; border-inline-end: var(--sg-hairline) solid var(--sg-rule-strong); box-shadow: 24px 0 60px -30px var(--sg-shadow); }
+sg-drawer[data-edge="top"] dialog { inset: 0 0 auto 0; inline-size: 100%; max-inline-size: none; block-size: min(70vh, 30rem); border-inline: 0; border-block-end: var(--sg-hairline) solid var(--sg-rule-strong); box-shadow: 0 24px 60px -30px var(--sg-shadow); }
+sg-drawer[data-edge="bottom"] dialog { inset: auto 0 0 0; inline-size: 100%; max-inline-size: none; block-size: min(70vh, 30rem); border-inline: 0; border-block-start: var(--sg-hairline) solid var(--sg-rule-strong); box-shadow: 0 -24px 60px -30px var(--sg-shadow); }
+
+/* quiet's slide-in: a transform on the dialog itself (it is the panel), timed by the register's own duration token */
+sg-drawer:not([data-skin="warm"]):not([data-skin="playful"]) dialog[open] { animation: sg-drawer-in var(--sg-dur-calm, 320ms) var(--sg-ease-out, ease-out) both; }
+@keyframes sg-drawer-in { from { transform: var(--sg-drawer-off, translateX(100%)); } to { transform: translate(0, 0); } }
+sg-drawer[data-edge="end"] dialog { --sg-drawer-off: translateX(100%); }
+sg-drawer[data-edge="start"] dialog { --sg-drawer-off: translateX(-100%); }
+sg-drawer[data-edge="top"] dialog { --sg-drawer-off: translateY(-100%); }
+sg-drawer[data-edge="bottom"] dialog { --sg-drawer-off: translateY(100%); }
+
+/* ── warm and playful: the dialog is full-bleed (Carepa fills the whole
+   viewport, exactly like Dialog's does), and .sg-drawer-card is the panel,
+   placed and animated at the edge inside it. [open] gates every rule that
+   sets `display` or the full-bleed box, the same lesson as Dialog's own
+   cascade bug: a closed dialog must stay display:none, never win the
+   full-bleed layout by source order. ── */
+sg-drawer[data-skin="warm"] dialog[open],
+sg-drawer[data-skin="playful"] dialog[open] {
+  inset: 0; margin: 0; max-inline-size: none; max-block-size: none;
+  inline-size: 100%; block-size: 100%;
+  background: transparent; box-shadow: none; border: 0;
+  animation: none; /* the dialog itself no longer slides; .sg-drawer-card does */
+}
+sg-drawer[data-skin="warm"] .sg-drawer-scrim,
+sg-drawer[data-skin="playful"] .sg-drawer-scrim {
+  display: block; position: absolute; inset: 0; z-index: 0;
+}
+sg-drawer[data-skin="warm"] .sg-drawer-card,
+sg-drawer[data-skin="playful"] .sg-drawer-card {
+  position: absolute; z-index: 1; inset-block: 0;
+  inset-inline-start: auto; inset-inline-end: 0; /* default edge: end */
+  inline-size: min(26rem, 92vw); block-size: 100%;
+  background: color-mix(in oklab, var(--sg-surface-raised) 97%, transparent);
+  box-shadow: -18px 0 46px -26px var(--sg-shadow);
+  animation: sg-drawer-in var(--sg-dur-calm, 320ms) var(--sg-ease-out, ease-out) both;
+}
+sg-drawer[data-edge="start"][data-skin="warm"] .sg-drawer-card,
+sg-drawer[data-edge="start"][data-skin="playful"] .sg-drawer-card {
+  inset-inline: 0 auto; box-shadow: 18px 0 46px -26px var(--sg-shadow);
+}
+sg-drawer[data-edge="top"][data-skin="warm"] .sg-drawer-card,
+sg-drawer[data-edge="top"][data-skin="playful"] .sg-drawer-card {
+  inset: 0 0 auto 0; inline-size: 100%; block-size: min(70vh, 30rem); box-shadow: 0 18px 46px -26px var(--sg-shadow);
+}
+sg-drawer[data-edge="bottom"][data-skin="warm"] .sg-drawer-card,
+sg-drawer[data-edge="bottom"][data-skin="playful"] .sg-drawer-card {
+  inset: auto 0 0 0; inline-size: 100%; block-size: min(70vh, 30rem); box-shadow: 0 -18px 46px -26px var(--sg-shadow);
+}
+/* the deckled (torn-paper) edge, drawn with a mask so it works at any panel height */
+sg-drawer[data-skin="warm"] .sg-drawer-card::before,
+sg-drawer[data-skin="playful"] .sg-drawer-card::before {
+  content: ""; position: absolute; inset-block: 0; inline-size: 10px; inset-inline-start: -1px;
+  background: color-mix(in oklab, var(--sg-surface-raised) 97%, transparent);
+  -webkit-mask: repeating-radial-gradient(circle at 0 3px, transparent 0 1.2px, #000 1.6px 3px) 0 0 / 6px 6px;
+  mask: repeating-radial-gradient(circle at 0 3px, transparent 0 1.2px, #000 1.6px 3px) 0 0 / 6px 6px;
+}
+sg-drawer[data-edge="start"][data-skin="warm"] .sg-drawer-card::before,
+sg-drawer[data-edge="start"][data-skin="playful"] .sg-drawer-card::before { inset-inline-start: auto; inset-inline-end: -1px; }
+
+/* playful: the panel's slide start is timed to the Teental cycle's first beat (skins/playful.js sets this var via talaDelay(1)) */
+sg-drawer[data-skin="playful"] .sg-drawer-card { animation-delay: var(--sg-drawer-delay, 0ms); }
+
+@media (prefers-reduced-motion: reduce) {
+  sg-drawer dialog[open], sg-drawer .sg-drawer-card { animation: none !important; }
+}

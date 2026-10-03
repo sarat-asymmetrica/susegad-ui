@@ -5,7 +5,7 @@
    tokens.test.js checks the two agree and that every text role meets WCAG 2.2 AA.
 
    Selectors, all usable on :root or any element:
-     data-palette="susegad|casa"   colour palette (default susegad)
+     data-palette="susegad|casa|azulejo"   colour palette (default susegad)
      data-theme="light|dark"          absent: follow prefers-color-scheme
      data-register="quiet|warm|playful" (or register="...")  default warm
 
@@ -68,6 +68,9 @@
   --sg-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --sg-ease-ink: cubic-bezier(0.45, 0.05, 0.25, 1);
 
+  /* teental: one beat of the sixteen-beat stagger cycle (packages/tokens/tokens.js, talaDelay) */
+  --sg-tala-beat: 130ms;
+
   /* sound: names of synth patches; the sound layer plays them, off by default */
   --sg-sound-tick: "tick";
   --sg-sound-confirm: "confirm";
@@ -88,6 +91,8 @@
   --sg-dur-ambient: 9000ms;
   --sg-dur-fade: 180ms;
   --sg-ease-spring: linear(0, 0.043, 0.147, 0.282, 0.424, 0.561, 0.682, 0.785, 0.867, 0.93, 0.975, 1.006, 1.025, 1.035, 1.038, 1.037, 1.034, 1.029, 1.024, 1.018, 1.013, 1.009, 1.006, 1.003, 1.001, 1, 0.999, 0.999, 1);
+  --sg-glass-blur: 14px;
+  --sg-glass-tint: 74%;
 }
 
 [data-theme="light"] {
@@ -192,6 +197,50 @@
   --sg-lift: 0 1px 0 color-mix(in oklch, var(--sg-shadow) 12%, transparent), 0 22px 44px -28px var(--sg-shadow);
 }
 
+/* ── palette: Azulejo. The painted tiles of Goa's Portuguese-era houses and churches: a cream glaze, cobalt ink, and the lemon and leaf green of the majolica cousin. Dark is the same cobalt at night.
+   Source: the azulejo and majolica tiles of Goa (a sister palette for the tile-band component) */
+
+[data-palette="azulejo"] {
+  /* pigments: for drawing and decoration, the same in both themes */
+  --sg-cobalt: oklch(42.68% 0.142 260.56); /* the blue of the brush: cobalt oxide under a clear glaze (#1B4A9B, 6.7:1 on cream) */
+  --sg-cobalt-bright: oklch(76.23% 0.1002 262.12); /* cobalt lifted for a night ground; decoration and dark-theme lines, never text on cream (#8FB2F2) */
+  --sg-lemon: oklch(84.96% 0.1463 90.49); /* the yellow of majolica; decoration only, never text on cream (#F2C94C) */
+  --sg-leaf: oklch(57.43% 0.129 138.24); /* the green of the leaves in a majolica border; decoration (#4F8A3A) */
+  --sg-glaze: oklch(97.87% 0.0136 92.98); /* the white of a glazed tile (#FBF8EE) */
+  --sg-wash: oklch(86.44% 0.0422 263); /* a thin cobalt wash, the pale blue behind a motif (#C4D3EF) */
+
+  /* grounds and inks, light and dark */
+  --sg-paper: light-dark(oklch(96.1% 0.0205 91.58), oklch(23.1% 0.0709 266.88)); /* cream plaster; at night, deep cobalt */
+  --sg-paper-raised: light-dark(oklch(98.44% 0.0108 95.16), oklch(29.09% 0.099 267.41)); /* the glaze a card sits on */
+  --sg-paper-deep: light-dark(oklch(92.51% 0.0276 90.91), oklch(19.74% 0.0596 266.58)); /* a sunk well: inputs, code, table stripes */
+  --sg-rule: light-dark(oklch(86.57% 0.0303 94.38), oklch(36.34% 0.0919 268.66)); /* a grout line */
+  --sg-rule-strong: light-dark(oklch(59.08% 0.0412 97.36), oklch(62.09% 0.0879 269.38)); /* 3:1 or more on every ground: control borders */
+  --sg-ink: light-dark(oklch(29.39% 0.1014 265.92), oklch(94.82% 0.0244 94.07)); /* cobalt-black ink on cream; cream on the night ground; 11.4:1 or more */
+  --sg-ink-soft: light-dark(oklch(43.11% 0.0968 269.51), oklch(84.45% 0.0386 272.47)); /* secondary text; 6.5:1 or more */
+  --sg-ink-faint: light-dark(oklch(50.6% 0.0927 271.57), oklch(73.13% 0.0654 272.82)); /* captions and labels; 4.5:1 or more on every ground */
+
+  /* roles: what components read */
+  --sg-surface: var(--sg-paper);
+  --sg-surface-raised: var(--sg-paper-raised);
+  --sg-surface-sunk: var(--sg-paper-deep);
+  --sg-text: var(--sg-ink);
+  --sg-text-soft: var(--sg-ink-soft);
+  --sg-text-faint: var(--sg-ink-faint);
+  --sg-accent: light-dark(oklch(42.68% 0.142 260.56), oklch(76.23% 0.1002 262.12)); /* cobalt: the primary act, as a fill */
+  --sg-on-accent: light-dark(oklch(98.44% 0.0108 95.16), oklch(23.1% 0.0709 266.88)); /* glaze on cobalt; night on bright cobalt at night */
+  --sg-accent-text: light-dark(oklch(42.68% 0.142 260.56), oklch(76.23% 0.1002 262.12)); /* cobalt as text: links, the active tab */
+  --sg-success: light-dark(oklch(47.2% 0.116 142.13), oklch(76.57% 0.1189 138.41)); /* leaf green, darkened to read */
+  --sg-warning: light-dark(oklch(47.7% 0.099 79.41), oklch(84.96% 0.1463 90.49)); /* lemon, darkened to a mustard by day to read; lemon itself at night */
+  --sg-danger: light-dark(oklch(46.5% 0.147 24.94), oklch(77.22% 0.1079 28.22)); /* a terracotta red, which the tiles do not have, so it is a plain warning red */
+  --sg-info: light-dark(oklch(48.7% 0.1316 255.91), oklch(76.23% 0.1002 262.12)); /* a lighter cobalt */
+  --sg-focus: light-dark(oklch(42.68% 0.142 260.56), oklch(84.96% 0.1463 90.49)); /* cobalt by day, lemon at night; 3:1 or more on every ground */
+  --sg-selection: light-dark(oklch(92.18% 0.0902 96.83), oklch(39.23% 0.1198 268.41)); /* a lemon highlighter; cobalt wash at night */
+  --sg-pencil: light-dark(oklch(72.53% 0.0524 271.37), oklch(51.69% 0.0953 268.52)); /* drawing only: pencil strokes and construction lines, fainter than any text; never text */
+  --sg-scrim: light-dark(oklch(98.44% 0.0108 95.16 / 0.9), oklch(29.09% 0.099 267.41 / 0.9)); /* a glaze wash behind text on scenes */
+  --sg-shadow: light-dark(oklch(29.39% 0.1014 265.92 / 0.4), oklch(0% 0 0 / 0.6)); /* the lift shadow colour at full strength: ink by day, near-black at night (ink is light at night and would glow) */
+  --sg-lift: 0 1px 0 color-mix(in oklch, var(--sg-shadow) 12%, transparent), 0 22px 44px -28px var(--sg-shadow);
+}
+
 /* Browsers without light-dark(): the same palettes in hex, on :root only. */
 @supports not (color: light-dark(#000, #fff)) {
   :root {
@@ -256,6 +305,34 @@
     --sg-scrim: rgb(251 249 244 / 0.9);
     --sg-shadow: rgb(46 36 25 / 0.4);
   }
+  :root[data-palette="azulejo"] {
+    --sg-cobalt: #1B4A9B;
+    --sg-cobalt-bright: #8FB2F2;
+    --sg-lemon: #F2C94C;
+    --sg-leaf: #4F8A3A;
+    --sg-glaze: #FBF8EE;
+    --sg-wash: #C4D3EF;
+    --sg-paper: #F7F2E3;
+    --sg-paper-raised: #FCFAF2;
+    --sg-paper-deep: #EDE6D2;
+    --sg-rule: #D9D3BD;
+    --sg-rule-strong: #847E62;
+    --sg-ink: #14275E;
+    --sg-ink-soft: #3B4C85;
+    --sg-ink-faint: #52619A;
+    --sg-accent: #1B4A9B;
+    --sg-on-accent: #FCFAF2;
+    --sg-accent-text: #1B4A9B;
+    --sg-success: #2F6B2A;
+    --sg-warning: #7A5500;
+    --sg-danger: #9B2C2C;
+    --sg-info: #255FA8;
+    --sg-focus: #1B4A9B;
+    --sg-selection: #F6E6A0;
+    --sg-pencil: #9AA5C8;
+    --sg-scrim: rgb(252 250 242 / 0.9);
+    --sg-shadow: rgb(20 39 94 / 0.4);
+  }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --sg-laterite: #B3563A;
@@ -317,6 +394,34 @@
       --sg-selection: #18444D;
       --sg-pencil: #645D51;
       --sg-scrim: rgb(30 32 39 / 0.9);
+      --sg-shadow: rgb(0 0 0 / 0.6);
+    }
+    :root[data-palette="azulejo"]:not([data-theme="light"]) {
+      --sg-cobalt: #1B4A9B;
+      --sg-cobalt-bright: #8FB2F2;
+      --sg-lemon: #F2C94C;
+      --sg-leaf: #4F8A3A;
+      --sg-glaze: #FBF8EE;
+      --sg-wash: #C4D3EF;
+      --sg-paper: #0E1A3E;
+      --sg-paper-raised: #16265C;
+      --sg-paper-deep: #091330;
+      --sg-rule: #2A3A6E;
+      --sg-rule-strong: #7184BC;
+      --sg-ink: #F3EEDC;
+      --sg-ink-soft: #C3CBE6;
+      --sg-ink-faint: #9AA6D2;
+      --sg-accent: #8FB2F2;
+      --sg-on-accent: #0E1A3E;
+      --sg-accent-text: #8FB2F2;
+      --sg-success: #8CC57A;
+      --sg-warning: #F2C94C;
+      --sg-danger: #F29A8E;
+      --sg-info: #8FB2F2;
+      --sg-focus: #F2C94C;
+      --sg-selection: #2B3F85;
+      --sg-pencil: #51659F;
+      --sg-scrim: rgb(22 38 92 / 0.9);
       --sg-shadow: rgb(0 0 0 / 0.6);
     }
   }
@@ -382,6 +487,34 @@
     --sg-scrim: rgb(30 32 39 / 0.9);
     --sg-shadow: rgb(0 0 0 / 0.6);
   }
+  :root[data-palette="azulejo"][data-theme="dark"] {
+    --sg-cobalt: #1B4A9B;
+    --sg-cobalt-bright: #8FB2F2;
+    --sg-lemon: #F2C94C;
+    --sg-leaf: #4F8A3A;
+    --sg-glaze: #FBF8EE;
+    --sg-wash: #C4D3EF;
+    --sg-paper: #0E1A3E;
+    --sg-paper-raised: #16265C;
+    --sg-paper-deep: #091330;
+    --sg-rule: #2A3A6E;
+    --sg-rule-strong: #7184BC;
+    --sg-ink: #F3EEDC;
+    --sg-ink-soft: #C3CBE6;
+    --sg-ink-faint: #9AA6D2;
+    --sg-accent: #8FB2F2;
+    --sg-on-accent: #0E1A3E;
+    --sg-accent-text: #8FB2F2;
+    --sg-success: #8CC57A;
+    --sg-warning: #F2C94C;
+    --sg-danger: #F29A8E;
+    --sg-info: #8FB2F2;
+    --sg-focus: #F2C94C;
+    --sg-selection: #2B3F85;
+    --sg-pencil: #51659F;
+    --sg-scrim: rgb(22 38 92 / 0.9);
+    --sg-shadow: rgb(0 0 0 / 0.6);
+  }
 }
 
 /* ── the register */
@@ -400,6 +533,8 @@
   --sg-dur-ambient: 0ms;
   --sg-dur-fade: 120ms;
   --sg-ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --sg-glass-blur: 0px;
+  --sg-glass-tint: 100%;
 }
 
 [data-register="warm"], [register="warm"] {
@@ -416,6 +551,8 @@
   --sg-dur-ambient: 9000ms;
   --sg-dur-fade: 180ms;
   --sg-ease-spring: linear(0, 0.043, 0.147, 0.282, 0.424, 0.561, 0.682, 0.785, 0.867, 0.93, 0.975, 1.006, 1.025, 1.035, 1.038, 1.037, 1.034, 1.029, 1.024, 1.018, 1.013, 1.009, 1.006, 1.003, 1.001, 1, 0.999, 0.999, 1);
+  --sg-glass-blur: 14px;
+  --sg-glass-tint: 74%;
 }
 
 [data-register="playful"], [register="playful"] {
@@ -432,6 +569,8 @@
   --sg-dur-ambient: 7000ms;
   --sg-dur-fade: 200ms;
   --sg-ease-spring: linear(0, 0.096, 0.318, 0.581, 0.822, 1.006, 1.122, 1.173, 1.175, 1.145, 1.1, 1.053, 1.015, 0.987, 0.972, 0.968, 0.971, 0.978, 0.986, 0.994, 1, 1.004, 1.006, 1.006, 1.005, 1.003, 1.002, 1.001, 1);
+  --sg-glass-blur: 18px;
+  --sg-glass-tint: 66%;
 }
 
 /* Browsers without linear(): a cubic-bezier with a small overshoot. */

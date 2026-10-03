@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="/tools/harness/demo.js"></script>
+  <link rel="stylesheet" href="/packages/tokens/fonts.css">
+  <link rel="stylesheet" href="/packages/tokens/tokens.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Drawer</title>
+  <link rel="stylesheet" href="./drawer.css">
+  <style>
+    body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: 400 1rem/1.6 var(--sg-font-body); }
+    main { max-width: 44rem; margin: 0 auto; padding: var(--sg-space-5) var(--sg-space-3) 10rem; }
+    h1 { font: 400 2.25rem/1.1 var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+    p.lede { color: var(--sg-text-soft); max-width: 42rem; }
+    p.body-copy { max-width: 42rem; }
+    a.opener { display: inline-block; font: 500 0.9375rem/1 var(--sg-font-body); color: var(--sg-text); text-decoration: none;
+      background: var(--sg-surface-raised); border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-pill);
+      padding: 0.6em 1.1em; margin: 0 var(--sg-space-2) var(--sg-space-2) 0; }
+    a.opener:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+    ul.rooms { list-style: none; margin: 0; padding: 0; }
+    ul.rooms li { padding: var(--sg-space-2) 0; border-block-end: var(--sg-hairline) solid var(--sg-rule); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Drawer</h1>
+    <p class="lede">The same native &lt;dialog&gt; as Dialog, sliding in from an edge instead of appearing centred. Playful times its entrance to the Teental cycle's first beat.</p>
+    <p class="body-copy">This paragraph sits behind every drawer on this page, for the same reason as Dialog's: to prove the backdrop keeps it present but never legible as text once the drawer is open. The rooms at Balcão open onto a shared verandah with cane chairs and a view of the mango tree, and none of that sentence should read through the scrim.</p>
+
+    <a class="opener" href="./no-js.html" data-sg-drawer="rooms">The rooms</a>
+
+    <sg-drawer id="rooms" edge="end">
+      <dialog>
+        <h2>The rooms</h2>
+        <ul class="rooms">
+          <li>Garden room, ground floor, one queen bed</li>
+          <li>Verandah room, first floor, two singles</li>
+          <li>The loft, under the roof, one queen bed</li>
+          <li>Courtyard room, ground floor, two singles</li>
+          <li>Well room, ground floor, one queen bed</li>
+          <li>Mango room, first floor, one queen bed</li>
+          <li>Balcão room, first floor, two singles</li>
+          <li>Chapel room, first floor, one double</li>
+          <li>Kitchen-side room, ground floor, one double</li>
+          <li>The annexe, a short walk across the garden, one queen bed</li>
+        </ul>
+        <form method="dialog"><button type="submit" value="dismiss">Close</button></form>
+      </dialog>
+    </sg-drawer>
+  </main>
+  <script type="module">
+    import '/packages/core/index.js';
+    import '/packages/components/drawer/drawer.js';
+    await customElements.whenDefined('sg-drawer');
+    window.__demoReady();
+  </script>
+</body>
+</html>

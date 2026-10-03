@@ -1,0 +1,1910 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/action-menu/action-menu.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgActionMenu",
+          "tagName": "sg-action-menu",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-action-menu",
+          "declaration": {
+            "name": "SgActionMenu",
+            "module": "packages/components/action-menu/action-menu.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/badge/badge.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgBadge",
+          "tagName": "sg-badge",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "tone"
+            },
+            {
+              "name": "busy"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": [],
+          "cssProperties": [
+            {
+              "name": "--sg-badge-fill"
+            },
+            {
+              "name": "--sg-badge-icon"
+            },
+            {
+              "name": "--sg-badge-ink"
+            },
+            {
+              "name": "--sg-badge-on"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-badge",
+          "declaration": {
+            "name": "SgBadge",
+            "module": "packages/components/badge/badge.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/button/button.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgButton",
+          "tagName": "sg-button",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-button",
+          "declaration": {
+            "name": "SgButton",
+            "module": "packages/components/button/button.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/chat-thread/chat-thread.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgChatThread",
+          "tagName": "sg-chat-thread",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "label"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-chat-thread",
+          "declaration": {
+            "name": "SgChatThread",
+            "module": "packages/components/chat-thread/chat-thread.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/check/check.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgCheck",
+          "tagName": "sg-check",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "indeterminate"
+            },
+            {
+              "name": "controls"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-check",
+          "declaration": {
+            "name": "SgCheck",
+            "module": "packages/components/check/check.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/combobox/combobox.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgCombobox",
+          "tagName": "sg-combobox",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-choose",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "input",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-combobox",
+          "declaration": {
+            "name": "SgCombobox",
+            "module": "packages/components/combobox/combobox.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/connecting/connecting.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgConnecting",
+          "tagName": "sg-connecting",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "state"
+            },
+            {
+              "name": "label"
+            },
+            {
+              "name": "register"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-connecting",
+          "declaration": {
+            "name": "SgConnecting",
+            "module": "packages/components/connecting/connecting.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/date-range/date-range.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgDateRange",
+          "tagName": "sg-date-range",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "today"
+            },
+            {
+              "name": "prices"
+            },
+            {
+              "name": "blocks"
+            },
+            {
+              "name": "open-from"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-pick",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-range",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-date-range",
+          "declaration": {
+            "name": "SgDateRange",
+            "module": "packages/components/date-range/date-range.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/dialog/dialog.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgDialog",
+          "tagName": "sg-dialog",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-dialog-close",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-dialog-cancel",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-dialog-open",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-dialog",
+          "declaration": {
+            "name": "SgDialog",
+            "module": "packages/components/dialog/dialog.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/drawer/drawer.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgDrawer",
+          "tagName": "sg-drawer",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "edge"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-drawer-close",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-drawer-cancel",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-drawer-open",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "cssProperties": [
+            {
+              "name": "--sg-drawer-delay"
+            },
+            {
+              "name": "--sg-drawer-off"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-drawer",
+          "declaration": {
+            "name": "SgDrawer",
+            "module": "packages/components/drawer/drawer.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/empty/empty.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgEmpty",
+          "tagName": "sg-empty",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "scene"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-empty",
+          "declaration": {
+            "name": "SgEmpty",
+            "module": "packages/components/empty/empty.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/event-card/event-card.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgEventCard",
+          "tagName": "sg-event-card",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "start"
+            },
+            {
+              "name": "end"
+            },
+            {
+              "name": "timezone"
+            },
+            {
+              "name": "seats-left"
+            },
+            {
+              "name": "kind"
+            },
+            {
+              "name": "now"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-event-state",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-event-card",
+          "declaration": {
+            "name": "SgEventCard",
+            "module": "packages/components/event-card/event-card.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/event-list/event-list.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgEventList",
+          "tagName": "sg-event-list",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "now"
+            },
+            {
+              "name": "timezone"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-event-list-change",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-event-list",
+          "declaration": {
+            "name": "SgEventList",
+            "module": "packages/components/event-list/event-list.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/field-note/field-note.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgFieldNote",
+          "tagName": "sg-field-note",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "for"
+            },
+            {
+              "name": "tone"
+            },
+            {
+              "name": "validate"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-field-note",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-field-note",
+          "declaration": {
+            "name": "SgFieldNote",
+            "module": "packages/components/field-note/field-note.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/field/field.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgField",
+          "tagName": "sg-field",
+          "customElement": true,
+          "attributes": [],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-field",
+          "declaration": {
+            "name": "SgField",
+            "module": "packages/components/field/field.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/file-drop/file-drop.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgFileDrop",
+          "tagName": "sg-file-drop",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "max-size"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-files",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-file-drop",
+          "declaration": {
+            "name": "SgFileDrop",
+            "module": "packages/components/file-drop/file-drop.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/form/form.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgForm",
+          "tagName": "sg-form",
+          "customElement": true,
+          "attributes": [],
+          "events": [
+            {
+              "name": "sg-submit",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-form-state",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-form",
+          "declaration": {
+            "name": "SgForm",
+            "module": "packages/components/form/form.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/link/link.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgLink",
+          "tagName": "sg-link",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-link",
+          "declaration": {
+            "name": "SgLink",
+            "module": "packages/components/link/link.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/loader/loader.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgLoader",
+          "tagName": "sg-loader",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "label"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-loader",
+          "declaration": {
+            "name": "SgLoader",
+            "module": "packages/components/loader/loader.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/menu/menu.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgMenu",
+          "tagName": "sg-menu",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "seed"
+            },
+            {
+              "name": "orderable"
+            },
+            {
+              "name": "currency"
+            },
+            {
+              "name": "max-qty"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-change",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-menu",
+          "declaration": {
+            "name": "SgMenu",
+            "module": "packages/components/menu/menu.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/now-note/now-note.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgNowNote",
+          "tagName": "sg-now-note",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "stale-after"
+            },
+            {
+              "name": "today"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-now-note",
+          "declaration": {
+            "name": "SgNowNote",
+            "module": "packages/components/now-note/now-note.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/otp/otp.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgOtp",
+          "tagName": "sg-otp",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "length"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-otp",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "cssProperties": [
+            {
+              "name": "--sg-otp-frame"
+            },
+            {
+              "name": "--sg-otp-ink"
+            },
+            {
+              "name": "--sg-otp-ink-color"
+            },
+            {
+              "name": "--sg-otp-length"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-otp",
+          "declaration": {
+            "name": "SgOtp",
+            "module": "packages/components/otp/otp.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/popover/popover.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgPopover",
+          "tagName": "sg-popover",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-popover",
+          "declaration": {
+            "name": "SgPopover",
+            "module": "packages/components/popover/popover.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/postcard/postcard.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgPostcard",
+          "tagName": "sg-postcard",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "postmark"
+            },
+            {
+              "name": "seed"
+            },
+            {
+              "name": "status-style"
+            }
+          ],
+          "events": [],
+          "cssProperties": [
+            {
+              "name": "--sg-postcard-tilt"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-postcard",
+          "declaration": {
+            "name": "SgPostcard",
+            "module": "packages/components/postcard/postcard.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/progress/progress.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgProgress",
+          "tagName": "sg-progress",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "label"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-complete",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-progress",
+          "declaration": {
+            "name": "SgProgress",
+            "module": "packages/components/progress/progress.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/quote/quote.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgQuote",
+          "tagName": "sg-quote",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-quote",
+          "declaration": {
+            "name": "SgQuote",
+            "module": "packages/components/quote/quote.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/radio/radio.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgRadioGroup",
+          "tagName": "sg-radio-group",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "orientation"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-radio-group",
+          "declaration": {
+            "name": "SgRadioGroup",
+            "module": "packages/components/radio/radio.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/reach/reach.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgReach",
+          "tagName": "sg-reach",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-reach-copy",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "cssProperties": [
+            {
+              "name": "--sg-reach-ghost-x"
+            },
+            {
+              "name": "--sg-reach-ghost-y"
+            },
+            {
+              "name": "--sg-reach-inland"
+            },
+            {
+              "name": "--sg-reach-mask"
+            },
+            {
+              "name": "--sg-reach-rotate"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-reach",
+          "declaration": {
+            "name": "SgReach",
+            "module": "packages/components/reach/reach.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/scroll-section/scroll-section.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgScrollSection",
+          "tagName": "sg-scroll-section",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-scroll-progress",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-scroll-section",
+          "declaration": {
+            "name": "SgScrollSection",
+            "module": "packages/components/scroll-section/scroll-section.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/select/select.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgSelect",
+          "tagName": "sg-select",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            }
+          ],
+          "events": [],
+          "cssProperties": [
+            {
+              "name": "--sg-select-caret"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-select",
+          "declaration": {
+            "name": "SgSelect",
+            "module": "packages/components/select/select.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/signature/signature.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgSignature",
+          "tagName": "sg-signature",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-signature",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "cssProperties": [
+            {
+              "name": "--sg-signature-ink"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-signature",
+          "declaration": {
+            "name": "SgSignature",
+            "module": "packages/components/signature/signature.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/site-nav/site-nav.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgSiteNav",
+          "tagName": "sg-site-nav",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-site-nav",
+          "declaration": {
+            "name": "SgSiteNav",
+            "module": "packages/components/site-nav/site-nav.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/skeleton/skeleton.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgSkeleton",
+          "tagName": "sg-skeleton",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "busy"
+            },
+            {
+              "name": "shape"
+            },
+            {
+              "name": "lines"
+            },
+            {
+              "name": "label"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-loaded",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-skeleton",
+          "declaration": {
+            "name": "SgSkeleton",
+            "module": "packages/components/skeleton/skeleton.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/sound-switch/sound-switch.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgSoundSwitch",
+          "tagName": "sg-sound-switch",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-sound-switch",
+          "declaration": {
+            "name": "SgSoundSwitch",
+            "module": "packages/components/sound-switch/sound-switch.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/stamp/stamp.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgStamp",
+          "tagName": "sg-stamp",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "tone"
+            },
+            {
+              "name": "seed"
+            },
+            {
+              "name": "pending"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-stamp",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "cssProperties": [
+            {
+              "name": "--sg-stamp-ghost-x"
+            },
+            {
+              "name": "--sg-stamp-ghost-y"
+            },
+            {
+              "name": "--sg-stamp-ink"
+            },
+            {
+              "name": "--sg-stamp-mask"
+            },
+            {
+              "name": "--sg-stamp-mask-h"
+            },
+            {
+              "name": "--sg-stamp-mask-w"
+            },
+            {
+              "name": "--sg-stamp-rotate"
+            },
+            {
+              "name": "--sg-stamp-word-x"
+            },
+            {
+              "name": "--sg-stamp-word-y"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-stamp",
+          "declaration": {
+            "name": "SgStamp",
+            "module": "packages/components/stamp/stamp.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/stepper/stepper.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgStepper",
+          "tagName": "sg-stepper",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-step",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-stepper",
+          "declaration": {
+            "name": "SgStepper",
+            "module": "packages/components/stepper/stepper.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/tabs/tabs.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgTabs",
+          "tagName": "sg-tabs",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-tab-change",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-tabs",
+          "declaration": {
+            "name": "SgTabs",
+            "module": "packages/components/tabs/tabs.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/tile-band/tile-band.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgTileBand",
+          "tagName": "sg-tile-band",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "seed"
+            },
+            {
+              "name": "tones"
+            },
+            {
+              "name": "orientation"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-tile-band",
+          "declaration": {
+            "name": "SgTileBand",
+            "module": "packages/components/tile-band/tile-band.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/toast/toast.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgToast",
+          "tagName": "sg-toast",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "tone"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-toast-dismiss",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "cssProperties": [
+            {
+              "name": "--sg-toast-pile"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-toast",
+          "declaration": {
+            "name": "SgToast",
+            "module": "packages/components/toast/toast.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/toggle/toggle.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgToggle",
+          "tagName": "sg-toggle",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": [],
+          "cssProperties": [
+            {
+              "name": "--sg-toggle-brass"
+            },
+            {
+              "name": "--sg-toggle-brass-deep"
+            },
+            {
+              "name": "--sg-toggle-clay"
+            },
+            {
+              "name": "--sg-toggle-flame"
+            },
+            {
+              "name": "--sg-toggle-flame-core"
+            },
+            {
+              "name": "--sg-toggle-h"
+            },
+            {
+              "name": "--sg-toggle-w"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-toggle",
+          "declaration": {
+            "name": "SgToggle",
+            "module": "packages/components/toggle/toggle.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/tooltip/tooltip.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgTooltip",
+          "tagName": "sg-tooltip",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-tooltip",
+          "declaration": {
+            "name": "SgTooltip",
+            "module": "packages/components/tooltip/tooltip.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/voice-note/voice-note.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgVoiceNote",
+          "tagName": "sg-voice-note",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "peaks"
+            },
+            {
+              "name": "label"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-voice-press",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-voice-play",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-voice-pause",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-voice-note",
+          "declaration": {
+            "name": "SgVoiceNote",
+            "module": "packages/components/voice-note/voice-note.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/wa-order/wa-order.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgWaOrder",
+          "tagName": "sg-wa-order",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "for"
+            },
+            {
+              "name": "number"
+            },
+            {
+              "name": "business"
+            },
+            {
+              "name": "min-notice"
+            },
+            {
+              "name": "areas"
+            },
+            {
+              "name": "slots"
+            },
+            {
+              "name": "fulfilment"
+            },
+            {
+              "name": "currency"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-wa-open",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-wa-order",
+          "declaration": {
+            "name": "SgWaOrder",
+            "module": "packages/components/wa-order/wa-order.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/core/scene-element.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgScene",
+          "tagName": "sg-scene",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "name"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-state",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-ready",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "slots": [
+            {
+              "name": "",
+              "summary": "the default slot"
+            }
+          ],
+          "cssParts": [
+            {
+              "name": "stage"
+            },
+            {
+              "name": "reading"
+            },
+            {
+              "name": "panel"
+            },
+            {
+              "name": "toggle"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-scene",
+          "declaration": {
+            "name": "SgScene",
+            "module": "packages/core/scene-element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/player/player.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgPlayer",
+          "tagName": "sg-player",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "treatment"
+            },
+            {
+              "name": "poster-scene"
+            },
+            {
+              "name": "label"
+            }
+          ],
+          "events": [],
+          "cssProperties": [
+            {
+              "name": "--sg-player-icon-stroke"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-player",
+          "declaration": {
+            "name": "SgPlayer",
+            "module": "packages/player/player.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/stage3d/depth-photo/depth-photo.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgDepthPhoto",
+          "tagName": "sg-depth-photo",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "dolly-path"
+            },
+            {
+              "name": "keep"
+            },
+            {
+              "name": "treatment"
+            },
+            {
+              "name": "renderer"
+            },
+            {
+              "name": "data-theme"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-tier",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-ready",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-depth-photo",
+          "declaration": {
+            "name": "SgDepthPhoto",
+            "module": "packages/stage3d/depth-photo/depth-photo.js"
+          }
+        }
+      ]
+    }
+  ]
+}

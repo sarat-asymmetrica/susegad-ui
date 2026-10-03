@@ -1,6 +1,7 @@
 {
   "name": "form",
   "type": "component",
+  "stability": "experimental",
   "title": "Form",
   "description": "A native form the browser validates, which says what happens when you send it. Adds a field note to every field, summarises problems and focuses the first, and follows an sg-submit promise (or posts itself with fetch): Sending only while work is pending, then Sent or why it could not send, in one polite voice. Quiet is words only; warm and playful draw a Loader and a Stamp, and a failure is also a Toast. Without JavaScript it validates and submits natively.",
   "version": "0.1.0",

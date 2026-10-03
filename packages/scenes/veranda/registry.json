@@ -1,0 +1,42 @@
+{
+  "name": "scene-veranda",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": [
+    "hero",
+    "background"
+  ],
+  "title": "Veranda",
+  "description": "A Goan veranda drawn in ink and wash, seen from a seat on it: laterite pillars with a balcão between them, a teak door and a shuttered window in a lime-washed wall, a brass lamp under the rafters, and the garden and paddy beyond. The pillars' shadows are traced from the same solids as the drawing, and so is an exact depth map (white near, sky 0) that lets <sg-depth-photo treatment=\"drawn\"> rack focus and walk the camera in. Quiet is a hairline still, warm sways the lamp, playful lets your hand move the sun, and the dark theme is dusk with the lamp lit. A scape: the still loads first.",
+  "version": "0.1.0",
+  "files": [
+    "index.js",
+    "model.js",
+    "world.js",
+    "paint.js",
+    "render.js",
+    "meta.js",
+    "assets.js",
+    "veranda.prompt.md"
+  ],
+  "dependencies": [
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "veranda.prompt.md",
+  "tier": "scape",
+  "entry": [
+    "index.js"
+  ],
+  "budget": {
+    "jsBytes": 98304,
+    "firstSightBytes": 65536,
+    "reason": "A ray-cast drawing, 70 KB of source with its comments: the world and its ray caster 15.8 KB, the painter 35.0 KB, the renderer 6.5 KB, the model 2.7 KB, meta 6.3 KB. First sight is the still, 55.7 KB of code (under 64 KB); assets.js (2.9 KB), which writes the depth and layers maps for the 3D stage, loads only on a page that stages it."
+  }
+}

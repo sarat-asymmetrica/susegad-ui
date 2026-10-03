@@ -67,13 +67,14 @@ export async function recordCanvasToWebm(canvas, { fps = 30, durationSec = 3, dr
  * scene's own wall-clock loop — so the export is reproducible.
  * @param {import('../core/define-scene.js').SceneDef} def
  * @param {{ seed?: number|string, register?: 'quiet'|'warm'|'playful', params?: object,
- *   fps?: number, durationSec?: number, mimeType?: string, videoBitsPerSecond?: number }} [opts]
+ *   fps?: number, durationSec?: number, startSec?: number, mimeType?: string, videoBitsPerSecond?: number }} [opts]
+ *   `startSec` is the scene time the first frame is drawn at (default 0).
  *   Recorded at the scene's own logical size (the canvas `stage()` draws);
  *   downscale after the fact if a smaller file is wanted.
  * @returns {Promise<Blob>}
  */
 export async function recordSceneToWebm(def, opts = {}) {
-  const { seed = def.meta.seed ?? 1, register = 'warm', params = {}, fps = 24, durationSec = 3, mimeType, videoBitsPerSecond } = opts;
+  const { seed = def.meta.seed ?? 1, register = 'warm', params = {}, fps = 24, durationSec = 3, mimeType, videoBitsPerSecond, startSec = 0 } = opts;
   const { W, H } = def.meta;
   const motion = register === 'quiet' ? 'state' : register === 'playful' ? 'full' : 'ambient';
   const host = document.createElement('div');
@@ -86,7 +87,8 @@ export async function recordSceneToWebm(def, opts = {}) {
   try {
     return await recordCanvasToWebm(canvas, {
       fps, durationSec, mimeType, videoBitsPerSecond,
-      draw(t) {
+      draw(t0) {
+        const t = t0 + startSec;
         const data = def.model({ time: t, seed, register, params, W, H });
         renderer.render(data, { time: t, dt: 1 / fps, calm: [], pointer: { x: 0, y: 0, inside: false, down: false, keyboard: false }, quality: 1, still: false, epoch: 0, register, motion });
       },

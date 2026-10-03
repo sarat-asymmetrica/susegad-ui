@@ -1,0 +1,87 @@
+/* <sg-now-note>. Without JavaScript this is the quiet look: a small heading,
+   a line or two, the availability in words and the date. With it, the note
+   also says how long ago that was, and whether it may be out of date. Warm is
+   a sticky note in the hand; playful a chalkboard outside a café. */
+
+sg-now-note {
+  display: block;
+  max-width: 26rem;
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body);
+}
+sg-now-note[hidden] { display: none; }
+sg-now-note > * { margin: 0; }
+sg-now-note :is(h1, h2, h3, h4) {
+  margin: 0 0 var(--sg-space-1);
+  font: var(--sg-weight-medium) var(--sg-step--1) / 1.3 var(--sg-font-body);
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.06em;
+  color: var(--sg-text-soft);
+}
+sg-now-note p { margin: 0 0 var(--sg-space-2); }
+sg-now-note .sg-now-state { margin-block: var(--sg-space-2); }
+sg-now-note .sg-now-updated { margin: 0; font-size: var(--sg-step--1); color: var(--sg-text-soft); }
+sg-now-note .sg-now-stale {
+  margin: var(--sg-space-2) 0 0;
+  padding-inline-start: var(--sg-space-2);
+  border-inline-start: var(--sg-stroke-bold) solid var(--sg-warning);
+  font-size: var(--sg-step--1);
+  color: var(--sg-text);
+}
+/* the quiet note sits under a hairline, as a dated line on a page */
+sg-now-note:not([data-skin="warm"], [data-skin="playful"]) > * { border-top: var(--sg-hairline) solid var(--sg-rule-strong); padding-top: var(--sg-space-2); }
+
+/* ── warm: a sticky note ── it keeps its daylight yellow at night. */
+sg-now-note[data-skin="warm"] {
+  position: relative;
+  color-scheme: light;
+  padding: var(--sg-space-4) var(--sg-space-4) var(--sg-space-3);
+  background: var(--sg-selection);
+  color: var(--sg-text);
+  border-radius: 2px 2px 3px 14px / 2px 2px 3px 6px;
+  box-shadow: 0 1px 1px var(--sg-shadow), 0 10px 14px -10px var(--sg-shadow);
+  transform: rotate(var(--sg-now-lean, -1.2deg));
+  font-family: var(--sg-font-hand);
+}
+sg-now-note[data-skin="warm"]::before {
+  content: "";
+  position: absolute;
+  top: -0.7rem;
+  left: 50%;
+  width: 4.5rem;
+  height: 1.4rem;
+  translate: -50% 0;
+  rotate: -3deg;
+  background: color-mix(in oklch, var(--sg-surface-raised) 70%, transparent);
+  box-shadow: 0 0 0 var(--sg-hairline) color-mix(in oklch, var(--sg-rule-strong) 40%, transparent);
+}
+sg-now-note[data-skin="warm"] :is(h1, h2, h3, h4) { font: 400 var(--sg-step-1) / 1.2 var(--sg-font-hand); font-variant-caps: normal; letter-spacing: 0; color: var(--sg-text); }
+sg-now-note[data-skin="warm"] p { font-size: var(--sg-step-1); line-height: var(--sg-leading-snug); }
+sg-now-note[data-skin="warm"] .sg-now-updated { font-size: var(--sg-step-0); color: var(--sg-text-soft); }
+sg-now-note[data-skin="warm"] .sg-now-stale { font-size: var(--sg-step-0); }
+
+/* ── playful: a chalkboard outside a café ── dark by day and by night. */
+sg-now-note[data-skin="playful"] {
+  color-scheme: dark;
+  /* slate with a little green in it, and a dark wooden frame from the palette's red stone */
+  --sg-now-board: color-mix(in oklch, var(--sg-success) 14%, var(--sg-surface-sunk));
+  --sg-now-wood: color-mix(in oklch, var(--sg-laterite, var(--sg-accent)) 62%, black);
+  padding: var(--sg-space-4);
+  background:
+    radial-gradient(ellipse at 30% 20%, color-mix(in oklch, var(--sg-text) 7%, transparent), transparent 60%),
+    radial-gradient(ellipse at 80% 85%, color-mix(in oklch, var(--sg-text) 5%, transparent), transparent 55%),
+    var(--sg-now-board);
+  color: var(--sg-text);
+  border: 10px solid var(--sg-now-wood);
+  border-radius: var(--sg-radius-2);
+  box-shadow: inset 0 0 0 2px color-mix(in oklch, var(--sg-now-wood) 60%, black), 0 6px 0 -2px var(--sg-shadow);
+  font-family: var(--sg-font-hand);
+}
+sg-now-note[data-skin="playful"] :is(h1, h2, h3, h4) { font: 400 var(--sg-step-2) / 1.1 var(--sg-font-hand); font-variant-caps: normal; letter-spacing: 0.02em; color: var(--sg-text); text-decoration: underline wavy var(--sg-accent-text) 1px; text-underline-offset: 0.3em; }
+sg-now-note[data-skin="playful"] p { font-size: var(--sg-step-1); line-height: var(--sg-leading-snug); letter-spacing: 0.01em; }
+sg-now-note[data-skin="playful"] .sg-now-updated { font-size: var(--sg-step-0); color: var(--sg-text-soft); }
+sg-now-note[data-skin="playful"] .sg-now-stale { font-size: var(--sg-step-0); }
+
+@media (forced-colors: active) {
+  sg-now-note[data-skin] { border: 2px solid CanvasText; }
+}

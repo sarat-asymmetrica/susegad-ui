@@ -1,6 +1,7 @@
 {
   "name": "export",
   "type": "package",
+  "stability": "experimental",
   "title": "Export",
   "description": "A scene (or any canvas) to PNG, WebM and animated GIF. PNG uses canvas.toBlob; WebM records one requested frame at a time from canvas.captureStream(0), so a seeded run is reproducible however busy the machine is; GIF uses a small, dependency-free encoder (median-cut palette, an LZW core), tested against a reference decoder in Node.",
   "version": "0.1.0",

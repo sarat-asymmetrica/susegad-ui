@@ -1,0 +1,35 @@
+{
+  "name": "quote",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Quote",
+  "description": "A pull-quote or testimonial in a native figure: the words, who said them, their role and business, and an optional link to the source. Quiet sets the words beside a hairline with the name in small capitals; warm writes them in the hand as a margin note with a pencil bracket; playful sets them large under a hand-drawn quotation mark that inks in once.",
+  "version": "0.1.0",
+  "files": [
+    "quote.js",
+    "quote.core.js",
+    "quote.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "quote.prompt.md",
+    "quote.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "quote.prompt.md",
+  "docs": "quote.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 7520 bytes: element 1.4 KB, pure core 3.1 KB, skins quiet 0.2 KB, warm 1.5 KB, playful 1.3 KB."
+  }
+}

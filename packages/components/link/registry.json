@@ -1,0 +1,34 @@
+{
+  "name": "link",
+  "type": "component",
+  "title": "Link",
+  "description": "A native <a href>, unchanged, with the register's underline drawn beneath it: quiet is a plain hairline underline; warm draws an ink line in on hover or focus and back out on leave; playful is the underline as a kolam line, one continuous wave with a small knotted loop. Forced colours bring back the browser's own underline.",
+  "version": "0.1.0",
+  "files": [
+    "link.js",
+    "link.core.js",
+    "link.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "link.prompt.md",
+    "link.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "link.prompt.md",
+  "docs": "link.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today about 6.1 KB: behaviour (link.js + link.core.js) 3.4 KB, skins quiet 0.2 KB, warm 1.3 KB, playful 1.1 KB."
+  }
+}

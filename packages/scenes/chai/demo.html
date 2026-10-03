@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chai scene</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .lede { margin: 0 0 20px; color: var(--sg-text-soft, inherit); }
+  sg-scene { border-radius: 6px; --sg-reading-place: start start; }
+  sg-scene h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  sg-scene p { margin: 0; }
+  form { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 20px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  legend { font-weight: 600; float: left; margin-right: 8px; }
+  button { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--sg-rule-strong, currentColor); background: var(--sg-surface-raised, Canvas); color: inherit; cursor: pointer; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  .note { margin: 16px 0 0; padding-left: 12px; border-left: 2px solid var(--sg-rule-strong, currentColor); color: var(--sg-text-soft, inherit); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Chai</h1>
+  <p class="lede">Three small things. A dev page for the scene: registers, the lamp lit or out, and words over the sheet.</p>
+  <sg-scene id="chai" name="chai" label="Tea, a lamp and a creeper">
+    <h2>Chai at four</h2>
+    <p>On the veranda, every afternoon.</p>
+  </sg-scene>
+  <form id="controls">
+    <fieldset>
+      <legend>Register</legend>
+      <label><input type="radio" name="register" value="quiet"> Quiet</label>
+      <label><input type="radio" name="register" value="warm"> Warm</label>
+      <label><input type="radio" name="register" value="playful"> Playful</label>
+    </fieldset>
+    <label><input type="checkbox" id="dark"> Dark</label>
+    <label><input type="checkbox" id="text" checked> Words over the sheet</label>
+    <label><input type="checkbox" id="lit" checked> The lamp is lit</label>
+  </form>
+  <p class="note">A loader, a toggle and a divider, drawn in ink. The lamp is not a control: this page's checkbox is, and it sets the lit attribute.</p>
+</main>
+<script type="module">
+  const q = new URLSearchParams(location.search), root = document.documentElement;
+  const el = document.getElementById('chai');
+  const register = q.get('register') || 'warm';
+  root.dataset.register = register;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+  for (const k of ['seed', 'lit']) if (q.has(k)) el.setAttribute(k, q.get(k));
+  if (q.get('content') === '0') el.innerHTML = '';
+  // where the words sit: ?place=center puts them in the middle of the sheet (set before the scene measures them)
+  if (q.get('place') === 'center') el.style.setProperty('--sg-reading-place', 'center center');
+  el.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__piece = el;
+  await import('./index.js');
+
+  const $ = id => document.getElementById(id), form = $('controls'), content = el.innerHTML;
+  form.register.value = register;
+  $('dark').checked = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  $('text').checked = !!content.trim();
+  $('lit').checked = el.getAttribute('lit') !== 'false';
+  form.addEventListener('change', e => {
+    const t = e.target;
+    if (t.name === 'register') root.dataset.register = t.value;
+    else if (t.id === 'dark') root.dataset.theme = t.checked ? 'dark' : 'light';
+    else if (t.id === 'text') el.innerHTML = t.checked ? content || '<h2>Chai at four</h2><p>On the veranda, every afternoon.</p>' : '';
+    else if (t.id === 'lit') el.setAttribute('lit', String(t.checked));
+  });
+</script>
+</body>
+</html>

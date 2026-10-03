@@ -1,0 +1,72 @@
+/* <sg-link>. The native <a> underneath carries the meaning. Quiet is a plain
+   CSS underline, drawn by the browser. Warm and playful replace it with a
+   drawn SVG line, injected by the skin, so the text-decoration is switched
+   off only once the drawing is in place. */
+
+sg-link[hidden] { display: none; } /* our display rule would otherwise beat the browser's [hidden] */
+
+sg-link {
+  display: inline-block;
+  position: relative;
+}
+
+sg-link > a {
+  color: var(--sg-accent-text, LinkText);
+  text-decoration-line: underline;
+  text-decoration-thickness: var(--sg-stroke, 1.5px);
+  text-underline-offset: 0.2em;
+  transition: color var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out);
+}
+sg-link > a:hover { color: var(--sg-accent, Highlight); }
+sg-link > a:focus-visible {
+  outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight);
+  outline-offset: var(--sg-focus-offset, 2px);
+  border-radius: var(--sg-radius-1, 2px);
+}
+sg-link > a:visited { color: var(--sg-accent-text, VisitedText); }
+
+/* ── warm: the ink underline, drawn on hover and focus ───────────────────── */
+sg-link[data-skin="warm"] > a { text-decoration-line: none; }
+sg-link[data-skin="warm"] .sg-link-ink {
+  position: absolute;
+  left: 0;
+  bottom: -0.1em;
+  width: 100%;
+  height: 6px;
+  overflow: visible;
+  pointer-events: none;
+}
+sg-link[data-skin="warm"] .sg-link-ink path {
+  fill: none;
+  stroke: var(--sg-accent-text, LinkText);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  transition: stroke-dashoffset var(--sg-dur-calm, 280ms) var(--sg-ease-ink, ease-out);
+}
+sg-link[data-skin="warm"]:is(:hover, :focus-within) .sg-link-ink path { stroke-dashoffset: 0 !important; }
+
+/* ── playful: the kolam line, always drawn, in the accent ink ───────────── */
+sg-link[data-skin="playful"] > a { text-decoration-line: none; }
+sg-link[data-skin="playful"] .sg-link-ink {
+  position: absolute;
+  left: 0;
+  bottom: -0.15em;
+  width: 100%;
+  height: 10px;
+  overflow: visible;
+  pointer-events: none;
+}
+sg-link[data-skin="playful"] .sg-link-ink path {
+  fill: none;
+  stroke: var(--sg-accent, Highlight);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+@media (forced-colors: active) {
+  sg-link .sg-link-ink { display: none !important; }
+  sg-link > a { text-decoration-line: underline !important; color: LinkText !important; }
+}

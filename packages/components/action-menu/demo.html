@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Action menu</title>
+<link rel="stylesheet" href="/packages/components/button/button.css">
+<link rel="stylesheet" href="./action-menu.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 44rem; margin: 0 auto; padding: var(--sg-space-5) 16px 20rem; }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .lede { margin: 0 0 var(--sg-space-5); color: var(--sg-text-soft); max-width: var(--sg-measure); }
+  section { margin-bottom: var(--sg-space-6); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-1) / var(--sg-leading-tight) var(--sg-font-body); margin: 0 0 var(--sg-space-3); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--sg-space-5); }
+  output { display: block; margin-top: var(--sg-space-3); font: var(--sg-step--1) / 1.5 var(--sg-font-mono); color: var(--sg-text-soft); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Action menu</h1>
+  <p class="lede">A button with <code>popovertarget</code> and a popover list of real links and buttons. With JavaScript, arrow keys, Home, End and typing a letter move through the items.</p>
+
+  <section>
+    <h2>Account</h2>
+    <div class="row">
+      <sg-action-menu>
+        <sg-button><button type="button" popovertarget="account-menu" id="account-trigger">Account</button></sg-button>
+        <ul id="account-menu" popover role="menu">
+          <li role="none"><a href="#profile" role="menuitem" id="mi-profile">Profile</a></li>
+          <li role="none"><a href="#preferences" role="menuitem">Preferences</a></li>
+          <li role="none"><a href="#payment" role="menuitem">Payment methods</a></li>
+          <li role="none"><button type="button" role="menuitem" id="mi-signout">Sign out</button></li>
+        </ul>
+      </sg-action-menu>
+      <output id="last-choice" aria-live="polite"></output>
+    </div>
+  </section>
+
+  <section>
+    <h2>In Kannada</h2>
+    <!-- These Indian-language labels are drafts awaiting a native speaker's check. -->
+    <div class="row">
+      <sg-action-menu lang="kn">
+        <sg-button><button type="button" popovertarget="kn-menu">ಖಾತೆ</button></sg-button>
+        <ul id="kn-menu" popover role="menu">
+          <li role="none"><a href="#profile" role="menuitem">ಪ್ರೊಫೈಲ್</a></li>
+          <li role="none"><button type="button" role="menuitem">ಸೈನ್ ಔಟ್</button></li>
+        </ul>
+      </sg-action-menu>
+    </div>
+  </section>
+</main>
+<script type="module">
+  import '/packages/components/button/button.js';
+  import './action-menu.js';
+  document.getElementById('mi-signout').addEventListener('click', () => {
+    document.getElementById('last-choice').textContent = 'Chosen: Sign out';
+  });
+  document.getElementById('mi-profile').addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('last-choice').textContent = 'Chosen: Profile';
+  });
+</script>
+</body>
+</html>

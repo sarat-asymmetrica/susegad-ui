@@ -1,6 +1,7 @@
 {
   "name": "core-component",
   "type": "package",
+  "stability": "experimental",
   "title": "Core: components",
   "description": "SgElement and defineComponent: the light-DOM base every sg-* component extends. It enhances a native child, follows the register, loads one skin per register lazily, batches updates, pauses off screen and survives moves.",
   "version": "0.1.0",

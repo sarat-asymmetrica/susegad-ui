@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Words in the world</title>
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 60rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .lede { margin: 0 0 var(--sg-space-4); max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  /* the stage the pointer is read over: the words' plane turns inside it */
+  .stage { position: relative; display: grid; place-items: center; min-height: 26rem; padding: var(--sg-space-5) var(--sg-space-4);
+    border-radius: var(--sg-radius-3); background: linear-gradient(180deg, var(--sg-surface-raised), var(--sg-surface)); box-shadow: var(--sg-lift); cursor: crosshair; }
+  /* the layer: one composited transform lives here, and never on a span that carries text */
+  .layer { width: min(34rem, 100%); padding: var(--sg-space-5); border-radius: var(--sg-radius-3);
+    background: var(--sg-surface-raised); box-shadow: var(--sg-lift); will-change: transform; }
+  .title { margin: 0 0 var(--sg-space-3); font: 400 var(--sg-step-3) / var(--sg-leading-tight) var(--sg-font-display); }
+  .para { margin: 0 0 var(--sg-space-3); max-width: var(--sg-measure); color: var(--sg-text); }
+  .para:last-child { margin-bottom: 0; }
+  /* one span a line, the shape Pretext lays out: real text, so it selects and reads aloud */
+  .line { display: block; }
+  .said { margin: var(--sg-space-4) 0 0; color: var(--sg-text-soft); min-height: 1.5em; }
+  .note { color: var(--sg-text-soft); font-size: var(--sg-step--1); max-width: var(--sg-measure); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Words in the world</h1>
+  <p class="lede">A text panel whose supporting plane has an orientation. The register sets the cone: quiet turns nothing, warm six degrees, playful sixteen, and reduced motion is the finished still in every register. Move the pointer over the stage to turn the words.</p>
+
+  <div class="stage" id="stage">
+    <div class="layer" id="words-layer">
+      <h2 class="title"><span class="line">A plane of their own</span></h2>
+      <p class="para">
+        <span class="line">The words sit on a plane of their own, and the plane can turn.</span>
+        <span class="line">It never turns past a readability cone, it settles with a damped</span>
+        <span class="line">slerp, and it comes to rest without jitter, so a reader is not left</span>
+        <span class="line">chasing a page that will not hold still.</span>
+      </p>
+      <p class="para">
+        <span class="line">The text is still the layout engine's: measured once, one span a line,</span>
+        <span class="line">still selectable and still in the accessibility tree. The turn is one</span>
+        <span class="line">composited transform on the layer, so nothing reflows and nothing</span>
+        <span class="line">moves under the cursor while you read.</span>
+      </p>
+    </div>
+  </div>
+
+  <p class="said" id="said" role="status" aria-live="polite">The words face you.</p>
+  <p class="note">With <code>?register=quiet|warm|playful</code> and <code>?reduced=1</code>. No three.js is imported here: the turn is a composited transform, with or without the depth tier.</p>
+</main>
+
+<script type="module">
+  import { createOrient } from './orient.js';
+  import { fromEuler, cssMatrix3d } from './quat.core.js';
+
+  const query = new URLSearchParams(location.search);
+  const register = query.get('register') || document.documentElement.dataset.register || 'warm';
+  const reduced = query.get('reduced') === '1' || matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const layer = document.getElementById('words-layer');
+  const stage = document.getElementById('stage');
+  const said = document.getElementById('said');
+
+  // In the control run the broken piece owns the layer: the applier is still (quiet, reduced) and
+  // the spin below is the only writer. Two writers on one transform would let the race, not the
+  // piece, decide what the checks measure.
+  const orient = createOrient({
+    layer, stage, perspective: 900,
+    register: window.__orientBreak ? 'quiet' : register,
+    reduced: window.__orientBreak ? true : reduced,
+    onSaid: text => { said.textContent = text; },
+  });
+
+  // The reader's pointer over the stage, in [-1, 1] each way. The applier ignores it where the
+  // register does not follow the pointer, so this stays a one-liner here.
+  if (!window.__orientBreak) stage.addEventListener('pointermove', e => {
+    const r = stage.getBoundingClientRect();
+    orient.pointer([((e.clientX - r.left) / r.width) * 2 - 1, ((e.clientY - r.top) / r.height) * 2 - 1]);
+  });
+
+  // The control run of the check (--break): a broken piece, the way a wrong implementation behaves.
+  // It ignores the cone and never rests: a sixty degree tilt written straight onto the layer every
+  // frame, in every register, quiet included. Checks 1, 3 and 4 then fail, which is the point.
+  if (window.__orientBreak) {
+    const wrong = fromEuler(0, 60, 0);
+    (function spin() {
+      layer.style.transform = `perspective(900px) ${cssMatrix3d(wrong)}`;
+      layer.dataset.orient = 'on';
+      requestAnimationFrame(spin);
+    })();
+  }
+
+  // What the check reads: the applier itself, and the layer it turns.
+  window.__orient = {
+    orient, layer,
+    register: () => register,
+    state: () => orient.state(),
+    pointer: (x, y) => orient.pointer([x, y]),
+  };
+  window.__demoReady();
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+/* Studio home: the seven studio-site components on one page. Layout only;
+   every look comes from the components and the page's register. */
+
+body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+.studio { max-width: 68rem; margin: 0 auto; padding: 0 16px var(--sg-space-6); }
+.placeholder-banner {
+  margin: 0 calc(-1 * 16px);
+  padding: var(--sg-space-2) 16px;
+  background: var(--sg-surface-sunk);
+  color: var(--sg-text-soft);
+  font-size: var(--sg-step--1);
+}
+.placeholder-banner a { color: var(--sg-accent-text); display: inline-block; padding-block: 0.15em; }
+header { margin-bottom: var(--sg-space-6); }
+
+.intro { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(16rem, 1fr); gap: var(--sg-space-5); align-items: start; margin-bottom: var(--sg-space-7); }
+.intro h1 { margin: 0 0 var(--sg-space-3); font: 400 var(--sg-step-5) / var(--sg-leading-tight) var(--sg-font-display); text-wrap: balance; }
+.intro .lede { margin: 0; max-width: var(--sg-measure); font-size: var(--sg-step-1); color: var(--sg-text-soft); }
+:root[data-register="playful"] .intro h1 { font-family: var(--sg-font-hand); }
+
+.section-h { margin: 0 0 var(--sg-space-4); font: 400 var(--sg-step-3) / var(--sg-leading-tight) var(--sg-font-display); }
+section[id] { margin-bottom: var(--sg-space-7); scroll-margin-top: var(--sg-space-4); }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); gap: var(--sg-space-5) var(--sg-space-4); }
+.said { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: var(--sg-space-5); align-items: start; }
+.aside { margin: var(--sg-space-3) 0 0; font-size: var(--sg-step--1); color: var(--sg-text-soft); max-width: var(--sg-measure); }
+footer { border-top: var(--sg-hairline) solid var(--sg-rule); padding-top: var(--sg-space-3); color: var(--sg-text-soft); font-size: var(--sg-step--1); }
+
+@media (max-width: 52rem) {
+  .intro, .said { grid-template-columns: minmax(0, 1fr); }
+  header { margin-bottom: var(--sg-space-5); }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "tooltip",
+  "type": "component",
+  "title": "Tooltip",
+  "description": "A trigger and its accessible description, always linked by aria-describedby so the text reaches assistive technology whether or not it is shown. Quiet is a plain small label; warm hand-letters it; playful adds a pencil leader line. Without JavaScript, CSS alone reveals it by opacity on hover and focus. With JavaScript it becomes a popover (hint where understood, else manual), positioned above the trigger and flipped below when there is little room, by a pure, tested placement().",
+  "version": "0.1.0",
+  "files": [
+    "tooltip.js",
+    "tooltip.core.js",
+    "tooltip.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "tooltip.prompt.md",
+    "tooltip.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "tooltip.prompt.md",
+  "docs": "tooltip.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today about 7.3 KB: behaviour (tooltip.js + tooltip.core.js) 6.6 KB; skins quiet, warm and playful are each a no-op mount (about 0.2 KB each), because the look is entirely in tooltip.css keyed off [data-skin]/[data-open]/[data-above]."
+  }
+}

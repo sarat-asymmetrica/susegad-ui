@@ -35,10 +35,10 @@ const Base = globalThis.HTMLElement ?? class {};
 export class SgScene extends Base {
   #def = null; #renderer = null; #lp = null; #gov = createGovernor();
   #params = {}; #seed = 1; #time = 0; #pending = 0; #epoch = 0;
-  #rs = null; #calm = []; #pointer = { x: 0, y: 0, inside: false, down: false, keyboard: false, travel: 0 };
+  #rs = null; #calm = []; #all = []; #extra = new Map(); #placed = ''; #pointer = { x: 0, y: 0, inside: false, down: false, keyboard: false, travel: 0 };
   #want = false; #still = true; #sleeping = false; #settled = false; #onscreen = true; #ready = false;
   #mounted = false; #destroyed = false; #token = 0; #raf = 0; #statusAt = 0; #statusTimer = 0;
-  #off = []; #els; #ro = null; #interactive = false; #early = {}; #touched = false; #told = '';
+  #off = []; #els; #ro = null; #mv = null; #mvLoad = false; #interactive = false; #early = {}; #touched = false; #told = ''; #held = false;
 
   constructor() {
     super();
@@ -76,6 +76,17 @@ export class SgScene extends Base {
     this.#status(); this.#wake(); this.#invalidate();
   }
   still() { this.#want = false; this.#still = true; this.#sync(); this.#draw(0); }
+  /** Where the words have been moved to as { x, y } (fractions of the free room), or null at home; only with `movable`. */
+  get wordsAt() { return this.#mv?.at() ?? null; }
+  /** The keep-away list a renderer gets as `calm`: the slotted words' rects plus whatever joined with keepClear, in logical units. A copy. */
+  get calm() { return this.#all.map(r => ({ ...r })); }
+  /** Anything can join the keep-away list: a rect in logical units, replaced by id, removed with null (decision 0021). */
+  keepClear(id, rect) {
+    rect && [rect.x, rect.y, rect.w, rect.h].every(Number.isFinite) ? this.#extra.set(id, { x: rect.x, y: rect.y, w: rect.w, h: rect.h }) : this.#extra.delete(id);
+    this.#merge(); this.#invalidate();
+  }
+  /** A renderer that sets the slotted words on a surface of its own hides the panel (decision 0019); false gives them back. */
+  holdReading(on = true) { if (this.#held !== !!on) { this.#held = !!on; this.#watchSlot(); } }
   destroy() { this.#destroyed = true; this.#teardown(); }
 
   // ── lifecycle
@@ -116,7 +127,7 @@ export class SgScene extends Base {
     const vis = () => this.#sync();
     document.addEventListener('visibilitychange', vis);
     this.#off.push(() => io.disconnect(), () => ro.disconnect(), () => mo.disconnect(), () => document.removeEventListener('visibilitychange', vis));
-    this.#label(); this.#status(); this.#watchSlot();
+    this.#label(); this.#status(); this.#watchSlot(); this.#watchPlace(); this.#movable();
     this.#want = this.#rs.motion !== 'still' && !this.hasAttribute('paused');
     this.#still = !this.#want;
     if (!this.#want) this.#draw(0);
@@ -129,6 +140,19 @@ export class SgScene extends Base {
     this.#lp?.pause(); cancelAnimationFrame(this.#raf); clearTimeout(this.#statusTimer);
     this.#off.splice(0).forEach(f => f());
     this.#renderer?.destroy(); this.#renderer = null; this.#lp = null;
+    this.#mv?.destroy(); this.#mv = null;
+  }
+  // `movable` is its own module (decision 0021): loaded the first time it is asked for, dropped when the attribute goes.
+  #movable() {
+    if (!this.hasAttribute('movable')) { if (this.#mv) { this.#mv.destroy(); this.#mv = null; this.#measure(); } return; }
+    if (this.#mv || this.#mvLoad) return;
+    this.#mvLoad = true;
+    import('./movable.js').then(m => {
+      this.#mvLoad = false;
+      if (!this.#mounted || this.#mv || !this.hasAttribute('movable')) return;
+      this.#mv = m.attach(this, { root: this.shadowRoot, els: this.#els, register: () => this.#rs.register, measure: () => this.#measure() });
+      this.#measure();
+    }, () => { this.#mvLoad = false; });
   }
 
   #makeRenderer() {
@@ -146,7 +170,7 @@ export class SgScene extends Base {
     if (!prev) { this.#makeRenderer(); this.#setMode(); return; }
     if (prev.register !== rs.register || prev.motion !== rs.motion) {
       this.#renderer.setRegister ? this.#renderer.setRegister(rs.register, rs.motion) : this.#makeRenderer();
-      this.#setMode();
+      this.#setMode(); this.#mv?.sync();
       if (rs.motion === 'still') return this.still();
       if (prev.motion === 'still' && !this.hasAttribute('paused')) return this.replay();
     } else if (prev.theme !== rs.theme) this.#renderer.restyle?.();
@@ -174,6 +198,8 @@ export class SgScene extends Base {
     const names = new Set(list.map(m => m.attributeName));
     if (names.has('name')) { this.#teardown(); this.#mount(); return; }
     if (names.has('label')) { this.#label(); this.#status(); }
+    if (names.has('movable')) this.#movable();
+    if (names.has('words-at')) this.#mv?.attr(this.getAttribute('words-at'));
     if (names.has('interactive') && this.#def) { this.#setMode(); this.#sync(); }
     if (names.has('seed')) this.reseed(coerceSeed(this.getAttribute('seed'), this.#def?.meta.seed ?? 1));
     if (names.has('paused')) this.hasAttribute('paused') ? this.pause() : this.#rs?.motion !== 'still' && this.play();
@@ -210,7 +236,7 @@ export class SgScene extends Base {
     const time = still ? def.meta.stillTime ?? 1e6 : this.#time;
     const data = def.model({ time, seed: this.#seed, register: rs.register, params: this.#params, W, H });
     const quality = still || !dt ? this.#gov.level : this.#gov.sample(dt * 1000);
-    r.render(data, { time, dt, calm: this.#calm, pointer: this.#pointer, quality, still, epoch: this.#epoch, register: rs.register, motion: rs.motion });
+    r.render(data, { time, dt, calm: this.#all, pointer: this.#pointer, quality, still, epoch: this.#epoch, register: rs.register, motion: rs.motion });
     const settled = !!data?.settled;
     if (settled !== this.#settled) { this.#settled = settled; if (settled && this.#lp?.playing) this.#sleeping = true; this.#sync(); }
     if (!this.#ready) {
@@ -242,7 +268,7 @@ export class SgScene extends Base {
   #watchSlot() {
     const els = this.#els.slot.assignedElements();
     const text = this.#els.slot.assignedNodes().some(n => n.nodeType === 3 && n.textContent.trim());
-    this.#els.panel.hidden = !els.length && !text;
+    this.#els.panel.hidden = this.#held || (!els.length && !text);
     if (!this.#ro) return;
     this.#ro.disconnect(); this.#ro.observe(this.#els.stage);
     els.forEach(el => this.#ro.observe(el));
@@ -257,12 +283,24 @@ export class SgScene extends Base {
     const cover = panel.hidden ? 0 : panel.offsetHeight / s.height;
     const stacked = frame.classList.contains('stacked') ? cover > 0.4 : cover > 0.45;
     frame.classList.toggle('stacked', stacked);
+    this.#mv?.sync();
     const kx = W / s.width, ky = H / s.height;
     this.#calm = this.#els.slot.assignedElements().map(el => {
       const r = el.getBoundingClientRect();
       return { x: (r.left - s.left) * kx, y: (r.top - s.top) * ky, w: r.width * kx, h: r.height * ky };
     }).filter(r => r.w > 0 && r.h > 0 && r.y < H && r.y + r.h > 0);
-    this.#invalidate();
+    this.#placed = this.#placeKey(); this.#merge(); this.#invalidate();
+  }
+  #merge() { this.#all = this.#extra.size ? [...this.#calm, ...this.#extra.values()] : this.#calm; }
+  // The panel can move with no resize (--sg-reading-place, a class up the tree, a stylesheet), which the
+  // ResizeObserver never sees: watch the tree's style, class and register attributes and the head's styles, and re-measure if the panel really moved.
+  #placeKey() { const r = this.#els.panel.getBoundingClientRect(); return `${r.left | 0},${r.top | 0},${r.width | 0},${r.height | 0}`; }
+  #placeMoved() { return this.#placed !== '' && this.#placed !== this.#placeKey(); }
+  #watchPlace() {
+    const mo = new MutationObserver(() => this.#placeMoved() && this.#measure());
+    for (let n = this; n; n = n.parentElement ?? n.getRootNode().host) mo.observe(n, { attributes: true, attributeFilter: ['style', 'class', 'hidden', 'register', 'data-register', 'data-theme', 'data-palette'] });
+    mo.observe(document.head, { childList: true, subtree: true, characterData: true });
+    this.#off.push(() => mo.disconnect());
   }
 
   // ── pointer and keys (arrow keys mirror the pointer)

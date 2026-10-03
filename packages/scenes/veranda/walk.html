@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A walk down the veranda</title>
+<script>
+  // ?register, ?theme and the demo stylesheets, as tools/harness/demo.js does; ready is the stage's own sg-ready, not a timer
+  (() => {
+    const q = new URLSearchParams(location.search), root = document.documentElement;
+    for (const k of ['register', 'theme', 'palette']) if (q.get(k)) root.setAttribute('data-' + k, q.get(k));
+    for (const href of ['/packages/tokens/fonts.css', '/packages/tokens/tokens.css', '/tools/harness/demo.css', '/packages/stage3d/depth-photo/depth-photo.css']) document.head.append(Object.assign(document.createElement('link'), { rel: 'stylesheet', href }));
+    window.__ready = false;
+  })();
+</script>
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 64rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .lede, .note { max-width: var(--sg-measure); color: var(--sg-text-soft); margin: 0 0 var(--sg-space-3); }
+  .note { font-size: var(--sg-step--1); }
+  sg-veranda-stage h2 { font: var(--sg-weight-medium) var(--sg-step-1) / 1.25 var(--sg-font-display); margin: 0 0 .25em; }
+  sg-veranda-stage p { margin: 0; }
+  .pin { display: flex; flex-wrap: wrap; gap: var(--sg-space-3) var(--sg-space-4); align-items: end; margin-top: var(--sg-space-4); }
+  .pin label { display: grid; gap: 4px; font-size: var(--sg-step--1); color: var(--sg-text-soft); }
+  .pin select { font: inherit; padding: .35em .5em; }
+  .pin a { font-size: var(--sg-step--1); }
+</style>
+</head>
+<body>
+<main>
+  <h1>A walk down the veranda</h1>
+  <p class="lede">Scroll to walk down the veranda. The camera stops at each note, the focus moves to what it is stuck to, and the note stays on its place as you go. With reduced motion, each stop is a still.</p>
+  <sg-veranda-stage id="stage" walk>
+    <h2>Come and sit</h2>
+    <p>The lamp is on at six. There is tea, and the paddy is green.</p>
+  </sg-veranda-stage>
+  <p class="note" id="said" aria-live="polite">Drag the grip at the pane's corner to move it.</p>
+  <p class="note">Nothing here is a photograph. The words are real text on the page: the drawing and its depth map only decide where they show.</p>
+</main>
+<script type="module">
+  import './stage-element.js';
+  import { encodeNotes, decodeNotes } from './pane.core.js';
+  const TEXTS = ['Tea is at four.', 'Mind the step down to the garden.', 'The lamp is lit at dusk.', 'This door sticks in the rains.', 'Sit here for the paddy.', 'The best place to hear the rain.', 'Ask for the mango pickle.', 'Swept every morning, by hand.'];
+  const q = new URLSearchParams(location.search), st = document.getElementById('stage');
+  st.noteTexts = TEXTS;
+  // the postcard: the hash carries the notes' places and text ids (never words); the page writes it, and reads it back
+  const sync = () => { const h = encodeNotes(st.notes); history.replaceState(null, '', location.pathname + location.search + (h ? '#' + h : '')); };
+  st.notes = decodeNotes(location.hash || '#notes=pillar.0,window.1,lamp.2,door.3,mango.4', st.anchors.map(a => a.id), TEXTS.length);
+  st.addEventListener('sg-notes-changed', sync);
+  sync();
+  for (const k of ['words-at', 'pane-depth', 'mood', 'lens']) if (q.get(k)) st.setAttribute(k, q.get(k));
+  st.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__stage = st;
+</script>
+</body>
+</html>

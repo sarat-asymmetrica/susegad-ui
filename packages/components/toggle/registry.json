@@ -1,6 +1,7 @@
 {
   "name": "toggle",
   "type": "component",
+  "stability": "experimental",
   "title": "Toggle",
   "description": "A native switch (a checkbox with role=\"switch\") that submits and takes Space with or without JavaScript. Quiet is a plain track and thumb drawn by CSS; warm is the brass tower bolt from a Goan door, sliding into its keeper; playful is a clay diya that lights, its flame flickering only while lit and on screen. Forced colours bring back the system control.",
   "version": "0.1.0",

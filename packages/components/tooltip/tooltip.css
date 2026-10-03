@@ -1,0 +1,83 @@
+/* <sg-tooltip>. The panel is always linked to its trigger by
+   aria-describedby (in tooltip.js), so a screen reader has its text
+   whether or not it is ever shown. Without JavaScript this file alone
+   reveals it on :hover and :focus-visible, with opacity, never display
+   or visibility, so the accessible description is never at the mercy of
+   the visual state. With JavaScript the panel becomes a popover, in the
+   top layer, positioned in a fixed left/top the element computes
+   (tooltip.core.js's placement()), and sg-tooltip[data-open] carries the
+   shown state instead of :hover (touch and keyboard both use it).
+   sg-tooltip[data-above] says which side of the trigger it landed on. */
+
+sg-tooltip[hidden] { display: none; } /* our display rule would otherwise beat the browser's [hidden] */
+
+sg-tooltip {
+  display: inline-block;
+  position: relative;
+}
+
+sg-tooltip [role="tooltip"] {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  z-index: 10;
+  box-sizing: border-box;
+  max-width: 22em;
+  width: max-content;
+  padding: 0.35em 0.7em;
+  border-radius: var(--sg-radius-2, 4px);
+  background: var(--sg-text, CanvasText);
+  color: var(--sg-surface, Canvas);
+  font: var(--sg-step--1, 0.85rem) / 1.4 var(--sg-font-body, system-ui, sans-serif);
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out);
+}
+/* no JS: revealed by real hover/focus, never JS state */
+sg-tooltip:is(:hover, :focus-within) [role="tooltip"]:not([popover]) { opacity: 1; }
+
+/* ── with JavaScript: the panel is a popover, in the top layer ──────────── */
+sg-tooltip [role="tooltip"][popover] {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  transform: none;
+}
+sg-tooltip[data-open] [role="tooltip"][popover] { opacity: 1; }
+
+/* ── warm: hand-lettered ─────────────────────────────────────────────────── */
+sg-tooltip[data-skin="warm"] [role="tooltip"] {
+  font-family: var(--sg-font-hand, cursive);
+  font-size: var(--sg-step-0, 1rem);
+  background: var(--sg-accent-text, var(--sg-text, CanvasText));
+}
+
+/* ── playful: a pencil leader line between the panel and the trigger ────── */
+/* by default the panel sits above the trigger, so the leader points down */
+sg-tooltip[data-skin="playful"] [role="tooltip"]::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 2px;
+  height: 9px;
+  /* not currentColor: the panel's own text is pale-on-dark, which would
+     draw the line the same colour as the page behind it and hide it */
+  background: var(--sg-text, CanvasText);
+  transform: translateX(-50%);
+}
+/* flipped below the trigger (JS only, no room above): the leader points up */
+sg-tooltip[data-skin="playful"]:not([data-above]) [role="tooltip"][popover]::after {
+  top: auto;
+  bottom: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  sg-tooltip [role="tooltip"] { transition: none; }
+}
+@media (forced-colors: active) {
+  sg-tooltip [role="tooltip"] { border: 1px solid CanvasText; background: Canvas; color: CanvasText; }
+  sg-tooltip[data-skin="playful"] [role="tooltip"]::after { display: none; }
+}

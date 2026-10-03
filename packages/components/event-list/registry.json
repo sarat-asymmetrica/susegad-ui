@@ -1,0 +1,35 @@
+{
+  "name": "event-list",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Event list",
+  "description": "A calendar of event cards that keeps itself honest: what is coming up is on top, soonest first; what has happened is put away in a closed \"Before\" drawer (a native details element); and when nothing is coming it says so in words, with your call to action beside it. When the clock passes an event while the page is open the card moves by itself, from a single timer that runs only while the list is on screen. Quiet is a plain ruled list; warm draws the empty state as a ticket with nothing printed on it yet; playful lets the hand show.",
+  "version": "0.1.0",
+  "files": [
+    "event-list.js",
+    "event-list.core.js",
+    "event-list.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "event-list.prompt.md",
+    "event-list.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "tokens",
+    "event-card"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "event-list.prompt.md",
+  "docs": "event-list.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 8,415 bytes: element 6.8 KB, pure core 1.1 KB (it leans on event-card's core for the clock), skins 0.5 KB in all."
+  }
+}

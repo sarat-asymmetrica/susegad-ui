@@ -1,6 +1,6 @@
 # Kolam
 
-*Tamil: the rice-flour line drawn at the doorstep every morning and gone by evening.*
+*Tamil: the rice-flour line drawn at the doorstep every morning and gone by evening. The threshold drawings of Tamil Nadu and South India, with kin forms across India.*
 
 First a grid of dots, then one line that loops around every dot without lifting. The line comes from a trick mathematicians use to study kolam: put tiny mirrors between some dots and bounce a ray diagonally through the grid. Rice flour feeds the ants, so the ants come.
 

@@ -1,6 +1,7 @@
 {
   "name": "proposal",
   "type": "recipe",
+  "stability": "experimental",
   "title": "Proposal",
   "description": "A proposal written in Markdown and built into one sealed Folio file: a cover with the Paus scene, who it is for and from, its date and how long it holds, and a stamped status while it is a draft; one section per heading; a rate card and stay prices worked out by the booking kernels, with other dates to try; a plan you can walk through with a native range; scope and cost tables that stack into labelled cards on a phone; terms; and a signing block with the options as native radios and <sg-signature>. It reads, prints and can be signed on paper without JavaScript. The page builder (proposal.page.js, build.mjs) runs in Node beside Folio and is not copied.",
   "version": "0.1.0",

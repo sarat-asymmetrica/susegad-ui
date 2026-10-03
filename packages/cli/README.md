@@ -87,3 +87,15 @@ node packages/cli/e2e.mjs scene-dot --registry registry/fixtures/good
 ```
 
 This adds the item to a fresh project outside the repo, serves that project on its own, loads it in Chromium, and passes when `sg-ready` fires, the scene drew something, and the console is clean. The screenshot goes to `.shots/cli/<item>.png`.
+
+## As a package
+
+This folder (`packages/cli`) is a self-contained npm package, `@susegad/cli` (`package.json`'s `files` field ships only `bin/`, `src/` and this README; no test files, no `e2e.mjs`). Nothing under `src/` imports anything outside `packages/cli/`, so it works installed on its own, away from the rest of this repo.
+
+```sh
+npm pack               # from packages/cli/: writes susegad-cli-0.1.0.tgz
+npm install /path/to/susegad-cli-0.1.0.tgz   # in a scratch project, to prove the tarball installs clean
+npx susegad list --registry https://susegad.asymmetrica.ai/registry/registry.json
+```
+
+`npx susegad` and a bare `npm install @susegad/cli` don't work yet: the name has not been published (`docs/ROADMAP.md`'s open questions; `susegad`, `susegad-ui` and `@susegad/cli` were all free on 28 September 2026). Reserving one and running `npm publish` is the owner's call, not something this repo, its CI or any agent does on its own. Until then, install from a packed tarball (above), from a clone (`node packages/cli/bin/susegad.mjs ...`, see the top of this file), or from a commit with `--ref` (see "Install from a commit").

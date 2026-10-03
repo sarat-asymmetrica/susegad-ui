@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<link rel="stylesheet" href="/packages/components/field/field.css">
+<link rel="stylesheet" href="/packages/components/menu/menu.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="demo-ready" content="manual">
+<title>WhatsApp order</title>
+<link rel="stylesheet" href="./wa-order.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 80rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: 400 var(--sg-step-2) / 1.2 var(--sg-font-display); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-5); }
+  .cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sg-space-5); align-items: start; }
+  @media (min-width: 62rem) { .cols { grid-template-columns: minmax(0, 36rem) minmax(0, 40rem); gap: var(--sg-space-6); } }
+  #opened { margin: var(--sg-space-3) 0 0; font: var(--sg-step--1) / 1.5 var(--sg-font-mono); color: var(--sg-text-soft); white-space: pre-wrap; overflow-wrap: anywhere; }
+  #opened:empty { display: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>WhatsApp order</h1>
+  <p class="lede">Choose dishes in the menu, say when and where, and this writes the order as a WhatsApp message. You see the exact words first. Nothing is sent until you press send in WhatsApp.</p>
+  <div class="cols">
+    <div>
+      <h2>The menu</h2>
+      <sg-menu id="menu" orderable glyphs continue="#order">
+      <section class="sg-menu-section"><h3 class="sg-menu-section-title">Fresh pasta</h3><ul class="sg-menu-items">
+          <li class="sg-menu-item" data-id="fettuccine" data-availability="available"><span class="sg-menu-name">Fresh fettuccine</span><span class="sg-menu-price"><data value="450">₹450</data> <span class="sg-menu-unit">10 pieces</span></span><span class="sg-menu-line">Plain wheat, rolled thin</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="egg-less">Egg-less</li><li class="sg-menu-tag" data-tag="veg">Veg</li></ul></div></li>
+          <li class="sg-menu-item" data-id="ravioli" data-availability="available"><span class="sg-menu-name">Spinach ravioli</span><span class="sg-menu-price"><data value="520">₹520</data> <span class="sg-menu-unit">serves 2</span></span><span class="sg-menu-line">Ricotta, lemon and nutmeg</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="veg">Veg</li></ul></div></li>
+          <li class="sg-menu-item" data-id="gnocchi" data-availability="available"><span class="sg-menu-name">Beetroot gnocchi</span><span class="sg-menu-price"><data value="480">₹480</data> <span class="sg-menu-unit">serves 2</span></span><span class="sg-menu-line">Soft, with sage butter</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="egg-less">Egg-less</li><li class="sg-menu-tag" data-tag="veg">Veg</li></ul></div></li>
+        </ul></section>
+      <section class="sg-menu-section"><h3 class="sg-menu-section-title">Sauces</h3><ul class="sg-menu-items">
+          <li class="sg-menu-item" data-id="tomato" data-availability="available"><span class="sg-menu-name">Tomato and basil</span><span class="sg-menu-price"><data value="260">₹260</data> <span class="sg-menu-unit">1 jar</span></span><span class="sg-menu-line">Slow cooked, nothing else</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="vegan">Vegan</li><li class="sg-menu-tag" data-tag="egg-less">Egg-less</li></ul></div></li>
+          <li class="sg-menu-item" data-id="pesto" data-availability="available"><span class="sg-menu-name">Walnut pesto</span><span class="sg-menu-price"><data value="340">₹340</data> <span class="sg-menu-unit">1 jar</span></span><span class="sg-menu-line">Green and a little bitter</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="veg">Veg</li><li class="sg-menu-tag" data-tag="nuts">Contains nuts</li></ul></div></li>
+        </ul></section>
+      </sg-menu>
+    </div>
+    <div>
+      <h2 id="order-h">Your order</h2>
+      <sg-wa-order id="order" for="menu" number="+91 90000 12345" business="Sample Pasta Studio" min-notice="24"
+                   areas="Porvorim, Panjim, Margao, Calangute, Mapusa" slots="Morning (9 to 12), Afternoon (12 to 4), Evening (4 to 7)">
+        <a class="sg-wa-send" href="https://wa.me/919000012345?text=Hello%20Sample%20Pasta%20Studio!%20I%20would%20like%20to%20order.%20What%20is%20available%3F">Order on WhatsApp</a>
+      </sg-wa-order>
+      <p id="opened" role="status"></p>
+    </div>
+  </div>
+  <p class="note">A made-up sample studio, made-up dishes and a made-up number. Without JavaScript the page keeps the plain link, which opens WhatsApp with a short message. The link in the composer is the same link: its address is the message you see.</p>
+</main>
+<script type="module">
+  import '../menu/menu.js';
+  import './wa-order.js';
+  document.getElementById('order').addEventListener('sg-wa-open', e => { document.getElementById('opened').textContent = `sg-wa-open: ${e.detail.lines.length} dish line(s), estimated total ${e.detail.total}, link ${e.detail.href.length} characters`; });
+  // ?fill=1 shows the page with an order half-written (the tools use it to look at the moment the piece exists for)
+  const fill = new URLSearchParams(location.search).has('fill');
+  const els = [...document.querySelectorAll('sg-menu, sg-wa-order')];
+  Promise.all(els.map(el => customElements.whenDefined(el.localName).then(() => (el.skin ? 0 : new Promise(r => el.addEventListener('sg-skin', r, { once: true }))))))
+    .then(() => document.fonts.ready).then(() => {
+      if (fill) {
+        for (const id of ['fettuccine', 'fettuccine', 'ravioli']) document.querySelector(`#menu [data-id=${id}] .sg-menu-plus`).click();
+        const set = (name, value) => { const el = document.querySelector(`#order [name=${name}]`); el.value = value; el.dispatchEvent(new Event('input', { bubbles: true })); };
+        const day = new Date(Date.now() + 3 * 86400000), pad = n => String(n).padStart(2, '0');
+        set('date', `${day.getFullYear()}-${pad(day.getMonth() + 1)}-${pad(day.getDate())}`);
+        set('slot', 'Morning (9 to 12)'); set('area', 'Porvorim'); set('name', 'Anjali'); set('notes', 'Please ring the bell twice.');
+      }
+      setTimeout(() => window.__demoReady(), 150);
+    });
+</script>
+</body>
+</html>

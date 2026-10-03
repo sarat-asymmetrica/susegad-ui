@@ -1,6 +1,8 @@
 {
   "name": "scene-paus",
   "type": "scene",
+  "stability": "experimental",
+  "useFor": ["hero"],
   "title": "Paus",
   "version": "0.1.0",
   "description": "The monsoon through a Goan window: rain beads, merges and runs down fogged glass. Hosts text in calm zones, clears from the sill up with progress, and wipes under a finger or the arrow keys.",

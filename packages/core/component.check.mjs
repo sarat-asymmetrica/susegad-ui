@@ -5,11 +5,11 @@
 // Checks: `hidden` hides every component even when its own CSS sets a display,
 // and showing it again restores that display.
 
-import { chromium } from 'playwright';
+import { pickEngine } from '../../tools/lib/engine.mjs';
 import { startServer } from '../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const browser = await pickEngine().launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 

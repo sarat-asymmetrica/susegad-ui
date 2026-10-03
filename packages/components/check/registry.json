@@ -1,6 +1,7 @@
 {
   "name": "check",
   "type": "component",
+  "stability": "experimental",
   "title": "Checkbox",
   "description": "A native checkbox that submits, validates and takes Space with or without JavaScript. Quiet is a hairline box with a crisp tick drawn by CSS; warm sketches the box in four pencil strokes whose corners cross and draws a heavy tick in by hand; playful is a little rubber-stamp block, and stamps a bold tick over its edge, printed through the stamp's ink texture. Indeterminate, and a \"select all\" box that goes checked, mixed or clear with its children. Forced colours bring back the system checkbox.",
   "version": "0.1.0",

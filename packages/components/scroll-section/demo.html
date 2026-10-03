@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scroll section</title>
+<link rel="stylesheet" href="./scroll-section.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0; padding: var(--sg-space-5) 16px var(--sg-space-2); max-width: 44rem; }
+  .lede { max-width: var(--sg-measure); color: var(--sg-text-soft); padding: 0 16px; margin: 0 0 var(--sg-space-5); }
+  .spacer { height: 90vh; display: grid; place-items: center; color: var(--sg-text-soft); font-size: var(--sg-step--1); }
+  sg-scroll-section { max-width: 44rem; margin: 0 auto var(--sg-space-6); }
+  sg-scene { display: block; border-radius: var(--sg-radius-3); overflow: hidden; }
+  .sg-scroll-reveal { padding: var(--sg-space-4); max-width: var(--sg-measure); margin: var(--sg-space-4) auto 0; text-align: center; }
+  #status { position: fixed; top: var(--sg-space-2); right: var(--sg-space-2); padding: var(--sg-space-2) var(--sg-space-3); background: var(--sg-surface-raised); border: var(--sg-hairline) solid var(--sg-rule); border-radius: var(--sg-radius-2); font-size: var(--sg-step--1); z-index: 2; }
+</style>
+</head>
+<body>
+<div id="status">progress: <span id="p">0.000</span></div>
+<h1>Scroll section</h1>
+<p class="lede">Scroll down. The Paus scene's fog clears in step with how far its section has travelled through the viewport (a scene's own `progress`, following the SKILL doc's "progress is real state" rule: set only by real scroll here, never by a timer). Reduced motion and the quiet register show the scene's still instead.</p>
+
+<div class="spacer">scroll ↓</div>
+
+<sg-scroll-section id="section">
+  <sg-scene name="paus" register="warm" wipe="false"></sg-scene>
+  <p class="sg-scroll-reveal">Come for the rain. Our lowest rate runs June to September, and this window watches it arrive.</p>
+</sg-scroll-section>
+
+<div class="spacer">still scrolling ↓</div>
+<div class="spacer">↓</div>
+
+<script type="module">
+  import '../../core/index.js';
+  import '../../scenes/paus/index.js';
+  import './scroll-section.js';
+
+  const section = document.getElementById('section');
+  const out = document.getElementById('p');
+  section.addEventListener('sg-scroll-progress', e => { out.textContent = e.detail.progress.toFixed(3); });
+</script>
+</body>
+</html>

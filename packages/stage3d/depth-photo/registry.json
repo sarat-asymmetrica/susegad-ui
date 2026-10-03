@@ -1,0 +1,42 @@
+{
+  "name": "depth-photo",
+  "type": "component",
+  "title": "Depth photo",
+  "description": "<sg-depth-photo>: a photograph (or a drawing) with a depth map, seen through a camera. The <img> inside is the picture and its alt is what a screen reader hears. Live (three.js): the focus racks by depth with a circle-of-confusion gather, the camera dollies with true parallax, and the water moves inside a mask. 2D (quiet, reduced motion, lite devices, no WebGL, three blocked): the same frame at rest, the focus still racking, nothing moving on its own. Implements the frame contract for exact-frame export.",
+  "version": "0.1.0",
+  "stability": "experimental",
+  "files": [
+    "depth-photo.js",
+    "depth-photo.core.js",
+    "depth-photo.gl.js",
+    "depth-photo.2d.js",
+    "depth-photo.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "depth-photo.prompt.md",
+    "depth-photo.docs.md",
+    "story-shims.js"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens",
+    "stage3d"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "depth-photo.prompt.md",
+  "docs": "depth-photo.docs.md",
+  "budget": {
+    "jsBytes": 46080,
+    "reason": "Decisions 0009, 0010 and 0017; the step from 40 KB to 45 KB (46,080) was accepted by the Sutradhar on 26 Sep 2026 (story 1). Today 42.8 KB: element 14.9 KB (0009, up to 16 KB: two renderers, the governor, the slow-machine rescue, context-loss recovery, the frame contract), pure core 3.8 KB (0010), the three.js renderer 15.4 KB (a look shader and a two-layer stage shader: near and far layers, dropped stretched pixels and a small inpaint, which the share card's smeared plate rim asked for), the 2D renderer 6.5 KB, register skins 2.2 KB. The rack-focus and frame helpers it took from story 1 are copied into story-shims.js (1.6 KB). Needs npm three 0.186.1 (npmDependencies) for the live tier only."
+  },
+  "npmDependencies": {
+    "three": "0.186.1"
+  }
+}

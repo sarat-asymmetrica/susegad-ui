@@ -9,6 +9,7 @@
       "title": "Core",
       "description": "Fixture core: defineScene and a minimal <sg-scene> that draws once on a canvas.",
       "version": "0.1.0",
+      "stability": "experimental",
       "manifest": "packages/core/registry.json",
       "files": [
         {
@@ -43,6 +44,7 @@
       "title": "Engine",
       "description": "Fixture engine: one drawing helper, in a src/ folder to prove the tree is kept.",
       "version": "0.1.0",
+      "stability": "experimental",
       "manifest": "packages/engine/registry.json",
       "files": [
         {
@@ -72,6 +74,7 @@
       "title": "Hello",
       "description": "Fixture recipe: a greeting beside the dot scene, to prove recipes copy to susegad/recipes/ with their imports intact.",
       "version": "0.1.0",
+      "stability": "experimental",
       "manifest": "packages/recipes/hello/registry.json",
       "files": [
         {
@@ -116,6 +119,7 @@
       "title": "Dot",
       "description": "Fixture scene: a kumkum dot on paper. One path is repo-rooted on purpose.",
       "version": "0.1.0",
+      "stability": "experimental",
       "manifest": "packages/scenes/dot/registry.json",
       "files": [
         {
@@ -159,6 +163,7 @@
       "title": "Tokens",
       "description": "Fixture tokens: two colours as CSS custom properties with a JS mirror.",
       "version": "0.1.0",
+      "stability": "experimental",
       "manifest": "packages/tokens/registry.json",
       "files": [
         {

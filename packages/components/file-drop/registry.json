@@ -1,6 +1,7 @@
 {
   "name": "file-drop",
   "type": "component",
+  "stability": "experimental",
   "title": "File drop",
   "description": "A native file input you can also drop files onto. Without JavaScript it is the browser's own input; with it, the real input covers a drop zone, and the element checks accept, size and count, lists each file with a Remove button, and says every change in words. Quiet is a ruled zone; warm posts a letter into a pillar box; playful drops it in with a thunk.",
   "version": "0.1.0",

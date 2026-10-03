@@ -1,6 +1,7 @@
 {
   "name": "progress",
   "type": "component",
+  "stability": "experimental",
   "title": "Progress",
   "description": "Enhances a native progress element. Quiet is the native bar as a pencil hairline; warm is a small kolam drawn exactly as far as the value, closing at 100%; playful is a cutting-chai glass that fills with tea. It moves only when the value moves, and without a value it says in words what is happening.",
   "version": "0.1.0",

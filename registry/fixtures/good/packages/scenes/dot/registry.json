@@ -1,6 +1,7 @@
 {
   "name": "scene-dot",
   "type": "scene",
+  "stability": "experimental",
   "title": "Dot",
   "description": "Fixture scene: a kumkum dot on paper. One path is repo-rooted on purpose.",
   "version": "0.1.0",

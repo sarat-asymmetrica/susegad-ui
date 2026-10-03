@@ -1,0 +1,92 @@
+/* <sg-quote>. Without JavaScript this is the quiet look: the words beside a
+   hairline, who said them in small capitals below. Warm writes it in the
+   hand as a margin note with a pencil bracket; playful sets it large under a
+   hand-drawn quotation mark. */
+
+sg-quote {
+  display: block;
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body);
+}
+sg-quote[hidden] { display: none; }
+sg-quote figure { margin: 0; }
+sg-quote blockquote {
+  position: relative;
+  margin: 0;
+  padding-inline-start: var(--sg-space-4);
+  border-inline-start: var(--sg-hairline) solid var(--sg-rule-strong);
+  font: var(--sg-step-1) / var(--sg-leading-snug) var(--sg-font-display);
+  text-wrap: pretty;
+}
+sg-quote blockquote p { margin: 0; }
+sg-quote blockquote p + p { margin-top: var(--sg-space-3); }
+sg-quote figcaption {
+  margin-top: var(--sg-space-3);
+  padding-inline-start: var(--sg-space-4);
+  font-size: var(--sg-step--1);
+  color: var(--sg-text-soft);
+}
+sg-quote .sg-quote-who {
+  display: block;
+  color: var(--sg-text);
+  font-weight: var(--sg-weight-medium);
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.05em;
+  font-size: var(--sg-step-0);
+}
+sg-quote .sg-quote-role { display: block; }
+sg-quote .sg-quote-source {
+  display: inline-block;
+  margin-top: var(--sg-space-1);
+  padding-block: 0.15em; /* a 24 px target with the line height */
+  color: var(--sg-accent-text);
+}
+sg-quote a:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); border-radius: var(--sg-radius-1); }
+
+/* ── warm: a margin note in the hand, with a pencil bracket ── */
+sg-quote[data-skin="warm"] blockquote {
+  border-inline-start: 0;
+  padding-inline-start: calc(var(--sg-space-4) + 4px);
+  font: var(--sg-step-1) / var(--sg-leading-snug) var(--sg-font-hand);
+}
+sg-quote[data-skin="warm"] figcaption { font-family: var(--sg-font-hand); }
+sg-quote[data-skin="warm"] .sg-quote-who { font-variant-caps: normal; letter-spacing: 0; }
+sg-quote .sg-quote-bracket {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 12px;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke: var(--sg-pencil);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+sg-quote .sg-quote-bracket path:first-child { stroke-width: 1.6; }
+sg-quote .sg-quote-bracket path:last-child { stroke-width: 0.8; opacity: 0.6; }
+
+/* ── playful: big words under a hand-drawn quotation mark ── */
+sg-quote[data-skin="playful"] figure { position: relative; padding-top: 3.8rem; }
+sg-quote[data-skin="playful"] blockquote {
+  border-inline-start: 0;
+  padding-inline-start: 0;
+  font: var(--sg-step-2) / var(--sg-leading-tight) var(--sg-font-display);
+}
+sg-quote[data-skin="playful"] figcaption { padding-inline-start: 0; }
+sg-quote[data-skin="playful"] .sg-quote-who { font-variant-caps: normal; letter-spacing: 0; font-family: var(--sg-font-hand); font-size: var(--sg-step-1); color: var(--sg-accent-text); }
+sg-quote .sg-quote-mark {
+  position: absolute;
+  top: 0;
+  inset-inline-start: -0.3rem;
+  width: 4.2rem;
+  height: auto;
+  overflow: visible;
+  fill: var(--sg-accent);
+}
+sg-quote .sg-quote-mark path { transform-box: fill-box; transform-origin: 40% 70%; }
+
+@media (forced-colors: active) {
+  sg-quote .sg-quote-bracket { stroke: CanvasText; }
+  sg-quote .sg-quote-mark { fill: CanvasText; }
+}

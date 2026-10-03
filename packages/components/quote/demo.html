@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quote</title>
+<link rel="stylesheet" href="./quote.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 72rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: 0 0 var(--sg-space-3); }
+  h3 { font: var(--sg-weight-medium) var(--sg-step--1) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-4); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); gap: var(--sg-space-4); margin-top: var(--sg-space-5); }
+  .panel { background: var(--sg-surface); color: var(--sg-text); border: var(--sg-hairline) solid var(--sg-rule); border-radius: var(--sg-radius-3); padding: var(--sg-space-4) 16px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Quote</h1>
+  <p class="lede">A pull-quote or testimonial: the words, who said them, their role and business, and a link to where they said it.</p>
+  <div class="grid">
+    <section data-register="quiet" aria-labelledby="h-quiet">
+      <h2 id="h-quiet">Quiet</h2>
+      <div class="panel">
+        <sg-quote>
+          <figure>
+            <blockquote><p>Placeholder quote: the order page does in one evening what took us a week of messages.</p></blockquote>
+            <figcaption><span class="sg-quote-who">Maya Fernandes</span> <span class="sg-quote-role">Founder, Aldona Organics</span> <a class="sg-quote-source" href="../voice-note/demo.html">Hear the voice note</a></figcaption>
+          </figure>
+        </sg-quote>
+        <h3>Without a link</h3>
+        <sg-quote>
+          <figure>
+            <blockquote><p>Placeholder quote: the invoices finally match the stock.</p></blockquote>
+            <figcaption><span class="sg-quote-who">A. Menezes</span> <span class="sg-quote-role">Accounts, a trading company in Margao</span></figcaption>
+          </figure>
+        </sg-quote>
+      </div>
+    </section>
+    <section data-register="warm" aria-labelledby="h-warm">
+      <h2 id="h-warm">Warm</h2>
+      <div class="panel">
+        <sg-quote>
+          <figure>
+            <blockquote><p>Placeholder quote: the order page does in one evening what took us a week of messages.</p></blockquote>
+            <figcaption><span class="sg-quote-who">Maya Fernandes</span> <span class="sg-quote-role">Founder, Aldona Organics</span> <a class="sg-quote-source" href="../voice-note/demo.html">Hear the voice note</a></figcaption>
+          </figure>
+        </sg-quote>
+        <h3>Without a link</h3>
+        <sg-quote>
+          <figure>
+            <blockquote><p>Placeholder quote: the invoices finally match the stock.</p></blockquote>
+            <figcaption><span class="sg-quote-who">A. Menezes</span> <span class="sg-quote-role">Accounts, a trading company in Margao</span></figcaption>
+          </figure>
+        </sg-quote>
+      </div>
+    </section>
+    <section data-register="playful" aria-labelledby="h-playful">
+      <h2 id="h-playful">Playful</h2>
+      <div class="panel">
+        <sg-quote>
+          <figure>
+            <blockquote><p>Placeholder quote: the order page does in one evening what took us a week of messages.</p></blockquote>
+            <figcaption><span class="sg-quote-who">Maya Fernandes</span> <span class="sg-quote-role">Founder, Aldona Organics</span> <a class="sg-quote-source" href="../voice-note/demo.html">Hear the voice note</a></figcaption>
+          </figure>
+        </sg-quote>
+        <h3>Without a link</h3>
+        <sg-quote>
+          <figure>
+            <blockquote><p>Placeholder quote: the invoices finally match the stock.</p></blockquote>
+            <figcaption><span class="sg-quote-who">A. Menezes</span> <span class="sg-quote-role">Accounts, a trading company in Margao</span></figcaption>
+          </figure>
+        </sg-quote>
+      </div>
+    </section>
+  </div>
+  <p class="note">People, businesses and words here are made up.</p>
+</main>
+<script type="module">
+  import './quote.js';
+</script>
+</body>
+</html>

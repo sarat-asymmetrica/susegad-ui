@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Site nav</title>
+<link rel="stylesheet" href="./site-nav.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 64rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-3); }
+  .panel { background: var(--sg-surface); color: var(--sg-text); border: var(--sg-hairline) solid var(--sg-rule); border-radius: var(--sg-radius-3); padding: 0 16px var(--sg-space-2); }
+  .narrow { max-width: 22rem; margin-top: var(--sg-space-3); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Site nav</h1>
+  <p class="lede">A site header that works with no JavaScript. On a wide screen the links sit in a row; on a narrow one (the second of each pair) they are behind a Menu button, a native disclosure.</p>
+  <section data-register="quiet" aria-labelledby="h-quiet">
+    <h2 id="h-quiet">Quiet: a hairline rule</h2>
+    <div class="panel">
+      <sg-site-nav>
+        <nav aria-label="Main, quiet">
+          <a class="sg-site-nav-home" href="#top">Casa Studio</a>
+          <details class="sg-site-nav-menu">
+            <summary>Menu</summary>
+            <ul>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#work" aria-current="page">Work</a></li>
+              <li><a href="#notes">Notes</a></li>
+              <li><a href="#now">Now</a></li>
+              <li><a href="#say-hello">Say hello</a></li>
+            </ul>
+          </details>
+        </nav>
+      </sg-site-nav>
+    </div>
+    <div class="panel narrow">
+      <sg-site-nav>
+        <nav aria-label="Main, quiet, narrow">
+          <a class="sg-site-nav-home" href="#top">Casa Studio</a>
+          <details class="sg-site-nav-menu">
+            <summary>Menu</summary>
+            <ul>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#work" aria-current="page">Work</a></li>
+              <li><a href="#notes">Notes</a></li>
+              <li><a href="#now">Now</a></li>
+              <li><a href="#say-hello">Say hello</a></li>
+            </ul>
+          </details>
+        </nav>
+      </sg-site-nav>
+    </div>
+  </section>
+  <section data-register="warm" aria-labelledby="h-warm">
+    <h2 id="h-warm">Warm: written on the paper</h2>
+    <div class="panel">
+      <sg-site-nav>
+        <nav aria-label="Main, warm">
+          <a class="sg-site-nav-home" href="#top">Casa Studio</a>
+          <details class="sg-site-nav-menu">
+            <summary>Menu</summary>
+            <ul>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#work" aria-current="page">Work</a></li>
+              <li><a href="#notes">Notes</a></li>
+              <li><a href="#now">Now</a></li>
+              <li><a href="#say-hello">Say hello</a></li>
+            </ul>
+          </details>
+        </nav>
+      </sg-site-nav>
+    </div>
+    <div class="panel narrow">
+      <sg-site-nav>
+        <nav aria-label="Main, warm, narrow">
+          <a class="sg-site-nav-home" href="#top">Casa Studio</a>
+          <details class="sg-site-nav-menu">
+            <summary>Menu</summary>
+            <ul>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#work" aria-current="page">Work</a></li>
+              <li><a href="#notes">Notes</a></li>
+              <li><a href="#now">Now</a></li>
+              <li><a href="#say-hello">Say hello</a></li>
+            </ul>
+          </details>
+        </nav>
+      </sg-site-nav>
+    </div>
+  </section>
+  <section data-register="playful" aria-labelledby="h-playful">
+    <h2 id="h-playful">Playful: stamped tabs</h2>
+    <div class="panel">
+      <sg-site-nav>
+        <nav aria-label="Main, playful">
+          <a class="sg-site-nav-home" href="#top">Casa Studio</a>
+          <details class="sg-site-nav-menu">
+            <summary>Menu</summary>
+            <ul>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#work" aria-current="page">Work</a></li>
+              <li><a href="#notes">Notes</a></li>
+              <li><a href="#now">Now</a></li>
+              <li><a href="#say-hello">Say hello</a></li>
+            </ul>
+          </details>
+        </nav>
+      </sg-site-nav>
+    </div>
+    <div class="panel narrow">
+      <sg-site-nav>
+        <nav aria-label="Main, playful, narrow">
+          <a class="sg-site-nav-home" href="#top">Casa Studio</a>
+          <details class="sg-site-nav-menu">
+            <summary>Menu</summary>
+            <ul>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#work" aria-current="page">Work</a></li>
+              <li><a href="#notes">Notes</a></li>
+              <li><a href="#now">Now</a></li>
+              <li><a href="#say-hello">Say hello</a></li>
+            </ul>
+          </details>
+        </nav>
+      </sg-site-nav>
+    </div>
+  </section>
+  <h2>Marked from the address, when the server hasn't</h2>
+  <div class="panel" data-register="quiet">
+    <sg-site-nav>
+      <nav aria-label="Main, marked from the address">
+        <a class="sg-site-nav-home" href="#top">Casa Studio</a>
+        <details class="sg-site-nav-menu">
+          <summary>Menu</summary>
+          <ul>
+            <li><a href="../stamp/demo.html">Stamp</a></li>
+            <li><a href="./demo.html">Site nav</a></li>
+            <li><a href="../badge/demo.html">Badge</a></li>
+          </ul>
+        </details>
+      </nav>
+    </sg-site-nav>
+  </div>
+  <p class="note">Nothing in this last nav carries <code>aria-current</code> in the HTML; the element sets it on "Site nav" because that is this page's address.</p>
+</main>
+<script type="module">
+  import './site-nav.js';
+</script>
+</body>
+</html>

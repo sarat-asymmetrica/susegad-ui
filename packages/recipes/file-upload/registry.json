@@ -1,6 +1,7 @@
 {
   "name": "file-upload",
   "type": "recipe",
+  "stability": "experimental",
   "title": "File upload",
   "description": "Choose photos and PDFs and watch each one arrive. Files too large are refused in plain words beside the field, a dropped file keeps its bar where it stopped and offers Try again, and a Received stamp lands once every file is safe. Each bar reads 99% until the server confirms, so the warm kolam closes only when the file has really arrived. Driven by a pure, seeded fake transport you swap for your own.",
   "version": "0.1.0",

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<link rel="stylesheet" href="../page.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page B</title>
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  header { padding: var(--sg-space-4); border-bottom: var(--sg-hairline) solid var(--sg-rule); }
+  main { max-width: 40rem; margin: 0 auto; padding: var(--sg-space-5) 16px; }
+  .scene { margin-top: var(--sg-space-4); height: 14rem; border-radius: var(--sg-radius-3); background: var(--sg-accent); color: var(--sg-on-accent); display: flex; align-items: center; justify-content: center; font: 400 var(--sg-step-2) var(--sg-font-display); }
+</style>
+</head>
+<body>
+<header data-vt="header"><strong>Casa Aldona</strong> · <a id="to-a" href="a.html">Page A</a> · <a href="b.html">Page B</a></header>
+<main>
+  <h1 id="h1">Page B</h1>
+  <p>The tinted block is a different height here, so the browser's own View Transitions morph its box between the two sizes instead of jumping.</p>
+  <div class="scene" data-vt="scene">the scene</div>
+</main>
+</body>
+</html>

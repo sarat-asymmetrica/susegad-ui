@@ -1,6 +1,7 @@
 {
   "name": "connecting",
   "type": "component",
+  "stability": "experimental",
   "title": "Connecting (FireflySync)",
   "description": "A connection's state in words, read out as it changes. Quiet shows a static dot; warm and playful show fireflies that blink on their own while connecting and fall into step (Kuramoto coupling) only once connected. Offline, they dim.",
   "version": "0.1.0",

@@ -1,6 +1,7 @@
 // A tiny static server for the repo root.
 //
 //   node tools/serve.mjs [port]        (default 5173; 0 picks a free port)
+//   node tools/serve.mjs --root=out/docs [port]   serve another folder (the built docs site)
 //
 // Other tools import startServer({ root, port }) and get back { url, port, close }.
 // No caching, correct MIME types for everything the library ships, 404s logged.
@@ -62,6 +63,9 @@ export function resolveInside(root, pathname) {
 
 function fileFor(root, pathname) {
   const p = resolveInside(root, pathname);
+  // /scenes/paus -> scenes/paus.html, the way Workers serves the built docs site
+  // (html_handling); a real file, or a folder with its own index.html, still wins
+  if (p && !path.extname(p) && !fs.existsSync(path.join(p, 'index.html')) && fs.existsSync(`${p}.html`)) return `${p}.html`;
   if (!p || !fs.existsSync(p)) return null;
   const st = fs.statSync(p);
   if (st.isFile()) return p;
@@ -93,7 +97,8 @@ export async function startServer({ root = REPO_ROOT, port = 0, host = '127.0.0.
     }
     // A directory without a trailing slash: redirect so relative URLs resolve.
     const p = resolveInside(root, url.pathname);
-    if (p && !url.pathname.endsWith('/') && fs.existsSync(p) && fs.statSync(p).isDirectory()) {
+    // (unless a page of the same name answers first: /scenes is scenes.html, as on Workers)
+    if (p && !url.pathname.endsWith('/') && fs.existsSync(p) && fs.statSync(p).isDirectory() && !fs.existsSync(`${p}.html`)) {
       res.writeHead(301, { location: url.pathname + '/' + url.search });
       return res.end();
     }
@@ -112,9 +117,30 @@ export async function startServer({ root = REPO_ROOT, port = 0, host = '127.0.0.
       res.writeHead(404, { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' });
       return res.end(`404 ${url.pathname}`);
     }
+    const size = fs.statSync(file).size;
+    // Byte ranges, so audio and video can seek (a browser resets currentTime to 0 on a server without them).
+    const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '');
+    if (range && (range[1] || range[2])) {
+      let start = range[1] ? +range[1] : Math.max(0, size - +range[2]);
+      let end = range[1] && range[2] ? Math.min(+range[2], size - 1) : size - 1;
+      if (start >= size || start > end) {
+        res.writeHead(416, { 'content-range': `bytes */${size}`, 'cache-control': 'no-store' });
+        return res.end();
+      }
+      res.writeHead(206, {
+        'content-type': mimeFor(file),
+        'content-length': end - start + 1,
+        'content-range': `bytes ${start}-${end}/${size}`,
+        'accept-ranges': 'bytes',
+        'cache-control': 'no-store',
+      });
+      if (req.method === 'HEAD') return res.end();
+      return fs.createReadStream(file, { start, end }).pipe(res);
+    }
     res.writeHead(200, {
       'content-type': mimeFor(file),
-      'content-length': fs.statSync(file).size,
+      'content-length': size,
+      'accept-ranges': 'bytes',
       'cache-control': 'no-store',
     });
     if (req.method === 'HEAD') return res.end();
@@ -134,8 +160,11 @@ export async function startServer({ root = REPO_ROOT, port = 0, host = '127.0.0.
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const port = Number(process.argv[2] ?? 5173);
-  const s = await startServer({ port });
-  console.log(`serving ${REPO_ROOT} at ${s.url}/`);
+  const args = process.argv.slice(2);
+  const rootArg = args.find(a => a.startsWith('--root='))?.slice('--root='.length);
+  const root = rootArg ? path.resolve(rootArg) : REPO_ROOT;
+  const port = Number(args.find(a => !a.startsWith('--')) ?? 5173);
+  const s = await startServer({ root, port, notFoundHtml: rootArg && fs.existsSync(path.join(root, '404.html')) ? '404.html' : undefined });
+  console.log(`serving ${root} at ${s.url}/`);
   console.log(`harness: ${s.url}/tools/harness/scene.html?name=kolam`);
 }

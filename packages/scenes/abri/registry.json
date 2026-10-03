@@ -1,0 +1,30 @@
+{
+  "name": "scene-abri",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["background","section-break"],
+  "title": "Abri",
+  "description": "Deccani cloud paper being made: drops of indigo, ochre, madder and grey-green land on a tray of size and push each other into rings by the area-preserving marbling map, a stylus combs them, a curl drift billows them, and a sheet is laid, lifted and turned to show its print. Quiet is the print as a still; warm makes sheet after sheet; playful takes a hand in the size (pointer, or arrow keys and Enter to drop a colour).",
+  "version": "0.1.0",
+  "files": [
+    "index.js",
+    "model.js",
+    "render.js",
+    "meta.js",
+    "abri.prompt.md"
+  ],
+  "dependencies": [
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "abri.prompt.md",
+  "budget": {
+    "jsBytes": 40960
+  }
+}

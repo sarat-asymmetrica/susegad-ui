@@ -23,6 +23,9 @@ Pure modules touch no DOM and are tested in Node.
 | `src/geom.js` | `resample`, `catmull`, `chaikin`, `measure` (arc length and `at(d)`), `ellipse`, `blob`, `roughen`, `bbox` |
 | `src/fields.js` | `flow` (noise flow field), `curl`, `domainWarp`, `sampleGrid`, `contours` (marching squares), `poissonDisc`, `grayScott` / `gsSpot` / `gsStep` |
 | `src/governor.js` | `createGovernor`: frame times in, a detail level (0.25 to 1) out |
+| `src/light.js` | `sunAt` (where the sun is over a day), `shadowLength` (`h / tan(e)`, the one number checkable against a sundial), `shadowDir`, `daylight` |
+| `src/motion.js` | `follow` / `followAll` (exponential, frame-rate independent), `spring` / `makeSpring` (damped oscillator, damping as a ratio), `lagged`, `lagAndTension`, `pendulum`, `cycle`, `visit` |
+| `src/wave.js` | `front` / `radialFront` / `linearFront` / `weightedFront` (a wavefront over real distance), `arrivalTime`, `phaseShifted`, `spread` (discrete cellular) |
 
 Canvas edge modules need a browser.
 

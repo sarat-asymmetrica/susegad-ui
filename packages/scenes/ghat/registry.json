@@ -1,0 +1,14 @@
+{
+  "name": "scene-ghat",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["background","hero"],
+  "title": "Ghat",
+  "description": "A survey sheet of the Western Ghats above Goa: contours traced out of a noise height field with marching squares, rivers that find their own way to the sea, a ghat road that switchbacks up the escarpment, hand lettering, and monsoon clouds catching on the ridge. progress inks it from sea level up (a page can tie it to its own scroll); the pointer, or the keyboard hand in playful, reads the height of the ground as text.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "ghat.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "ghat.prompt.md",
+  "budget": { "jsBytes": 61440, "reason": "The plate's terrain, drainage, contour, road and lettering code, ported line for line." }
+}

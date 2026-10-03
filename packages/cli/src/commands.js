@@ -8,7 +8,7 @@ import { LOCKFILE, lockedHashes, readLock, writeLock } from './lockfile.js';
 import { diffLines, formatPatch } from './linediff.js';
 
 export const DEFAULT_DIR = 'src/lib';
-const TYPE_ORDER = ['package', 'scene', 'component', 'recipe', 'adapter'];
+const TYPE_ORDER = ['package', 'scene', 'surface', 'component', 'recipe', 'adapter'];
 const TYPE_HEADINGS = { package: 'Packages', scene: 'Scenes', component: 'Components', recipe: 'Recipes', adapter: 'Adapters' };
 const plural = (n, word, many = word + 's') => `${n} ${n === 1 ? word : many}`;
 const listing = names => names.length < 2 ? names.join('') : `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`;
@@ -33,9 +33,9 @@ function order(reg, names) {
 
 // list ------------------------------------------------------------------------
 
-export function list(args, ctx) {
-  const reg = loadRegistry(ctx.registry, ctx.cwd);
-  if (args.json) { ctx.out(JSON.stringify(reg.index.items.map(({ name, type, title, description, version }) => ({ name, type, title, description, version })), null, 2)); return 0; }
+export async function list(args, ctx) {
+  const reg = await loadRegistry(ctx.registry, ctx.cwd);
+  if (args.json) { ctx.out(JSON.stringify(reg.index.items.map(({ name, type, title, description, version, useFor }) => ({ name, type, title, description, version, ...(useFor ? { useFor } : {}) })), null, 2)); return 0; }
   if (!reg.index.items.length) { ctx.out('The shelf is empty for now: the registry has no items yet.'); return 0; }
 
   const width = Math.max(...reg.index.items.map(i => i.name.length)) + 2;
@@ -47,7 +47,9 @@ export function list(args, ctx) {
     ctx.out(TYPE_HEADINGS[type]);
     for (const item of items) {
       const regs = item.registers.length ? `  [${item.registers.join(', ')}]` : '';
-      ctx.out(`  ${item.name.padEnd(width)}${item.description || item.title || '(no description yet)'}${regs}`);
+      const stab = item.stability && item.stability !== 'experimental' ? `  (${item.stability})` : '';
+      const use = item.useFor?.length ? `  {${item.useFor.join(', ')}}` : '';
+      ctx.out(`  ${item.name.padEnd(width)}${item.description || item.title || '(no description yet)'}${regs}${stab}${use}`);
     }
   }
   ctx.out('');
@@ -57,9 +59,9 @@ export function list(args, ctx) {
 
 // info ------------------------------------------------------------------------
 
-export function info(args, ctx) {
+export async function info(args, ctx) {
   if (!args.items.length) throw new CliError('Tell me which item you would like to know about, for example: susegad info scene-kolam');
-  const reg = loadRegistry(ctx.registry, ctx.cwd);
+  const reg = await loadRegistry(ctx.registry, ctx.cwd);
   const blocks = [];
   for (const name of args.items) {
     const item = knownItem(reg, name);
@@ -71,9 +73,11 @@ export function info(args, ctx) {
     ctx.out(`${item.title || item.name}  (${item.name} ${item.version}, ${item.type})`);
     if (item.description) ctx.out(item.description);
     ctx.out('');
+    ctx.out(`Stability:   ${item.stability}${item.stabilityReason ? ` (${item.stabilityReason})` : ''}`);
     ctx.out(`Depends on:  ${item.dependencies.length ? item.dependencies.join(', ') : 'nothing'}`);
     if (needs.length > item.dependencies.length) ctx.out(`All it pulls in:  ${needs.join(', ')}`);
     if (item.registers.length) ctx.out(`Registers:   ${item.registers.join(', ')}`);
+    if (item.useFor?.length) ctx.out(`Use for:     ${item.useFor.join(', ')}`);
     if (item.budget) {
       const parts = [];
       if (item.budget.jsBytes !== undefined) parts.push(`${item.jsBytes} of ${item.budget.jsBytes} JS bytes${item.jsBytes > item.budget.jsBytes ? ' (over budget)' : ''}${item.codeBytes !== undefined ? ` (${item.codeBytes} without comments)` : ''}`);
@@ -134,9 +138,10 @@ export function planAdd(reg, names, target) {
   return { items, lock };
 }
 
-export function add(args, ctx) {
+export async function add(args, ctx) {
   if (!args.items.length) throw new CliError('Tell me what to add, for example: susegad add scene-kolam\nRun susegad list to see everything on the shelf.');
-  const reg = loadRegistry(ctx.registry, ctx.cwd);
+  const reg = await loadRegistry(ctx.registry, ctx.cwd);
+  if (reg.remote) throw new CliError(`add cannot copy files from an HTTP registry yet (${reg.file}). list and info work against it; add and diff still need a local path or --ref.`);
   const target = resolve(ctx.cwd, args.dir ?? DEFAULT_DIR);
   const shown = p => toPosix(relative(ctx.cwd, p)) || '.';
   const { items, lock } = planAdd(reg, args.items, target);
@@ -200,12 +205,16 @@ export function add(args, ctx) {
   else ctx.out(`Everything was already here and up to date in ${shown(join(target, 'susegad'))}.`);
   ctx.out(`I noted what I copied in ${shown(join(target, LOCKFILE))}, so next time I can tell your edits from mine.`);
 
-  const usage = usageHint(reg, items, target, ctx.cwd);
-  if (usage.length) { ctx.out(''); ctx.out('To use it on a page:'); for (const l of usage) ctx.out('  ' + l); }
+  const usage = usageHint(reg, items, target, ctx.cwd, args.base);
+  if (usage.length) {
+    ctx.out('');
+    ctx.out(args.base ? `To use it on a page served from ${args.base}/:` : 'To use it on a page:');
+    for (const l of usage) ctx.out('  ' + l);
+  }
   return 0;
 }
 
-function usageHint(reg, planned, target, cwd) {
+function usageHint(reg, planned, target, cwd, pageRoot) {
   const shown = planned.filter(p => p.requested && ['scene', 'component', 'recipe'].includes(p.item.type));
   if (!shown.length) return [];
   const dirOf = item => item.manifest.slice(0, item.manifest.lastIndexOf('/'));
@@ -213,7 +222,10 @@ function usageHint(reg, planned, target, cwd) {
   const base = item => dirOf(item).split('/').at(-1);
   // index.js for packages and scenes, <name>.js for components, recipe.js for recipes
   const entry = item => own(item, 'index.js') ?? own(item, `${base(item)}.js`) ?? own(item, 'recipe.js');
-  const rel = p => { const r = toPosix(relative(cwd, join(target, targetPathFor(p)))); return r.startsWith('.') ? r : './' + r; };
+  // --base names the page's own web root, when it differs from where the command was run
+  // (a page served from site/ needs vendor/..., not ./site/vendor/...). Default: cwd itself.
+  const from = pageRoot ? resolve(cwd, pageRoot) : cwd;
+  const rel = p => { const r = toPosix(relative(from, join(target, targetPathFor(p)))); return r.startsWith('.') ? r : './' + r; };
 
   const imports = [];
   const core = planned.find(p => p.item.name === 'core');
@@ -240,8 +252,9 @@ function usageHint(reg, planned, target, cwd) {
 
 // diff ------------------------------------------------------------------------
 
-export function diff(args, ctx) {
-  const reg = loadRegistry(ctx.registry, ctx.cwd);
+export async function diff(args, ctx) {
+  const reg = await loadRegistry(ctx.registry, ctx.cwd);
+  if (reg.remote) throw new CliError(`diff cannot read files from an HTTP registry yet (${reg.file}). list and info work against it; add and diff still need a local path or --ref.`);
   const target = resolve(ctx.cwd, args.dir ?? DEFAULT_DIR);
   const lock = readLock(target);
   const names = args.items.length ? args.items : Object.keys(lock.items).sort();

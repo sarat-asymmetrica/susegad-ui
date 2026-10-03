@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vad: words in the world</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 1240px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  h2 { font-size: 1.1rem; margin: 28px 0 4px; }
+  .lede, .note { margin: 0 0 16px; color: var(--sg-text-soft, inherit); max-width: 46rem; }
+  .note { margin: 0 0 10px; }
+  sg-scene { border-radius: 6px; }
+  sg-scene h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  sg-scene p { margin: 0; }
+  form { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin: 0 0 8px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  legend { font-weight: 600; float: left; margin-right: 8px; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Vad: words in the world</h1>
+  <p class="lede">The same banyan and the same words, twice. Above, the words sit on a panel over the picture. Below, with <code>words="world"</code>, they are written in the sky beside the tree, and each line ends where the canopy begins; as the tree grows, the paragraph makes room for it four times, never under a leaf. Quiet keeps the words flat, and so does any screen too small to read them.</p>
+  <form id="controls">
+    <fieldset>
+      <legend>Register</legend>
+      <label><input type="radio" name="register" value="quiet"> Quiet</label>
+      <label><input type="radio" name="register" value="warm"> Warm</label>
+      <label><input type="radio" name="register" value="playful"> Playful</label>
+    </fieldset>
+    <label><input type="checkbox" id="dark"> Dark</label>
+    <button type="button" id="replay">Grow it again</button>
+  </form>
+
+  <h2>On a panel</h2>
+  <p class="note">The ordinary Vad: the page's words in the reading panel, the tree held still under them.</p>
+  <sg-scene id="panel" name="vad" label="A banyan, with the page's words on a panel">
+    <h2>Under the vad</h2>
+    <p>Every village has one: a banyan by the square, older than anyone can remember. Its roots come down from the branches and become new trunks, so the tree walks slowly outward, and its shade walks with it. The stone platform at its foot is where the news is passed on and the afternoon is slept through.</p>
+  </sg-scene>
+
+  <h2>In the world</h2>
+  <p class="note">The words in the sky, each line stopping short of the canopy.</p>
+  <sg-scene id="world" name="vad" words="world" label="A banyan, with the page's words in the sky beside it">
+    <h2>Under the vad</h2>
+    <p>Every village has one: a banyan by the square, older than anyone can remember. Its roots come down from the branches and become new trunks, so the tree walks slowly outward, and its shade walks with it. The stone platform at its foot is where the news is passed on and the afternoon is slept through.</p>
+  </sg-scene>
+  <p class="note"><a href="demo.html">Vad's own page</a>: registers, progress and a new tree.</p>
+</main>
+<script type="module">
+  const q = new URLSearchParams(location.search), root = document.documentElement;
+  const world = document.getElementById('world'), panel = document.getElementById('panel');
+  const register = q.get('register') || 'warm';
+  root.dataset.register = register;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+  if (q.get('only') === 'world') panel.remove();
+  for (const k of ['seed', 'progress']) if (q.has(k)) world.setAttribute(k, q.get(k));
+  if (q.get('content') === '0') world.innerHTML = '';
+  world.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__piece = world;
+  await import('./index.js');
+
+  const $ = id => document.getElementById(id), form = $('controls');
+  form.register.value = register;
+  $('dark').checked = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  form.addEventListener('change', e => {
+    const t = e.target;
+    if (t.name === 'register') root.dataset.register = t.value;
+    else if (t.id === 'dark') root.dataset.theme = t.checked ? 'dark' : 'light';
+  });
+  $('replay').addEventListener('click', () => { world.replay(); panel.isConnected && panel.replay(); });
+</script>
+</body>
+</html>

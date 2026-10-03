@@ -1,6 +1,7 @@
 {
   "name": "enquiry",
   "type": "recipe",
+  "stability": "experimental",
   "title": "Ask the house (enquiry)",
   "description": "The Casa Exemplo enquiry form rebuilt from library parts: a native form the browser validates, ruled fields that ink as you type, notes in the house's own words, a still line drawing of the house's front elevation in warm and playful, and a send that says plainly it is a prototype and sends nothing. Without JavaScript it validates natively and posts to a page that keeps nothing.",
   "version": "0.1.0",

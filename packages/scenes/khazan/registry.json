@@ -1,0 +1,14 @@
+{
+  "name": "scene-khazan",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["background","hero"],
+  "title": "Khazan",
+  "description": "Fireflies over a Goan tidal wetland at night: some four hundred phase oscillators with Kuramoto coupling fall into step in slow waves, with additive glows and rippling reflections. Quiet is a still of a wave passing through the bank; warm lets them find each other; playful lets a hand scatter them. Set progress and the bank is exactly that far in step: a calm loader for syncs and uploads.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "khazan.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "khazan.prompt.md",
+  "budget": { "jsBytes": 40960 }
+}

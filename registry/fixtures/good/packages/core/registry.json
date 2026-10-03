@@ -1,6 +1,7 @@
 {
   "name": "core",
   "type": "package",
+  "stability": "experimental",
   "title": "Core",
   "description": "Fixture core: defineScene and a minimal <sg-scene> that draws once on a canvas.",
   "version": "0.1.0",

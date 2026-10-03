@@ -1,0 +1,35 @@
+{
+  "name": "reach",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Reach",
+  "description": "A contact block in an address: email and WhatsApp as real links (built by waLink and mailtoLink), a copy-the-number button that appears only where the clipboard works and says in words that it copied, and a line on reply times. Quiet is plain lines; warm is an inland letter that stays pale blue at night; playful is a rubber-stamped card with the stamp's own ink starvation on its frame.",
+  "version": "0.1.0",
+  "files": [
+    "reach.js",
+    "reach.core.js",
+    "reach.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "reach.prompt.md",
+    "reach.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "tokens",
+    "stamp"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "reach.prompt.md",
+  "docs": "reach.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 8457 bytes: element 3.8 KB, pure core 2.1 KB, skins quiet 0.1 KB, warm 0.2 KB, playful 2.3 KB (the ink mask is the stamp's, reused)."
+  }
+}

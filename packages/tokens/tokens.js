@@ -151,6 +151,54 @@ export const palettes = {
       night: '#14161C', 'night-ink': '#E8E2D6',
     },
   },
+
+  azulejo: {
+    label: 'Azulejo',
+    about: 'The painted tiles of Goa\'s Portuguese-era houses and churches: a cream glaze, cobalt ink, and the lemon and leaf green of the majolica cousin. Dark is the same cobalt at night.',
+    source: 'the azulejo and majolica tiles of Goa (a sister palette for the tile-band component)',
+    pigments: {
+      cobalt: { ...c(42.68, 0.1420, 260.56), note: "the blue of the brush: cobalt oxide under a clear glaze (#1B4A9B, 6.7:1 on cream)" },
+      'cobalt-bright': { ...c(76.23, 0.1002, 262.12), note: "cobalt lifted for a night ground; decoration and dark-theme lines, never text on cream (#8FB2F2)" },
+      lemon: { ...c(84.96, 0.1463, 90.49), note: "the yellow of majolica; decoration only, never text on cream (#F2C94C)" },
+      leaf: { ...c(57.43, 0.1290, 138.24), note: "the green of the leaves in a majolica border; decoration (#4F8A3A)" },
+      glaze: { ...c(97.87, 0.0136, 92.98), note: "the white of a glazed tile (#FBF8EE)" },
+      wash: { ...c(86.44, 0.0422, 263.00), note: "a thin cobalt wash, the pale blue behind a motif (#C4D3EF)" },
+    },
+    themed: {
+      paper: { ...t(c(96.10, 0.0205, 91.58), c(23.10, 0.0709, 266.88)), note: "cream plaster; at night, deep cobalt" },
+      'paper-raised': { ...t(c(98.44, 0.0108, 95.16), c(29.09, 0.0990, 267.41)), note: "the glaze a card sits on" },
+      'paper-deep': { ...t(c(92.51, 0.0276, 90.91), c(19.74, 0.0596, 266.58)), note: "a sunk well: inputs, code, table stripes" },
+      rule: { ...t(c(86.57, 0.0303, 94.38), c(36.34, 0.0919, 268.66)), note: "a grout line" },
+      'rule-strong': { ...t(c(59.08, 0.0412, 97.36), c(62.09, 0.0879, 269.38)), note: "3:1 or more on every ground: control borders" },
+      ink: { ...t(c(29.39, 0.1014, 265.92), c(94.82, 0.0244, 94.07)), note: "cobalt-black ink on cream; cream on the night ground; 11.4:1 or more" },
+      'ink-soft': { ...t(c(43.11, 0.0968, 269.51), c(84.45, 0.0386, 272.47)), note: "secondary text; 6.5:1 or more" },
+      'ink-faint': { ...t(c(50.60, 0.0927, 271.57), c(73.13, 0.0654, 272.82)), note: "captions and labels; 4.5:1 or more on every ground" },
+    },
+    roles: {
+      surface: 'paper',
+      'surface-raised': 'paper-raised',
+      'surface-sunk': 'paper-deep',
+      text: 'ink',
+      'text-soft': 'ink-soft',
+      'text-faint': 'ink-faint',
+      rule: 'rule',
+      'rule-strong': 'rule-strong',
+      accent: { ...t(c(42.68, 0.1420, 260.56), c(76.23, 0.1002, 262.12)), note: "cobalt: the primary act, as a fill" },
+      'on-accent': { ...t(c(98.44, 0.0108, 95.16), c(23.10, 0.0709, 266.88)), note: "glaze on cobalt; night on bright cobalt at night" },
+      'accent-text': { ...t(c(42.68, 0.1420, 260.56), c(76.23, 0.1002, 262.12)), note: "cobalt as text: links, the active tab" },
+      success: { ...t(c(47.20, 0.1160, 142.13), c(76.57, 0.1189, 138.41)), note: "leaf green, darkened to read" },
+      warning: { ...t(c(47.70, 0.0990, 79.41), c(84.96, 0.1463, 90.49)), note: "lemon, darkened to a mustard by day to read; lemon itself at night" },
+      danger: { ...t(c(46.50, 0.1470, 24.94), c(77.22, 0.1079, 28.22)), note: "a terracotta red, which the tiles do not have, so it is a plain warning red" },
+      info: { ...t(c(48.70, 0.1316, 255.91), c(76.23, 0.1002, 262.12)), note: "a lighter cobalt" },
+      focus: { ...t(c(42.68, 0.1420, 260.56), c(84.96, 0.1463, 90.49)), note: "cobalt by day, lemon at night; 3:1 or more on every ground" },
+      selection: { ...t(c(92.18, 0.0902, 96.83), c(39.23, 0.1198, 268.41)), note: "a lemon highlighter; cobalt wash at night" },
+      pencil: { ...t(c(72.53, 0.0524, 271.37), c(51.69, 0.0953, 268.52)), note: "drawing only: pencil strokes and construction lines, fainter than any text; never text" },
+    },
+    alpha: {
+      scrim: { of: 'paper-raised', light: 0.9, dark: 0.9, note: 'a glaze wash behind text on scenes' },
+      shadow: { of: 'ink', light: 0.4, dark: 0.6, darkOf: 'black', note: 'the lift shadow colour at full strength: ink by day, near-black at night (ink is light at night and would glow)' },
+    },
+  },
 };
 
 // Casa's own faint ink survives as a pigment, for 13px-and-up labels on
@@ -345,6 +393,52 @@ export const motion = {
   reduced: { instant: 0.01, quick: 0.01, calm: 0.01, slow: 0.01, ambient: 0, fade: 150 },
 };
 
+// ─── Teental: staggering by the sixteen-beat cycle ─────────────────────────
+//
+// A generic ease staggers a list by a flat multiple of the index. Teental
+// (Wave 5, ported from the sketchbook's `teental.js`) staggers it by a
+// sixteen-beat rhythmic cycle instead: four sections of four, with a heavy
+// first beat (sam) and a three-beat silence (khali) in the third section.
+// Nothing enters on a khali beat, the way the tabla's bass drum falls silent
+// there. `--sg-tala-beat` is the CSS duration of one beat, for a list staggered
+// in pure CSS (`animation-delay: calc(var(--sg-tala-beat) * <n>)`); `talaDelay`
+// is the same arithmetic in JS, for a WAAPI or class-toggling stagger, and
+// caps the wait so a long list never keeps its last item waiting.
+
+export const tala = {
+  beats: 16,
+  /** Beats that stay quiet: no entrance lands here, as the bass drum rests through them. */
+  khali: [8, 9, 10],
+  /** One beat, in milliseconds. Fast enough that a full go-round still reads as one gesture. */
+  beatMs: 130,
+  /** No entrance waits longer than this, however long the list. */
+  maxDelayMs: 600,
+};
+
+/** The beats of a `beats`-long cycle that are not in `khali`, in order. */
+export function talaBeats(beats = tala.beats, khali = tala.khali) {
+  const out = [];
+  for (let i = 0; i < beats; i++) if (!khali.includes(i)) out.push(i);
+  return out;
+}
+
+/**
+ * The stagger delay, in milliseconds, for the `index`-th item in a list
+ * entering on the teental cycle: items land only on the beats outside
+ * `khali`, cycling round again once they run out, and the result is capped
+ * at `tala.maxDelayMs` so the last item of a long list is never kept waiting
+ * past it. Pure; the same result for the same arguments every time.
+ * @param {number} index 0-based position in the list
+ * @param {{ beats?: number, khali?: number[], beat?: number }} [opts]
+ */
+export function talaDelay(index, { beats = tala.beats, khali = tala.khali, beat = tala.beatMs } = {}) {
+  const active = talaBeats(beats, khali);
+  const slot = active[((index % active.length) + active.length) % active.length];
+  const round = Math.floor(index / active.length);
+  const raw = (round * beats + slot) * beat;
+  return Math.min(raw, tala.maxDelayMs);
+}
+
 // ─── Sound ─────────────────────────────────────────────────────────────────
 
 /** Names of the synth patches. The patches themselves arrive with the sound layer. */
@@ -358,18 +452,21 @@ export const registers = {
     ornament: 0, motionScale: 0.6, wobble: 0, sound: 'confirmations',
     durations: { instant: 50, quick: 100, calm: 160, slow: 190, ambient: 0, fade: 120 },
     spring: null, // no overshoot: the spring easing becomes ease-out
+    glass: { blur: 0, tint: 100 }, // words over a drawing sit on an opaque plate
   },
   warm: {
     about: 'Slow ambient motion, one living thing per screen, hand-drawn detail visible up close.',
     ornament: 1, motionScale: 1, wobble: 0.6, sound: 'soft',
     durations: { ...motion.durations },
     spring: 0.72,
+    glass: { blur: 14, tint: 74 }, // frosted: the drawing shows through, blurred (blur in px, tint as % of the raised paper)
   },
   playful: {
     about: 'Fully interactive, overshoot and spring allowed, motifs and colour.',
     ornament: 2, motionScale: 1.2, wobble: 1.4, sound: 'full',
     durations: { instant: 80, quick: 170, calm: 340, slow: 700, ambient: 7000, fade: 200 },
     spring: 0.48,
+    glass: { blur: 18, tint: 66 },
   },
 };
 export const defaultRegister = 'warm';

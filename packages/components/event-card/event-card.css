@@ -1,0 +1,185 @@
+/* <sg-event-card>. Without JavaScript this is the quiet look: a ruled card with
+   the kind, the title, the date and the venue, what you'll do and eat, and a
+   price and a booking link along the foot. With it, the card also says how far
+   off the event is. Warm is a ticket with a stub on a perforated line; playful
+   is the same ticket, and the stub tears away a little when you point at it. */
+
+sg-event-card {
+  display: block;
+  container: event-card / inline-size;
+  max-width: 46rem;
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body);
+}
+sg-event-card[hidden], sg-event-card [hidden] { display: none !important; }
+sg-event-card > article {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sg-space-2) var(--sg-space-4);
+  padding: var(--sg-space-4);
+  background: var(--sg-surface-raised);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-top: var(--sg-stroke-bold) solid var(--sg-text);
+}
+sg-event-card > article > * { grid-column: 1 / -1; margin: 0; min-width: 0; }
+sg-event-card a { color: var(--sg-accent-text); text-underline-offset: 0.2em; }
+sg-event-card a:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); border-radius: 2px; }
+
+sg-event-card .sg-event-kind {
+  font: var(--sg-weight-medium) var(--sg-step--1) / 1.3 var(--sg-font-body);
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.08em;
+  color: var(--sg-text-soft);
+}
+sg-event-card > article > :is(h1, h2, h3, h4) { font: 400 var(--sg-step-2) / var(--sg-leading-tight) var(--sg-font-display); text-wrap: balance; }
+sg-event-card .sg-event-when { font-size: var(--sg-step-1); line-height: var(--sg-leading-snug); font-weight: var(--sg-weight-medium); }
+sg-event-card .sg-event-when time { font-variant-numeric: lining-nums; }
+sg-event-card .sg-event-status {
+  display: flex; align-items: center; gap: var(--sg-space-2);
+  font-size: var(--sg-step--1); color: var(--sg-text-soft);
+}
+/* the clock's state has a shape as well as words: a ring, a half, a filled dot, a dash */
+sg-event-card .sg-event-status::before {
+  content: ""; flex: none; box-sizing: border-box; width: 0.7em; height: 0.7em; border-radius: 50%;
+  border: var(--sg-stroke-bold) solid currentColor;
+}
+sg-event-card[data-phase="today"] .sg-event-status::before { background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
+sg-event-card[data-phase="now"] .sg-event-status::before { background: currentColor; }
+sg-event-card[data-phase="past"] .sg-event-status::before { border-radius: 1px; height: 0; width: 0.8em; border-width: var(--sg-stroke-bold) 0 0; }
+sg-event-card[data-phase="today"] .sg-event-status, sg-event-card[data-phase="now"] .sg-event-status { color: var(--sg-accent-text); font-weight: var(--sg-weight-medium); }
+sg-event-card .sg-event-where { color: var(--sg-text-soft); }
+sg-event-card .sg-event-venue { color: var(--sg-text); font-weight: var(--sg-weight-medium); }
+
+sg-event-card :is(.sg-event-do, .sg-event-eat) h4 {
+  margin: var(--sg-space-2) 0 var(--sg-space-1);
+  font: var(--sg-weight-medium) var(--sg-step--1) / 1.3 var(--sg-font-body);
+  font-variant-caps: all-small-caps; letter-spacing: 0.08em; color: var(--sg-text-soft);
+}
+sg-event-card :is(.sg-event-do, .sg-event-eat) ul { margin: 0; padding-inline-start: 1.15em; }
+sg-event-card :is(.sg-event-do, .sg-event-eat) li { margin-block: 0.15em; }
+@container event-card (min-width: 30rem) {
+  sg-event-card > article > :is(.sg-event-do, .sg-event-eat) { grid-column: auto; }
+  sg-event-card > article { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* the foot: price and booking. In quiet this is a ruled row; the ticket skins make it a stub. */
+sg-event-card .sg-event-stub {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--sg-space-2) var(--sg-space-4);
+  margin-top: var(--sg-space-2); padding-top: var(--sg-space-3);
+  border-top: var(--sg-hairline) solid var(--sg-rule-strong);
+}
+sg-event-card .sg-event-price { display: flex; align-items: baseline; gap: 0.35em; color: var(--sg-text-soft); font-size: var(--sg-step--1); }
+sg-event-card .sg-event-amount { font: var(--sg-weight-medium) var(--sg-step-2) / 1 var(--sg-font-display); color: var(--sg-text); }
+sg-event-card .sg-event-seats { font-size: var(--sg-step--1); color: var(--sg-text-soft); }
+sg-event-card[data-sold-out] .sg-event-seats { color: var(--sg-text); font-weight: var(--sg-weight-medium); }
+sg-event-card .sg-event-cta { margin-inline-start: auto; }
+sg-event-card .sg-event-cta a, sg-event-card [data-when="sold-out"] a {
+  display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0 var(--sg-space-3);
+  background: var(--sg-accent); color: var(--sg-on-accent);
+  border-radius: var(--sg-radius-2); font-weight: var(--sg-weight-medium); text-decoration: none;
+}
+/* quiet: the booking link is an outline, as the library's quiet buttons are */
+sg-event-card:not([data-skin="warm"], [data-skin="playful"]) :is(.sg-event-cta a, [data-when="sold-out"] a) { background: transparent; color: var(--sg-text); border: var(--sg-hairline) solid var(--sg-rule-strong); }
+sg-event-card .sg-event-cta a:hover { text-decoration: underline; text-underline-offset: 0.2em; }
+sg-event-card .sg-event-cta a:focus-visible { outline-offset: 3px; }
+sg-event-card[data-phase="past"] > article { background: var(--sg-surface-sunk); }
+sg-event-card[data-phase="past"] > article > :is(h1, h2, h3, h4) { color: var(--sg-text-soft); }
+
+/* ── warm: a ticket ── the stub is a column on the right when there is room and a strip along
+   the foot when there is not; the skin measures where the tear line falls and draws the holes. */
+sg-event-card[data-skin="warm"], sg-event-card[data-skin="playful"] {
+  --sg-event-r: 10px;
+  --sg-event-stub: color-mix(in oklch, var(--sg-accent) 9%, var(--sg-surface-raised));
+  filter: drop-shadow(0 1px 0 color-mix(in oklch, var(--sg-shadow) 14%, transparent)) drop-shadow(0 12px 14px color-mix(in oklch, var(--sg-shadow) 26%, transparent));
+  rotate: var(--sg-event-lean, 0deg);
+}
+sg-event-card:is([data-skin="warm"], [data-skin="playful"]) > article {
+  background: none; border: 0; border-radius: 0; isolation: isolate;
+  padding: var(--sg-space-4);
+}
+/* the body of the ticket, painted behind the words and cut where the tear line meets the edge */
+sg-event-card:is([data-skin="warm"], [data-skin="playful"]) > article::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: var(--sg-surface-raised);
+  box-shadow: inset 0 0 0 var(--sg-hairline) var(--sg-rule-strong), inset 0 0 0 5px var(--sg-surface-raised), inset 0 0 0 6px var(--sg-rule);
+  border-radius: var(--sg-radius-2);
+}
+sg-event-card[data-phase="past"]:is([data-skin="warm"], [data-skin="playful"]) > article::before { background: var(--sg-surface-sunk); box-shadow: inset 0 0 0 var(--sg-hairline) var(--sg-rule-strong), inset 0 0 0 5px var(--sg-surface-sunk), inset 0 0 0 6px var(--sg-rule); }
+sg-event-card:is([data-skin="warm"], [data-skin="playful"]) .sg-event-stub {
+  position: relative; z-index: 0;
+  margin: var(--sg-space-2) calc(var(--sg-space-4) * -1) calc(var(--sg-space-4) * -1); padding: var(--sg-space-3) var(--sg-space-4);
+  border: 0; background: var(--sg-event-stub);
+  transform-origin: var(--sg-event-origin, 0 0);
+}
+sg-event-card:is([data-skin="warm"], [data-skin="playful"]) .sg-event-kind { color: var(--sg-accent-text); }
+sg-event-card[data-skin="warm"] > article > :is(h1, h2, h3, h4) { font-size: var(--sg-step-3); }
+
+/* a horizontal tear (the stub along the foot): the body stops at the tear, notches at both ends */
+sg-event-card[data-tear="y"] > article::before {
+  bottom: auto; height: var(--sg-event-tear, 100%);
+  -webkit-mask: radial-gradient(circle var(--sg-event-r) at 0 100%, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r)), radial-gradient(circle var(--sg-event-r) at 100% 100%, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r));
+  mask: radial-gradient(circle var(--sg-event-r) at 0 100%, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r)), radial-gradient(circle var(--sg-event-r) at 100% 100%, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r));
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+}
+sg-event-card[data-tear="y"] .sg-event-stub {
+  --sg-event-origin: 0 0;
+  border-radius: 0 0 var(--sg-radius-2) var(--sg-radius-2);
+  -webkit-mask: radial-gradient(circle var(--sg-event-r) at 0 0, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r)), radial-gradient(circle var(--sg-event-r) at 100% 0, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r));
+  mask: radial-gradient(circle var(--sg-event-r) at 0 0, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r)), radial-gradient(circle var(--sg-event-r) at 100% 0, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r));
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+}
+
+/* a vertical tear (the stub as a column at the right) when the card is wide enough */
+@container event-card (min-width: 40rem) {
+  sg-event-card:is([data-skin="warm"], [data-skin="playful"]) > article { grid-template-columns: minmax(0, 1fr); padding-inline-end: calc(var(--sg-space-4) + 11.5rem); min-height: 15rem; }
+  sg-event-card:is([data-skin="warm"], [data-skin="playful"]) > article > :is(.sg-event-do, .sg-event-eat) { grid-column: 1 / -1; }
+  sg-event-card:is([data-skin="warm"], [data-skin="playful"]) .sg-event-stub {
+    grid-column: auto; position: absolute; inset: 0 0 0 auto; width: 11.5rem; margin: 0; padding: var(--sg-space-4) var(--sg-space-3);
+    flex-direction: column; align-items: flex-start; justify-content: center; gap: var(--sg-space-3); padding-inline-start: var(--sg-space-4);
+  }
+  sg-event-card:is([data-skin="warm"], [data-skin="playful"]) .sg-event-cta { margin: 0; }
+  sg-event-card[data-tear="x"] > article::before {
+    right: auto; width: var(--sg-event-tear, 100%);
+    -webkit-mask: radial-gradient(circle var(--sg-event-r) at 100% 0, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r)), radial-gradient(circle var(--sg-event-r) at 100% 100%, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r));
+    mask: radial-gradient(circle var(--sg-event-r) at 100% 0, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r)), radial-gradient(circle var(--sg-event-r) at 100% 100%, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r));
+    -webkit-mask-composite: source-in; mask-composite: intersect;
+  }
+  sg-event-card[data-tear="x"] .sg-event-stub {
+    --sg-event-origin: 0 100%;
+    border-radius: 0 var(--sg-radius-2) var(--sg-radius-2) 0;
+    -webkit-mask: radial-gradient(circle var(--sg-event-r) at 0 0, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r)), radial-gradient(circle var(--sg-event-r) at 0 100%, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r));
+    mask: radial-gradient(circle var(--sg-event-r) at 0 0, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r)), radial-gradient(circle var(--sg-event-r) at 0 100%, #0000 calc(var(--sg-event-r) - 0.5px), #000 var(--sg-event-r));
+    -webkit-mask-composite: source-in; mask-composite: intersect;
+  }
+}
+
+@container event-card (min-width: 52rem) {
+  sg-event-card:is([data-skin="warm"], [data-skin="playful"]) > article { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  sg-event-card:is([data-skin="warm"], [data-skin="playful"]) > article > :is(.sg-event-do, .sg-event-eat) { grid-column: auto; }
+}
+
+/* the perforation: drawn by the skin, aria-hidden, on top of both halves */
+sg-event-card .sg-event-perf { grid-column: auto; position: absolute; z-index: 2; pointer-events: none; overflow: visible; fill: var(--sg-surface); }
+sg-event-card .sg-event-perf circle { stroke: color-mix(in oklch, var(--sg-rule-strong) 55%, transparent); stroke-width: 0.6; }
+
+/* ── playful: the stub tears a little ── it lifts at the free corner and settles there
+   while the pointer or the focus is on the card; nothing loops, and reduced motion keeps it flat. */
+@media (prefers-reduced-motion: no-preference) {
+  sg-event-card[data-skin="playful"][data-motion="full"] .sg-event-stub {
+    transition: transform var(--sg-dur-slow) var(--sg-ease-spring);
+  }
+  sg-event-card[data-skin="playful"][data-motion="full"][data-tear="x"]:is(:hover, :focus-within) .sg-event-stub { transform: translate(5px, 0) rotate(3.2deg); }
+  sg-event-card[data-skin="playful"][data-motion="full"][data-tear="y"]:is(:hover, :focus-within) .sg-event-stub { transform: translate(0, 5px) rotate(-1.6deg); }
+}
+sg-event-card[data-skin="playful"] .sg-event-kind {
+  display: inline-block; justify-self: start; padding: 0.1em 0.7em; border: var(--sg-stroke-bold) solid currentColor; border-radius: var(--sg-radius-pill);
+  font: 400 var(--sg-step-0) / 1.3 var(--sg-font-hand); font-variant-caps: normal; letter-spacing: 0.02em; rotate: -1.5deg;
+}
+sg-event-card[data-skin="playful"] .sg-event-amount { font-family: var(--sg-font-hand); font-weight: 400; font-size: var(--sg-step-3); }
+sg-event-card[data-skin="playful"] > article > :is(h1, h2, h3, h4) { font-size: var(--sg-step-3); }
+
+@media (forced-colors: active) {
+  sg-event-card > article { border: 1px solid CanvasText; }
+  sg-event-card .sg-event-cta a { border: 1px solid ButtonText; }
+}

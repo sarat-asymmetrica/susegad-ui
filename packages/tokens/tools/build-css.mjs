@@ -12,7 +12,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
-  palettes, type, space, radius, line, layout, motion, sound, registers, defaultRegister, oklchToCss, utilities, alphaBase,
+  palettes, type, space, radius, line, layout, motion, tala, sound, registers, defaultRegister, oklchToCss, utilities, alphaBase,
 } from '../tokens.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -35,6 +35,8 @@ function registerDecls(name) {
     `--sg-sound-vocabulary: "${r.sound}";`,
     ...Object.entries(d).map(([k, v]) => `--sg-dur-${k}: ${ms(v)};`),
     `--sg-ease-spring: ${r.easeSpring};`,
+    `--sg-glass-blur: ${r.glass.blur}px;`,
+    `--sg-glass-tint: ${r.glass.tint}%;`,
   ];
 }
 
@@ -81,7 +83,7 @@ export function buildCss() {
    tokens.test.js checks the two agree and that every text role meets WCAG 2.2 AA.
 
    Selectors, all usable on :root or any element:
-     data-palette="susegad|casa"   colour palette (default susegad)
+     data-palette="susegad|casa|azulejo"   colour palette (default susegad)
      data-theme="light|dark"          absent: follow prefers-color-scheme
      data-register="quiet|warm|playful" (or register="...")  default warm
 
@@ -116,6 +118,9 @@ export function buildCss() {
     '/* motion: easings; durations come with the register below */',
     ...ease.filter(e => !e.startsWith('--sg-ease-spring')),
     '',
+    `/* teental: one beat of the sixteen-beat stagger cycle (packages/tokens/tokens.js, talaDelay) */`,
+    `--sg-tala-beat: ${ms(tala.beatMs)};`,
+    '',
     '/* sound: names of synth patches; the sound layer plays them, off by default */',
     ...snd,
     '',
@@ -136,9 +141,11 @@ export function buildCss() {
   const fb = [];
   fb.push(block(':root', hexDecls(palettes.susegad, 'light'), '  '));
   fb.push(block(':root[data-palette="casa"]', hexDecls(palettes.casa, 'light'), '  '));
-  fb.push(`  @media (prefers-color-scheme: dark) {\n${block(':root:not([data-theme="light"])', hexDecls(palettes.susegad, 'dark'), '    ')}\n${block(':root[data-palette="casa"]:not([data-theme="light"])', hexDecls(palettes.casa, 'dark'), '    ')}\n  }`);
+  fb.push(block(':root[data-palette="azulejo"]', hexDecls(palettes.azulejo, 'light'), '  '));
+  fb.push(`  @media (prefers-color-scheme: dark) {\n${block(':root:not([data-theme="light"])', hexDecls(palettes.susegad, 'dark'), '    ')}\n${block(':root[data-palette="casa"]:not([data-theme="light"])', hexDecls(palettes.casa, 'dark'), '    ')}\n${block(':root[data-palette="azulejo"]:not([data-theme="light"])', hexDecls(palettes.azulejo, 'dark'), '    ')}\n  }`);
   fb.push(block(':root[data-theme="dark"]', hexDecls(palettes.susegad, 'dark'), '  '));
   fb.push(block(':root[data-palette="casa"][data-theme="dark"]', hexDecls(palettes.casa, 'dark'), '  '));
+  fb.push(block(':root[data-palette="azulejo"][data-theme="dark"]', hexDecls(palettes.azulejo, 'dark'), '  '));
   parts.push(`/* Browsers without light-dark(): the same palettes in hex, on :root only. */\n@supports not (color: light-dark(#000, #fff)) {\n${fb.join('\n')}\n}`);
 
   // Registers.

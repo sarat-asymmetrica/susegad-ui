@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prahar scene</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .lede { margin: 0 0 20px; color: var(--sg-text-soft, inherit); }
+  sg-scene { border-radius: 6px; --sg-reading-place: start end; }
+  sg-scene h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  sg-scene p { margin: 0; }
+  form { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 20px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  legend { font-weight: 600; float: left; margin-right: 8px; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  .after, .note { margin: 16px 0 0; padding-left: 12px; border-left: 2px solid var(--sg-rule-strong, currentColor); color: var(--sg-text-soft, inherit); }
+  #said { min-height: 1.5em; color: var(--sg-text-soft, inherit); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Prahar</h1>
+  <p class="lede">Raga hours. A dev page for the scene: registers, the hour from your own clock, and text over the sky.</p>
+  <sg-scene id="prahar" name="prahar" label="The light in the village">
+    <h2>Open until late</h2>
+    <p>The kitchen closes at ten.</p>
+  </sg-scene>
+  <p id="said" aria-hidden="true"></p>
+  <form id="controls">
+    <fieldset>
+      <legend>Register</legend>
+      <label><input type="radio" name="register" value="quiet"> Quiet</label>
+      <label><input type="radio" name="register" value="warm"> Warm</label>
+      <label><input type="radio" name="register" value="playful"> Playful</label>
+    </fieldset>
+    <label><input type="checkbox" id="dark"> Dark</label>
+    <label><input type="checkbox" id="text" checked> Text over the sky</label>
+    <label><input type="checkbox" id="clock"> Follow my clock</label>
+    <label for="hour">Hour</label>
+    <input type="range" id="hour" min="0" max="24" step="0.1" value="19.2">
+    <label><input type="checkbox" id="useHour"> Hold this hour</label>
+  </form>
+  <p class="note">The raga-to-hour mapping is one common reckoning; traditions differ.</p>
+  <p class="after"><b>After the time theory of Hindustani music</b>, and the Goan singers who carried it: Kesarbai Kerkar, Mogubai Kurdikar, Kishori Amonkar. Taken: the idea that a colour, like a raga, belongs to an hour. Left: the music itself; the ragas are named, never imitated.</p>
+</main>
+<script type="module">
+  const q = new URLSearchParams(location.search), root = document.documentElement;
+  const el = document.getElementById('prahar');
+  const register = q.get('register') || 'warm';
+  root.dataset.register = register;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+  for (const k of ['seed', 'hour']) if (q.has(k)) el.setAttribute(k, q.get(k));
+  if (q.get('content') === '0') el.innerHTML = '';
+  el.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__piece = el;
+  const { say } = await import('./index.js');
+
+  const $ = id => document.getElementById(id), form = $('controls'), content = el.innerHTML;
+  form.register.value = register;
+  $('dark').checked = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  $('text').checked = !!content.trim();
+  let timer = 0;
+  const show = () => { const h = el.getAttribute('hour'); $('said').textContent = h == null ? '' : say(+h); };
+  const clock = () => { const d = new Date(); el.setAttribute('hour', (d.getHours() + d.getMinutes() / 60).toFixed(2)); show(); };
+  form.addEventListener('change', e => {
+    const t = e.target;
+    if (t.name === 'register') root.dataset.register = t.value;
+    else if (t.id === 'dark') root.dataset.theme = t.checked ? 'dark' : 'light';
+    else if (t.id === 'text') el.innerHTML = t.checked ? content || '<h2>Open until late</h2><p>The kitchen closes at ten.</p>' : '';
+    else if (t.id === 'clock') { clearInterval(timer); if (t.checked) { $('useHour').checked = false; clock(); timer = setInterval(clock, 60000); } else { el.removeAttribute('hour'); show(); } }
+    else if (t.id === 'useHour') { $('clock').checked = false; clearInterval(timer); t.checked ? el.setAttribute('hour', $('hour').value) : el.removeAttribute('hour'); show(); }
+  });
+  $('hour').addEventListener('input', e => { if ($('useHour').checked) { el.setAttribute('hour', e.target.value); show(); } });
+  show();
+</script>
+</body>
+</html>

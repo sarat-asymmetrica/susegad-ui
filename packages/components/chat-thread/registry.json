@@ -1,0 +1,35 @@
+{
+  "name": "chat-thread",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Chat thread",
+  "description": "A conversation as a list of messages a screen reader can read, instead of a screenshot. Phone numbers, emails and names are taken out at build time and replaced by a marker that says what was removed. Quiet is a ruled transcript like a court record; warm puts each message in a hand-inked bubble on paper; playful uses bright bubbles that bounce in as they scroll into view. Replies quote the earlier message (\"Replying to:\" for screen readers) and reactions are read once, as words.",
+  "version": "0.1.0",
+  "files": [
+    "chat-thread.js",
+    "chat-thread.core.js",
+    "chat-thread.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "chat-thread.prompt.md",
+    "chat-thread.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "chat-thread.prompt.md",
+  "docs": "chat-thread.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Element 4.1 KB, pure core 10.2 KB (redaction, markup with replies and reactions, the bubble), skins quiet 0.3 KB, warm 2.5 KB, playful 1.1 KB."
+  }
+}

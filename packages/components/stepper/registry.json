@@ -1,6 +1,7 @@
 {
   "name": "stepper",
   "type": "component",
+  "stability": "experimental",
   "title": "Stepper",
   "description": "A long form walked one step at a time. Without JavaScript every step is a visible fieldset with one submit. With it, Back and Next, focus on each step's legend, progress in words, and nothing typed ever lost. Quiet is numbered stations; warm is a walk on a survey map, the road found round the hills with A*; playful adds footprints.",
   "version": "0.1.0",

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  // What tools/harness/demo.js does (?register, ?theme, the demo stylesheets), except the readiness: this page is ready when the
+  // drawing has been made and painted (sg-ready), not 50 ms after load, so a tool that waits on window.__ready waits for the picture.
+  (() => {
+    const q = new URLSearchParams(location.search), root = document.documentElement;
+    for (const k of ['register', 'theme', 'palette']) if (q.get(k)) root.setAttribute('data-' + k, q.get(k));
+    root.setAttribute('lang', 'en');
+    for (const href of ['/packages/tokens/fonts.css', '/packages/tokens/tokens.css', '/tools/harness/demo.css']) document.head.append(Object.assign(document.createElement('link'), { rel: 'stylesheet', href }));
+    window.__ready = false;
+  })();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The veranda staged</title>
+<script type="importmap">{ "imports": { "three": "/packages/stage3d/vendor/three.named.js" } }</script>
+<link rel="stylesheet" href="../../stage3d/depth-photo/depth-photo.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 64rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .lede, .note { max-width: var(--sg-measure); color: var(--sg-text-soft); margin: 0 0 var(--sg-space-3); }
+  .note { font-size: var(--sg-step--1); }
+  #host { position: relative; }
+  #host sg-depth-photo { aspect-ratio: 3 / 2; border-radius: var(--sg-radius-3); box-shadow: var(--sg-lift); }
+  .controls { display: grid; gap: var(--sg-space-3); margin-top: var(--sg-space-4); grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); align-items: end; }
+  label { display: grid; gap: 4px; font-size: var(--sg-step--1); color: var(--sg-text-soft); }
+  input[type="range"] { width: 100%; accent-color: var(--sg-accent); }
+  output { color: var(--sg-text); font-variant-numeric: tabular-nums; }
+  .row { display: flex; flex-wrap: wrap; gap: var(--sg-space-2); }
+</style>
+</head>
+<body>
+<main>
+  <h1>The veranda, staged</h1>
+  <p class="lede">A drawn veranda seen through a camera. The depth map is not a model's guess: every pixel's distance comes from the same solids the drawing is made from. The focus racks by that depth, and the camera can walk in.</p>
+  <div id="host"><p class="note" id="wait">Drawing the veranda.</p></div>
+  <div class="controls">
+    <div class="row">
+      <button type="button" class="demo-button" data-focus="0.6">Focus on the lamp</button>
+      <button type="button" class="demo-button" data-focus="0.78">Focus on the near pillar</button>
+      <button type="button" class="demo-button" data-focus="0.05">Focus on the paddy</button>
+    </div>
+    <label>Focus depth <input id="focus" type="range" min="0" max="1" step="0.01" value="0.55"> <output id="focus-out" for="focus">0.55</output></label>
+    <label>Walk in <input id="dolly" type="range" min="0" max="1" step="0.01" value="0"> <output id="dolly-out" for="dolly">0</output></label>
+  </div>
+  <p class="note" id="tier" aria-live="polite">Choosing how to draw.</p>
+  <p class="note">Nothing here is a photograph or a generated image. In quiet, under reduced motion, without WebGL, or when three.js is blocked, the same drawing shows in 2D and holds still; three.js is only requested when the picture will move.</p>
+</main>
+<script type="module">
+  import '../../stage3d/depth-photo/depth-photo.js';
+  import { verandaAssets } from './assets.js';
+  const q = new URLSearchParams(location.search), root = document.documentElement;
+  const register = q.get('register') || root.dataset.register || 'warm';
+  root.dataset.register = register;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+  const dark = (q.get('theme') ?? root.dataset.theme) === 'dark' || (!q.get('theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+  const mood = q.get('mood') || (dark ? 'dusk' : 'day');
+  // ?w=1100 draws the picture at exactly that width, so a perf run can match another page's size
+  const w = +q.get('w');
+  if (w) { document.querySelector('main').style.maxWidth = 'none'; document.getElementById('host').style.width = `${w}px`; }
+  const alt = 'A drawing of a Goan veranda seen along its length: laterite pillars and a built-in seat on the right, a lime-washed wall with a teak door and a shuttered window on the left, a brass lamp hanging from the roof, and the garden and paddy beyond.';
+  const a = await verandaAssets({ mood });
+  const still = await new Promise(r => a.look.toBlob(r, 'image/png'));
+  const img = Object.assign(new Image(), { src: URL.createObjectURL(still), alt });
+  const drawn = Object.assign(a.look, {}); drawn.dataset.treatment = 'drawn';
+  const dp = document.createElement('sg-depth-photo');
+  dp.id = 'dp';
+  for (const [k, v] of Object.entries({ depth: a.depth, layers: a.layers, treatment: 'drawn', sea: '0', focus: '0.55', 'dolly-path': '0 -0.02 0.6 0', keep: '0.5 0.5' })) dp.setAttribute(k, v);
+  if (q.get('renderer')) dp.setAttribute('renderer', q.get('renderer')); // ?renderer=live forces the three.js tier, for perf runs
+  dp.append(img, drawn);
+  document.getElementById('wait').replaceWith(dp);
+  const focus = document.getElementById('focus'), dolly = document.getElementById('dolly');
+  const show = () => { document.getElementById('focus-out').value = (+focus.value).toFixed(2); document.getElementById('dolly-out').value = (+dolly.value).toFixed(2); };
+  focus.addEventListener('input', () => { dp.set({ focus: +focus.value }); show(); });
+  dolly.addEventListener('input', () => { dp.set({ dolly: +dolly.value }); show(); });
+  for (const b of document.querySelectorAll('[data-focus]')) b.addEventListener('click', () => { focus.value = b.dataset.focus; dp.set({ focus: +b.dataset.focus }); show(); });
+  const words = { live: 'Drawn live with three.js.', '2d': 'Drawn in 2D, holding still', still: 'Showing the picture only' };
+  dp.addEventListener('sg-tier', e => { document.getElementById('tier').textContent = `${words[e.detail.tier]}${e.detail.tier === 'live' ? '' : ` (${e.detail.reason}).`}`; });
+  dp.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__dp = dp;
+</script>
+</body>
+</html>

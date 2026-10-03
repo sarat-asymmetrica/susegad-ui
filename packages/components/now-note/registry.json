@@ -1,0 +1,36 @@
+{
+  "name": "now-note",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Now note",
+  "description": "A short, dated note of what someone is up to right now, with the availability as a badge in words. It adds how long ago it was updated and, past a stale-after limit, says plainly that it may be out of date. Quiet is a dated line; warm is a sticky note in the hand; playful is a café chalkboard in a wooden frame.",
+  "version": "0.1.0",
+  "files": [
+    "now-note.js",
+    "now-note.core.js",
+    "now-note.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "now-note.prompt.md",
+    "now-note.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens",
+    "badge"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "now-note.prompt.md",
+  "docs": "now-note.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 5921 bytes: element 3.0 KB, pure core 2.2 KB, skins quiet 0.1 KB, warm 0.4 KB, playful 0.2 KB. The state is the badge component."
+  }
+}

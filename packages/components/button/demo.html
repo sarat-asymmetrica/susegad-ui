@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Button</title>
+<link rel="stylesheet" href="./button.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 44rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .lede { margin: 0 0 var(--sg-space-5); color: var(--sg-text-soft); max-width: var(--sg-measure); }
+  section { display: grid; gap: var(--sg-space-3); margin-bottom: var(--sg-space-5); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-1) / var(--sg-leading-tight) var(--sg-font-body); margin: 0; }
+  .row { display: flex; flex-wrap: wrap; gap: var(--sg-space-3); align-items: center; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Button</h1>
+  <p class="lede">A native &lt;button&gt; or &lt;a&gt;, unchanged: it takes the keyboard, submits a form, or follows a link with or without JavaScript. The register lays a drawing over it.</p>
+
+  <section>
+    <h2>Plain and accent</h2>
+    <div class="row">
+      <sg-button><button type="button" id="book-now">Book now</button></sg-button>
+      <sg-button><button type="button" data-tone="accent" id="see-rooms">See the rooms</button></sg-button>
+      <sg-button><a href="#rooms">A link, styled the same</a></sg-button>
+      <sg-button><button type="button" disabled>Disabled</button></sg-button>
+    </div>
+  </section>
+
+  <section>
+    <h2>In a form, with a real submit</h2>
+    <form action="" method="get">
+      <input type="hidden" name="sent" value="1">
+      <div class="row">
+        <sg-button><button type="reset">Clear</button></sg-button>
+        <sg-button><button type="submit" data-tone="accent">Send the request</button></sg-button>
+      </div>
+    </form>
+    <output id="sent" aria-live="polite"></output>
+  </section>
+
+  <section>
+    <h2>In Marathi, Kannada and Konkani</h2>
+    <!-- These Indian-language labels are drafts awaiting a native speaker's check. -->
+    <div class="row">
+      <sg-button><button type="button" lang="mr">आता बुक करा</button></sg-button>
+      <sg-button><button type="button" data-tone="accent" lang="kn">ಈಗ ಕಾಯ್ದಿರಿಸಿ</button></sg-button>
+      <sg-button><button type="button" lang="kok-Latn">Book atam</button></sg-button>
+    </div>
+  </section>
+</main>
+<script type="module">
+  import './button.js';
+  const q = new URLSearchParams(location.search);
+  if (q.has('sent')) document.getElementById('sent').textContent = 'Sent.';
+</script>
+</body>
+</html>

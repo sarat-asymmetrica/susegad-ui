@@ -29,7 +29,7 @@ function fixture(t, name) {
   cpSync(join(fixtures, name), root, { recursive: true });
   return root;
 }
-const item = (name, extra = {}) => ({ name, type: 'package', title: name, description: `The ${name}.`, version: '1.0.0', files: ['index.js'], ...extra });
+const item = (name, extra = {}) => ({ name, type: 'package', title: name, description: `The ${name}.`, version: '1.0.0', stability: 'experimental', files: ['index.js'], ...extra });
 
 test('the good fixture builds, and the committed index matches it byte for byte', t => {
   const good = fixture(t, 'good');
@@ -76,7 +76,7 @@ test('schema problems are reported per manifest', t => {
   assert.equal(index, null);
   assert.deepEqual(errors, [
     'packages/x/registry.json: name: "X" should be lowercase kebab-case, like scene-kolam',
-    'packages/x/registry.json: type: should be one of "package", "scene", "component", "recipe", "adapter", got "widget"',
+    'packages/x/registry.json: type: should be one of "package", "scene", "surface", "component", "recipe", "adapter", got "widget"',
     'packages/x/registry.json: files: should have at least 1 item',
   ]);
 });
@@ -114,7 +114,7 @@ test('thin manifests warn, and fail under --strict', t => {
   assert.deepEqual(loose.errors, []);
   assert.equal(loose.index.items[0].version, '0.0.0');
   assert.deepEqual(loose.warnings, [
-    'packages/s/registry.json: has no title, description or version (listed as 0.0.0 for now)',
+    'packages/s/registry.json: has no title, description, version or stability (listed as 0.0.0 for now; listed as experimental for now)',
     'packages/s/registry.json: a scene should list all three registers, this one lists warm',
   ]);
   assert.equal(buildRegistry({ root, strict: true }).errors.length, 2);
@@ -143,6 +143,114 @@ test('budgets are a gate: decisions 0002 to 0004', t => {
   assert.match(run(pkg).errors.join('\n'), /23 JS bytes is over its budget of 10\./, 'packages are held to their declared budget too');
   const unbudgeted = tree(t, { 'packages/p/registry.json': item('p'), 'packages/p/index.js': big(90000) });
   assert.deepEqual(run(unbudgeted).errors, [], 'packages without a budget are not given one');
+});
+
+test('stability: a manifest with no stability builds but is flagged; beta or stable needs a one-line reason', t => {
+  const bare = tree(t, {
+    'packages/p/registry.json': { name: 'p', type: 'package', files: ['index.js'] }, // no stability at all
+    'packages/p/index.js': '',
+  });
+  const bareResult = buildRegistry({ root: bare });
+  assert.deepEqual(bareResult.errors, [], 'missing stability does not fail the build');
+  assert.equal(bareResult.index.items[0].stability, 'experimental', 'it defaults to experimental');
+  assert.match(bareResult.warnings.join('\n'), /has no .*stability.*\(listed as 0\.0\.0 for now; listed as experimental for now\)/);
+
+  // This is the check that must fail first: declaring "beta" with no reason is an error.
+  const noReason = tree(t, { 'packages/p/registry.json': item('p', { stability: 'beta' }), 'packages/p/index.js': '' });
+  assert.match(buildRegistry({ root: noReason }).errors.join('\n'), /is "beta", which needs a one-line stabilityReason saying why/);
+
+  const withReason = tree(t, {
+    'packages/p/registry.json': item('p', { stability: 'beta', stabilityReason: 'Ported from Casa Exemplo, unchanged for two months.' }),
+    'packages/p/index.js': '',
+  });
+  const ok = buildRegistry({ root: withReason });
+  assert.deepEqual(ok.errors, []);
+  assert.equal(ok.index.items[0].stability, 'beta');
+  assert.equal(ok.index.items[0].stabilityReason, 'Ported from Casa Exemplo, unchanged for two months.');
+});
+
+test('useFor: optional, sorted, and left off the item entirely when absent', t => {
+  const tagged = tree(t, { 'packages/s/registry.json': item('scene-s', { type: 'scene', useFor: ['hero', 'divider'] }), 'packages/s/index.js': '' });
+  const withUse = buildRegistry({ root: tagged });
+  assert.deepEqual(withUse.errors, []);
+  assert.deepEqual(withUse.index.items[0].useFor, ['divider', 'hero'], 'sorted, not insertion order');
+
+  const untagged = tree(t, { 'packages/s/registry.json': item('scene-s', { type: 'scene' }), 'packages/s/index.js': '' });
+  const noUse = buildRegistry({ root: untagged });
+  assert.deepEqual(noUse.errors, []);
+  assert.ok(!('useFor' in noUse.index.items[0]), 'no useFor field at all, not an empty array');
+});
+
+test('motif: optional, carried to the index as written, and refused when it lacks a field', t => {
+  const m = { origin: 'goa', tier: 'everyday', gloss: 'Azulejo: the painted tiles of Goa.' };
+  const tagged = tree(t, { 'packages/c/registry.json': item('c', { type: 'component', motif: m }), 'packages/c/index.js': '' });
+  const r = buildRegistry({ root: tagged });
+  assert.deepEqual(r.errors, []);
+  assert.deepEqual(r.index.items[0].motif, m);
+  const plain = buildRegistry({ root: tree(t, { 'packages/c/registry.json': item('c', { type: 'component' }), 'packages/c/index.js': '' }) });
+  assert.ok(!('motif' in plain.index.items[0]), 'no motif field when absent');
+  const bad = buildRegistry({ root: tree(t, { 'packages/c/registry.json': item('c', { type: 'component', motif: { origin: 'goa' } }), 'packages/c/index.js': '' }) });
+  assert.ok(bad.errors.length > 0, 'a motif with no tier or gloss is an error');
+});
+
+test('scapes are gated on first sight: decision 0020', t => {
+  // first sight counts code (0020, amended), so pad with code, not comments
+  const pad = n => 'void 0;\n'.repeat(Math.ceil(n / 8));
+  // index.js imports still.js statically and year.js with a dynamic import(): year.js is past first sight
+  const scape = ({ still = 30000, year = 50000, budget, extra = {}, staticYear = false } = {}) => tree(t, {
+    'packages/s/registry.json': item('scene-s', {
+      type: 'scene', registers: ['quiet', 'warm', 'playful'], files: ['index.js', 'still.js', 'year.js'], tier: 'scape', entry: ['index.js'],
+      budget: budget ?? { jsBytes: 90000, firstSightBytes: 65536, reason: 'A year of a field; the still first.' }, ...extra,
+    }),
+    'packages/s/index.js': `import './still.js';\n${staticYear ? "import { year } from './year.js';\n" : "export const later = () => import('./year.js');\n"}`,
+    'packages/s/still.js': 'export const still = 1;\n' + pad(still),
+    'packages/s/year.js': 'export const year = 1;\n' + pad(year),
+  });
+  const run = root => buildRegistry({ root });
+
+  const ok = run(scape());
+  assert.deepEqual(ok.errors, [], 'a 90 KB scape whose first sight is about 30 KB builds');
+  const s = ok.index.items[0];
+  assert.equal(s.tier, 'scape');
+  assert.deepEqual(s.entry, ['packages/s/index.js']);
+  assert.ok(s.firstSightBytes > 30000 && s.firstSightBytes < 31000, `first sight ${s.firstSightBytes}: index and still, not year`);
+  assert.ok(s.jsBytes > 80000);
+  assert.deepEqual(validate(ok.index, schema.$defs.index, schema), []);
+
+  assert.match(run(scape({ still: 70000 })).errors.join('\n'), /its first sight is \d+ bytes of code \(packages\/s\/index\.js, packages\/s\/still\.js\), over 65536/, 'a 70 KB first sight fails');
+  assert.match(run(scape({ still: 1000, year: 70000, staticYear: true })).errors.join('\n'), /its first sight is \d+ bytes of code \(packages\/s\/index\.js, packages\/s\/still\.js, packages\/s\/year\.js\)/, 'a seam claimed but imported statically fails');
+  assert.match(run(scape({ budget: { jsBytes: 90000, reason: 'x' } })).errors.join('\n'), /a scape declares budget\.firstSightBytes/);
+  assert.match(run(scape({ budget: { jsBytes: 90000, firstSightBytes: 70000, reason: 'x' } })).errors.join('\n'), /declares a first sight of 70000 JS bytes, and a scape may declare at most 65536/);
+  assert.match(run(scape({ budget: { jsBytes: 300000, firstSightBytes: 65536, reason: 'x' } })).errors.join('\n'), /a scape may declare at most 262144/);
+  assert.match(run(scape({ budget: { jsBytes: 90000, firstSightBytes: 65536 } })).errors.join('\n'), /a scape needs a one-line budget\.reason/);
+  assert.match(run(scape({ extra: { entry: [] } })).errors.join('\n'), /entry: should have at least 1 item/);
+  assert.match(run(scape({ extra: { type: 'package' } })).errors.join('\n'), /only a scene can be a scape/);
+
+  // a plain scene over 64 KB still fails (decision 0003), and entry alone does not make a scape
+  const plain = tree(t, {
+    'packages/p/registry.json': item('scene-p', { type: 'scene', registers: ['quiet', 'warm', 'playful'], budget: { jsBytes: 90000, reason: 'Too big.' } }),
+    'packages/p/index.js': 'export const p = 1;\n' + pad(80000),
+  });
+  assert.match(run(plain).errors.join('\n'), /may declare at most 65536 \(decision 0003\)/);
+  const half = tree(t, {
+    'packages/h/registry.json': item('scene-h', { type: 'scene', registers: ['quiet', 'warm', 'playful'], entry: ['index.js'] }),
+    'packages/h/index.js': 'export const h = 1;\n',
+  });
+  assert.match(run(half).errors.join('\n'), /entry and budget\.firstSightBytes belong to a scape/);
+});
+
+test('a scape\'s first sight counts code bytes, and its total counts raw source (0020, amended)', t => {
+  const scape = (comment, code) => tree(t, {
+    'packages/s/registry.json': item('scene-s', { type: 'scene', registers: ['quiet', 'warm', 'playful'], files: ['index.js'], tier: 'scape', entry: ['index.js'],
+      budget: { jsBytes: 262144, firstSightBytes: 65536, reason: 'Heavily documented.' } }),
+    'packages/s/index.js': '// a note\n'.repeat(Math.ceil(comment / 10)) + 'void 0;\n'.repeat(Math.ceil(code / 8)),
+  });
+  const documented = buildRegistry({ root: scape(40000, 40000) });
+  assert.deepEqual(documented.errors, [], 'over 64 KB raw, under on code: builds');
+  const s = documented.index.items[0];
+  assert.ok(s.jsBytes > 65536 && s.firstSightBytes < 65536, `raw ${s.jsBytes}, first sight ${s.firstSightBytes}`);
+  assert.equal(s.firstSightBytes, s.codeBytes, 'the same measure as codeBytes');
+  assert.match(buildRegistry({ root: scape(100, 70000) }).errors.join('\n'), /its first sight is \d+ bytes of code/, 'over 64 KB of code: fails');
 });
 
 test('fixtures and node_modules are not walked', t => {
@@ -234,4 +342,43 @@ test('a recipe outside packages/ gets a note on how to move it, and is not copie
 test('the real repo builds from whatever manifests exist today', () => {
   const { errors } = buildRegistry({ root: join(here, '..') });
   assert.deepEqual(errors, []);
+});
+
+// Decision 0017: an item may need an npm package (three for stage3d). The CLI adds it to the
+// consumer's package.json, so the pin in the manifest must be the pin the library itself runs on.
+test('npmDependencies carry into the index, sorted, and change the hash', t => {
+  const files = {
+    'package.json': { dependencies: { three: '0.186.1', mediabunny: '1.60.0' } },
+    'packages/a/registry.json': item('a', { npmDependencies: { three: '0.186.1', mediabunny: '1.60.0' } }),
+    'packages/a/index.js': 'export const a = 1;\n',
+  };
+  const { index, errors } = buildRegistry({ root: tree(t, files) });
+  assert.deepEqual(errors, []);
+  const a = index.items[0];
+  assert.deepEqual(Object.entries(a.npmDependencies), [['mediabunny', '1.60.0'], ['three', '0.186.1']]);
+  assert.deepEqual(validate(index, schema.$defs.index, schema), []);
+  const plain = buildRegistry({ root: tree(t, { ...files, 'packages/a/registry.json': item('a') }) }).index.items[0];
+  assert.equal(plain.npmDependencies, undefined, 'items without npm packages keep their old shape');
+  assert.notEqual(plain.hash, a.hash);
+});
+
+test('an npm pin must match the library package.json exactly', t => {
+  const manifest = item('a', { npmDependencies: { three: '0.186.1' } });
+  const drift = buildRegistry({ root: tree(t, {
+    'package.json': { dependencies: { three: '0.185.0' } }, 'packages/a/registry.json': manifest, 'packages/a/index.js': '',
+  }) });
+  assert.deepEqual(drift.errors, ['packages/a/registry.json: npmDependencies: three is pinned at 0.186.1 here but the library runs 0.185.0 (package.json dependencies); make them agree']);
+  const absent = buildRegistry({ root: tree(t, {
+    'package.json': { dependencies: {} }, 'packages/a/registry.json': manifest, 'packages/a/index.js': '',
+  }) });
+  assert.deepEqual(absent.errors, ['packages/a/registry.json: npmDependencies: three is pinned at 0.186.1 here but the library runs none (package.json dependencies); make them agree']);
+});
+
+test('an npm pin is an exact version, not a range', t => {
+  const { errors } = buildRegistry({ root: tree(t, {
+    'package.json': { dependencies: { three: '^0.186.1' } },
+    'packages/a/registry.json': item('a', { npmDependencies: { three: '^0.186.1' } }), 'packages/a/index.js': '',
+  }) });
+  assert.equal(errors.length, 1);
+  assert.match(errors[0], /^packages\/a\/registry\.json: npmDependencies\.three: "\^0\.186\.1" should be a version like 0\.1\.0/);
 });

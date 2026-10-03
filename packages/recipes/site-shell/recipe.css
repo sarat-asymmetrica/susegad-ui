@@ -1,0 +1,67 @@
+/* The site-shell recipe: layout only. Every component here draws its own
+   look; this file places them on a page. */
+
+body {
+  margin: 0;
+  background: var(--sg-surface, Canvas);
+  color: var(--sg-text, CanvasText);
+  font: var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif);
+}
+
+.shell-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sg-space-4, 1.5rem);
+  padding: var(--sg-space-3, 0.75rem) var(--sg-space-4, 1.5rem);
+  border-bottom: var(--sg-hairline, 1px) solid var(--sg-rule);
+  flex-wrap: wrap;
+}
+.shell-brand {
+  font: 400 var(--sg-step-1, 1.15rem) var(--sg-font-display, serif);
+  color: var(--sg-text);
+  text-decoration: none;
+  margin-right: auto;
+}
+.shell-header sg-tabs { flex: 1 1 auto; min-width: 0; }
+.shell-header sg-tabs nav > ul { border-bottom: none; }
+.shell-account { margin-left: auto; }
+
+main { max-width: 56rem; margin: 0 auto; padding: 0 var(--sg-space-4, 1.5rem) var(--sg-space-6, 4rem); }
+h1 { font: 400 var(--sg-step-4, 2rem) / var(--sg-leading-tight, 1.1) var(--sg-font-display, serif); margin: var(--sg-space-5, 2rem) 0 var(--sg-space-2, 0.5rem); }
+h2 { font: 400 var(--sg-step-2, 1.35rem) / var(--sg-leading-tight, 1.2) var(--sg-font-display, serif); margin: var(--sg-space-5, 2rem) 0 var(--sg-space-2, 0.5rem); }
+.lede { max-width: var(--sg-measure, 62ch); color: var(--sg-text-soft); }
+
+.overview-scene { margin-top: var(--sg-space-4, 1.5rem); max-width: 40rem; }
+.overview-scene sg-scene { border-radius: var(--sg-radius-3, 8px); overflow: hidden; }
+
+.room-list { list-style: none; margin: var(--sg-space-3, 0.75rem) 0; padding: 0; display: grid; gap: var(--sg-space-3, 0.75rem); }
+.room-list li { padding: var(--sg-space-3, 0.75rem); border: var(--sg-hairline, 1px) solid var(--sg-rule); border-radius: var(--sg-radius-2, 4px); }
+.room-list h3 { margin: 0 0 0.2em; font: var(--sg-weight-medium, 500) var(--sg-step-0) var(--sg-font-body); }
+.room-list p { margin: 0; color: var(--sg-text-soft); font-size: var(--sg-step--1, 0.9rem); }
+
+.booking-stage {
+  position: relative;
+  margin-top: var(--sg-space-3, 0.75rem);
+  min-height: 12rem;
+  border: var(--sg-hairline, 1px) solid var(--sg-rule);
+  border-radius: var(--sg-radius-3, 8px);
+  overflow: hidden;
+}
+.booking-step { padding: var(--sg-space-4, 1.5rem); }
+.booking-step h3 { margin: 0 0 var(--sg-space-2, 0.5rem); font: 400 var(--sg-step-1) var(--sg-font-display); }
+.booking-step button {
+  margin-top: var(--sg-space-3, 0.75rem);
+  padding: 0.6em 1.2em;
+  border-radius: var(--sg-radius-2, 4px);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  background: var(--sg-accent);
+  color: var(--sg-on-accent);
+  font: var(--sg-weight-medium, 500) var(--sg-step-0) var(--sg-font-body);
+  cursor: pointer;
+}
+.booking-step button:disabled { opacity: 0.6; cursor: default; }
+
+.opener {
+  display: inline-block;
+  margin-top: var(--sg-space-2, 0.5rem);
+}

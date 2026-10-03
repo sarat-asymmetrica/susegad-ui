@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dar scene</title>
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .lede { margin: 0 0 20px; color: var(--sg-text-soft, inherit); }
+  sg-scene { border-radius: 6px; }
+  sg-scene h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  sg-scene p { margin: 0; }
+  form { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 20px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  legend { font-weight: 600; float: left; margin-right: 8px; }
+  button { font: inherit; padding: 6px 14px; border-radius: 6px; border: 1px solid currentColor; background: none; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  #sorted { font-size: 0.95rem; color: var(--sg-text-soft, inherit); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Dar</h1>
+  <p class="lede">Yours to keep. A dev page for the scene: in playful, swing the key or slide the bolt.</p>
+  <sg-scene id="dar" name="dar">
+    <h2>Yours to keep</h2>
+    <p>The code, the data and the keys stay with you.</p>
+  </sg-scene>
+  <p id="how">In playful, focus the drawing: Enter or Space swings the key; move your hand to the bolt with the arrow keys and Enter slides it.</p>
+  <form id="controls">
+    <fieldset>
+      <legend>Register</legend>
+      <label><input type="radio" name="register" value="quiet"> Quiet</label>
+      <label><input type="radio" name="register" value="warm"> Warm</label>
+      <label><input type="radio" name="register" value="playful"> Playful</label>
+    </fieldset>
+    <label><input type="checkbox" id="dark"> Dark</label>
+    <button type="button" id="replay">From the start</button>
+  </form>
+</main>
+<script type="module">
+  const q = new URLSearchParams(location.search), root = document.documentElement;
+  const el = document.getElementById('dar');
+  const register = q.get('register') || 'warm';
+  root.dataset.register = register;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+  if (q.has('seed')) el.setAttribute('seed', q.get('seed'));
+  el.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__piece = el;
+  await import('./index.js');
+  const form = document.getElementById('controls'), dark = document.getElementById('dark');
+  form.register.value = register;
+  dark.checked = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  form.addEventListener('change', e => {
+    if (e.target.name === 'register') root.dataset.register = form.register.value;
+    if (e.target === dark) root.dataset.theme = dark.checked ? 'dark' : 'light';
+  });
+  document.getElementById('replay').onclick = () => el.replay();
+</script>
+</body>
+</html>

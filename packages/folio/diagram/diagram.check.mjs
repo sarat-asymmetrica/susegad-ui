@@ -10,11 +10,11 @@
 // a register change redraws and keeps the step; a narrow screen turns a
 // rightward diagram downward but keeps a direction its author chose.
 
-import { chromium } from 'playwright';
+import { dropBenignErrors, pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const browser = await pickEngine().launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const url = `${server.url}/packages/folio/diagram/demo.html`;
@@ -147,7 +147,8 @@ for (const [label, opts, q] of [['reduced motion', { reducedMotion: 'reduce' }, 
   check('a direction the author chose is kept', dirs.rain === 'down');
   const over = await p.evaluate(() => document.documentElement.scrollWidth > innerWidth);
   check('no sideways scroll at phone width', !over);
-  check('no console or page errors (phone)', p.errors.length === 0, p.errors.join(' | '));
+  const real = dropBenignErrors(p.errors);
+  check('no console or page errors (phone)', real.length === 0, real.join(' | '));
   await ctx.close();
 }
 

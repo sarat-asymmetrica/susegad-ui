@@ -1,0 +1,75 @@
+/* <sg-popover>. The [popover] element is the whole panel: the native
+   popover API opens, closes, focuses and light-dismisses it, and answers
+   Escape, with or without JavaScript. This file only gives the card its
+   register's look. */
+
+sg-popover[hidden] { display: none; } /* our display rule would otherwise beat the browser's [hidden] */
+
+sg-popover { display: contents; }
+
+sg-popover [popover] {
+  /* the popover UA stylesheet sets inset: 0, which stretches a fit-content
+     box across the whole viewport and leaves it pinned top-left; reset it
+     so popover.js's own left/top/bottom (set on open, in #place()) are the
+     only offsets in play. */
+  position: fixed;
+  inset: auto;
+  box-sizing: border-box;
+  max-width: min(90vw, var(--sg-measure-narrow, 38ch));
+  margin: 0;
+  padding: var(--sg-space-4, 1rem);
+  border: var(--sg-hairline, 1px) solid var(--sg-rule-strong, CanvasText);
+  border-radius: var(--sg-radius-3, 8px);
+  background: var(--sg-surface-raised, Canvas);
+  color: var(--sg-text, CanvasText);
+  font: var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif);
+  box-shadow: var(--sg-lift, 0 8px 24px rgb(0 0 0 / 0.2));
+}
+sg-popover [popover]:popover-open { animation: sg-popover-in var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out); }
+@keyframes sg-popover-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  sg-popover [popover]:popover-open { animation: none; }
+}
+
+/* ── warm: the inland-letter card, a folded top corner ───────────────────── */
+sg-popover[data-skin="warm"] [popover] {
+  border-left-width: 3px;
+  border-left-color: var(--sg-accent, Highlight);
+}
+sg-popover[data-skin="warm"] [popover]::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0;
+  width: 16px; height: 16px;
+  background: linear-gradient(135deg, transparent 50%, var(--sg-surface, Canvas) 50%);
+  border-left: var(--sg-hairline, 1px) solid var(--sg-rule, CanvasText);
+  border-bottom: var(--sg-hairline, 1px) solid var(--sg-rule, CanvasText);
+  border-top-right-radius: var(--sg-radius-3, 8px);
+  pointer-events: none;
+}
+
+/* ── playful: the same, with a postmark ──────────────────────────────────── */
+sg-popover[data-skin="playful"] [popover] {
+  border-width: 2px;
+  border-color: var(--sg-accent, Highlight);
+}
+sg-popover[data-skin="playful"] [popover]::before {
+  content: "";
+  position: absolute;
+  top: -12px; right: -12px;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 2px dashed var(--sg-accent, Highlight);
+  background:
+    linear-gradient(20deg, transparent 47%, var(--sg-accent, Highlight) 47%, var(--sg-accent, Highlight) 53%, transparent 53%),
+    linear-gradient(-25deg, transparent 47%, var(--sg-accent, Highlight) 47%, var(--sg-accent, Highlight) 53%, transparent 53%);
+  opacity: 0.55;
+  transform: rotate(-10deg);
+  pointer-events: none;
+}
+
+@media (forced-colors: active) {
+  sg-popover [popover]::before,
+  sg-popover [popover]::after { display: none !important; }
+  sg-popover [popover] { border: 1px solid CanvasText !important; box-shadow: none !important; }
+}

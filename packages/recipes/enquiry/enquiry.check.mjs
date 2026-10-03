@@ -9,11 +9,11 @@
 // 3. Importing recipe.js wires nothing: with demo.js left out, no prototype
 //    answer is mounted and the form posts as the page wrote it.
 
-import { chromium } from 'playwright';
+import { pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const browser = await pickEngine().launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const URL_ = `${server.url}/packages/recipes/enquiry/index.html`;

@@ -1,0 +1,227 @@
+/* <sg-postcard>. Without JavaScript this is the quiet look: an index card with
+   a red rule under the heading and faint ruled lines. The heading's link is
+   stretched over the whole card, so the card is one tab stop. The status is a
+   badge on the where-line by default; status-style="stamp" puts a rubber
+   stamp in the corner instead. Warm is the back of a picture postcard (a
+   postmark joins the stamp when there is one); playful is set down crooked
+   and flips to its back on hover or focus. */
+
+sg-postcard {
+  display: block;
+  container-type: inline-size;
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body);
+}
+sg-postcard[hidden] { display: none; }
+
+sg-postcard article {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "title status" "where where" "face face" "back back";
+  align-content: start;
+  gap: var(--sg-space-2) var(--sg-space-3);
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--sg-space-3) var(--sg-space-4) var(--sg-space-4);
+  background: var(--sg-surface-raised);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-2);
+}
+sg-postcard :is(h2, h3, h4) {
+  grid-area: title;
+  align-self: center;
+  margin: 0;
+  font: 400 var(--sg-step-2) / var(--sg-leading-tight) var(--sg-font-display);
+  text-wrap: balance;
+}
+/* One link, stretched over the card: the whole card is a target, and nothing interactive nests. */
+sg-postcard :is(h2, h3, h4) a { color: inherit; text-decoration: none; }
+sg-postcard :is(h2, h3, h4) a::after { content: ""; position: absolute; inset: 0; z-index: 2; border-radius: inherit; }
+sg-postcard article:hover :is(h2, h3, h4) a { text-decoration: underline; text-decoration-thickness: var(--sg-hairline); text-underline-offset: 0.15em; }
+sg-postcard :is(h2, h3, h4) a:focus-visible { outline: none; }
+sg-postcard article:has(a:focus-visible) { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+
+sg-postcard > article > sg-stamp { grid-area: status; align-self: start; justify-self: end; }
+/* The where-line: where and when, with the status badge beside it. Level, quiet, never rotated. */
+sg-postcard .sg-postcard-where {
+  grid-area: where;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sg-space-1) var(--sg-space-3);
+  font-size: var(--sg-step--1);
+  color: var(--sg-text-soft);
+}
+sg-postcard .sg-postcard-where > sg-badge { flex: none; }
+sg-postcard .sg-postcard-face { grid-area: face; }
+sg-postcard .sg-postcard-problem { margin: 0; font-size: var(--sg-step-1); line-height: var(--sg-leading-snug); }
+sg-postcard .sg-postcard-back {
+  grid-area: back;
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0 var(--sg-space-3);
+}
+sg-postcard .sg-postcard-back dt {
+  font-weight: var(--sg-weight-medium);
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.05em;
+  color: var(--sg-text-soft);
+}
+sg-postcard .sg-postcard-back dd { margin: 0; }
+
+/* quiet: the index card's rules (also the no-JavaScript look) */
+sg-postcard article::before {
+  content: "";
+  grid-row: 1;
+  grid-column: 1 / -1;
+  align-self: end;
+  margin: 0 calc(-1 * var(--sg-space-4)) calc(-1 * var(--sg-space-2) / 2);
+  border-bottom: var(--sg-hairline) solid var(--sg-accent);
+}
+sg-postcard:not([data-skin="warm"], [data-skin="playful"]) .sg-postcard-back {
+  background: linear-gradient(to bottom, transparent calc(1lh - 1px), var(--sg-rule) calc(1lh - 1px)) 0 0 / 100% 1lh;
+}
+
+@container (max-width: 22rem) {
+  sg-postcard .sg-postcard-back { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ── warm: the back of a picture postcard ── */
+sg-postcard[data-skin="warm"] { filter: drop-shadow(0 1px 1px var(--sg-shadow)) drop-shadow(0 6px 8px color-mix(in oklch, var(--sg-shadow) 40%, transparent)); } /* the deckle's mask would cut a box-shadow off */
+sg-postcard[data-skin="warm"] article {
+  /* the message side takes about two thirds, as on a real card */
+  grid-template-columns: minmax(0, 1fr) 1px minmax(8rem, 30%);
+  grid-template-areas: "title rule status" "where rule address" "face rule address" "back rule address";
+  column-gap: var(--sg-space-4);
+  border: 0;
+  border-radius: 2px;
+  padding: calc(var(--sg-space-4) + 3px) var(--sg-space-4);
+  /* card stock: faint fibres over the raised paper */
+  background:
+    repeating-linear-gradient(115deg, transparent 0 7px, color-mix(in oklch, var(--sg-text) 3%, transparent) 7px 8px),
+    repeating-linear-gradient(25deg, transparent 0 11px, color-mix(in oklch, var(--sg-text) 2%, transparent) 11px 12px),
+    var(--sg-surface-raised);
+  /* the deckle: small bites along the top and bottom edges, as a cut card has */
+  -webkit-mask: radial-gradient(circle at 50% 0, transparent 1.5px, #000 2px) top / 5px 51% repeat-x, radial-gradient(circle at 50% 100%, transparent 1.5px, #000 2px) bottom / 5px 51% repeat-x;
+  mask: radial-gradient(circle at 50% 0, transparent 1.5px, #000 2px) top / 5px 51% repeat-x, radial-gradient(circle at 50% 100%, transparent 1.5px, #000 2px) bottom / 5px 51% repeat-x;
+}
+/* A printed postage square with no word: ornament only, where a stamp would go. */
+sg-postcard .sg-postcard-postage {
+  grid-area: status;
+  justify-self: end;
+  align-self: start;
+  width: 2.2rem;
+  height: 2.7rem;
+  box-sizing: border-box;
+  border: var(--sg-hairline) dashed var(--sg-pencil);
+  border-radius: 1px;
+  background: linear-gradient(var(--sg-surface-raised), var(--sg-surface-raised)) padding-box;
+  box-shadow: inset 0 0 0 3px var(--sg-surface-raised), inset 0 0 0 4px var(--sg-pencil);
+}
+sg-postcard[status-style="stamp"] .sg-postcard-postage { display: none; }
+sg-postcard[data-skin="warm"] article::before { display: none; }
+sg-postcard[data-skin="warm"] article::after { content: ""; grid-area: rule; background: var(--sg-rule-strong); margin-block: var(--sg-space-1); }
+sg-postcard[data-skin="warm"] :is(h2, h3, h4) { font-family: var(--sg-font-hand); align-self: start; }
+sg-postcard[data-skin="warm"] .sg-postcard-problem { font-family: var(--sg-font-hand); }
+sg-postcard[data-skin="warm"][status-style="stamp"] > article > sg-stamp { margin-top: calc(-1 * var(--sg-space-2)); margin-bottom: 1.5rem; } /* room for the postmark's lines */
+sg-postcard .sg-postcard-address {
+  grid-area: address;
+  align-self: end;
+  height: 5.4em;
+  background: linear-gradient(to bottom, transparent calc(1.8em - 1px), var(--sg-pencil) calc(1.8em - 1px)) 0 0 / 100% 1.8em;
+}
+sg-postcard .sg-postcard-postmark {
+  position: absolute;
+  top: var(--sg-space-4);
+  right: var(--sg-space-4);
+  width: 120px; /* the skin places it by the stamp in px, so it is sized in px too */
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--sg-text-faint);
+  stroke-width: 1.1;
+  opacity: 0.8;
+  transform: rotate(var(--sg-postmark-rotate, -8deg));
+  transform-origin: 21% 50%; /* the ring's centre */
+}
+sg-postcard .sg-postcard-postmark text {
+  fill: var(--sg-text-faint);
+  stroke: none;
+  font: 600 6.4px var(--sg-font-body);
+  letter-spacing: 0.12em;
+}
+/* Below 44rem a side column would squeeze the message to a few words a line.
+   The address lines move up under the postage square, beside the title and
+   the where-line, and the message runs the full width, under a pencil rule. */
+@container (max-width: 44rem) {
+  sg-postcard[data-skin="warm"] article {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "title status" "where address" "face face" "back back";
+  }
+  sg-postcard[data-skin="warm"] article::after { display: none; }
+  sg-postcard[data-skin="warm"] .sg-postcard-address { align-self: start; width: 7rem; height: 3.6em; }
+  sg-postcard[data-skin="warm"] .sg-postcard-face { border-top: var(--sg-hairline) solid var(--sg-pencil); padding-top: var(--sg-space-2); }
+}
+@container (max-width: 30rem) {
+  sg-postcard[data-skin="warm"] article { grid-template-areas: "title status" "where where" "face face" "back back"; }
+  sg-postcard .sg-postcard-address { display: none; }
+}
+
+/* ── playful: set down crooked; flips where it may ── */
+sg-postcard[data-skin="playful"] article {
+  transform: rotate(var(--sg-postcard-tilt, -1.2deg));
+  border: var(--sg-stroke-bold) solid var(--sg-text);
+  border-radius: var(--sg-radius-3);
+  box-shadow: 5px 5px 0 var(--sg-text);
+  row-gap: var(--sg-space-3);
+}
+sg-postcard[data-skin="playful"] article::before { display: none; }
+sg-postcard[data-skin="playful"] .sg-postcard-face {
+  display: grid;
+  align-content: center;
+  min-height: 7.5rem;
+  padding: var(--sg-space-3) var(--sg-space-4);
+  border-radius: var(--sg-radius-2);
+  background: var(--sg-accent);
+  color: var(--sg-on-accent);
+}
+sg-postcard[data-skin="playful"] .sg-postcard-problem { font: var(--sg-step-2) / var(--sg-leading-tight) var(--sg-font-hand); }
+sg-postcard[data-skin="playful"] .sg-postcard-back {
+  align-content: center;
+  padding: var(--sg-space-3) var(--sg-space-4);
+  border-radius: var(--sg-radius-2);
+  background: var(--sg-selection);
+}
+sg-postcard[data-skin="playful"] .sg-postcard-back dt { color: var(--sg-text); }
+
+/* The flip: only when the skin has confirmed full motion and a hovering pointer. */
+sg-postcard[data-flip] article { grid-template-areas: "title status" "where where" "flip flip"; }
+sg-postcard[data-flip] :is(.sg-postcard-face, .sg-postcard-back) {
+  grid-area: flip;
+  backface-visibility: hidden;
+  transition: transform var(--sg-dur-slow) var(--sg-ease-spring);
+  transform: perspective(900px) rotateY(0deg);
+}
+sg-postcard[data-flip] .sg-postcard-back { transform: perspective(900px) rotateY(-180deg); }
+sg-postcard[data-flip] article:is(:hover, :focus-within) .sg-postcard-face { transform: perspective(900px) rotateY(180deg); }
+sg-postcard[data-flip] article:is(:hover, :focus-within) .sg-postcard-back { transform: perspective(900px) rotateY(0deg); }
+
+@media (forced-colors: active) {
+  sg-postcard article { border: 1px solid CanvasText; -webkit-mask: none; mask: none; }
+  sg-postcard .sg-postcard-postage { border-color: CanvasText; }
+  sg-postcard .sg-postcard-postmark { stroke: CanvasText; }
+  sg-postcard .sg-postcard-postmark text { fill: CanvasText; }
+}
+
+/* The status stamp at postcard size: the stamp's own warm and playful word is
+   set for a page, too big for a card's corner. */
+sg-postcard > article > sg-stamp[data-skin] > .sg-stamp-words { padding: 0.45em 0.8em 0.5em; }
+sg-postcard > article > sg-stamp[data-skin] > .sg-stamp-words > strong { font-size: var(--sg-step-0); letter-spacing: 0.14em; }
+sg-postcard > article > sg-stamp:not([data-skin]) > .sg-stamp-words > strong,
+sg-postcard > article > sg-stamp[data-skin="quiet"] > .sg-stamp-words > strong { font-size: var(--sg-step--1); }
+/* Room for the playful tilt and its shadow, so the card never pushes the page sideways. */
+sg-postcard[data-skin="playful"] { padding: 4px 10px 10px 4px; }

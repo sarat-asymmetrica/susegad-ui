@@ -1,0 +1,24 @@
+{
+  "name": "stage3d",
+  "type": "package",
+  "title": "Stage3d: the three.js tier",
+  "description": "The lazy three.js tier (decision 0017): loadThree() imports three only when a live 3D drawing is about to be seen, and resolves null if it cannot; webglAvailable(), liteDevice() and watchVisible() choose and pause the tier; the pure core chooses live, 2D or still, reprojects a photo with a depth map so a moving camera gives true parallax, and fits it to any frame. Needs the npm package three at exactly 0.186.1.",
+  "version": "0.1.0",
+  "stability": "experimental",
+  "files": [
+    "stage3d.js",
+    "stage3d.core.js",
+    "stage3d.prompt.md",
+    "stage3d.docs.md"
+  ],
+  "dependencies": [],
+  "prompt": "stage3d.prompt.md",
+  "docs": "stage3d.docs.md",
+  "budget": {
+    "jsBytes": 12288,
+    "reason": "Decision 0017: the tier is budgeted apart from the dependency-free layers. Today 10.0 KB: stage3d.js 4.3 KB (lazy loader, WebGL and software-renderer detection, visibility), stage3d.core.js 5.8 KB (pure, tested in Node). three itself (npmDependencies) is recorded per story as bundled."
+  },
+  "npmDependencies": {
+    "three": "0.186.1"
+  }
+}

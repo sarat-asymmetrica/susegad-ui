@@ -8,7 +8,7 @@ import { snapshotAt } from '../src/ref.js';
 
 const COMMANDS = { list, ls: list, add, diff, info };
 
-export function run(argv, { cwd = process.cwd(), out = s => console.log(s ?? ''), err = s => console.error(s ?? '') } = {}) {
+export async function run(argv, { cwd = process.cwd(), out = s => console.log(s ?? ''), err = s => console.error(s ?? '') } = {}) {
   let snap = null;
   try {
     const args = parseArgs(argv);
@@ -24,11 +24,11 @@ export function run(argv, { cwd = process.cwd(), out = s => console.log(s ?? '')
       err('Run susegad --help for the details.');
       return 1;
     }
-    if (!args.ref) return command(args, { cwd, out, registry: args.registry });
+    if (!args.ref) return await command(args, { cwd, out, registry: args.registry });
     // --ref: run against the registry as committed, exported to a temporary folder
     snap = snapshotAt(args.ref, args.registry, cwd);
     out(`Reading the registry at ${args.ref} (${snap.commit.slice(0, 7)}), as committed.`);
-    return command(args, { cwd, out, registry: snap.dir });
+    return await command(args, { cwd, out, registry: snap.dir });
   } catch (e) {
     if (e instanceof CliError) { err(snap ? e.message.split(snap.dir).join(`${snap.top} at ${snap.commit.slice(0, 7)}`) : e.message); return 1; }
     err(`Something went wrong that I did not expect: ${e.stack ?? e}`);
@@ -40,5 +40,5 @@ export function run(argv, { cwd = process.cwd(), out = s => console.log(s ?? '')
 }
 
 if (import.meta.main ?? process.argv[1]?.replace(/\\/g, '/').endsWith('/bin/susegad.mjs')) {
-  process.exitCode = run(process.argv.slice(2));
+  process.exitCode = await run(process.argv.slice(2));
 }

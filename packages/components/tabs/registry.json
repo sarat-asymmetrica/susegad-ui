@@ -1,0 +1,34 @@
+{
+  "name": "tabs",
+  "type": "component",
+  "title": "Tabs",
+  "description": "A row of headed sections, read one at a time. Without JavaScript it is a table of contents: every section shows and each link jumps to its heading. With JavaScript it is the ARIA APG tabs pattern, automatic activation, and the selected tab is marked by an ink underline that travels to it: a static hairline in quiet, an eased line in warm, the same line with a bead in playful. Panel swaps use a same-document View Transition where the browser has one, else an instant swap.",
+  "version": "0.1.0",
+  "files": [
+    "tabs.js",
+    "tabs.core.js",
+    "tabs.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "tabs.prompt.md",
+    "tabs.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "tokens",
+    "transitions"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "tabs.prompt.md",
+  "docs": "tabs.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005/0010: 12 KB behaviour (tabs.js + tabs.core.js) plus 8 KB for each of three skins. Today 11601 bytes: behaviour 9.2 KB (tabs.js imports the shared packages/transitions/page.js helper rather than repeating its View Transition guard), skins quiet 0.2 KB, warm 0.9 KB, playful 1.1 KB."
+  }
+}

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="/tools/harness/demo.js"></script>
+  <link rel="stylesheet" href="/packages/tokens/fonts.css">
+  <link rel="stylesheet" href="/packages/tokens/tokens.css">
+  <meta charset="utf-8">
+  <title>Carepa perf</title>
+  <style>
+    /* Matches tools/harness/scene.html's #box exactly (min(1100px, 100%)) and
+       Paus's own aspect ratio (1200x800, not Carepa's own 1200x820), so the
+       two pages are the same size when perf.mjs measures them in the same
+       run (Karigar A7: a 1200px page against the 1100px harness once read
+       as a 20% cost for something that actually cost 2%). */
+    body { margin: 0; }
+    #box { width: min(1100px, 100%); aspect-ratio: 1200 / 800; margin: 0 auto; position: relative; }
+  </style>
+</head>
+<body>
+  <div id="box"></div>
+  <script type="module">
+    import { mount } from '/packages/surfaces/carepa/index.js';
+    const ctl = mount(document.getElementById('box'), { seed: 1, register: 'warm', reducedMotion: false });
+    window.__piece = ctl;
+    window.__ready = true;
+  </script>
+</body>
+</html>

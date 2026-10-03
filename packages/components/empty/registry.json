@@ -1,6 +1,7 @@
 {
   "name": "empty",
   "type": "component",
+  "stability": "experimental",
   "title": "Empty state",
   "description": "What a place shows before there is anything in it: your heading, sentence and action, named as a region. Quiet adds a hairline drawing; warm sets a scene (Paus, rain on a Goan window) beside the words, drifting slowly; playful lets you play with it. The scene loads only when a warm or playful page needs it.",
   "version": "0.1.0",

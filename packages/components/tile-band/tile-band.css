@@ -1,0 +1,37 @@
+/* <sg-tile-band>. Without JavaScript this is a cobalt hairline (the <hr>, or a rule down the side). With it,
+   a canvas of painted tiles lies over the band's box. The thickness of the band is one tile: --sg-tile-size
+   is the tile you would like, and the element sets --sg-tile-fit to the size that makes whole square tiles
+   fit its length. */
+
+sg-tile-band {
+  --sg-tile-size: 4rem;
+  display: block;
+  position: relative;
+  max-width: 100%;
+  color: var(--sg-text);
+}
+@media (max-width: 30rem) { sg-tile-band { --sg-tile-size: 3.25rem; } }
+sg-tile-band[hidden] { display: none; }
+
+/* the plain look: a cobalt hairline */
+sg-tile-band > hr { margin: 0; border: 0; border-top: var(--sg-hairline) solid var(--sg-cobalt, light-dark(#1B4A9B, #8FB2F2)); }
+sg-tile-band[orientation="vertical"]:not([data-skin]) { min-height: 8rem; border-inline-start: var(--sg-hairline) solid var(--sg-cobalt, light-dark(#1B4A9B, #8FB2F2)); width: 0; }
+
+/* the painted look */
+sg-tile-band[data-skin] { block-size: var(--sg-tile-fit, var(--sg-tile-size)); }
+sg-tile-band[data-skin] > hr {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); border: 0;
+}
+sg-tile-band[orientation="vertical"] { display: block; align-self: stretch; }
+sg-tile-band[orientation="vertical"][data-skin] { block-size: auto; inline-size: var(--sg-tile-fit, var(--sg-tile-size)); min-block-size: 12rem; }
+sg-tile-band .sg-tile-band-canvas { position: absolute; inset: 0; display: block; inline-size: 100%; block-size: 100%; pointer-events: none; }
+/* a glazed tile stands a hair proud of the wall */
+sg-tile-band:is([data-skin="warm"], [data-skin="playful"]) .sg-tile-band-canvas { filter: drop-shadow(0 1px 1px color-mix(in oklch, var(--sg-shadow) 40%, transparent)); }
+/* playful: the tiles answer a pointer or a finger, as long as motion is allowed */
+sg-tile-band[data-skin="playful"][data-motion="full"] .sg-tile-band-canvas { pointer-events: auto; touch-action: manipulation; }
+
+@media (forced-colors: active) {
+  sg-tile-band[data-skin] > hr { position: static; width: auto; height: auto; margin: 0; clip-path: none; border-top: 2px solid CanvasText; }
+  sg-tile-band[data-skin] .sg-tile-band-canvas { display: none; }
+  sg-tile-band[data-skin] { block-size: auto; }
+}

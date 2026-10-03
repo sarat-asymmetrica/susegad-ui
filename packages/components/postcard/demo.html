@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Postcard</title>
+<link rel="stylesheet" href="./postcard.css">
+<link rel="stylesheet" href="../badge/badge.css">
+<link rel="stylesheet" href="../stamp/stamp.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 80rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: 0 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-5); }
+  .opt { margin: var(--sg-space-2) 0 0; font-size: var(--sg-step--1); color: var(--sg-text-soft); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: var(--sg-space-5) var(--sg-space-4); margin-top: var(--sg-space-5); }
+  .stack { display: grid; gap: var(--sg-space-4); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Postcard</h1>
+  <p class="lede">A card for a piece of work: where and when, the problem in a line, what was built, the outcome and its status. The whole card is one link.</p>
+  <div class="grid">
+    <section data-register="quiet" aria-labelledby="h-quiet">
+      <h2 id="h-quiet">Quiet: an index card</h2>
+      <div class="stack">
+        <sg-postcard>
+          <article>
+            <h3><a href="#aldona-quiet">Aldona Organics</a></h3>
+            <p class="sg-postcard-where">Aldona, Goa, 2026 <sg-badge tone="success">Live</sg-badge></p>
+            <div class="sg-postcard-face"><p class="sg-postcard-problem">Orders arrived by message and got lost between chats.</p></div>
+            <dl class="sg-postcard-back">
+              <dt>Built</dt><dd>An order page and a stock sheet that update each other</dd>
+              <dt>Outcome</dt><dd>Placeholder: orders answered the same day</dd>
+            </dl>
+          </article>
+        </sg-postcard>
+        <sg-postcard>
+          <article>
+            <h3><a href="#tides-quiet">Tide table</a></h3>
+            <p class="sg-postcard-where">Chapora, 2025 <sg-badge tone="info">Experiment</sg-badge></p>
+            <div class="sg-postcard-face"><p class="sg-postcard-problem">Fishing boats read tides off a printed sheet a year old.</p></div>
+            <dl class="sg-postcard-back">
+              <dt>Built</dt><dd>A one-page tide clock that works offline</dd>
+              <dt>Outcome</dt><dd>Placeholder: a sketch, not in use yet</dd>
+            </dl>
+          </article>
+        </sg-postcard>
+        <p class="opt">With <code>status-style="stamp"</code>:</p>
+        <sg-postcard status-style="stamp" postmark="Margao 2026">
+          <article>
+            <h3><a href="#ledger-quiet">A trading ledger</a></h3>
+            <p class="sg-postcard-where">Margao, 2026</p>
+            <div class="sg-postcard-face"><p class="sg-postcard-problem">Invoices, stock and bank lines lived in three places.</p></div>
+            <dl class="sg-postcard-back">
+              <dt>Built</dt><dd>One ledger on the office machine, no cloud</dd>
+              <dt>Outcome</dt><dd>Placeholder: month-end in a day, not a week</dd>
+            </dl>
+            <sg-stamp role="none" tone="accent" seed="ledger-quiet"><p class="sg-stamp-words"><strong>Shipped</strong></p></sg-stamp>
+          </article>
+        </sg-postcard>
+      </div>
+    </section>
+    <section data-register="warm" aria-labelledby="h-warm">
+      <h2 id="h-warm">Warm: a picture postcard, back side</h2>
+      <div class="stack">
+        <sg-postcard>
+          <article>
+            <h3><a href="#aldona-warm">Aldona Organics</a></h3>
+            <p class="sg-postcard-where">Aldona, Goa, 2026 <sg-badge tone="success">Live</sg-badge></p>
+            <div class="sg-postcard-face"><p class="sg-postcard-problem">Orders arrived by message and got lost between chats.</p></div>
+            <dl class="sg-postcard-back">
+              <dt>Built</dt><dd>An order page and a stock sheet that update each other</dd>
+              <dt>Outcome</dt><dd>Placeholder: orders answered the same day</dd>
+            </dl>
+          </article>
+        </sg-postcard>
+        <sg-postcard>
+          <article>
+            <h3><a href="#tides-warm">Tide table</a></h3>
+            <p class="sg-postcard-where">Chapora, 2025 <sg-badge tone="info">Experiment</sg-badge></p>
+            <div class="sg-postcard-face"><p class="sg-postcard-problem">Fishing boats read tides off a printed sheet a year old.</p></div>
+            <dl class="sg-postcard-back">
+              <dt>Built</dt><dd>A one-page tide clock that works offline</dd>
+              <dt>Outcome</dt><dd>Placeholder: a sketch, not in use yet</dd>
+            </dl>
+          </article>
+        </sg-postcard>
+        <p class="opt">With <code>status-style="stamp"</code>:</p>
+        <sg-postcard status-style="stamp" postmark="Margao 2026">
+          <article>
+            <h3><a href="#ledger-warm">A trading ledger</a></h3>
+            <p class="sg-postcard-where">Margao, 2026</p>
+            <div class="sg-postcard-face"><p class="sg-postcard-problem">Invoices, stock and bank lines lived in three places.</p></div>
+            <dl class="sg-postcard-back">
+              <dt>Built</dt><dd>One ledger on the office machine, no cloud</dd>
+              <dt>Outcome</dt><dd>Placeholder: month-end in a day, not a week</dd>
+            </dl>
+            <sg-stamp role="none" tone="accent" seed="ledger-warm"><p class="sg-stamp-words"><strong>Shipped</strong></p></sg-stamp>
+          </article>
+        </sg-postcard>
+      </div>
+    </section>
+    <section data-register="playful" aria-labelledby="h-playful">
+      <h2 id="h-playful">Playful: hover or focus to turn it over</h2>
+      <div class="stack">
+        <sg-postcard>
+          <article>
+            <h3><a href="#aldona-playful">Aldona Organics</a></h3>
+            <p class="sg-postcard-where">Aldona, Goa, 2026 <sg-badge tone="success">Live</sg-badge></p>
+            <div class="sg-postcard-face"><p class="sg-postcard-problem">Orders arrived by message and got lost between chats.</p></div>
+            <dl class="sg-postcard-back">
+              <dt>Built</dt><dd>An order page and a stock sheet that update each other</dd>
+              <dt>Outcome</dt><dd>Placeholder: orders answered the same day</dd>
+            </dl>
+          </article>
+        </sg-postcard>
+        <sg-postcard>
+          <article>
+            <h3><a href="#tides-playful">Tide table</a></h3>
+            <p class="sg-postcard-where">Chapora, 2025 <sg-badge tone="info">Experiment</sg-badge></p>
+            <div class="sg-postcard-face"><p class="sg-postcard-problem">Fishing boats read tides off a printed sheet a year old.</p></div>
+            <dl class="sg-postcard-back">
+              <dt>Built</dt><dd>A one-page tide clock that works offline</dd>
+              <dt>Outcome</dt><dd>Placeholder: a sketch, not in use yet</dd>
+            </dl>
+          </article>
+        </sg-postcard>
+        <p class="opt">With <code>status-style="stamp"</code>:</p>
+        <sg-postcard status-style="stamp" postmark="Margao 2026">
+          <article>
+            <h3><a href="#ledger-playful">A trading ledger</a></h3>
+            <p class="sg-postcard-where">Margao, 2026</p>
+            <div class="sg-postcard-face"><p class="sg-postcard-problem">Invoices, stock and bank lines lived in three places.</p></div>
+            <dl class="sg-postcard-back">
+              <dt>Built</dt><dd>One ledger on the office machine, no cloud</dd>
+              <dt>Outcome</dt><dd>Placeholder: month-end in a day, not a week</dd>
+            </dl>
+            <sg-stamp role="none" tone="accent" seed="ledger-playful"><p class="sg-stamp-words"><strong>Shipped</strong></p></sg-stamp>
+          </article>
+        </sg-postcard>
+      </div>
+    </section>
+  </div>
+  <p class="note">Projects and outcomes here are made up. By default the status is a badge on the where-line. The third card of each column opts in to the library's stamp (with <code>role="none"</code>, so it is read as part of the card rather than announced), and in warm to a postmark on it.</p>
+</main>
+<script type="module">
+  import './postcard.js';
+  import '../badge/badge.js';
+  import '../stamp/stamp.js';
+</script>
+</body>
+</html>

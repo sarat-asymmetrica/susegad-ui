@@ -1,6 +1,7 @@
 {
   "name": "signature",
   "type": "component",
+  "stability": "experimental",
   "title": "Signature",
   "description": "Sign by hand or by typing your name. The native path is a typed-name input that submits and works without JavaScript; with it, a pad takes a finger, pen or mouse, inks the stroke from the pen's pressure and speed, and submits the ink as SVG path data in a hidden input. Undo and start again are real buttons. Quiet is a plain line and a plain pen; warm a broad nib whose fresh ink dries into the paper; playful adds a flourish.",
   "version": "0.1.0",

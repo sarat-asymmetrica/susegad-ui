@@ -1,0 +1,14 @@
+{
+  "name": "scene-saanj",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["hero","background"],
+  "title": "Saanj",
+  "description": "Dusk over flooded paddy: a sky mixed in OKLCH from apricot through rose to indigo, a line of ink palms, and a murmuration of six hundred rosy starlings flown by boids, which pours into the palms to roost and leaves at dawn. Quiet is one finished frame of the murmuration; warm an easier dusk with a smaller flock; playful makes the pointer, or the arrow keys, a hawk the flock parts around. The flock flies round slotted text.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "saanj.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "saanj.prompt.md",
+  "budget": { "jsBytes": 49152, "reason": "The plate's own OKLCH colour, boids flock, paddy plots and palms, ported line for line." }
+}

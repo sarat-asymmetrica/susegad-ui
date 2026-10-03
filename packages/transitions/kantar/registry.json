@@ -1,0 +1,31 @@
+{
+  "name": "kantar-interlude",
+  "type": "package",
+  "title": "The Kantar interlude",
+  "description": "A curtain between two steps of a long flow: it drops (with folds and a hem that ripples with a damped wave when it lands), a line plays in a warm spotlight pool while the real work happens (however long that actually takes, with a standing silhouette in playful), and it rises on the next step. Always has a skip control; never outlasts the real work unless the author raises minWaitMs on purpose; falls back to a plain status line in the quiet register or under reduced motion. Ported from the sketchbook's Kantar plate (a tiatr stage), principle rather than likeness (HOMAGE rule 1): the three-phase timeline and the curtain's own geometry (canvas-drawn from pure, tested functions), not the painted sets or the pit band. Makes no sound of its own (decision 0015); the song lines are placeholders awaiting a Konkani ear (HOMAGE rule 7).",
+  "version": "0.1.0",
+  "files": [
+    "kantar.js",
+    "kantar.core.js",
+    "kantar.css",
+    "kantar.prompt.md",
+    "kantar.docs.md"
+  ],
+  "dependencies": [
+    "engine",
+    "kantar-curtain",
+    "tokens",
+    "transitions"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "kantar.prompt.md",
+  "docs": "kantar.docs.md",
+  "budget": {
+    "jsBytes": 26624,
+    "reason": "Counted raw (comments included) since the registry measures source bytes: kantar.js (the DOM and timing driver, the spot, the singer) 13.6 KB and kantar.core.js (the pure timeline and the pure geometry, all tested) 10.7 KB, about 24.6 KB. The velvet, folds, shadow and fringe moved out to the shared kantar-curtain package, which the Kantar scene draws from too."
+  }
+}

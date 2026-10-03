@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Popover</title>
+<link rel="stylesheet" href="/packages/components/button/button.css">
+<link rel="stylesheet" href="./popover.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 44rem; margin: 0 auto; padding: var(--sg-space-5) 16px 30rem; }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .lede { margin: 0 0 var(--sg-space-5); color: var(--sg-text-soft); max-width: var(--sg-measure); }
+  section { margin-bottom: var(--sg-space-6); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-1) / var(--sg-leading-tight) var(--sg-font-body); margin: 0 0 var(--sg-space-3); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--sg-space-4); }
+  #rates p, #kn-rates p { margin: 0; }
+  #rates h3, #kn-rates h3 { margin: 0 0 var(--sg-space-2); font: var(--sg-weight-medium) var(--sg-step-0) / 1.2 var(--sg-font-body); }
+  .bottom-trigger { margin-top: 26rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Popover</h1>
+  <p class="lede">A trigger and a native popover, unchanged: <code>popovertarget</code> opens, closes, focuses and light-dismisses it, with or without JavaScript. The register skins the card.</p>
+
+  <section>
+    <h2>Today's rate</h2>
+    <sg-popover>
+      <sg-button><button type="button" popovertarget="rates">Today's rate</button></sg-button>
+      <div id="rates" popover>
+        <h3>The garden room</h3>
+        <p>₹8,200 a night, this week. Breakfast is included.</p>
+      </div>
+    </sg-popover>
+  </section>
+
+  <section>
+    <h2>In Kannada</h2>
+    <!-- This Indian-language content is a draft awaiting a native speaker's check. -->
+    <sg-popover>
+      <sg-button><button type="button" popovertarget="kn-rates">ಇಂದಿನ ದರ</button></sg-button>
+      <div id="kn-rates" popover lang="kn">
+        <h3>ಗಾರ್ಡನ್ ಕೊಠಡಿ</h3>
+        <p>ಈ ವಾರ ರಾತ್ರಿಗೆ ₹8,200.</p>
+      </div>
+    </sg-popover>
+  </section>
+
+  <section class="bottom-trigger">
+    <h2>Near the bottom of the page (flips above)</h2>
+    <sg-popover>
+      <sg-button><button type="button" popovertarget="low">Open near the bottom</button></sg-button>
+      <div id="low" popover>
+        <p>There is not much room below this trigger, so the panel should open above it instead.</p>
+      </div>
+    </sg-popover>
+  </section>
+</main>
+<script type="module">
+  import '/packages/components/button/button.js';
+  import './popover.js';
+</script>
+</body>
+</html>

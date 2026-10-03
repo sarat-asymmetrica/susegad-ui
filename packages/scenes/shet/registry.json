@@ -1,0 +1,14 @@
+{
+  "name": "scene-shet",
+  "type": "scene",
+  "title": "Shet",
+  "description": "One year of a Goan paddy field seen from a low rise: cracked April mud, the first rain darkening it drop by drop, flooded plots, green rice combed by wind, ripe gold, the harvest, and the mud cracking again, with two cattle egrets that come with the water. Quiet is the ripening gold as a finished still, warm turns the year at an easier pace, playful gives the wind to the hand. Set progress and the field holds at that point of the year. A scape: the still loads first, the turning year after.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "year.js", "year-model.js", "shet.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "shet.prompt.md",
+  "tier": "scape",
+  "entry": ["index.js"],
+  "budget": { "jsBytes": 98304, "firstSightBytes": 65536, "reason": "A year in a field, the plate's own code: its still is under 64 KB of code (first sight), the whole year under 96 KB of source, comments kept." }
+}

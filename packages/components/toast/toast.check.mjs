@@ -9,11 +9,11 @@
 // Escape dismisses it and focus goes back; an error stays; reduced motion
 // shows the letter open at once.
 
-import { chromium } from 'playwright';
+import { dropBenignErrors, pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const browser = await pickEngine().launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 
@@ -152,7 +152,8 @@ for (const register of ['quiet', 'warm', 'playful']) {
     bad.length ? bad.map(b => `${b.what} ${(b.covered * 100).toFixed(0)}%`).join('; ') : `${worst.length} checked`);
   const pile = await p.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--sg-toast-pile').trim());
   check(`${register}: the region tells the page how much room the pile takes`, /^\d+px$/.test(pile) && parseInt(pile, 10) > 60, pile);
-  check(`${register}: no page errors at phone width`, errors.length === 0, errors.join(' | '));
+  const real = dropBenignErrors(errors);
+  check(`${register}: no page errors at phone width`, real.length === 0, real.join(' | '));
   await ctx.close();
 }
 

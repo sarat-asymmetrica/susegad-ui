@@ -13,11 +13,22 @@
     },
     "type": {
       "type": "string",
-      "enum": ["package", "scene", "component", "recipe", "adapter"]
+      "enum": ["package", "scene", "surface", "component", "recipe", "adapter"]
     },
     "register": {
       "type": "string",
       "enum": ["quiet", "warm", "playful"]
+    },
+    "stability": {
+      "description": "experimental: may change or move without notice. beta: the contract is settling; breaking it gets a changelog entry. stable: covered by the semver rules in the roadmap.",
+      "type": "string",
+      "enum": ["experimental", "beta", "stable"]
+    },
+    "useForTag": {
+      "description": "A short, honest tag for where this piece fits well: for example hero, loader, empty-state, 404, divider, section-break, background or story. Not a closed list; add one only where the piece's own description already supports it.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "x-hint": "should be a short kebab-case tag, like hero or section-break"
     },
     "relPath": {
       "description": "A forward-slash path inside the repo. No leading slash, no backslashes, no .. segments.",
@@ -41,6 +52,7 @@
       "properties": {
         "jsBytes": { "description": "Unminified source bytes of this item's own .js and .mjs files.", "type": "integer", "minimum": 0 },
         "frameMs": { "description": "Milliseconds per frame when animated.", "type": "number", "exclusiveMinimum": 0 },
+        "firstSightBytes": { "description": "A scape only (decision 0020, amended): the most code (comments stripped) its first sight may load before the finished still is on screen, at most 65536.", "type": "integer", "minimum": 0 },
         "reason": { "description": "Why this item's budget differs from the default for its type (see docs/decisions/0001-architecture.md, Budgets).", "type": "string", "minLength": 1 }
       },
       "additionalProperties": false
@@ -55,6 +67,24 @@
         "title": { "type": "string", "minLength": 1 },
         "description": { "type": "string", "minLength": 1 },
         "version": { "$ref": "#/$defs/version" },
+        "stability": { "$ref": "#/$defs/stability" },
+        "stabilityReason": { "description": "Required for beta or stable: one line saying why.", "type": "string", "minLength": 1 },
+        "motif": {
+          "description": "For a piece drawn from a cultural tradition: where it comes from, how everyday or ceremonial it is, and one honest sentence about it. The gate batch lints this field.",
+          "type": "object",
+          "required": ["origin", "tier", "gloss"],
+          "properties": {
+            "origin": { "type": "string", "minLength": 1 },
+            "tier": { "type": "string", "minLength": 1 },
+            "gloss": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        },
+        "useFor": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/useForTag" }
+        },
         "files": {
           "type": "array",
           "minItems": 1,
@@ -66,6 +96,11 @@
           "uniqueItems": true,
           "items": { "$ref": "#/$defs/name" }
         },
+        "npmDependencies": {
+          "description": "npm packages the CLI adds to the consumer's package.json, name to exact version, matching the library's own package.json (decision 0017).",
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/version" }
+        },
         "registers": {
           "type": "array",
           "uniqueItems": true,
@@ -73,7 +108,15 @@
         },
         "budget": { "$ref": "#/$defs/budget" },
         "docs": { "$ref": "#/$defs/relPath" },
-        "prompt": { "$ref": "#/$defs/relPath" }
+        "prompt": { "$ref": "#/$defs/relPath" },
+        "tier": { "description": "\"scape\": a scene budgeted on its first sight rather than its total (decision 0020).", "type": "string", "enum": ["scape"] },
+        "entry": {
+          "description": "A scape only: the files its first sight loads from. What they import statically counts; a dynamic import() is the seam to the rest.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/relPath" }
+        }
       },
       "additionalProperties": false
     },
@@ -89,16 +132,35 @@
     },
     "indexItem": {
       "type": "object",
-      "required": ["name", "type", "title", "description", "version", "manifest", "files", "dependencies", "registers", "bytes", "jsBytes", "codeBytes", "hash"],
+      "required": ["name", "type", "title", "description", "version", "stability", "manifest", "files", "dependencies", "registers", "bytes", "jsBytes", "codeBytes", "hash"],
       "properties": {
         "name": { "$ref": "#/$defs/name" },
         "type": { "$ref": "#/$defs/type" },
         "title": { "type": "string" },
         "description": { "type": "string" },
         "version": { "$ref": "#/$defs/version" },
+        "stability": { "$ref": "#/$defs/stability" },
+        "stabilityReason": { "type": "string", "minLength": 1 },
+        "motif": {
+          "description": "For a piece drawn from a cultural tradition: where it comes from, how everyday or ceremonial it is, and one honest sentence about it. The gate batch lints this field.",
+          "type": "object",
+          "required": ["origin", "tier", "gloss"],
+          "properties": {
+            "origin": { "type": "string", "minLength": 1 },
+            "tier": { "type": "string", "minLength": 1 },
+            "gloss": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        },
+        "useFor": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/useForTag" }
+        },
         "manifest": { "$ref": "#/$defs/relPath" },
         "files": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/indexFile" } },
         "dependencies": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/name" } },
+        "npmDependencies": { "type": "object", "additionalProperties": { "$ref": "#/$defs/version" } },
         "registers": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/register" } },
         "budget": { "$ref": "#/$defs/budget" },
         "docs": { "$ref": "#/$defs/relPath" },
@@ -106,6 +168,9 @@
         "bytes": { "type": "integer", "minimum": 0 },
         "jsBytes": { "type": "integer", "minimum": 0 },
         "codeBytes": { "description": "jsBytes with comments and blank lines taken out (decision 0002).", "type": "integer", "minimum": 0 },
+        "tier": { "type": "string", "enum": ["scape"] },
+        "entry": { "type": "array", "items": { "$ref": "#/$defs/relPath" } },
+        "firstSightBytes": { "description": "A scape only: the code bytes (comments stripped, as codeBytes) of its own files that its entry reaches by static imports (decision 0020, amended).", "type": "integer", "minimum": 0 },
         "hash": { "$ref": "#/$defs/hash" }
       },
       "additionalProperties": false

@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="../../packages/tokens/fonts.css">
   <link rel="stylesheet" href="../../packages/tokens/tokens.css">
   <link rel="stylesheet" href="./docs.css">
+  <link rel="stylesheet" href="./site.css">
+  <script type="module" src="./shell.js"></script>
   <script type="module" src="./docs.js"></script>
 </head>
 <body>
@@ -19,11 +21,13 @@
     <div class="bar-in">
       <a class="brand" href="./" aria-label="Susegad UI, home">Susegad <span>UI</span></a>
       <nav class="nav" aria-label="Sections">
-        <a href="#ideas">Ideas</a>
-        <a href="#scenes">Scenes</a>
-        <a href="#pencil-box">Pencil box</a>
-        <a href="./components.html">Components</a>
+        <a href="scenes">Scenes</a>
+        <a href="components">Components</a>
+        <a href="recipes">Recipes</a>
+        <a href="foundations">Foundations</a>
+        <a href="pencil-box">Pencil box</a>
       </nav>
+      <a class="src" href="https://github.com/sarat-asymmetrica/susegad-ui" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
       <form class="prefs" id="prefs" aria-label="How this page looks">
         <fieldset class="seg seg-register" data-pref="register">
           <legend>Register</legend>
@@ -58,15 +62,51 @@
       <div class="mast-text">
         <p class="kicker">a front-end library, drawn in code in Goa</p>
         <h1 id="title">Susegad <span class="h1-ui">UI</span></h1>
-        <p class="gloss">Konkani, from the Portuguese <i>sossegado</i>: the unhurried contentment of a Goan afternoon.</p>
+        <p class="gloss">Konkani, from the Portuguese <i>sossegado</i>.</p>
         <p class="lede">Susegad UI is a library for interfaces and documents that are beautiful and comfortable at the same time. It grew out of a sketchbook of code-drawn studies of Goa and India, and it keeps their craft: drawings that host your words, show something real and answer the person using them. Every piece comes in three registers, ships with the prompt you could give an AI agent to make it, and keeps its keyboard and screen reader support in a plain core underneath.</p>
       </div>
       <figure class="mast-art" id="mast-art">
-        <div class="mast-frame">
-          <sg-scene class="mast-kolam" id="mast-kolam" name="kolam" seed="7" label="A kolam: one unbroken line looping around a grid of dots"></sg-scene>
+        <!-- The frame is a seam: a later border (a kaavi, scraped laterite) mounts into .mast-border and sets --mast-frame-pad; the stage inside does not change. -->
+        <div class="mast-frame" data-frame="proscenium">
+          <div class="mast-border" data-slot="border" aria-hidden="true"></div>
+          <sg-scene class="mast-stage" id="mast-stage" name="kantar" hero="true" label="A tiatr stage: a painted proscenium, footlights, the band in the pit and a red velvet curtain"></sg-scene>
         </div>
-        <figcaption class="mast-note">one line, never lifted<span class="if-moving">, drawing itself as you read</span></figcaption>
+        <figcaption class="mast-line" id="mast-line"><span style="--i:0">Susegad:</span> <span style="--i:1">the</span> <span style="--i:2">unhurried</span> <span style="--i:3">contentment</span> <span style="--i:4">of</span> <span style="--i:5">a</span> <span style="--i:6">Goan</span> <span style="--i:7">afternoon.</span></figcaption>
       </figure>
+    </section>
+
+    <section class="library" id="library" aria-labelledby="library-title">
+      <div class="section-head">
+        <h2 id="library-title" class="section-title">What is inside</h2>
+        <p class="section-intro">Every piece has a page of its own, with its prompt and its install line. The indexes show a still of each; the drawing runs when you open it.</p>
+      </div>
+      <!-- site:doors:start -->
+      <ul class="doors" role="list">
+        <li class="door"><h3 class="door-title"><a href="scenes">Scenes</a></h3></li>
+        <li class="door"><h3 class="door-title"><a href="components">Components</a></h3></li>
+        <li class="door"><h3 class="door-title"><a href="recipes">Recipes</a></h3></li>
+        <li class="door"><h3 class="door-title"><a href="foundations">Foundations</a></h3></li>
+        <li class="door door-small"><h3 class="door-title"><a href="pencil-box">The pencil box</a></h3></li>
+      </ul>
+      <!-- site:doors:end -->
+    </section>
+
+    <section class="newest" aria-labelledby="newest-title">
+      <h2 id="newest-title" class="section-title">Newest</h2>
+      <ul class="new-list" role="list">
+        <li class="new-item">
+          <h3 class="new-title"><a href="scenes/veranda">The veranda, in depth</a></h3>
+          <p>A Goan veranda drawn with exact depth: words on glass slide behind its pillars and settle where they can be read, and notes stay pinned to the door and the lamp as the camera walks.</p>
+        </li>
+        <li class="new-item">
+          <h3 class="new-title"><a href="../../packages/scenes/tinto/world.html">Words on glass</a></h3>
+          <p>Put a scene's words on frosted glass and move them by a grip or the arrow keys; the people in the square step round them. Try it in Tinto's square.</p>
+        </li>
+        <li class="new-item">
+          <h3 class="new-title"><a href="scenes/shet">A year of paddy</a></h3>
+          <p>Shet, the first scape: one Goan field from cracked April mud to the harvest, loading its first sight in under 64 KB.</p>
+        </li>
+      </ul>
     </section>
 
     <section class="ideas" id="ideas" aria-labelledby="ideas-title">
@@ -95,7 +135,7 @@
         </li>
         <li class="idea">
           <h3>Every component ships with its prompt</h3>
-          <p>Next to the code sits the prompt you could give an AI agent to make it, and a map from the words in that prompt to the techniques in the code. The library teaches as it serves. Each scene below carries its prompt on a blue inland letter you can copy, with the map just after it.</p>
+          <p>Next to the code sits the prompt you could give an AI agent to make it, and a map from the words in that prompt to the techniques in the code. The library teaches as it serves. Each scene's page carries its prompt on a blue inland letter you can copy, with the map folded away just after it.</p>
         </li>
         <li class="idea">
           <h3>Behaviour and skin are separate</h3>
@@ -104,40 +144,14 @@
       </ol>
     </section>
 
-    <section class="scenes" id="scenes" aria-labelledby="scenes-title">
-      <div class="section-head">
-        <h2 id="scenes-title" class="section-title">Scenes</h2>
-        <p class="section-intro">A scene is a drawing that does a job. It can hold your content, reflect something real such as upload progress, or respond to the person using it. Each one here is drawn live by <code>&lt;sg-scene&gt;</code>, with the prompt that made it and a map from its words to the code. Every other piece of the library, components and recipes included, lives on the <a href="./components.html">Components page</a>.</p>
-      </div>
-      <div id="plates" class="plates">
-        <noscript><p class="note">The scenes are drawn with JavaScript. Everything else on this page works without it.</p></noscript>
-      </div>
-    </section>
-
-    <section class="box" id="pencil-box" aria-labelledby="box-title">
-      <div class="section-head">
-        <h2 id="box-title" class="section-title">The pencil box</h2>
-        <p class="section-intro">A handful of techniques do nearly all the work. Every scene lists the ones it uses, and each tag brings you back here.</p>
-      </div>
-      <dl class="tools" id="tools"></dl>
-    </section>
-
   </main>
 
   <footer class="foot wrap">
     <p class="sig">made by Claude with Sarat, Asymmetrica, Goa, 2026</p>
     <p class="for"><a href="./for-rafe.html">For Rafe</a>, who lent us his Activa and went fishing.</p>
+    <p class="src-line">The code, the prompts and the drawings are open on <a href="https://github.com/sarat-asymmetrica/susegad-ui" rel="noopener">GitHub</a>. Take what you like.</p>
     <p>MIT licensed code; documentation under CC BY 4.0. This page makes no requests to anyone else's servers and keeps your settings only in your own browser. The prompt cards borrow their blue from the India Post inland letter.</p>
   </footer>
-
-  <dialog class="closer" id="closer" aria-labelledby="closer-title">
-    <div class="closer-head">
-      <h2 id="closer-title"></h2>
-      <p class="word" id="closer-word"></p>
-      <button class="btn" type="button" id="closer-close" autofocus>Close</button>
-    </div>
-    <div class="closer-slot" id="closer-slot"></div>
-  </dialog>
 
   <p class="sr-only" id="announce" aria-live="polite"></p>
 </body>

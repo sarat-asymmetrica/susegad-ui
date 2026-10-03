@@ -1,0 +1,127 @@
+/* <sg-button>. The native <button> or <a> underneath is unstyled by us apart
+   from this file: quiet is a hairline outline; warm and playful lay an
+   aria-hidden drawing behind the label, injected by the skin. In forced
+   colours the native control's own look comes back. */
+
+sg-button[hidden] { display: none; } /* our display rule would otherwise beat the browser's [hidden] */
+
+sg-button {
+  display: inline-block;
+  position: relative;
+  isolation: isolate;
+}
+
+sg-button > button,
+sg-button > a {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sg-space-2, 0.5em);
+  box-sizing: border-box;
+  min-height: 2.75em;
+  padding: 0.6em 1.1em;
+  border: var(--sg-stroke, 1.5px) solid var(--sg-rule-strong, CanvasText);
+  border-radius: var(--sg-radius-2, 4px);
+  background: transparent;
+  color: var(--sg-text, CanvasText);
+  font: inherit;
+  font-weight: var(--sg-weight-medium, 600);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out),
+              border-color var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out),
+              color var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out),
+              transform var(--sg-dur-instant, 70ms) var(--sg-ease-out, ease-out);
+}
+sg-button > button:hover,
+sg-button > a:hover {
+  background: var(--sg-surface-raised, ButtonFace);
+}
+sg-button > button:focus-visible,
+sg-button > a:focus-visible {
+  outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight);
+  outline-offset: var(--sg-focus-offset, 2px);
+}
+sg-button > button:disabled,
+sg-button > a[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.55;
+  border-style: dashed;
+}
+
+/* the primary look: a builder opts in with data-tone="accent" on the native element */
+sg-button > [data-tone="accent"] {
+  border-color: var(--sg-accent, Highlight);
+  background: var(--sg-accent, Highlight);
+  color: var(--sg-on-accent, HighlightText);
+}
+sg-button > [data-tone="accent"]:hover { background: var(--sg-accent, Highlight); filter: brightness(1.08); }
+
+/* ── warm: the hand-drawn outline, behind the label ─────────────────────── */
+sg-button[data-skin="warm"] .sg-button-boil {
+  position: absolute;
+  inset: -3px;
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
+  pointer-events: none;
+  overflow: visible;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out);
+}
+sg-button[data-skin="warm"] .sg-button-boil path {
+  fill: none;
+  stroke: var(--sg-accent-text, var(--sg-text, CanvasText));
+  stroke-width: 1.3;
+  vector-effect: non-scaling-stroke;
+}
+sg-button[data-skin="warm"]:is(:hover, :focus-within) .sg-button-boil { opacity: 0.85; }
+sg-button[data-skin="warm"]:is(:hover, :focus-within) .sg-button-boil path {
+  animation: sg-button-boil var(--sg-dur-ambient, 9000ms) var(--sg-ease-in-out, ease-in-out) infinite;
+}
+@keyframes sg-button-boil {
+  0%, 100% { transform: scale(1) translate(0, 0); }
+  33% { transform: scale(1.006, 0.994) translate(0.3px, -0.2px); }
+  66% { transform: scale(0.995, 1.005) translate(-0.2px, 0.3px); }
+}
+/* a real, visible hairline at rest — the ink boil is an addition on hover/
+   focus, never the button's only affordance */
+sg-button[data-skin="warm"] > button,
+sg-button[data-skin="warm"] > a { border-color: var(--sg-rule, CanvasText); }
+
+/* ── playful: the stamped chip, pressing in, with an ink spread on release ── */
+sg-button[data-skin="playful"] > button,
+sg-button[data-skin="playful"] > a {
+  border-radius: var(--sg-radius-1, 2px);
+  border-width: 2px;
+  border-color: var(--sg-accent, Highlight);
+  color: var(--sg-accent-text, var(--sg-text, CanvasText));
+  font-weight: var(--sg-weight-bold, 700);
+}
+sg-button[data-skin="playful"] > [data-tone="accent"] { color: var(--sg-on-accent, HighlightText); }
+sg-button[data-skin="playful"] > button:active,
+sg-button[data-skin="playful"] > a:active {
+  transform: translateY(1px) scale(0.97);
+}
+sg-button[data-skin="playful"] .sg-button-ink {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 60%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--sg-accent, Highlight);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 0;
+}
+
+/* ── forced colours: the browser's own button and link look ─────────────── */
+@media (forced-colors: active) {
+  sg-button .sg-button-boil,
+  sg-button .sg-button-ink { display: none !important; }
+  sg-button > button,
+  sg-button > a { border-color: ButtonText !important; background: revert !important; }
+}

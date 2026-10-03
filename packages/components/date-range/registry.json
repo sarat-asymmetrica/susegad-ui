@@ -1,6 +1,7 @@
 {
   "name": "date-range",
   "type": "component",
+  "stability": "experimental",
   "title": "Date range",
   "description": "Arrival and departure over two native date inputs that submit without JavaScript. With it, a two-month calendar that knows taken nights and turnover mornings from the booking kernels, moves like the APG date grid, feeds the kernels' reasons into native validation, and in warm and playful inks your stay under a season ribbon.",
   "version": "0.1.0",

@@ -1,0 +1,14 @@
+{
+  "name": "scene-chiro",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["background","section-break"],
+  "title": "Chiro",
+  "description": "A Goan laterite compound wall up close through a year: the pits in each cut block grow as a Gray-Scott reaction-diffusion, the monsoon darkens the stone from the top, moss creeps out of the joints and the sun bleaches it back. Quiet is the monsoon-green still; warm an easier year; playful takes a hand (pointer, or arrow keys and Enter) that leaves a damp print, and a brush that rubs red dust loose.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "chiro.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "chiro.prompt.md",
+  "budget": { "jsBytes": 51200, "reason": "The plate's simulation, colouring pass and pencil work, ported line for line." }
+}

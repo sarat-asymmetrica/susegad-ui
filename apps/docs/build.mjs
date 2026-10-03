@@ -5,13 +5,16 @@
 //
 // No bundler. The library is plain ES modules with relative imports, so the
 // build only has to:
-//   1. copy the site's own files (not this script, check.mjs or the README);
+//   1. copy the site's own files (not this script, check.mjs, the other checks or the README);
 //   2. follow the import graph from those files into packages/ and copy every
 //      module, stylesheet and asset it reaches, keeping the tree, so the
 //      packages' own relative imports still resolve;
 //   3. rewrite the site's `../../packages/` prefix to point at that copy;
 //   4. write manifest.js with the scenes it found, so the built page never
-//      probes the dev server.
+//      probes the dev server;
+//   5. take a poster of every piece (posters.mjs, cached) and generate the
+//      index pages and one page per registry item (pages.mjs, site.core.js),
+//      whose references join the import graph like any site file's.
 // Every path stays relative, so out/docs works under / or /any/base/path/.
 
 import fs from 'node:fs';
@@ -23,7 +26,7 @@ const ROOT = path.resolve(HERE, '../..');
 const PACKAGES = path.join(ROOT, 'packages');
 const TOOLS_HARNESS = path.join(ROOT, 'tools', 'harness');
 const OUT = path.join(ROOT, 'out', 'docs');
-const SKIP = new Set(['build.mjs', 'check.mjs', 'README.md']);
+const SKIP = new Set(['build.mjs', 'check.mjs', 'site.check.mjs', 'hero.check.mjs', 'pages.mjs', 'posters.mjs', 'README.md']);
 const rel = p => path.relative(ROOT, p).split(path.sep).join('/');
 
 // ── what a file refers to ────────────────────────────────────────────
@@ -45,7 +48,12 @@ const REF_PATTERNS = {
     /\bfetch\(\s*['"]([^'"]+)['"]/g,
   ],
   css: [/@import\s+(?:url\()?\s*['"]?([^'")\s]+)['"]?\s*\)?/g, /url\(\s*['"]?([^'")]+)['"]?\s*\)/g],
-  html: [/\b(?:src|href)\s*=\s*["']([^"']+)["']/g],
+  html: [
+    /\b(?:src|href)\s*=\s*["']([^"']+)["']/g,
+    // <sg-depth-photo depth="…" layers="…">: images it fetches itself (a file only
+    // when the value names one, so a numeric depth="0.5" is not taken for a path)
+    /\b(?:depth|layers)\s*=\s*["']([^"']+\.(?:png|jpe?g|webp|avif))["']/g,
+  ],
 };
 const kindOf = file => (/\.m?js$/.test(file) ? 'js' : file.endsWith('.css') ? 'css' : /\.html?$/.test(file) ? 'html' : null);
 // In JS a bare name is a package specifier; a leading `/` is root-absolute
@@ -61,7 +69,9 @@ const kindOfRef = (spec, kind) => {
 function stripComments(src) {
   // a /** ... */ doc comment can show an import(...) as an example (core/component.js's
   // skins JSDoc does); it is prose, not code, so it refers to nothing on disk either
-  return src.replace(/\/\*[\s\S]*?\*\//g, '');
+  // A whole-line // comment is prose too (stage3d.js shows an import map as an
+  // example). Only whole lines, so a // inside a string mid-line (a URL) stays.
+  return src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^[ \t]*\/\/.*$/gm, '');
 }
 
 function refsOf(file, base = ROOT) {
@@ -71,6 +81,8 @@ function refsOf(file, base = ROOT) {
   // an inline data: URI can hold url(...) of its own (an SVG filter); it refers to nothing on disk
   if (kind === 'css') src = src.replace(/url\(\s*"data:[^"]*"\s*\)|url\(\s*'data:[^']*'\s*\)/g, '');
   if (kind === 'js') src = stripComments(src);
+  // markup shown as an example (<code>, <pre>, as the rendered docs are full of) is prose, not a reference
+  if (kind === 'html') src = src.replace(/<pre\b[\s\S]*?<\/pre>|<code\b[\s\S]*?<\/code>/gi, '');
   // Demo pages bootstrap their component with an inline `<script type="module">
   // import './x.js';</script>`, not a `<script src>`, so the module's body is
   // JS to scan too, not HTML: a classic (non-module) inline script has no
@@ -78,6 +90,13 @@ function refsOf(file, base = ROOT) {
   const blocks = kind === 'html'
     ? [{ text: src, kind: 'html' }, ...[...src.matchAll(/<script\b[^>]*\btype=["']module["'][^>]*>([\s\S]*?)<\/script>/gi)].map(m => ({ text: stripComments(m[1]), kind: 'js' }))]
     : [{ text: src, kind }];
+  // An import map's addresses are fetched like any import, so they must ship
+  // too: a map into /node_modules/ loads under tools/serve.mjs and 404s on the site.
+  if (kind === 'html') for (const m of src.matchAll(/<script\b[^>]*\btype=["']importmap["'][^>]*>([\s\S]*?)<\/script>/gi)) {
+    const map = JSON.parse(m[1]);
+    const addrs = [...Object.values(map.imports ?? {}), ...Object.values(map.scopes ?? {}).flatMap(Object.values)];
+    blocks.push({ text: addrs.map(a => `import '${a}';`).join('\n'), kind: 'js' });
+  }
   const out = new Set();
   for (const b of blocks) for (const re of REF_PATTERNS[b.kind]) for (const m of b.text.matchAll(re)) {
     const spec = m[m.length - 1].split(/[?#]/)[0];
@@ -100,6 +119,19 @@ const siteFiles = [];
     else if (!(dir === HERE && SKIP.has(e.name))) siteFiles.push(p);
   }
 })(HERE);
+
+// ── 1b. posters and the generated pages ───────────────────────────────
+// Generated straight into out/docs (they have no source file to copy), before
+// the import graph is walked, so what they link to is copied too.
+const registryPath = path.join(ROOT, 'registry', 'registry.json');
+const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+const { makePosters } = await import(pathToFileURL(path.join(HERE, 'posters.mjs')).href);
+const { posters } = await makePosters({ root: ROOT, out: OUT, registry });
+const { writePages } = await import(pathToFileURL(path.join(HERE, 'pages.mjs')).href);
+const generated = await writePages({
+  root: ROOT, out: OUT, registry, posters,
+  write: (to, text) => { fs.mkdirSync(path.dirname(to), { recursive: true }); fs.writeFileSync(to, text); },
+});
 
 // ── 2. which scenes and packages exist ───────────────────────────────
 const { order } = await import(pathToFileURL(path.join(HERE, 'manifest.js')).href);
@@ -127,11 +159,11 @@ const enqueue = (p, from) => {
   queue.push(p);
 };
 for (const f of siteFiles) for (const r of refsOf(f)) enqueue(r, f);
+// a generated page's references resolve inside out/docs; the file to copy is the same path in the repo
+for (const f of generated.pages) for (const r of refsOf(f, OUT)) if (r.startsWith(OUT + path.sep)) enqueue(path.join(ROOT, path.relative(OUT, r)), f);
 if (hasCore) enqueue(path.join(PACKAGES, 'core', 'index.js'), HERE);
 for (const n of scenes) enqueue(path.join(PACKAGES, 'scenes', n, 'index.js'), HERE);
 
-const registryPath = path.join(ROOT, 'registry', 'registry.json');
-const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
 const demoEntries = [];
 for (const item of registry.items) {
   const dir = path.dirname(path.join(ROOT, item.manifest));
@@ -173,6 +205,89 @@ const write = (from, to, text) => {
 for (const p of seen) write(p, path.join(OUT, path.relative(ROOT, p)));
 write(registryPath, path.join(OUT, path.relative(ROOT, registryPath)));
 
+// The registry over HTTP (rung 8): every item's every file, copied at its
+// own repo-relative path (the same one registry.json's `base` points at),
+// whether the site's own pages reach it or not. This is deliberately
+// outside the enqueue/seen graph above and step 4's reference check below:
+// `susegad add --registry https://.../registry/registry.json` needs the
+// registry's declared files to exist byte-for-byte (registry/build.mjs
+// already hashed them), not to have every comment or dev-only path inside
+// them resolve on this site -- that is a different, stricter question this
+// step does not ask.
+const registryOnly = new Set(); // paths that exist in OUT only because of this step, not the site's own graph
+for (const item of registry.items) {
+  for (const f of item.files) {
+    const from = path.join(ROOT, f.path);
+    const to = path.join(OUT, f.path);
+    if (fs.existsSync(to)) continue; // already copied above (it's also reachable from the site)
+    write(from, to);
+    registryOnly.add(to);
+  }
+}
+
+// llms.txt and llms-full.txt (llmstxt.org): generated here, from the same
+// registry.json, never written by hand. See apps/docs/llms.core.js.
+{
+  const { buildLlms } = await import(pathToFileURL(path.join(HERE, 'llms.core.js')).href);
+  const readTexts = item => ({
+    docs: item.docs && fs.existsSync(path.join(ROOT, item.docs)) ? fs.readFileSync(path.join(ROOT, item.docs), 'utf8') : undefined,
+    prompt: item.prompt && fs.existsSync(path.join(ROOT, item.prompt)) ? fs.readFileSync(path.join(ROOT, item.prompt), 'utf8') : undefined,
+  });
+  const { txt, full } = buildLlms(registry, readTexts);
+  write(null, path.join(OUT, 'llms.txt'), txt);
+  write(null, path.join(OUT, 'llms-full.txt'), full);
+}
+
+// ── 3b. _headers: security headers, generated so they cannot drift ───
+// Cloudflare Workers static assets read a `_headers` file from the deploy
+// directory (wrangler.jsonc points at out/docs). The request that asked for
+// these headers is docs/requests/2026-09-27-front-door-2.md §7.
+//
+// Why script-src and style-src keep 'unsafe-inline': the pages carry 80
+// inline bootstrap scripts (the demo pages' module bootstraps, the recipes'
+// look switches, the veranda's stage and walk) and 35 pages set presentational
+// style attributes, and a hash-strict script-src cannot ship through
+// _headers at all: workerd (local and production alike) silently truncates
+// _headers header values at about 2 KB, and the 78 hashes the built pages
+// need measure 4.7 KB. A strict policy waits for a worker-first script that
+// can set headers of any length (recorded in the ledger). What this CSP does
+// hold, everywhere: no third-party script, style, font, image or connection;
+// no plug-ins, no framing, no base hijack, no off-site form action. The
+// library's scenes move styles through CSSOM, which 'self' already permits.
+{
+  const csp = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob:", // inline SVG marks load from CSS as data:, the veranda's canvas hands its picture over as a blob:
+    "font-src 'self'",
+    "media-src 'self'",
+    "connect-src 'self'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'", // no page of this site is somebody else's iframe
+  ].join('; ');
+  const headers = `# Generated by apps/docs/build.mjs. Do not edit by hand.
+# Rules merge: a path matching two rules gets both headers, so the general
+# block sets no Cache-Control and the immutable rules below stand alone
+# (Workers assets already answer with max-age=0, must-revalidate by default).
+/*
+  Content-Security-Policy: ${csp}
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+
+/packages/tokens/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/posters/*
+  Cache-Control: public, max-age=31536000, immutable
+`;
+  fs.writeFileSync(path.join(OUT, '_headers'), headers);
+  console.log('_headers: security headers written, fonts and posters cached immutable');
+}
+
 for (const f of siteFiles) {
   const relToSite = path.relative(HERE, f);
   const to = path.join(OUT, relToSite);
@@ -186,6 +301,14 @@ for (const f of siteFiles) {
     const built = [...(hasCore ? ['core'] : []), ...scenes];
     text = text.replace('export const built = null;', `export const built = ${JSON.stringify(built)};`);
     if (!text.includes('export const built = [')) throw new Error('manifest.js: could not write the built list');
+  }
+  if (relToSite === 'index.html') {
+    // the home page's doors, with their counts and posters (pages.mjs)
+    const a = text.indexOf('<!-- site:doors:start -->'), b = text.indexOf('<!-- site:doors:end -->');
+    if (a < 0 || b < a) throw new Error('index.html: the site:doors markers are missing');
+    text = `${text.slice(0, a)}<!-- site:doors:start -->
+      ${generated.doorsHtml}
+      ${text.slice(b)}`;
   }
   if (relToSite === '404.html') {
     // Workers' not_found_handling: "404-page" serves this file's body AT the
@@ -209,17 +332,24 @@ const broken = [];
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     const p = path.join(dir, e.name);
     if (e.isDirectory()) { walk(p); continue; }
+    // A file present only because the registry mirror (above) copied it is
+    // not part of the site's own page graph: its own internal references
+    // (test fixtures, doc-comment examples) are not this check's business.
+    if (registryOnly.has(p)) continue;
     // A root-absolute reference in the built copy means "resolve from the
     // site's own root once deployed", i.e. from out/docs, not from the repo.
     for (const r of refsOf(p, OUT)) {
-      const target = fs.existsSync(r) && fs.statSync(r).isDirectory() ? path.join(r, 'index.html') : r;
+      // Workers serves x.html at /x (html_handling), so a pretty link to a page resolves too
+      // (and /scenes is scenes.html even though a scenes/ folder of scene pages sits beside it)
+      const target = !path.extname(r) && fs.existsSync(`${r}.html`) ? `${r}.html`
+        : fs.existsSync(r) && fs.statSync(r).isDirectory() ? path.join(r, 'index.html') : r;
       if (r !== OUT && !r.startsWith(OUT + path.sep)) broken.push(`${path.relative(OUT, p)} -> ${r} (outside out/docs)`);
       else if (!fs.existsSync(target)) broken.push(`${path.relative(OUT, p)} -> ${path.relative(OUT, r)}`);
     }
   }
 })(OUT);
 
-console.log(`built ${rel(OUT)}: ${siteFiles.length} site files, ${seen.size} package files, ${(bytes / 1024).toFixed(1)} KB`);
+console.log(`built ${rel(OUT)}: ${siteFiles.length} site files, ${seen.size} package files, ${registryOnly.size} more for the registry over HTTP, ${(bytes / 1024).toFixed(1)} KB`);
 console.log(`scenes: ${scenes.join(', ') || 'none'}${missing.length ? ` (not found, skipped: ${missing.join(', ')})` : ''}; core: ${hasCore ? 'yes' : 'no'}`);
 console.log(`registry: ${registry.items.length} items, ${demoEntries.length} demo/entry pages shipped`);
 notes.forEach(n => console.log(`  note: ${n}`));
@@ -249,14 +379,13 @@ if (!process.argv.includes('--no-verify')) {
     await page.waitForTimeout(800);
     await page.evaluate(() => document.fonts.ready);
     const got = await page.evaluate(() => ({
-      plates: [...document.querySelectorAll('.plate')].map(p => p.id),
+      doors: document.querySelectorAll('.doors .door').length,
       drawn: [...document.querySelectorAll('sg-scene')].filter(s => s.shadowRoot?.querySelector('.stage canvas, .stage svg')).length,
-      tools: document.querySelectorAll('.tool').length,
       castoro: document.fonts.check('400 64px Castoro', 'Susegad'),
     }));
-    console.log(`verify ${url}: plates=${got.plates.join(',') || 'none'} drawn=${got.drawn} pencil-box=${got.tools} castoro=${got.castoro} errors=${errors.length}`);
+    console.log(`verify ${url}: doors=${got.doors} drawn=${got.drawn} castoro=${got.castoro} errors=${errors.length}`);
     errors.forEach(e => console.error(`  ${e}`));
-    if (errors.length || got.plates.length !== scenes.length || !got.tools || !got.castoro) throw new Error('the built copy did not load cleanly');
+    if (errors.length || got.doors < 5 || got.drawn !== 1 || !got.castoro) throw new Error('the built copy did not load cleanly');
     console.log('the built copy loads');
   } catch (err) {
     console.error(String(err.message || err));
@@ -281,7 +410,14 @@ if (!process.argv.includes('--no-verify')) {
       const errors = [];
       page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
       page.on('pageerror', e => errors.push(String(e)));
-      page.on('requestfailed', r => errors.push(`request failed ${r.url()}`));
+      page.on('requestfailed', r => {
+        const why = r.failure()?.errorText ?? 'no reason given';
+        // <audio preload="metadata"> takes the 206's header for the duration and then
+        // cancels the rest itself: ERR_ABORTED on media is the browser's choice, not a
+        // broken file (a missing one still fails below as a 404)
+        if (r.resourceType() === 'media' && why === 'net::ERR_ABORTED') return;
+        errors.push(`request failed ${r.url()} (${why})`);
+      });
       page.on('response', r => { if (r.status() >= 400 && r.url() !== `${deployServer.url}${urlPath}`) errors.push(`${r.status()} ${r.url()}`); });
       page.on('request', r => { if (!/^(data|blob):/.test(r.url()) && !r.url().startsWith(deployServer.url)) errors.push(`third-party request ${r.url()}`); });
       let status = null;

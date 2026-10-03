@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  // ?register=quiet|warm|playful and ?theme=light|dark set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute('data-' + k, v);
+  window.__ready = false;
+</script>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio home (a mock)</title>
+<link rel="stylesheet" href="../../components/site-nav/site-nav.css">
+<link rel="stylesheet" href="../../components/now-note/now-note.css">
+<link rel="stylesheet" href="../../components/badge/badge.css">
+<link rel="stylesheet" href="../../components/postcard/postcard.css">
+<link rel="stylesheet" href="../../components/quote/quote.css">
+<link rel="stylesheet" href="../../components/chat-thread/chat-thread.css">
+<link rel="stylesheet" href="../../components/voice-note/voice-note.css">
+<link rel="stylesheet" href="../../components/reach/reach.css">
+<link rel="stylesheet" href="./recipe.css">
+</head>
+<body>
+<div class="studio">
+  <p class="placeholder-banner">A mock of a one-person studio's home page. Every name, number and word here is placeholder copy. Registers: <a href="?register=quiet">quiet</a>, <a href="?register=warm">warm</a>, <a href="?register=playful">playful</a>.</p>
+  <header>
+    <sg-site-nav>
+      <nav aria-label="Main">
+        <a class="sg-site-nav-home" href="#top">Casa Studio</a>
+        <details class="sg-site-nav-menu">
+          <summary>Menu</summary>
+          <ul>
+            <li><a href="#top" aria-current="page">Home</a></li>
+            <li><a href="#work">Work</a></li>
+            <li><a href="#said">Said</a></li>
+            <li><a href="#now">Now</a></li>
+            <li><a href="#hello">Say hello</a></li>
+          </ul>
+        </details>
+      </nav>
+    </sg-site-nav>
+  </header>
+  <main id="top">
+    <section class="intro" aria-labelledby="intro-h">
+      <div>
+        <h1 id="intro-h">Placeholder: small software, made carefully, from Goa.</h1>
+        <p class="lede">Placeholder: one person who builds order pages, ledgers and odd little tools for businesses that would rather talk to a person than a platform.</p>
+      </div>
+      <sg-now-note today="2026-09-27">
+        <section aria-labelledby="now">
+          <h2 id="now">Now</h2>
+          <p>Placeholder: an order page for a clothing brand, and a tide clock for fun.</p>
+          <p class="sg-now-state"><sg-badge tone="success">Taking on one new project</sg-badge></p>
+          <p class="sg-now-updated">Updated <time datetime="2026-09-24">24 September 2026</time></p>
+        </section>
+      </sg-now-note>
+    </section>
+
+    <section id="work" aria-labelledby="work-h">
+      <h2 id="work-h" class="section-h">Work</h2>
+      <div class="cards">
+      <sg-postcard>
+        <article>
+          <h3><a href="#aldona">Aldona Organics</a></h3>
+          <p class="sg-postcard-where">Aldona, Goa, 2026 <sg-badge tone="success">Live</sg-badge></p>
+          <div class="sg-postcard-face"><p class="sg-postcard-problem">Orders arrived by message and got lost between chats.</p></div>
+          <dl class="sg-postcard-back"><dt>Built</dt><dd>An order page and a stock sheet that update each other</dd><dt>Outcome</dt><dd>Placeholder: orders answered the same day</dd></dl>
+        </article>
+      </sg-postcard>
+      <sg-postcard>
+        <article>
+          <h3><a href="#ledger">A trading ledger</a></h3>
+          <p class="sg-postcard-where">Margao, 2026 <sg-badge tone="accent">Shipped</sg-badge></p>
+          <div class="sg-postcard-face"><p class="sg-postcard-problem">Invoices, stock and bank lines lived in three places.</p></div>
+          <dl class="sg-postcard-back"><dt>Built</dt><dd>One ledger on the office machine, no cloud</dd><dt>Outcome</dt><dd>Placeholder: month-end in a day, not a week</dd></dl>
+        </article>
+      </sg-postcard>
+      <sg-postcard>
+        <article>
+          <h3><a href="#tides">Tide table</a></h3>
+          <p class="sg-postcard-where">Chapora, 2025 <sg-badge tone="info">Experiment</sg-badge></p>
+          <div class="sg-postcard-face"><p class="sg-postcard-problem">Boats read tides off a printed sheet a year old.</p></div>
+          <dl class="sg-postcard-back"><dt>Built</dt><dd>A one-page tide clock that works offline</dd><dt>Outcome</dt><dd>Placeholder: a sketch, not in use yet</dd></dl>
+        </article>
+      </sg-postcard>
+      </div>
+    </section>
+
+    <section id="said" aria-labelledby="said-h">
+      <h2 id="said-h" class="section-h">What a client said</h2>
+      <div class="said">
+        <sg-quote>
+          <figure>
+            <blockquote><p>Placeholder quote: the order page does in one evening what took us a week of messages.</p></blockquote>
+            <figcaption><span class="sg-quote-who">Maya Fernandes</span> <span class="sg-quote-role">Founder, Aldona Organics (placeholder)</span> <a class="sg-quote-source" href="#voice">Hear the voice note</a></figcaption>
+          </figure>
+        </sg-quote>
+        <sg-chat-thread>
+        <ol aria-label="Placeholder conversation with Aldona Organics">
+          <li class="sg-chat-day"><time datetime="2026-03-04">4 March 2026</time></li>
+          <li data-from="them"><span class="sg-chat-who">Maya, Aldona Organics</span> <p class="sg-chat-text">Placeholder: can we move the shoot to Friday? Call <span class="sg-redacted" data-kind="name">name removed</span> on <span class="sg-redacted" data-kind="phone">number removed</span> if I miss you.</p> <time class="sg-chat-time" datetime="2026-03-04T10:12">10:12</time></li>
+          <li data-from="me" data-status="read"><span class="sg-chat-who">Studio</span> <blockquote class="sg-chat-reply"><span class="sg-chat-sr">Replying to: </span><span class="sg-chat-reply-who">Maya, Aldona Organics</span> <span class="sg-chat-reply-text">Placeholder: can we move the shoot to Friday?</span></blockquote><p class="sg-chat-text">Placeholder: Friday works. I will bring the size chart printed.</p> <time class="sg-chat-time" datetime="2026-03-04T10:31">10:31</time> <span class="sg-chat-reaction" role="img" aria-label="Reacted with a heart"><span aria-hidden="true">❤️</span></span></li>
+          <li class="sg-chat-day"><time datetime="2026-03-09">9 March 2026</time></li>
+          <li data-from="them"><span class="sg-chat-who">Maya, Aldona Organics</span>
+            <sg-voice-note id="voice" label="from Maya">
+              <audio controls preload="metadata" src="placeholder.wav"></audio>
+              <p class="sg-voice-transcript">Placeholder transcript: the children wore the new kurtas all weekend and nobody wanted to take them off.</p>
+            </sg-voice-note>
+            <time class="sg-chat-time" datetime="2026-03-09T20:41">20:41</time></li>
+        </ol>
+        </sg-chat-thread>
+      </div>
+      <p class="aside">The voice note's audio is three seconds of silence standing in for a real message, and its waveform is a seeded stand-in.</p>
+    </section>
+
+    <section id="hello" aria-labelledby="hello-h">
+      <h2 id="hello-h" class="section-h">Say hello</h2>
+      <sg-reach>
+        <address>
+          <p class="sg-reach-line"><span class="sg-reach-label">Email</span> <a href="mailto:hello@casa-studio.example?subject=A%20project">hello@casa-studio.example</a></p>
+          <p class="sg-reach-line"><span class="sg-reach-label">WhatsApp</span> <a href="https://wa.me/919000012345?text=Hello!%20I%20saw%20your%20site%20and%20have%20a%20project%20in%20mind.">+91 90000 12345</a> <button type="button" class="sg-reach-copy" data-copy="+91 90000 12345" hidden>Copy number</button></p>
+          <p class="sg-reach-when">Placeholder: replies usually come the same day, India time.</p>
+        </address>
+      </sg-reach>
+    </section>
+  </main>
+  <footer><p>Placeholder footer. Made with Susegad UI.</p></footer>
+</div>
+<script type="module">
+  import '../../components/site-nav/site-nav.js';
+  import '../../components/now-note/now-note.js';
+  import '../../components/badge/badge.js';
+  import '../../components/postcard/postcard.js';
+  import '../../components/quote/quote.js';
+  import '../../components/chat-thread/chat-thread.js';
+  import '../../components/voice-note/voice-note.js';
+  import '../../components/reach/reach.js';
+  await document.fonts.ready;
+  await Promise.all([...new Set([...document.querySelectorAll('*')].map(e => e.localName).filter(n => n.startsWith('sg-')))].map(t => customElements.whenDefined(t)));
+  window.__ready = true;
+</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+/* <sg-reach>. Without JavaScript this is the quiet look: plain lines, a label
+   and a real link on each; the copy button stays hidden. Warm is an inland
+   letter; playful a rubber-stamped card. */
+
+sg-reach {
+  display: block;
+  position: relative;
+  max-width: 30rem;
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body);
+}
+sg-reach[hidden] { display: none; }
+sg-reach address { font-style: normal; display: grid; gap: var(--sg-space-2); }
+sg-reach .sg-reach-line {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--sg-space-3);
+}
+sg-reach .sg-reach-label {
+  flex: 0 0 6.5rem;
+  font-size: var(--sg-step--1);
+  font-weight: var(--sg-weight-medium);
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.05em;
+  color: var(--sg-text-soft);
+}
+sg-reach .sg-reach-line a {
+  display: inline-block;
+  padding-block: 0.2em;
+  color: var(--sg-accent-text);
+  font-weight: var(--sg-weight-medium);
+  overflow-wrap: anywhere;
+}
+sg-reach .sg-reach-copy {
+  min-height: 2rem;
+  padding: 0 var(--sg-space-3);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-2);
+  background: var(--sg-surface);
+  color: var(--sg-text);
+  font: var(--sg-weight-medium) var(--sg-step--1) / 1 var(--sg-font-body);
+  cursor: pointer;
+}
+sg-reach .sg-reach-copy[hidden] { display: none; }
+sg-reach :is(a, button):focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); border-radius: var(--sg-radius-1); }
+sg-reach .sg-reach-when { margin: var(--sg-space-1) 0 0; font-size: var(--sg-step--1); color: var(--sg-text-soft); }
+sg-reach .sg-reach-status { margin: 0; min-height: 1lh; font-size: var(--sg-step--1); color: var(--sg-text); }
+sg-reach .sg-reach-status:empty { min-height: 0; }
+
+@container (max-width: 22rem) { sg-reach .sg-reach-label { flex-basis: 100%; } }
+sg-reach { container-type: inline-size; }
+
+/* ── warm: an inland letter ── a pale blue card that keeps its daylight
+   colours at night (color-scheme: light inside, so every token reads as by day),
+   fold lines at a third and two thirds, and a printed postage square. */
+sg-reach[data-skin="warm"] address {
+  color-scheme: light;
+  /* inland-letter blue: the palette's info hue, pale and a little saturated,
+     so it reads blue rather than grey; words tested at 4.5:1 on it */
+  --sg-reach-inland: color-mix(in oklch, var(--sg-info) 13%, var(--sg-surface-raised));
+  color: var(--sg-text);
+  position: relative;
+  padding: var(--sg-space-4) var(--sg-space-4) var(--sg-space-4) var(--sg-space-5);
+  background:
+    linear-gradient(to bottom, transparent calc(33.3% - 0.5px), var(--sg-rule) calc(33.3% - 0.5px), var(--sg-rule) calc(33.3% + 0.5px), transparent calc(33.3% + 0.5px), transparent calc(66.6% - 0.5px), var(--sg-rule) calc(66.6% - 0.5px), var(--sg-rule) calc(66.6% + 0.5px), transparent calc(66.6% + 0.5px)),
+    var(--sg-reach-inland);
+  border-radius: 2px;
+  /* the perforated edge down the left, where an inland letter tears open */
+  -webkit-mask: radial-gradient(circle at 0 50%, transparent 3px, #000 3.5px) 0 0 / 100% 12px repeat-y, linear-gradient(#000, #000) 8px 0 / 100% 100% no-repeat;
+  mask: radial-gradient(circle at 0 50%, transparent 3px, #000 3.5px) 0 0 / 100% 12px repeat-y, linear-gradient(#000, #000) 8px 0 / 100% 100% no-repeat;
+}
+@supports (color: oklch(from red l c h)) {
+  sg-reach[data-skin="warm"] address { --sg-reach-inland: oklch(from var(--sg-info) 0.91 0.032 h); }
+}
+sg-reach[data-skin="warm"] { filter: drop-shadow(0 1px 2px var(--sg-shadow)); } /* the mask would cut a box-shadow off */
+sg-reach[data-skin="warm"] address::after {
+  content: "";
+  position: absolute;
+  top: var(--sg-space-3);
+  right: var(--sg-space-3);
+  width: 2.4rem;
+  height: 2.9rem;
+  border: 2px dotted var(--sg-accent-text);
+  border-radius: 2px;
+  background: linear-gradient(135deg, color-mix(in oklch, var(--sg-accent) 22%, transparent), color-mix(in oklch, var(--sg-info) 22%, transparent));
+}
+sg-reach[data-skin="warm"] .sg-reach-line:first-child { padding-inline-end: 3.2rem; }
+sg-reach[data-skin="warm"] .sg-reach-label { font-family: var(--sg-font-hand); font-variant-caps: normal; letter-spacing: 0; font-size: var(--sg-step-0); color: var(--sg-text-soft); }
+sg-reach[data-skin="warm"] .sg-reach-line a { font-family: var(--sg-font-hand); font-size: var(--sg-step-1); font-weight: 400; color: var(--sg-text); text-decoration-color: var(--sg-accent-text); }
+sg-reach[data-skin="warm"] .sg-reach-when { font-family: var(--sg-font-hand); font-size: var(--sg-step-0); }
+
+/* ── playful: a rubber-stamped card ── */
+sg-reach[data-skin="playful"] address {
+  position: relative;
+  padding: var(--sg-space-4) var(--sg-space-4);
+  background: var(--sg-surface-raised);
+  border-radius: var(--sg-radius-2);
+}
+sg-reach .sg-reach-frame {
+  position: absolute;
+  inset: -4px;
+  z-index: 1;
+  pointer-events: none;
+  color: var(--sg-accent);
+  border: 4px solid currentColor;
+  border-radius: 4px;
+  transform: rotate(var(--sg-reach-rotate, -1deg));
+  -webkit-mask: var(--sg-reach-mask, none) 0 0 / 100% 100% no-repeat;
+  mask: var(--sg-reach-mask, none) 0 0 / 100% 100% no-repeat;
+  filter: drop-shadow(var(--sg-reach-ghost-x, 2px) var(--sg-reach-ghost-y, 1px) 0 color-mix(in oklch, var(--sg-accent) 30%, transparent));
+}
+sg-reach .sg-reach-frame::after { content: ""; position: absolute; inset: 5px; border: 1.5px solid currentColor; border-radius: 2px; }
+sg-reach[data-skin="playful"] .sg-reach-label { font-family: var(--sg-font-hand); font-variant-caps: normal; letter-spacing: 0; font-size: var(--sg-step-0); color: var(--sg-accent-text); }
+sg-reach[data-skin="playful"] .sg-reach-line a { font-size: var(--sg-step-1); }
+sg-reach[data-skin="playful"] .sg-reach-copy { background: var(--sg-accent); color: var(--sg-on-accent); border-color: var(--sg-accent); border-radius: var(--sg-radius-pill); }
+
+@media (forced-colors: active) {
+  sg-reach[data-skin] address { border: 1px solid CanvasText; -webkit-mask: none; mask: none; }
+  sg-reach .sg-reach-frame { display: none; }
+}

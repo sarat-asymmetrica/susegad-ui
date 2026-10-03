@@ -1,0 +1,102 @@
+/* <sg-action-menu>. The [role="menu"] is a real popover: a click on the trigger
+   opens and closes it with no script, and every item is a real <a> or
+   <button> that takes Enter, Space and a click on its own. This file styles
+   the list and its entrance; action-menu.js adds the APG roving-tabindex keyboard
+   model and the teental stagger. */
+
+sg-action-menu[hidden] { display: none; } /* our display rule would otherwise beat the browser's [hidden] */
+
+sg-action-menu { display: contents; }
+
+sg-action-menu [role="menu"] {
+  /* the popover UA stylesheet sets inset: 0, which stretches a fit-content
+     box across the whole viewport and leaves it pinned top-left; reset it
+     so action-menu.js's own left/top/bottom (set on open, in #place()) are the
+     only offsets in play. */
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  padding: var(--sg-space-1, 0.25rem);
+  min-width: 12em;
+  list-style: none;
+  border: var(--sg-hairline, 1px) solid var(--sg-rule-strong, CanvasText);
+  border-radius: var(--sg-radius-3, 8px);
+  background: var(--sg-surface-raised, Canvas);
+  color: var(--sg-text, CanvasText);
+  font: var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif);
+  box-shadow: var(--sg-lift, 0 8px 24px rgb(0 0 0 / 0.2));
+}
+sg-action-menu [role="menu"][popover]:popover-open { animation: sg-action-menu-in var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out); }
+@keyframes sg-action-menu-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+sg-action-menu [role="menuitem"] {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.5em 0.8em;
+  border: none;
+  border-radius: var(--sg-radius-2, 4px);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+sg-action-menu [role="menuitem"]:hover,
+sg-action-menu [role="menuitem"]:focus { background: var(--sg-surface-sunk, ButtonFace); }
+sg-action-menu [role="menuitem"]:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: -2px; }
+
+/* the teental stagger: each item's own entrance, on the beat action-menu.js sets */
+sg-action-menu [role="menu"][popover]:popover-open [role="menuitem"] {
+  animation: sg-action-menu-item-in var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out) backwards;
+  animation-delay: var(--sg-item-delay, 0ms);
+}
+@keyframes sg-action-menu-item-in { from { opacity: 0; transform: translateY(-2px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  sg-action-menu [role="menu"][popover]:popover-open,
+  sg-action-menu [role="menu"][popover]:popover-open [role="menuitem"] { animation: none; }
+}
+
+/* ── quiet: a ruled list ──────────────────────────────────────────────────── */
+sg-action-menu [role="menuitem"] + [role="menuitem"] { border-top: var(--sg-hairline, 1px) solid var(--sg-rule, CanvasText); }
+
+/* ── warm: ink-ruled ─────────────────────────────────────────────────────── */
+sg-action-menu[data-skin="warm"] [role="menu"] { border-left-width: 3px; border-left-color: var(--sg-accent, Highlight); }
+sg-action-menu[data-skin="warm"] [role="menuitem"] + [role="menuitem"] { border-top-color: var(--sg-rule, CanvasText); }
+sg-action-menu[data-skin="warm"] [role="menuitem"]:is(:hover, :focus) { background: color-mix(in oklch, var(--sg-accent, Highlight) 12%, transparent); }
+
+/* ── playful: a stamped list ─────────────────────────────────────────────── */
+sg-action-menu[data-skin="playful"] [role="menu"] { border-width: 2px; border-color: var(--sg-accent, Highlight); }
+sg-action-menu[data-skin="playful"] [role="menuitem"] {
+  position: relative;
+  z-index: 0; /* its own stacking context, so the stamp's z-index: -1 stays behind this item's own text, not the whole list */
+  margin-block: 0.15em;
+  border: 1.5px dashed transparent;
+}
+sg-action-menu[data-skin="playful"] [role="menuitem"]:is(:hover, :focus) {
+  border-color: var(--sg-accent, Highlight);
+  background: color-mix(in oklch, var(--sg-accent, Highlight) 14%, transparent);
+  transform: rotate(-0.6deg);
+}
+/* the stamped landing: playful.js inserts this behind each item and plays
+   a short ink-impression animation, timed to the item's own teental beat,
+   as it lands (action-menu.core.js's stampLanding, the same shape as the
+   Button's ink-spread press). Purely decorative and z-index: -1 within the
+   item's own stacking context, so it never sits over the item's text. */
+sg-action-menu[data-skin="playful"] .sg-action-menu-item-stamp {
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: var(--sg-radius-1, 2px);
+  background: radial-gradient(ellipse at 32% 38%, var(--sg-accent, Highlight) 0%, transparent 72%);
+  filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (forced-colors: active) {
+  sg-action-menu [role="menu"] { border: 1px solid CanvasText !important; box-shadow: none !important; }
+  sg-action-menu [role="menuitem"]:is(:hover, :focus) { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+  sg-action-menu[data-skin="playful"] .sg-action-menu-item-stamp { display: none !important; }
+}

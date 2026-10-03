@@ -1,0 +1,49 @@
+/* Food order: the page around the menu and the composer. The parts style
+   themselves (menu.css, wa-order.css, field.css). Tokens only, so it follows
+   the palette, the theme and the register. */
+
+body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: 400 var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.6) var(--sg-font-body); }
+
+.food-order {
+  box-sizing: border-box;
+  max-inline-size: 72rem;
+  margin: 0 auto;
+  padding: var(--sg-space-6) var(--sg-space-3) var(--sg-space-7);
+}
+.food-order__head { max-inline-size: 42rem; }
+.food-order__note { margin: 0 0 var(--sg-space-2); font: 400 1.25rem / 1.2 var(--sg-font-hand); color: var(--sg-accent-text); }
+[data-register="quiet"] .food-order__note { font: 600 0.8125rem / 1.3 var(--sg-font-body); letter-spacing: 0.12em; text-transform: uppercase; color: var(--sg-text-soft); }
+.food-order h1 { margin: 0; font: 400 var(--sg-step-4, 2.4rem) / 1.08 var(--sg-font-display); text-wrap: balance; }
+.food-order__sub { margin: var(--sg-space-3) 0 0; color: var(--sg-text-soft); text-wrap: pretty; }
+.food-order h2 { margin: 0 0 var(--sg-space-3); font: 400 var(--sg-step-2, 1.6rem) / 1.2 var(--sg-font-display); }
+[data-register="warm"] .food-order h2, [data-register="playful"] .food-order h2 { font-family: var(--sg-font-hand); color: var(--sg-accent-text); }
+
+/* how ordering works: three short steps, numbered in words that stay in the markup */
+.food-order__how { margin-block: var(--sg-space-5); }
+.food-order__how ol { counter-reset: step; display: grid; gap: var(--sg-space-3); margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+.food-order__how li { counter-increment: step; position: relative; padding-inline-start: 2.75rem; color: var(--sg-text-soft); }
+.food-order__how li strong { display: block; color: var(--sg-text); font-weight: var(--sg-weight-medium, 500); }
+.food-order__how li::before {
+  content: counter(step);
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  display: grid;
+  place-items: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border: var(--sg-hairline, 1px) solid var(--sg-rule-strong);
+  border-radius: 50%;
+  color: var(--sg-text);
+  font: var(--sg-weight-medium, 500) 1rem / 1 var(--sg-font-body);
+  font-variant-numeric: tabular-nums;
+}
+[data-register="warm"] .food-order__how li::before { font: 400 1.25rem / 1 var(--sg-font-hand); border-color: var(--sg-accent-text); color: var(--sg-accent-text); }
+[data-register="playful"] .food-order__how li::before { background: var(--sg-accent); border-color: var(--sg-accent); color: var(--sg-on-accent); font: 400 1.25rem / 1 var(--sg-font-hand); }
+
+.food-order__cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sg-space-6); align-items: start; }
+@media (min-width: 62rem) { .food-order__cols { grid-template-columns: minmax(0, 40rem) minmax(0, 1fr); gap: var(--sg-space-6); } }
+.food-order__order { scroll-margin-block-start: var(--sg-space-4); }
+.food-order__prototype { margin: var(--sg-space-6) 0 0; padding: var(--sg-space-2) var(--sg-space-3); max-inline-size: 42rem; font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft); border-inline-start: 2px solid var(--sg-info); background: color-mix(in oklch, var(--sg-info) 7%, transparent); }
+
+@media (max-width: 40rem) { .food-order { padding-block-start: var(--sg-space-5); } }

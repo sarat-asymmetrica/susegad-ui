@@ -1,0 +1,23 @@
+{
+  "name": "transitions",
+  "type": "package",
+  "title": "Page transitions",
+  "description": "Cross-document View Transitions for every same-origin navigation (@view-transition { navigation: auto; }), with two named persistent elements (data-vt=\"header\" and data-vt=\"scene\") that carry across a navigation instead of cross-fading, and sameDocumentTransition(), a tiny shared guard for a same-document swap (used by Tabs and the Kantar interlude). No JavaScript is required for the cross-document behaviour; without View Transitions support, or under reduced motion, navigation and same-document swaps are simply instant.",
+  "version": "0.1.0",
+  "files": [
+    "page.css",
+    "page.js",
+    "page.core.js",
+    "page.docs.md",
+    "page.prompt.md"
+  ],
+  "dependencies": [
+    "tokens"
+  ],
+  "prompt": "page.prompt.md",
+  "docs": "page.docs.md",
+  "budget": {
+    "jsBytes": 4096,
+    "reason": "Not a component (no register, no skins): a CSS file plus a small pure helper. Today 3090 bytes of JS (page.js + page.core.js); page.css (1.7 KB) is not counted against the JS budget."
+  }
+}

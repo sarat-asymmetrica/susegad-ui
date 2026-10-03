@@ -1,6 +1,8 @@
 {
   "name": "scene-tollem",
   "type": "scene",
+  "stability": "experimental",
+  "useFor": ["hero","background"],
   "title": "Tollem",
   "description": "Looking down into a Goan pool at noon: a WebGL net of light over pale tiles, a frangipani that drops a flower now and then, and a full 2D painting when WebGL is missing, lost or too slow. Quiets under text, shows progress as a flower's place across the pool, and ripples under a finger or the arrow keys.",
   "version": "0.1.0",

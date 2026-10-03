@@ -1,0 +1,25 @@
+{
+  "name": "drawer",
+  "type": "component",
+  "title": "Drawer",
+  "version": "0.1.0",
+  "description": "A panel sliding in from an edge (start, end, top or bottom), on the same native <dialog> contract as Dialog: showModal() traps focus, Escape closes, focus returns to the opener. Quiet is a hairline panel; warm is a paper panel with a deckled edge over the Carepa surface; playful is the same, brighter, with the slide timed to the Teental cycle's first beat.",
+  "files": [
+    "drawer.js",
+    "drawer.core.js",
+    "drawer.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "drawer.prompt.md",
+    "drawer.docs.md"
+  ],
+  "dependencies": ["core-component", "core", "tokens", "surface-carepa"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "drawer.prompt.md",
+  "docs": "drawer.docs.md",
+  "budget": {
+    "jsBytes": 13312,
+    "reason": "0010: element + core together (5255 bytes today), plus three skins (quiet 0.2 KB, warm 0.7 KB, playful 1.1 KB, which also imports the shared talaDelay from packages/tokens). Carepa and the tokens' Teental export are separate registry items."
+  }
+}

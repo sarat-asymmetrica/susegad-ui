@@ -1,0 +1,34 @@
+{
+  "name": "tile-band",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Tile band",
+  "description": "A band of hand-painted tiles for a border or a section divider: Goan azulejo, the blue-and-white tiles of the Portuguese-era houses and churches, with a majolica sister in cobalt, lemon yellow and leaf green. Four geometric and floral motifs (a rosette, a quatrefoil, quarter-circle corners, a vine) laid from a seed, painted once on a canvas and kept, crisp at any pixel ratio, running along the page or down it. Quiet is a cobalt hairline, flat; warm is a hand-painted glaze with brush variation and crackle; playful turns a tile a quarter when you touch it, and settles.",
+  "version": "0.1.0",
+  "useFor": ["divider", "section-break", "border"],
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "Azulejo: the painted tiles of Goa's Portuguese-era houses and churches; majolica is its Mediterranean cousin."
+  },
+  "files": [
+    "tile-band.js",
+    "tile-band.core.js",
+    "tile-band.css",
+    "skins/band.js",
+    "skins/paint.js",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "tile-band.prompt.md",
+    "tile-band.docs.md"
+  ],
+  "dependencies": ["core-component", "core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "tile-band.prompt.md",
+  "docs": "tile-band.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005 and 0010: element 12 KB, pure core 12 KB apart, skins 8 KB each with a shared helper counting as one. Today about 25.5 KB: element 2.0 KB, pure core 11.0 KB (four motifs as path data, the seeded laying, crackle, the turn), the canvas manager 6.5 KB and the painter 5.2 KB, three one-line skins. It is a component, not a scene, because its box is the band (a length and a thickness the page chooses, horizontal or vertical) and it has no loop: it is painted once, and a rAF runs only for the half second of a turn."
+  }
+}

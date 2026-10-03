@@ -1,0 +1,14 @@
+{
+  "name": "scene-toran",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["divider","section-break"],
+  "title": "Toran",
+  "description": "A Goan doorway on the morning of Chovoth, with a garland of marigolds and mango leaves strung across it from three nails: a Verlet rope that sags, swings in a noise breeze and settles. Quiet is the garland at rest with petals on the step; warm a gentle breeze; playful the full breeze, and the hand (pointer or arrow keys) brushes it, knocking petals loose that drift down and stay. Night with a lantern on dark pages.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "toran.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "toran.prompt.md",
+  "budget": { "jsBytes": 61440, "reason": "The plate's whole doorway (wall, frame, teak door, step, balcão, eave, lota, chappals) and its marigold sprites are painted in code, ported line for line." }
+}

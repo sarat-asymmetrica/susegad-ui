@@ -8,7 +8,7 @@ Colour, type, space, motion, sound and the register for Susegad UI, as CSS custo
 <html data-palette="casa" data-theme="dark" data-register="quiet">
 ```
 
-- `data-palette="susegad|casa"`: the colour palette. Default `susegad`.
+- `data-palette="susegad|casa|azulejo"`: the colour palette. Default `susegad`.
 - `data-theme="light|dark"`: leave it off to follow the reader's system setting.
 - `data-register="quiet|warm|playful"` (or `register="..."`): default `warm`.
 
@@ -50,6 +50,34 @@ Motion: `--sg-dur-instant | quick | calm | slow | ambient | fade` and `--sg-ease
 
 Under `prefers-reduced-motion: reduce`, every movement duration becomes 0.01ms, ambient stops and `--sg-motion-scale` is 0. Only `--sg-dur-fade` (150ms) remains, for opacity. Sound tokens (`--sg-sound-tick | confirm | complete | error`) name synth patches; the sound layer plays them, and it is off by default.
 
+## Teental: the sixteen-beat stagger
+
+A generic ease staggers a list by a flat multiple of the index: item by
+item, always the same wait. Teental staggers it by a cycle instead, so a
+list has phrasing rather than a metronome.
+
+*After* Khaprumama Parvatkar, and teental, the sixteen-beat rhythmic cycle
+of Hindustani music he played it in on the tabla and the ghumot.
+
+*What we took*: timing as a cycle, not a straight line. A heavy first beat
+(sam), a three-beat hush two-thirds through (khali, where the bass drum
+falls silent), and everything else landing on the beats between. Nothing
+here enters on a khali beat, the way nothing in the cycle is struck there.
+
+*What we left*: his playing. `talaDelay()` counts out a rhythm; it does not
+attempt his hands, and no sound ships with it.
+
+`tala`, `talaBeats()` and `talaDelay()` live in `tokens.js` (see the comment
+above them there for how a list should use it), with `--sg-tala-beat` as
+the CSS duration of one beat for a pure-CSS stagger. Used in Drawer, Menu
+and the scroll sections. Ported from the sketchbook's Teental plate, per
+`docs/requests/2026-09-25-volume-iii-harvest.md`.
+
+**Owner to confirm:** whether Khaprumama Parvatkar has died. His name is
+used here as the library's other named patrons are (HOMAGE.md's rule 2),
+but nobody on this wave has verified it, and rule 4 only allows a living
+artist's name after they've agreed to it.
+
 ## Utilities
 
 `tokens.css` also carries two classes that every component and recipe may rely on:
@@ -77,6 +105,8 @@ They are defined in `tokens.js` (`utilities`) and generated like everything else
 
 Dark is the house's own night chapter: `#14161C` with `#E8E2D6` ink.
 
+**Azulejo** is the painted tile of Goa's Portuguese-era houses and churches, with its majolica cousin: a cream glaze, cobalt ink, and lemon and leaf green. It was made for the `tile-band` component and is a palette like the others: every text role passes AA on all three surfaces in both themes. Cobalt is the primary act and the focus ring by day; at night the ground is deep cobalt, the ink is cream, the accent is cobalt lifted to `#8FB2F2` and the focus ring is lemon. The tile pigments (`--sg-cobalt`, `--sg-cobalt-bright`, `--sg-lemon`, `--sg-leaf`, `--sg-glaze`, `--sg-wash`) are for drawing: lemon and leaf are never text on cream. Tiles keep their own colours in both themes, as a real tile would, so `tile-band` reads the pigments and not the page's grounds. Two choices to know: `warning` is lemon at night but a darkened mustard (`#7A5500`) by day, because lemon cannot be read on cream; and `danger` is a plain terracotta red, a colour azulejo itself does not have.
+
 ### Lowest contrast of each text role, on its worst surface
 
 | | text | soft | faint | accent | success | warning | danger | info |
@@ -85,6 +115,8 @@ Dark is the house's own night chapter: `#14161C` with `#E8E2D6` ink.
 | Susegad dark | 12.71 | 7.99 | 4.74 | 4.60 | 4.62 | 8.19 | 4.61 | 5.12 |
 | Casa light | 11.98 | 4.93 | 4.59 | 4.64 | 5.82 | 5.14 | 4.78 | 4.62 |
 | Casa dark | 12.61 | 7.55 | 4.72 | 5.61 | 4.62 | 4.59 | 4.62 | 7.31 |
+| Azulejo light | 11.37 | 6.59 | 4.77 | 6.74 | 5.17 | 5.39 | 6.04 | 5.14 |
+| Azulejo dark | 12.33 | 8.87 | 5.98 | 6.70 | 7.08 | 9.03 | 6.68 | 6.70 |
 
 These numbers use the 8-bit colour the browser paints. The tests also check on-accent against the accent fill, text and soft text on the selection and on the scrim over pure black and pure white, and focus and control borders at 3:1.
 

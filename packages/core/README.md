@@ -67,7 +67,7 @@ createRenderer(host, { W, H, register, motion, seed, governor, scene, invalidate
 
 ## `<sg-scene>` (`scene-element.js`)
 
-Attributes: `name`, `register`, `seed`, `paused`, `label`, and every param. Changing any of them updates the scene with no glue code, so a server can swap them (htmx).
+Attributes: `name`, `register`, `seed`, `paused`, `label`, `movable`, `words-at`, and every param. Changing any of them updates the scene with no glue code, so a server can swap them (htmx).
 
 | Member | |
 |---|---|
@@ -81,6 +81,10 @@ Attributes: `name`, `register`, `seed`, `paused`, `label`, and every param. Chan
 | `wanted` | The viewer's intent: true after `play()`, false after `pause()` or `still()`, whatever the viewport. |
 | `params`, `seed`, `meta` | Read-only. `meta.W` and `meta.H` are the logical units. |
 | `lastPointer` | `{ x, y, inside, down, keyboard }` in logical units, the last pointer the renderer saw; `null` before any. The reading panel takes its own pointer events, so taps on the text don't reach it. |
+| `keepClear(id, rect)` | Adds a rect (logical units) to the keep-away list, replaces the one with the same id, or removes it with `null`. The scene redraws. Anything can join: a badge, a note, a pane (decision 0021). |
+| `calm` | The keep-away list as the renderer gets it: the slotted words' rects, then the `keepClear` ones. A copy. |
+| `wordsAt` | With `movable`: where the words have been moved to, `{ x, y }`, or `null` at home. |
+| `sg-words-moved` event | With `movable`, when the words are let go or a key moves them. `detail: { x, y, home }`, fractions of the free room (0 flush top or left, 1 flush bottom or right). Bubbles and is composed. |
 | `sg-ready` event | After the first frame is drawn, and after `renderer.ready` settles when the renderer has one. Bubbles and is composed. |
 | `sg-state` event | When `wanted` or the still changes. `detail: { wanted, still, playing }`. |
 
@@ -89,7 +93,8 @@ What it does for every scene:
 - **Registers and motion.** Follows `registerState`. Quiet and reduced motion show the still. Moving into or out of quiet takes effect at once.
 - **Pausing.** Off screen (IntersectionObserver), in a hidden tab, and when the model says `settled` (nothing will change until an input does). It wakes on `set()`, the pointer, keys or a register change.
 - **Reading layer.** Slotted content sits over the drawing on a scrim. When the panel would cover more than 45% of the drawing's height (a phone, a wide scene), it moves below the drawing instead (the frame gets class `stacked`, and it goes back under 40%). Calm rects then only include text that still overlaps the drawing. The scrim is `--sg-scrim`, with text in `--sg-scrim-ink`, then `--sg-text`. Over the drawing the panel is placed with `--sg-reading-place` (default `end start`) and `--sg-reading-inset`. Style it through `::part(panel)`, `::part(reading)`, `::part(stage)` and `::part(toggle)`. The panel hides itself when nothing is slotted.
-- **Calm rects.** A ResizeObserver measures the slotted elements and hands their boxes to the renderer.
+- **Calm rects.** A ResizeObserver measures the slotted elements and hands their boxes to the renderer, with anything added by `keepClear`. A change of `--sg-reading-place` (on the element's style, a class up the tree, a `<style>` in the head) re-measures too.
+- **Movable words.** `<sg-scene movable>` puts a grip (a button named "Move the words") on the reading panel's corner. Drag it, or use its arrow keys (Shift for bigger steps, Home to put the words back); a status line says where they are in plain words. The panel moves by CSS transform, clamped inside the picture, and the scene re-measures on each move so the drawing makes room live. Warm and playful set it on frosted glass (`--sg-glass-blur`, `--sg-glass-tint`). The panel steps clear of the pause button. It is off in quiet and where the words sit below the picture. Remembering the place is the page's job: `words-at="0.5 0.5"` in, `sg-words-moved` out. Nothing loads without the attribute (`movable.js`, its own item).
 - **Pause button.** A native `<button>` labelled "Pause animation" with `aria-pressed`, top right, in warm and playful whenever the scene can move (WCAG 2.2.2). Hidden in quiet and while settled.
 - **Words.** The drawing is `role="img"` labelled by `label`, `meta.alt` or `meta.title`. State is spoken as the work, not the drawing: the scene's `status(params, meta)` returns only the short part (`"40% done"`, or `''` for nothing to say), and the element announces `${label}: ${status}` in a polite status region, where `label` is the `label` attribute or `meta.title`. So `<sg-scene name="kolam" progress="0.4" label="Upload progress">` says "Upload progress: 40% done". It writes at most once a second and only when the sentence changes, so nothing is repeated.
 - **Keys.** In an interactive register the drawing is focusable (`role="application"`, described by `meta.keys`), with a two-tone focus ring. The arrow keys move the pointer (Shift for bigger steps); Enter and Space call `activate`.

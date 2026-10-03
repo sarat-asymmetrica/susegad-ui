@@ -83,6 +83,45 @@ node tools/diff.mjs --scene kolam --seed 3 --at 2            # compare with it
 
 Shoots the scene with its clock frozen at `--at` seconds and compares it pixel by pixel with `tools/baselines/<scene>-<register>-<theme>.png`, in the browser, with no image library. A pixel counts as changed when its colour moves more than `--threshold` (0.02 on a 0 to 1 scale), and the check fails when more than `--max-ratio` of pixels change (0.001). The actual image and a diff image, with changes in vermilion over a faded copy, go to `.shots/diff/`. The JSON beside each baseline records the seed, params and size it was made with, and the tool tells you if they differ.
 
+## contact-sheet
+
+The whole matrix on one PNG. Quiet, warm and playful down the side; across the top, the page at 1440 px (light and dark), at 390 px (light and dark) and with reduced motion. Fifteen cells, each labelled, with the console-error count in red where there is one. `matrix.mjs` shoots a piece at rest into many files; this one can first take the page to the moment the piece exists for with `--act` steps, then tiles the result.
+
+```
+node tools/contact-sheet.mjs --url /packages/components/drawer/demo.html --name drawer   --act "click:a[data-sg-drawer=rooms]" --act "wait-for:#rooms dialog[open]" --act settle
+node tools/contact-sheet.mjs --url /apps/docs/index.html --name home --at 3
+```
+
+Steps: `click:SEL`, `press:KEY`, `hover:SEL`, `wait:MS`, `wait-for:SEL`, `settle` (every animation finished), `eval:JS`. A step that cannot run is named in that cell's label ("step failed") instead of passing as a blank shot. Output goes to `docs/shots/front/<name>-contact.png` beside a `.json` of per-cell errors. It exits non-zero if any cell had a console error, page error or failed request.
+
+## strip and onion
+
+Motion an agent can read. One screenshot at 2 s says nothing about how a scene moves; these two say it in one image and a few numbers. The idea is borrowed from fframes (MIT); the code is ours.
+
+```
+node tools/strip.mjs vad -n 12 --from 0 --to 45 --facts
+node tools/strip.mjs tinto -n 12 --to 8 --content --param movable= --param "words-at=0.95 0.05" --facts --json
+node tools/onion.mjs kolam --from 2 --to 6 -n 6
+node tools/onion.mjs vad --from 0 --to 45 -n 8 --diff
+```
+
+**`strip`** lays N evenly spaced frames (`-n`, default 12, both ends included) between `--from` and `--to` seconds (default 0 to 8) on one PNG. Each cell is labelled with its time and how much of the picture changed since the cell before; the header gives the target, register, theme, seed, params and which clock it used. Options are `shot.mjs`'s (target, `--register`, `--theme`, `--seed`, `--param`, `--content`, `--width`, `--height`, `--dpr`, `--reduced`, `--selector`, `--out`, `--allow-errors`), plus `--cols`, `--cell-width`, and `--frames` to keep every frame as its own PNG. It writes `.shots/strip/<target>-<register>-<theme>-strip.png`.
+
+**`onion`** blends the frames onto one PNG, older ones fainter, so a path and its easing show in one picture: evenly spaced ghosts are constant speed, ghosts crowding at one end are an ease. The still background stays exact (it is the per-pixel median of the frames) and each frame's moving pixels are laid over it, oldest first, at rising opacity. `--diff` shows only the pixels that change, each step's in vermilion over a faded last frame, older steps fainter; it says where things change, and older steps show only as a paler rim where the newest step has not painted over them. Where the picture changes everywhere (a growing tree, a season) the median has no still background to keep, and the diff fills in solid; read the order of growth from a strip, and use the onion for things that move through a still scene. It writes `<target>-<register>-<theme>-onion.png` (`-onion-diff.png`) to `.shots/onion/`.
+
+**The clock.** A scene runs on the harness's frozen clock, played by hand a 1/60 s tick at a time, so the same seed gives byte-identical frames and a frame at 40 s costs the time to draw it, not 40 s of waiting. The page loads as it normally would and the tool takes over at the scene's own `sg-ready` (holding every `requestAnimationFrame` loop from the first script instead changed the order of a scene's real events and frame callbacks; Tinto's glass then settled a few pixels apart from load to load). It then waits for the network and fonts to go quiet with the clock standing still, and steps. Times are the scene's clock, counted from when it mounted, and a cell asked for before the scene was ready shows the first moment it can be seen and says so. A stepped frame equals what `?freeze=<t>` draws in the harness (checked pixel for pixel on the fixture, Tinto and Vad). Web Animations and CSS animations run on the real clock, so a scene made of them will not repeat; the tool notes when any were running. A page (`--url`) has no harness clock, so it is taken in real time, and `--real` does the same for a scene; the header says `real clock`, and two real strips are never the same twice.
+
+**`--json`** prints JSON alone on stdout (everything else goes to stderr): per cell its requested time, its actual clock time and frame, whether the piece was `playing`, mean luminance (0 to 1), and the changed-pixel share, count and bounding box against the cell before. A pixel counts as changed when its colour moves more than `--threshold` (0.02), the same rule as `diff.mjs`. An agent can then say "motion stops between 4 s and 6 s" from numbers.
+
+**`--facts`** prints where motion happens (the bounding box of the changed pixels for each step, and their union) and flags two failures:
+
+- a **frozen span**: a run of cells with no change (at most 0.02% of pixels) that lasts longer than `--still` seconds (default 1.5) while the scene's `playing` is true at every cell. The same run while it is not playing is listed as at rest and not flagged; a page with no `playing` reports it as unknown.
+- a **jump**: a step that changes at least 5% of the picture and at least four times what the steps round it (two either side) change, counted no lower than 0.5%. The usual sign of a stage cut or a pop.
+
+Both are sampled at the strip's spacing, and `--facts` says how long that is: a freeze or a jump shorter than one step can hide between two cells, so raise `-n` to look closer. Flagged cells get a vermilion frame and a tag on the sheet. The abri and chiro flakes in the ledger (a ratio measured across a stage change, or against rain still falling) are the family a strip shows at once: the step that straddles the change is the jump.
+
+`tools/fixtures/motion-scene/` (`--scene motion`) is a dot orbiting a ring with two optional faults, `--param stall=3-5` (the dot stops while still playing) and `--param cut=7` (the picture changes at once), so the facts have something known to find. `node tools/strip.check.mjs` runs the gates by hand (it is not under `packages/`, so `npm run check` does not pick it up; `GATE=2` runs one): determinism against a real-clock control that must differ, the stall and the cut found and their absence reported on the plain fixture, stepped frames against `?freeze`, the onion's ghosts, and `--json`.
+
 ## No JavaScript
 
 `matrix.mjs` and `axe.mjs` take `--no-js` for pages (`--url`). Chromium then builds the page with JavaScript off, so `<noscript>` content renders and no page script runs. The page counts as ready at load plus fonts. The tools still set `data-register`, `data-theme` and `data-palette` on `:root`, standing in for what a server would render, because `demo.js` cannot run. axe needs timers, which do not run with JavaScript off. So `axe.mjs --no-js` takes the DOM the no-JS page produced (with `<noscript>` content, declarative shadow roots, and scripts and inline handlers removed) and checks it in a scripted copy served at the same URL. The matrix writes to `.shots/matrix/<target>-nojs/`. `perf.mjs` refuses `--no-js`, because nothing animates. A scene cannot run without JavaScript, so `--scene` with `--no-js` is an error.
@@ -129,4 +168,4 @@ The file-upload recipe has no `<form>` (the drop zone uploads as files are chose
 
 ## Tests
 
-`npm test` runs `tools/**/*.test.mjs` along with the package tests. They cover the argument parser, target URLs, form sample values and verdicts, frame and byte statistics, the pixel maths, the contact sheet and the server.
+`npm test` runs `tools/**/*.test.mjs` along with the package tests. They cover the argument parser, target URLs, form sample values and verdicts, frame and byte statistics, the pixel maths, the contact sheet, the strip and onion layout and facts, and the server.

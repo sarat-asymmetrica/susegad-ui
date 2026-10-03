@@ -1,0 +1,14 @@
+{
+  "name": "scene-chai",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["loader","divider"],
+  "title": "Chai",
+  "description": "Three small ink drawings on one sheet, meant as a loader, a toggle and a divider: a cutting-chai glass whose steam follows a curl-noise field, a clay diya whose flame leans from the pointer and goes out with a curl of smoke, and a tulsi creeper that grows along a rule. Set lit to put the lamp out or light it. Quiet is the plate's still; warm steams and flickers; playful takes a tap on the flame and a hover on the creeper.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "chai.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "chai.prompt.md",
+  "budget": { "jsBytes": 40960 }
+}

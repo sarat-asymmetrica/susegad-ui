@@ -145,3 +145,9 @@ test('filterGallery drops groups left with nothing, and an empty term is a no-op
   assert.equal(found[0].type, 'component');
   assert.deepEqual(filterGallery(groups, 'no such thing anywhere'), []);
 });
+
+test('a scape card carries both figures; other cards carry none', () => {
+  const shet = { ...tollem, name: 'scene-shet', title: 'Shet', tier: 'scape', firstSightBytes: 61440, jsBytes: 92160 };
+  assert.equal(toCard(shet, fileExists).tierNote, 'scape: 60 KB at first sight, 90 KB in all');
+  assert.equal(toCard(tollem, fileExists).tierNote, null);
+});

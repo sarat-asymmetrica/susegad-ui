@@ -1,6 +1,7 @@
 {
   "name": "narration",
   "type": "package",
+  "stability": "experimental",
   "title": "Narration",
   "description": "Recorded or synthesised speech plus a WebVTT timing track that drives captions and word-by-word highlighting. A pure timing core (phrase splitting, a WAV duration reader, script-aware word weights with a real Devanagari and Kannada akshara segmenter, a WebVTT writer and parser), a provider interface with a Sarvam bulbul adapter and an offline silent-WAV stub, a fixture cache keyed on the request so tests and demos never call the network, the <sg-narration> highlight driver, and an offline speechSynthesis fallback.",
   "version": "0.1.0",

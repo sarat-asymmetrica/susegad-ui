@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reach</title>
+<link rel="stylesheet" href="./reach.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 80rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: 0 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-5); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(21rem, 1fr)); gap: var(--sg-space-5) var(--sg-space-4); margin-top: var(--sg-space-5); }
+  .panel { padding: var(--sg-space-3) 8px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Reach</h1>
+  <p class="lede">A contact block: email and WhatsApp as real links, a button that copies the number and says so, and when replies usually come.</p>
+  <div class="grid">
+    <section data-register="quiet" aria-labelledby="h-quiet">
+      <h2 id="h-quiet">Quiet: plain lines</h2>
+      <div class="panel">
+        <sg-reach seed="casa-quiet">
+          <address>
+            <p class="sg-reach-line"><span class="sg-reach-label">Email</span> <a href="mailto:hello@casa-studio.example?subject=A%20project">hello@casa-studio.example</a></p>
+            <p class="sg-reach-line"><span class="sg-reach-label">WhatsApp</span> <a href="https://wa.me/919000012345?text=Hello!%20I%20saw%20your%20site%20and%20have%20a%20project%20in%20mind.">+91 90000 12345</a> <button type="button" class="sg-reach-copy" data-copy="+91 90000 12345" hidden>Copy number</button></p>
+            <p class="sg-reach-when">Replies usually come the same day, between 10 and 7, India time.</p>
+          </address>
+        </sg-reach>
+      </div>
+    </section>
+    <section data-register="warm" aria-labelledby="h-warm">
+      <h2 id="h-warm">Warm: an inland letter</h2>
+      <div class="panel">
+        <sg-reach seed="casa-warm">
+          <address>
+            <p class="sg-reach-line"><span class="sg-reach-label">Email</span> <a href="mailto:hello@casa-studio.example?subject=A%20project">hello@casa-studio.example</a></p>
+            <p class="sg-reach-line"><span class="sg-reach-label">WhatsApp</span> <a href="https://wa.me/919000012345?text=Hello!%20I%20saw%20your%20site%20and%20have%20a%20project%20in%20mind.">+91 90000 12345</a> <button type="button" class="sg-reach-copy" data-copy="+91 90000 12345" hidden>Copy number</button></p>
+            <p class="sg-reach-when">Replies usually come the same day, between 10 and 7, India time.</p>
+          </address>
+        </sg-reach>
+      </div>
+    </section>
+    <section data-register="playful" aria-labelledby="h-playful">
+      <h2 id="h-playful">Playful: a rubber-stamped card</h2>
+      <div class="panel">
+        <sg-reach seed="casa-playful">
+          <address>
+            <p class="sg-reach-line"><span class="sg-reach-label">Email</span> <a href="mailto:hello@casa-studio.example?subject=A%20project">hello@casa-studio.example</a></p>
+            <p class="sg-reach-line"><span class="sg-reach-label">WhatsApp</span> <a href="https://wa.me/919000012345?text=Hello!%20I%20saw%20your%20site%20and%20have%20a%20project%20in%20mind.">+91 90000 12345</a> <button type="button" class="sg-reach-copy" data-copy="+91 90000 12345" hidden>Copy number</button></p>
+            <p class="sg-reach-when">Replies usually come the same day, between 10 and 7, India time.</p>
+          </address>
+        </sg-reach>
+      </div>
+    </section>
+  </div>
+  <p class="note">The address and number are made up. The WhatsApp link opens a chat with a first message already written; the links were built with <code>waLink()</code> and <code>mailtoLink()</code>.</p>
+</main>
+<script type="module">
+  import './reach.js';
+</script>
+</body>
+</html>

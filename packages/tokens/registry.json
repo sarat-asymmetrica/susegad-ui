@@ -1,9 +1,11 @@
 {
   "name": "tokens",
   "type": "package",
+  "stability": "beta",
+  "stabilityReason": "Colour, type, space, motion and the register cascade: every other piece is built on it, and it has carried real pages since the soft launch.",
   "title": "Tokens",
   "version": "0.1.0",
-  "description": "Colour (OKLCH, light and dark, Susegad and Casa palettes), type for Latin, Devanagari and Kannada, space, motion, sound names and the register, as CSS custom properties with a JS mirror. Self-hosted OFL fonts split by script. Includes palette-from-photo.",
+  "description": "Colour (OKLCH, light and dark, Susegad, Casa and Azulejo palettes), type for Latin, Devanagari and Kannada, space, motion, sound names and the register, as CSS custom properties with a JS mirror. Self-hosted OFL fonts split by script. Includes palette-from-photo.",
   "files": [
     "tokens.css",
     "fonts.css",

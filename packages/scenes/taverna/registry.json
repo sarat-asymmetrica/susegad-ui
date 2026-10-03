@@ -1,0 +1,36 @@
+{
+  "name": "scene-taverna",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": [
+    "hero",
+    "empty-state",
+    "background"
+  ],
+  "title": "Taverna",
+  "description": "Rain on bottle glass: a village taverna window on a rainy monsoon night with dark wooden bars, dark green wine bottles, a ceramic jug, and a slate blackboard. Outside, rain sweeps down a cobblestone alley under a glowing streetlamp; on the glass, warm indoor air condenses and raindrops trickle in delicate rivulets. Quiet is a crisp ink elevation; warm settles gracefully; playful chimes the bottles and wipes the misted glass.",
+  "version": "0.1.0",
+  "files": [
+    "index.js",
+    "model.js",
+    "render.js",
+    "meta.js",
+    "taverna.prompt.md"
+  ],
+  "dependencies": [
+    "core",
+    "engine",
+    "tokens",
+    "sound"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "taverna.prompt.md",
+  "budget": {
+    "jsBytes": 57344,
+    "reason": "Adds the person crossing the alley under a lantern, the bar shadows it throws across the sill, and a struck-glass chime instead of a single tone. Under the 64 KB ceiling in decision 0003."
+  }
+}

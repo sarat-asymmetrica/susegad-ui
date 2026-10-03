@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Posta scene</title>
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .lede { margin: 0 0 20px; color: var(--sg-text-soft, inherit); }
+  sg-scene { border-radius: 6px; }
+  sg-scene h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  sg-scene p { margin: 0; }
+  form { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 20px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  legend { font-weight: 600; float: left; margin-right: 8px; }
+  button { font: inherit; padding: 6px 14px; border-radius: 6px; border: 1px solid currentColor; background: none; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  #statusText { font-size: 0.95rem; color: var(--sg-text-soft, inherit); }
+  #how { font-size: 0.95rem; color: var(--sg-text-soft, inherit); margin-top: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Posta</h1>
+  <p class="lede">The sorting desk in Fontainhas. A dev page for the scene: registers, theme, and progress driven from a slider standing in for real work.</p>
+  <sg-scene id="posta" name="posta" label="Mail sorted">
+    <h2>The Sorting Desk</h2>
+    <p>Every dispatch finds its pigeonhole.</p>
+  </sg-scene>
+  <p id="statusText">Time is sorting the letters into cubbies.</p>
+  <p id="how">In playful, click or press Space to lift the letterbox flap, rock the scale, or press the rubber stamp.</p>
+  <form id="controls">
+    <fieldset>
+      <legend>Register</legend>
+      <label><input type="radio" name="register" value="quiet"> Quiet</label>
+      <label><input type="radio" name="register" value="warm"> Warm</label>
+      <label><input type="radio" name="register" value="playful"> Playful</label>
+    </fieldset>
+    <label><input type="checkbox" id="dark"> Dark</label>
+    <label><input type="checkbox" id="useProgress"> Drive progress</label>
+    <label for="progressRange">Cubbies sorted</label>
+    <input type="range" id="progressRange" min="0" max="12" step="1" value="6" disabled>
+    <button type="button" id="replay">From the start</button>
+    <button type="button" id="reseed">A new desk</button>
+  </form>
+</main>
+<script type="module">
+  const q = new URLSearchParams(location.search), root = document.documentElement;
+  const el = document.getElementById('posta');
+  const register = q.get('register') || 'warm';
+  root.dataset.register = register;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+  for (const k of ['seed', 'progress', 'flap', 'stamped']) if (q.has(k)) el.setAttribute(k, q.get(k));
+  el.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__piece = el;
+  await import('./index.js');
+
+  const form = document.getElementById('controls'), dark = document.getElementById('dark');
+  const use = document.getElementById('useProgress'), range = document.getElementById('progressRange'), said = document.getElementById('statusText');
+  form.register.value = register;
+  dark.checked = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+
+  const show = () => {
+    if (!use.checked) {
+      el.removeAttribute('progress');
+      said.textContent = 'Time is sorting the letters into cubbies.';
+      return;
+    }
+    const n = +range.value;
+    el.setAttribute('progress', (n / 12).toFixed(3));
+    said.textContent = `${n} of 12 cubbies sorted`;
+  };
+
+  use.checked = el.hasAttribute('progress');
+  range.disabled = !use.checked;
+  if (use.checked) range.value = Math.round(+el.getAttribute('progress') * 12);
+
+  form.addEventListener('change', e => {
+    if (e.target.name === 'register') root.dataset.register = form.register.value;
+    if (e.target === dark) root.dataset.theme = dark.checked ? 'dark' : 'light';
+    if (e.target === use) { range.disabled = !use.checked; show(); }
+  });
+
+  range.addEventListener('input', show);
+  document.getElementById('replay').onclick = () => el.replay();
+  document.getElementById('reseed').onclick = () => el.reseed();
+</script>
+</body>
+</html>

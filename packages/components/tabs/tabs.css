@@ -1,0 +1,90 @@
+/* <sg-tabs>. Without JavaScript this is a plain nav list over headed
+   sections, styled as a row of links with a hairline rule under the whole
+   list. With JavaScript, the list becomes a tablist and each link a tab;
+   quiet adds a static hairline under the selected tab, warm and playful get
+   a travelling ink underline (drawn by the skin, positioned by tabs.js,
+   animated by this file's transition). */
+
+sg-tabs nav > ul,
+sg-tabs [role="tablist"] {
+  position: relative;
+  display: flex;
+  gap: var(--sg-space-1, 0.25rem);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: var(--sg-hairline) solid var(--sg-rule);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+sg-tabs [role="tablist"] > li { margin: 0; }
+
+sg-tabs a[role="tab"],
+sg-tabs nav a {
+  display: inline-block;
+  padding: var(--sg-space-2, 0.5rem) var(--sg-space-3, 0.75rem);
+  color: var(--sg-text-soft);
+  text-decoration: none;
+  white-space: nowrap;
+  font: var(--sg-weight-medium, 500) var(--sg-step-0) / var(--sg-leading-snug, 1.3) var(--sg-font-body);
+  border-radius: var(--sg-radius-1, 2px) var(--sg-radius-1, 2px) 0 0;
+}
+sg-tabs a[role="tab"]:hover { color: var(--sg-text); }
+sg-tabs a[role="tab"][aria-selected="true"] { color: var(--sg-text); font-weight: var(--sg-weight-bold, 600); }
+sg-tabs a[role="tab"]:focus-visible {
+  outline: var(--sg-focus-width) solid var(--sg-focus);
+  outline-offset: calc(-1 * var(--sg-focus-width));
+}
+
+/* quiet: a static hairline under the active tab, no travel */
+sg-tabs[data-skin="quiet"] a[role="tab"][aria-selected="true"] {
+  box-shadow: inset 0 calc(-1 * var(--sg-hairline)) 0 0 var(--sg-text);
+}
+
+/* warm and playful: the travelling underline the skin positions */
+sg-tabs .sg-tabs-underline {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: var(--sg-stroke-bold, 2px);
+  background: var(--sg-accent-text);
+  border-radius: var(--sg-radius-pill, 999px);
+  pointer-events: none;
+  transition: left var(--sg-dur-calm) var(--sg-ease-ink), width var(--sg-dur-calm) var(--sg-ease-ink);
+}
+sg-tabs[data-skin="playful"] .sg-tabs-underline {
+  transition-duration: var(--sg-dur-slow);
+  transition-timing-function: var(--sg-ease-spring);
+}
+sg-tabs .sg-tabs-bead {
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: var(--sg-accent-text);
+  pointer-events: none;
+  transition: left var(--sg-dur-slow) var(--sg-ease-spring);
+}
+
+/* panels */
+sg-tabs [role="tabpanel"] { padding-block: var(--sg-space-4, 1rem); }
+sg-tabs [role="tabpanel"]:focus-visible {
+  outline: var(--sg-focus-width) solid var(--sg-focus);
+  outline-offset: var(--sg-focus-offset);
+}
+sg-tabs section[hidden] { display: none; }
+
+/* Same-document View Transitions: tabs.js names the active panel uniquely
+   per <sg-tabs> instance (view-transition-name, inline), so the content
+   cross-fades; the underline is not part of the transition (it is animated
+   by this file's own transition, above), so it keeps travelling smoothly
+   underneath. */
+::view-transition-old(*), ::view-transition-new(*) { animation-duration: var(--sg-dur-calm); }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*) { animation: none !important; }
+}

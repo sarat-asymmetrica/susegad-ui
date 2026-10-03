@@ -1,0 +1,35 @@
+{
+  "name": "studio-home",
+  "type": "recipe",
+  "stability": "experimental",
+  "title": "Studio home (a mock)",
+  "description": "A one-person studio's home page from the studio-site pieces: a site nav, a now note, postcards for the work, a client's quote beside the redacted conversation it came from with a voice note in it, and a contact block. All copy is placeholder and says so. Reads in full without JavaScript, in any register.",
+  "version": "0.1.0",
+  "files": [
+    "index.html",
+    "placeholder.wav",
+    "recipe.css",
+    "README.md",
+    "recipe.prompt.md"
+  ],
+  "dependencies": [
+    "site-nav",
+    "now-note",
+    "badge",
+    "postcard",
+    "quote",
+    "chat-thread",
+    "voice-note",
+    "reach",
+    "core-component",
+    "core",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "recipe.prompt.md",
+  "docs": "README.md"
+}

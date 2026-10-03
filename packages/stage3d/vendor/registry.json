@@ -1,0 +1,12 @@
+{
+  "name": "three-named",
+  "type": "package",
+  "stability": "experimental",
+  "title": "three.js, shaken (vendored)",
+  "description": "three 0.186.1 (MIT) bundled with esbuild down to the names the stage3d tier and the veranda's pot use, for setThreeLoader(): 136 KB gzipped against 193 KB for the whole module. Never edited by hand; PROVENANCE.md records the exact command, the size and the sha256 (decision 0017).",
+  "version": "0.186.1",
+  "files": ["three.named.js", "three-entry.js", "PROVENANCE.md", "LICENSE"],
+  "dependencies": [],
+  "budget": { "jsBytes": 540000, "reason": "Vendored and never edited: the exact bytes of the pinned build, recorded apart from our own code (decision 0017). Any change to it must be recorded in PROVENANCE.md." },
+  "docs": "PROVENANCE.md"
+}

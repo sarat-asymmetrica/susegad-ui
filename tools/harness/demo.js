@@ -23,8 +23,11 @@
   }
   window.__ready = false;
   window.__demoReady = () => { window.__ready = true; };
-  // Fallback: ready after load, fonts and every sg-* element upgraded.
+  // Fallback: ready after load, fonts and every sg-* element upgraded. A page that
+  // does real work after load (rendering, recording) says <meta name="demo-ready" content="manual">
+  // and calls window.__demoReady() itself when the work is done.
   addEventListener('load', async () => {
+    if (document.querySelector('meta[name="demo-ready"][content="manual"]')) return;
     try { await document.fonts.ready; } catch {}
     const tags = new Set([...document.querySelectorAll('*')].map(e => e.localName).filter(n => n.startsWith('sg-')));
     await Promise.all([...tags].map(t => customElements.whenDefined(t)));

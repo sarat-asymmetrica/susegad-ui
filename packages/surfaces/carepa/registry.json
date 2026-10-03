@@ -1,0 +1,13 @@
+{
+  "name": "surface-carepa",
+  "type": "surface",
+  "title": "Carepa",
+  "version": "0.1.0",
+  "description": "A surface (decision 0016: a drawn backdrop, a pure model, a renderer and a still like a scene, but with no slotted reading zone of its own): a Goan window glazed with oyster shell, filling its host edge to edge (cover-fit): the warm and playful backdrop for Dialog and Drawer. The room is painted opaque, so nothing behind the surface is legible through it; the pointer is the sun, and each shell catches pink, green and blue at its own angle. A finished reduced-motion still and a plain translucent CSS fallback.",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "carepa.css", "carepa.prompt.md"],
+  "dependencies": ["engine", "tokens"],
+  "registers": ["warm", "playful"],
+  "prompt": "carepa.prompt.md",
+  "docs": "carepa.docs.md",
+  "budget": { "jsBytes": 30720, "reason": "model.js (pure) + render.js (the renderer, cover-fit mount, the dusk palette for dark theme, cached pane paths, the idle skip and a Paus-style quality governor) + meta.js + index.js: 28,803 bytes. Raised from 23,552 when the governor landed (8edd386); still under a scene's 40 KB default. Decision 0016." }
+}

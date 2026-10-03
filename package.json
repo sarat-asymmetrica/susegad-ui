@@ -1,7 +1,7 @@
 {
   "name": "susegad-ui",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Beautiful and comfortable interfaces and documents: three registers, drawn in code, copied into your project.",
   "license": "MIT",
   "type": "module",
@@ -9,9 +9,12 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test \"packages/**/*.test.js\" \"tools/**/*.test.mjs\" \"registry/**/*.test.mjs\"",
+    "test": "node --test \"packages/**/*.test.js\" \"tools/**/*.test.mjs\" \"registry/**/*.test.mjs\" \"apps/**/*.test.js\" \"apps/**/*.test.mjs\"",
     "serve": "node tools/serve.mjs",
     "check": "node tools/checks.mjs",
+    "cem": "node tools/cem.mjs",
+    "skill-coverage": "node tools/check-skill-coverage.mjs",
+    "skill-inventory": "node tools/skill-inventory.mjs",
     "folio": "node packages/folio/bin/folio.mjs",
     "docs:build": "node apps/docs/build.mjs",
     "deploy": "node apps/docs/build.mjs && wrangler deploy"
@@ -26,5 +29,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/sarat-asymmetrica/susegad-ui.git"
+  },
+  "dependencies": {
+    "three": "0.186.1"
   }
 }

@@ -1,0 +1,220 @@
+/* <sg-wa-order>. Without JavaScript all there is is the link, drawn as the page's
+   one strong button, so an order can still be started. With it, a few ruled
+   fields, the exact message, and the same button. Tokens only. */
+
+sg-wa-order {
+  display: block;
+  position: relative;
+  max-inline-size: 40rem;
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body);
+  container-type: inline-size;
+}
+sg-wa-order[hidden] { display: none; }
+
+/* the link: the primary button, with or without script */
+sg-wa-order .sg-wa-send {
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  min-block-size: 3rem;
+  padding: 0 var(--sg-space-4);
+  border: var(--sg-hairline) solid var(--sg-text);
+  border-radius: var(--sg-radius-2);
+  background: var(--sg-text);
+  color: var(--sg-surface);
+  font: var(--sg-weight-medium) var(--sg-step-0) / 1.2 var(--sg-font-body);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+sg-wa-order .sg-wa-send:focus-visible,
+sg-wa-order .sg-wa-menu-link:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+/* not ready: the link stays where it is and says why it cannot go yet, beside it */
+sg-wa-order .sg-wa-send[aria-disabled="true"] {
+  background: transparent;
+  color: var(--sg-text);
+  border: var(--sg-hairline) dashed var(--sg-rule-strong);
+  cursor: default;
+}
+
+sg-wa-order .sg-wa-panel { display: grid; gap: var(--sg-space-5); margin-block-start: var(--sg-space-3); }
+
+/* the fields */
+sg-wa-order .sg-wa-fields { display: grid; gap: var(--sg-space-4); min-inline-size: 0; margin: 0; padding: 0; border: 0; }
+sg-wa-order :is(.sg-wa-fields > legend, .sg-wa-how > legend) { padding: 0; }
+sg-wa-order .sg-wa-fields > legend { margin-block-end: var(--sg-space-3); font: 400 var(--sg-step-1) / 1.2 var(--sg-font-display); }
+sg-wa-order .sg-wa-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: var(--sg-space-4); }
+sg-wa-order .sg-wa-plain { display: grid; gap: var(--sg-space-1); min-inline-size: 0; }
+sg-wa-order :is(.sg-wa-plain > label, .sg-wa-how > legend) { font-weight: var(--sg-weight-medium); line-height: 1.35; color: var(--sg-text); }
+sg-wa-order .sg-wa-hint { margin: 0; font-size: var(--sg-step--1); line-height: 1.4; color: var(--sg-text-soft); }
+
+/* a date and a time of day: the same sunk, ruled well as the library's text fields */
+sg-wa-order :is(input[type="date"], select) {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+  margin: 0;
+  padding: 0.5rem 0.5rem 0.4rem;
+  font: 400 1.0625rem / 1.5 var(--sg-font-body);
+  color: var(--sg-text);
+  background-color: var(--sg-surface-sunk);
+  border: 0;
+  border-block-end: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-1) var(--sg-radius-1) 0 0;
+  accent-color: var(--sg-accent);
+}
+sg-wa-order :is(input[type="date"], select):hover { border-block-end-color: var(--sg-text-soft); }
+sg-wa-order :is(input[type="date"], select):focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); border-block-end-color: var(--sg-text); }
+sg-wa-order[data-tried] :is(input, select, textarea):invalid { border-block-end: 2px solid var(--sg-danger); }
+
+/* delivery or pickup: two big, honest choices; the chosen one is filled and ticked */
+sg-wa-order .sg-wa-how { min-inline-size: 0; margin: 0; padding: 0; border: 0; }
+sg-wa-order .sg-wa-how > legend { margin-block-end: var(--sg-space-1); }
+sg-wa-order .sg-wa-choices { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sg-space-2); }
+sg-wa-order .sg-wa-how[hidden], sg-wa-order .sg-wa-choice[hidden] { display: none; }
+sg-wa-order .sg-wa-choices:has(> .sg-wa-choice[hidden]) { grid-template-columns: 1fr; }
+sg-wa-order .sg-wa-choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  box-sizing: border-box;
+  min-block-size: 2.75rem;
+  padding: 0 var(--sg-space-3);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-2);
+  font-weight: var(--sg-weight-medium);
+  cursor: pointer;
+}
+sg-wa-order .sg-wa-choice input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+sg-wa-order .sg-wa-choice:has(input:checked) { background: var(--sg-text); border-color: var(--sg-text); color: var(--sg-surface); }
+sg-wa-order .sg-wa-choice:has(input:checked)::before {
+  content: "";
+  inline-size: 0.6em;
+  block-size: 0.32em;
+  border: solid currentColor;
+  border-width: 0 0 2px 2px;
+  transform: translateY(-0.12em) rotate(-45deg);
+}
+sg-wa-order .sg-wa-choice:has(input:focus-visible) { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+
+/* the exact message */
+sg-wa-order .sg-wa-preview { position: relative; display: grid; gap: var(--sg-space-2); }
+sg-wa-order .sg-wa-title { margin: 0; font: 400 var(--sg-step-1) / 1.2 var(--sg-font-display); }
+sg-wa-order .sg-wa-text {
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+  padding: var(--sg-space-3);
+  background: var(--sg-surface-raised);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-2);
+  color: var(--sg-text);
+  font: var(--sg-weight-regular) var(--sg-step-0) / 1.6 var(--sg-font-body);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  tab-size: 2;
+}
+sg-wa-order .sg-wa-text[data-empty] { color: var(--sg-text-soft); font-style: italic; }
+sg-wa-order .sg-wa-rule { display: none; }
+
+/* the way to send it, and what is in its way */
+sg-wa-order .sg-wa-actions { display: grid; justify-items: start; gap: var(--sg-space-2); }
+sg-wa-order .sg-wa-panel .sg-wa-send { justify-self: stretch; }
+sg-wa-order .sg-wa-reason { margin: 0; color: var(--sg-text); }
+sg-wa-order .sg-wa-reason:empty, sg-wa-order .sg-wa-written:empty { display: none; }
+sg-wa-order .sg-wa-menu-link { color: var(--sg-accent-text); font-weight: var(--sg-weight-medium); }
+sg-wa-order .sg-wa-menu-link[hidden] { display: none; }
+sg-wa-order .sg-wa-written {
+  margin: 0;
+  padding: var(--sg-space-2) var(--sg-space-3);
+  border-inline-start: 3px solid var(--sg-success);
+  background: var(--sg-surface-sunk);
+  font-weight: var(--sg-weight-medium);
+}
+
+@container (max-width: 30rem) {
+  sg-wa-order .sg-wa-row { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ── warm: a slip of ruled paper, written in the hand ── */
+sg-wa-order[data-skin="warm"] .sg-wa-fields > legend,
+sg-wa-order[data-skin="warm"] .sg-wa-title { font: 400 var(--sg-step-2) / 1.1 var(--sg-font-hand); color: var(--sg-accent-text); }
+sg-wa-order[data-skin="warm"] .sg-wa-rule { display: block; inline-size: 100%; block-size: 4px; margin-block-start: -0.35rem; overflow: visible; }
+sg-wa-order[data-skin="warm"] .sg-wa-rule path { fill: var(--sg-accent-text); }
+sg-wa-order[data-skin="warm"] .sg-wa-text {
+  padding-block: var(--sg-space-3);
+  padding-inline: var(--sg-space-5) var(--sg-space-3);
+  border: 0;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px var(--sg-shadow), 0 8px 20px -12px var(--sg-shadow);
+  font: 400 var(--sg-step-0) / 1.7em var(--sg-font-hand);
+}
+/* the ruled lines run behind the words, one to a line, and a margin line down the left */
+sg-wa-order[data-skin="warm"] .sg-wa-text::before {
+  content: "";
+  position: absolute;
+  inset: var(--sg-space-3) 0 0 0;
+  z-index: -1;
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent calc(1.7em - 1px), var(--sg-rule) calc(1.7em - 1px), var(--sg-rule) 1.7em);
+  background-size: 100% 1.7em;
+}
+sg-wa-order[data-skin="warm"] .sg-wa-text::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 var(--sg-space-4);
+  inline-size: 1.5px;
+  z-index: -1;
+  background: var(--sg-accent);
+  opacity: 0.55;
+}
+sg-wa-order[data-skin="warm"] .sg-wa-send:not([aria-disabled="true"]) { background: var(--sg-accent); border-color: var(--sg-accent); color: var(--sg-on-accent); }
+sg-wa-order[data-skin="warm"] .sg-wa-choice:has(input:checked) { background: var(--sg-accent); border-color: var(--sg-accent); color: var(--sg-on-accent); }
+sg-wa-order[data-skin="warm"] .sg-wa-written { font-family: var(--sg-font-hand); font-weight: 400; font-size: var(--sg-step-1); }
+
+/* ── playful: a speech bubble with a tail, pills, a button that presses ── */
+sg-wa-order[data-skin="playful"] .sg-wa-fields > legend,
+sg-wa-order[data-skin="playful"] .sg-wa-title { font: 400 var(--sg-step-2) / 1.1 var(--sg-font-hand); color: var(--sg-accent-text); }
+sg-wa-order[data-skin="playful"] .sg-wa-preview { margin-block-end: 0.7rem; }
+sg-wa-order[data-skin="playful"] .sg-wa-text { border: 2px solid var(--sg-accent); border-radius: 1.25rem; }
+sg-wa-order[data-skin="playful"] .sg-wa-text::after {
+  content: "";
+  position: absolute;
+  inset-block-end: -0.62rem;
+  inset-inline-start: 2rem;
+  inline-size: 1rem;
+  block-size: 1rem;
+  box-sizing: border-box;
+  background: var(--sg-surface-raised);
+  border: solid var(--sg-accent);
+  border-width: 0 2px 2px 0;
+  border-radius: 0 0 4px 0;
+  transform: rotate(45deg);
+  z-index: 1;
+}
+sg-wa-order[data-skin="playful"] .sg-wa-choice { border-width: 2px; border-radius: var(--sg-radius-pill, 999px); }
+sg-wa-order[data-skin="playful"] .sg-wa-choice:has(input:checked) { background: var(--sg-accent); border-color: var(--sg-accent); color: var(--sg-on-accent); }
+sg-wa-order[data-skin="playful"] .sg-wa-send {
+  background: var(--sg-accent);
+  border-color: var(--sg-accent);
+  color: var(--sg-on-accent);
+  border-radius: var(--sg-radius-pill, 999px);
+  box-shadow: 0 4px 0 color-mix(in oklch, var(--sg-accent) 55%, black);
+}
+sg-wa-order[data-skin="playful"] .sg-wa-send[aria-disabled="true"] { background: transparent; border: 2px dashed var(--sg-rule-strong); color: var(--sg-text); box-shadow: none; }
+@media (prefers-reduced-motion: no-preference) {
+  sg-wa-order[data-skin="playful"] .sg-wa-send { transition: transform 90ms ease-out, box-shadow 90ms ease-out; }
+  sg-wa-order[data-skin="playful"] .sg-wa-send:not([aria-disabled="true"]):active { transform: translateY(3px); box-shadow: 0 1px 0 color-mix(in oklch, var(--sg-accent) 55%, black); }
+}
+sg-wa-order[data-skin="playful"] .sg-wa-written { border: 2px solid var(--sg-success); border-radius: var(--sg-radius-2); font-family: var(--sg-font-hand); font-weight: 400; font-size: var(--sg-step-1); }
+
+@media (forced-colors: active) {
+  sg-wa-order .sg-wa-rule { display: none; }
+  sg-wa-order .sg-wa-send { border: 1px solid ButtonText; }
+  sg-wa-order .sg-wa-choice { border: 1px solid ButtonText; }
+  sg-wa-order .sg-wa-choice:has(input:checked) { border: 2px solid Highlight; }
+}

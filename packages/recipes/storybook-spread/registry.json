@@ -1,6 +1,7 @@
 {
   "name": "storybook-spread",
   "type": "recipe",
+  "stability": "experimental",
   "title": "The first rain (storybook spread)",
   "description": "One bilingual (English and Marathi), narrated spread of a Goan children's storybook: text beside the paus scene, word-by-word highlighting, always-present captions, and rain intensity driven by which words are playing, not the clock. Works without JavaScript: the story text and native audio controls and captions are always there.",
   "version": "0.1.0",

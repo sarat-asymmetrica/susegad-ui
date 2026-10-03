@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  // ?register=quiet|warm|playful, ?theme=light|dark and ?palette=… set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute(`data-${k}`, v);
+  window.__ready = false; // set once the menu and the composer are wired, so the tools wait for them
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order from Sample Pasta Studio</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="../../components/field/field.css">
+<link rel="stylesheet" href="../../components/menu/menu.css">
+<link rel="stylesheet" href="../../components/wa-order/wa-order.css">
+<link rel="stylesheet" href="./recipe.css">
+</head>
+<body>
+<main class="food-order">
+  <header class="food-order__head">
+    <p class="food-order__note">Sample Pasta Studio</p>
+    <h1>Order fresh pasta, in a few taps</h1>
+    <p class="food-order__sub">Everything is made to order, so we ask for a day's notice. Choose what you like, say when and where, and your order is written for you as a WhatsApp message. You read it, you send it, and we reply to confirm.</p>
+  </header>
+
+  <!-- How ordering works: a plain ordered list, so it reads in order with or without the styling. -->
+  <section class="food-order__how" aria-labelledby="how-h">
+    <h2 id="how-h">How ordering works</h2>
+    <ol>
+      <li><strong>Choose.</strong> Tap + beside each dish. Prices are for one of each unit.</li>
+      <li><strong>Say when and where.</strong> A day, a time of day, delivery or pickup, and your name.</li>
+      <li><strong>Send it in WhatsApp.</strong> We write the message; you press send. Nothing is final until we reply and confirm.</li>
+    </ol>
+  </section>
+
+  <div class="food-order__cols">
+    <section class="food-order__menu" aria-labelledby="menu-h">
+      <h2 id="menu-h">The menu</h2>
+      <sg-menu id="menu" orderable glyphs continue="#order" seed="sample-studio">
+      <section class="sg-menu-section"><h3 class="sg-menu-section-title">Fresh pasta</h3><p class="sg-menu-section-note">Made to order. Rolled and cut the morning we cook it.</p><ul class="sg-menu-items">
+            <li class="sg-menu-item" data-id="fettuccine" data-availability="available"><span class="sg-menu-name">Fresh fettuccine</span><span class="sg-menu-price"><data value="450">₹450</data> <span class="sg-menu-unit">10 pieces</span></span><span class="sg-menu-line">Plain wheat, rolled thin</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="egg-less">Egg-less</li><li class="sg-menu-tag" data-tag="veg">Veg</li></ul></div></li>
+            <li class="sg-menu-item" data-id="ravioli" data-availability="available"><span class="sg-menu-name">Spinach ravioli</span><span class="sg-menu-price"><data value="520">₹520</data> <span class="sg-menu-unit">serves 2</span></span><span class="sg-menu-line">Ricotta, lemon and nutmeg</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="veg">Veg</li></ul></div></li>
+            <li class="sg-menu-item" data-id="gnocchi" data-availability="available"><span class="sg-menu-name">Beetroot gnocchi</span><span class="sg-menu-price"><data value="480">₹480</data> <span class="sg-menu-unit">serves 2</span></span><span class="sg-menu-line">Soft, with sage butter</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="egg-less">Egg-less</li><li class="sg-menu-tag" data-tag="veg">Veg</li></ul></div></li>
+            <li class="sg-menu-item" data-id="tagliolini" data-availability="sold-out"><span class="sg-menu-name">Squid ink tagliolini</span><span class="sg-menu-price"><data value="640">₹640</data> <span class="sg-menu-unit">serves 2</span></span><span class="sg-menu-line">Back when the squid is in</span><div class="sg-menu-meta"><span class="sg-menu-status">Sold out</span></div></li>
+          </ul></section>
+        <section class="sg-menu-section"><h3 class="sg-menu-section-title">Sauces</h3><p class="sg-menu-section-note">By the jar. Keeps four days in the fridge.</p><ul class="sg-menu-items">
+            <li class="sg-menu-item" data-id="tomato" data-availability="available"><span class="sg-menu-name">Tomato and basil</span><span class="sg-menu-price"><data value="260">₹260</data> <span class="sg-menu-unit">1 jar</span></span><span class="sg-menu-line">Slow cooked, nothing else</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="vegan">Vegan</li><li class="sg-menu-tag" data-tag="egg-less">Egg-less</li></ul></div></li>
+            <li class="sg-menu-item" data-id="pesto" data-availability="available"><span class="sg-menu-name">Walnut pesto</span><span class="sg-menu-price"><data value="340">₹340</data> <span class="sg-menu-unit">1 jar</span></span><span class="sg-menu-line">Green and a little bitter</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="veg">Veg</li><li class="sg-menu-tag" data-tag="nuts">Contains nuts</li></ul></div></li>
+            <li class="sg-menu-item" data-id="arrabbiata" data-availability="available"><span class="sg-menu-name">Arrabbiata</span><span class="sg-menu-price"><data value="280">₹280</data> <span class="sg-menu-unit">1 jar</span></span><span class="sg-menu-line">Slow, then sharp</span><div class="sg-menu-meta"><ul class="sg-menu-tags"><li class="sg-menu-tag" data-tag="vegan">Vegan</li><li class="sg-menu-tag" data-tag="spicy">Spicy</li></ul></div></li>
+            <li class="sg-menu-item" data-id="chilli-oil" data-availability="ask"><span class="sg-menu-name">Chilli oil</span><span class="sg-menu-line">Small batch, when the chillies are good</span><div class="sg-menu-meta"><span class="sg-menu-status">Ask first</span></div></li>
+          </ul></section>
+        <section class="sg-menu-section"><h3 class="sg-menu-section-title">For a crowd</h3><ul class="sg-menu-items">
+            <li class="sg-menu-item" data-id="festival" data-availability="ask"><span class="sg-menu-name">Festival table</span><span class="sg-menu-price"><data value="123450">₹1,23,450</data> <span class="sg-menu-unit">serves 100</span></span><span class="sg-menu-line">Three pastas and two sauces, cooked and carried</span><div class="sg-menu-meta"><span class="sg-menu-status">Ask first</span></div></li>
+          </ul></section>
+      </sg-menu>
+    </section>
+
+    <section class="food-order__order" aria-labelledby="order-h">
+      <h2 id="order-h">Your order</h2>
+      <!-- The link inside is the page's fallback: with no JavaScript it is all there is, and it still opens WhatsApp. -->
+      <sg-wa-order id="order" for="menu" number="+91 90000 12345" business="Sample Pasta Studio" min-notice="24"
+                   areas="Porvorim, Panjim, Margao, Calangute, Mapusa" slots="Morning (9 to 12), Afternoon (12 to 4), Evening (4 to 7)">
+        <a class="sg-wa-send" href="https://wa.me/919000012345?text=Hello%20Sample%20Pasta%20Studio!%20I%20would%20like%20to%20order.%20What%20is%20available%3F">Order on WhatsApp</a>
+      </sg-wa-order>
+    </section>
+  </div>
+
+  <p class="food-order__prototype">This is a sample. The studio, the dishes and the number are made up.</p>
+</main>
+
+<script type="module" src="./recipe.js"></script>
+</body>
+</html>

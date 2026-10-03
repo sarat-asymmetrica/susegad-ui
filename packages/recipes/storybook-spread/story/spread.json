@@ -105,8 +105,8 @@
       ]
     },
     "narration_unavailable": {
-      "en": "The voice isn't available right now. Read the words below instead.",
-      "mr": "आवाज सध्या उपलब्ध नाही. खालचे शब्द वाचा."
+      "en": "The voice isn't available right now. Read the words above, or press \"Read it aloud with this device's voice\" to hear them.",
+      "mr": "आवाज सध्या उपलब्ध नाही. वरचे शब्द वाचा, किंवा ऐकण्यासाठी \"या उपकरणाच्या आवाजात ऐका\" दाबा."
     },
     "no_javascript": {
       "en": "This page needs JavaScript to play the story and show its picture. Here it is in words, ready to read.",

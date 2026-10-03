@@ -1,0 +1,14 @@
+{
+  "name": "scene-kairi",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["divider","background"],
+  "title": "Kairi",
+  "description": "A printed sari border drawn by a machine of spinning circles: each paisley's outline is a Fourier series, the chain grows one circle at a time until the pencil sketch sharpens, then the pen inks it and madder, indigo and turmeric fill it. Set progress from real work and the border is drawn exactly that far (\"40% done\"). Quiet is the finished border, warm draws it once and rests, playful draws border after border and slows near the pointer; Enter goes on to the next paisley.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "kairi.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "kairi.prompt.md",
+  "budget": { "jsBytes": 40960 }
+}

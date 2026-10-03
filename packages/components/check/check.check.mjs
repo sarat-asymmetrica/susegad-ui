@@ -10,11 +10,11 @@
 // assistive tech, reduced motion adds no animation, forced colours bring back
 // the native checkbox, and the box sits level with Indic labels.
 
-import { chromium } from 'playwright';
+import { pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const browser = await pickEngine().launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const demo = `${server.url}/packages/components/check/demo.html`;

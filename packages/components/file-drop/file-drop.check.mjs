@@ -4,13 +4,13 @@
 //   node packages/components/file-drop/file-drop.check.mjs [--shots]
 
 import fs from 'node:fs';
-import { chromium } from 'playwright';
+import { pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const shots = process.argv.includes('--shots');
 if (shots) fs.mkdirSync('.shots/file-drop', { recursive: true });
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const browser = await pickEngine().launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const PAGE = reg => `${server.url}/packages/components/file-drop/demo.html?register=${reg}`;

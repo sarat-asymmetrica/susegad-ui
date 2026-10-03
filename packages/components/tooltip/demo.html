@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tooltip</title>
+<link rel="stylesheet" href="/packages/components/button/button.css">
+<link rel="stylesheet" href="./tooltip.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 44rem; margin: 0 auto; padding: var(--sg-space-5) 16px 20rem; }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .lede { margin: 0 0 var(--sg-space-5); color: var(--sg-text-soft); max-width: var(--sg-measure); }
+  section { margin-bottom: var(--sg-space-6); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-1) / var(--sg-leading-tight) var(--sg-font-body); margin: 0 0 var(--sg-space-3); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--sg-space-5); align-items: center; }
+  p.prose { max-width: var(--sg-measure); }
+  .top-strip { padding: var(--sg-space-2) 16px; border-bottom: var(--sg-hairline) solid var(--sg-rule); }
+</style>
+</head>
+<body>
+<div class="top-strip">
+  <sg-tooltip>
+    <sg-button><button aria-describedby="top-note" id="top-btn">Hover this, flush against the top of the page</button></sg-button>
+    <span id="top-note" role="tooltip">There is no room above this button, so the tooltip opens below it instead.</span>
+  </sg-tooltip>
+</div>
+<main>
+  <h1>Tooltip</h1>
+  <p class="lede">A trigger and its accessible description, always linked by <code>aria-describedby</code>. Hover or focus the buttons below. The tooltip's own words are never the only place a meaning lives: the price and the deadline both also appear in real text.</p>
+
+  <section>
+    <h2>On a plain button</h2>
+    <div class="row">
+      <sg-tooltip>
+        <sg-button><button aria-describedby="cancel-note" id="cancel-btn">Free cancellation</button></sg-button>
+        <span id="cancel-note" role="tooltip">No charge up to 48 hours before arrival.</span>
+      </sg-tooltip>
+    </div>
+  </section>
+
+  <section>
+    <h2>In a sentence</h2>
+    <p class="prose">The <sg-tooltip><sg-button><button aria-describedby="rate-note" id="rate-btn">monsoon rate</button></sg-button><span id="rate-note" role="tooltip">₹8,200 a night, June to September.</span></sg-tooltip> runs June to September, ₹8,200 a night.</p>
+  </section>
+
+  <section>
+    <h2>In Marathi, Kannada and Konkani</h2>
+    <!-- These Indian-language labels are drafts awaiting a native speaker's check. -->
+    <div class="row">
+      <sg-tooltip lang="mr">
+        <sg-button><button aria-describedby="mr-note">मोफत रद्द करणे</button></sg-button>
+        <span id="mr-note" role="tooltip">आगमनाच्या ४८ तास आधीपर्यंत कोणतेही शुल्क नाही.</span>
+      </sg-tooltip>
+    </div>
+  </section>
+</main>
+<script type="module">
+  import '/packages/components/button/button.js';
+  import './tooltip.js';
+</script>
+</body>
+</html>

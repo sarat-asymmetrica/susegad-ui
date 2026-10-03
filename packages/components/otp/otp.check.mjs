@@ -10,11 +10,12 @@
 // autofill-style value setting and an SMS-keyboard insert all end up as digits
 // in the one input, and the boxes show them.
 
-import { chromium } from 'playwright';
+import { contextOptions, engineName, grantsPermission, pickEngine, unsupportedIn } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const engine = engineName();
+const browser = await pickEngine(engine).launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const url = `${server.url}/packages/components/otp/demo.html`;
@@ -25,8 +26,13 @@ const url = `${server.url}/packages/components/otp/demo.html`;
   const p = await ctx.newPage();
   await p.goto(`${url}?register=quiet`);
   const input = p.locator('#code');
-  const attrs = await input.evaluate(i => [i.autocomplete, i.inputMode, i.pattern]).catch(() => null)
-    ?? [await input.getAttribute('autocomplete'), await input.getAttribute('inputmode'), await input.getAttribute('pattern')];
+  // The autocomplete attribute, not the .autocomplete IDL property: Firefox's
+  // property reflection does not recognise "one-time-code" as a canonical
+  // autofill field name and returns '' for it, even though the attribute is
+  // there and Firefox's own SMS-autofill behaviour honours it (confirmed
+  // directly, 2026-09-28). The attribute is what the HTML actually says and
+  // what autofill keys off, so it is the more honest thing to read here.
+  const attrs = [await input.getAttribute('autocomplete'), ...(await input.evaluate(i => [i.inputMode, i.pattern]).catch(() => [null, null]))];
   check('no JS: one input, with the one-time-code autocomplete and the number pad', await p.locator('#verify input').count() === 1 && attrs[0] === 'one-time-code' && attrs[1] === 'numeric', attrs.join(' '));
   check('no JS: no boxes', await p.locator('#verify .sg-otp-boxes').count() === 0);
   await p.fill('#code', '48a91');
@@ -40,7 +46,7 @@ const url = `${server.url}/packages/components/otp/demo.html`;
 }
 
 // ── with JavaScript ──
-const ctx = await browser.newContext({ viewport: { width: 900, height: 900 }, permissions: ['clipboard-read', 'clipboard-write'] });
+const ctx = await browser.newContext(contextOptions(engine, { viewport: { width: 900, height: 900 }, permissions: ['clipboard-read', 'clipboard-write'] }));
 const p = await ctx.newPage();
 const errors = [];
 p.on('pageerror', e => errors.push(String(e)));
@@ -75,7 +81,7 @@ const tree = await p.evaluate(() => {
 });
 const roles = await p.locator('#verify').getByRole('textbox').count();
 check('one control: the native input is the only textbox; the six boxes are hidden from assistive tech', roles === 1 && tree.controls === 1 && tree.boxes === 6 && tree.boxesHidden === 'true', JSON.stringify({ roles, ...tree }));
-check('the input keeps its label and its autofill attributes', await p.getByLabel('Enter the 6-digit code we sent to 98220 12345').first().evaluate(i => i.id === 'code' && i.autocomplete === 'one-time-code' && i.inputMode === 'numeric'));
+check('the input keeps its label and its autofill attributes', await p.getByLabel('Enter the 6-digit code we sent to 98220 12345').first().evaluate(i => i.id === 'code' && i.getAttribute('autocomplete') === 'one-time-code' && i.inputMode === 'numeric'));
 
 await tapBox(0);
 await p.keyboard.type('48a2');
@@ -109,10 +115,14 @@ check('typing over it replaces that digit only', s.value === '472913' && s.boxes
 await p.keyboard.press('Control+A');
 await p.keyboard.press('Delete');
 check('select all and delete clears every box', (await read()).value === '');
-await p.evaluate(() => navigator.clipboard.writeText('Your Casa code is 118 204. It expires in 10 minutes.'));
-await p.keyboard.press('Control+V');
-s = await read();
-check('pasting a whole message keeps just the code and fills every box', s.value === '118204' && s.boxes === '118204', JSON.stringify(s));
+if (grantsPermission(engine, 'clipboard-write')) {
+  await p.evaluate(() => navigator.clipboard.writeText('Your Casa code is 118 204. It expires in 10 minutes.'));
+  await p.keyboard.press('Control+V');
+  s = await read();
+  check('pasting a whole message keeps just the code and fills every box', s.value === '118204' && s.boxes === '118204', JSON.stringify(s));
+} else {
+  unsupportedIn(engine, 'navigator.clipboard.writeText() from an automated context', 'no clipboard-write grant');
+}
 
 // autofill and SMS keyboards set the value their own way
 await p.evaluate(() => { const i = document.getElementById('code'); i.value = '９９１２３４'; i.dispatchEvent(new Event('input', { bubbles: true })); });

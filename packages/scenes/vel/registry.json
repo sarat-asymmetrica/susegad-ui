@@ -1,0 +1,14 @@
+{
+  "name": "scene-vel",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["hero","section-break"],
+  "title": "Vel",
+  "description": "A magenta bougainvillea grows from behind a laterite compound wall by a seeded L-system, arches up and spills down the lime-washed cap, drawn as inline SVG. Quiet is the grown vine as a still, warm grows it and lets a breeze move a few tips while a bract lets go now and then, playful stirs the branch under the hand and shakes bracts loose. For heroes and seasonal sections over a wall of text.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "vel.prompt.md"],
+  "dependencies": ["core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "vel.prompt.md",
+  "budget": { "jsBytes": 57344, "reason": "Two worlds ported line for line from the plate: the L-system vine with its turtle, taper and growth schedule, and the laterite wall with its sky, palms, pits, stains, cap and ground; the SVG renderer then drives every animation from the scene clock." }
+}

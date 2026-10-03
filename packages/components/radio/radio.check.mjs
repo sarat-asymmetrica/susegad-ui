@@ -10,11 +10,12 @@
 // the drawing is hidden from assistive tech; `value` reads and writes; reduced
 // motion adds no visible animation; forced colours bring back native radios.
 
-import { chromium } from 'playwright';
+import { engineName, pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const engine = engineName();
+const browser = await pickEngine(engine).launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const demo = `${server.url}/packages/components/radio/demo.html`;
@@ -29,14 +30,41 @@ async function keys(p, tag) {
   check(`${tag} Tab lands on the chosen radio`, await focused(p) === 'guests=2', await focused(p));
   await p.keyboard.press('ArrowRight');
   check(`${tag} ArrowRight moves and chooses`, await chosen(p, 'guests') === '4' && await focused(p) === 'guests=4');
-  await p.keyboard.press('ArrowLeft');
-  await p.keyboard.press('ArrowLeft');
-  check(`${tag} ArrowLeft wraps from the first to the last`, await chosen(p, 'guests') === '6', await chosen(p, 'guests'));
+  if (engine === 'webkit') {
+    // WebKit does not wrap arrow-key navigation past either end of a native
+    // radio group (confirmed directly, 2026-09-28, isolated from this
+    // component); Chromium and Firefox both do. Reach "6" by two more forward
+    // presses (4 -> 5 -> 6) instead of relying on the wrap this engine lacks.
+    await p.keyboard.press('ArrowRight');
+    await p.keyboard.press('ArrowRight');
+    check(`${tag} WebKit: two more ArrowRight presses reach "6" (no wrap needed)`, await chosen(p, 'guests') === '6', await chosen(p, 'guests'));
+  } else {
+    await p.keyboard.press('ArrowLeft');
+    await p.keyboard.press('ArrowLeft');
+    check(`${tag} ArrowLeft wraps from the first to the last`, await chosen(p, 'guests') === '6', await chosen(p, 'guests'));
+  }
   // Arriving by: nothing chosen, required, one option disabled.
   await p.keyboard.press('Tab');
   check(`${tag} with nothing chosen, Tab lands on the first radio`, await focused(p) === 'arrive=car', await focused(p));
-  await p.keyboard.press('ArrowUp');
-  check(`${tag} the arrows skip a disabled radio`, await chosen(p, 'arrive') === 'air', await chosen(p, 'arrive'));
+  if (engine === 'webkit') {
+    // WebKit's native radio-group navigation (no library code runs in this no-JS
+    // path at all) does not wrap past either end of the group (see the guests
+    // group above); "car" is the first radio, so ArrowUp -- backward past the
+    // start -- is a no-op here for the same reason, not a separate bug.
+    // Confirmed directly against real WebKit, 2026-09-28, isolated from this
+    // component (a bare <fieldset> of native radios). A real platform
+    // difference, so this asks the same real question (does the keyboard reach
+    // "air", skipping disabled "boat"?) by a path WebKit actually supports,
+    // rather than skip the assertion outright.
+    await p.keyboard.press('ArrowUp');
+    check(`${tag} WebKit: ArrowUp does nothing (no wrap past the first radio)`, await chosen(p, 'arrive') === null && await focused(p) === 'arrive=car', await chosen(p, 'arrive'));
+    await p.keyboard.press('ArrowDown');
+    await p.keyboard.press('ArrowDown');
+    check(`${tag} WebKit: two ArrowDown presses reach "air", skipping the disabled radio`, await chosen(p, 'arrive') === 'air', await chosen(p, 'arrive'));
+  } else {
+    await p.keyboard.press('ArrowUp');
+    check(`${tag} the arrows skip a disabled radio`, await chosen(p, 'arrive') === 'air', await chosen(p, 'arrive'));
+  }
 }
 
 // ── no JavaScript ───────────────────────────────────────────────────────────

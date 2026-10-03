@@ -1,0 +1,31 @@
+{
+  "name": "food-order",
+  "type": "recipe",
+  "stability": "experimental",
+  "title": "Food order",
+  "description": "A menu and the way to order from it, for a small food business that takes orders on WhatsApp: a short note on how ordering works, a menu with a stepper on every dish you can order, and a composer that writes the order as a plain message (day with notice, time of day, delivery or pickup, area, name, notes), shows the exact words, and opens WhatsApp with them already in the box. With no JavaScript the menu is a readable list and the page keeps one plain wa.me link. It never says an order is placed: the person sends the message and the shop confirms.",
+  "version": "0.1.0",
+  "files": [
+    "index.html",
+    "recipe.js",
+    "recipe.css",
+    "README.md",
+    "recipe.prompt.md"
+  ],
+  "dependencies": [
+    "menu",
+    "wa-order",
+    "field",
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "recipe.prompt.md",
+  "docs": "README.md"
+}

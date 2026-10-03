@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Now note</title>
+<link rel="stylesheet" href="./now-note.css">
+<link rel="stylesheet" href="../badge/badge.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 80rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: 0 0 var(--sg-space-4); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-5); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); gap: var(--sg-space-5) var(--sg-space-4); margin-top: var(--sg-space-5); }
+  .stack { display: grid; gap: var(--sg-space-5); padding: var(--sg-space-2) 8px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Now note</h1>
+  <p class="lede">What someone is up to right now, whether they are taking on work, and when they last said so. A note older than its limit says it may be out of date.</p>
+  <div class="grid">
+    <section data-register="quiet" aria-labelledby="h-quiet">
+      <h2 id="h-quiet">Quiet: a dated line</h2>
+      <div class="stack">
+        <sg-now-note today="2026-09-27">
+          <section aria-labelledby="now-quiet">
+            <h3 id="now-quiet">Now</h3>
+            <p>Placeholder: building an order page for a clothing brand in Aldona, and a tide clock for fun.</p>
+            <p class="sg-now-state"><sg-badge tone="success">Taking on one new project</sg-badge></p>
+            <p class="sg-now-updated">Updated <time datetime="2026-09-24">24 September 2026</time></p>
+          </section>
+        </sg-now-note>
+        <sg-now-note today="2026-09-27">
+          <section aria-labelledby="now-quiet-old">
+            <h3 id="now-quiet-old">Now</h3>
+            <p>Placeholder: painting the verandah and not answering email.</p>
+            <p class="sg-now-state"><sg-badge tone="warning">Heads-down till July</sg-badge></p>
+            <p class="sg-now-updated">Updated <time datetime="2026-06-02">2 June 2026</time></p>
+          </section>
+        </sg-now-note>
+      </div>
+    </section>
+    <section data-register="warm" aria-labelledby="h-warm">
+      <h2 id="h-warm">Warm: a sticky note</h2>
+      <div class="stack">
+        <sg-now-note today="2026-09-27">
+          <section aria-labelledby="now-warm">
+            <h3 id="now-warm">Now</h3>
+            <p>Placeholder: building an order page for a clothing brand in Aldona, and a tide clock for fun.</p>
+            <p class="sg-now-state"><sg-badge tone="success">Taking on one new project</sg-badge></p>
+            <p class="sg-now-updated">Updated <time datetime="2026-09-24">24 September 2026</time></p>
+          </section>
+        </sg-now-note>
+        <sg-now-note today="2026-09-27">
+          <section aria-labelledby="now-warm-old">
+            <h3 id="now-warm-old">Now</h3>
+            <p>Placeholder: painting the verandah and not answering email.</p>
+            <p class="sg-now-state"><sg-badge tone="warning">Heads-down till July</sg-badge></p>
+            <p class="sg-now-updated">Updated <time datetime="2026-06-02">2 June 2026</time></p>
+          </section>
+        </sg-now-note>
+      </div>
+    </section>
+    <section data-register="playful" aria-labelledby="h-playful">
+      <h2 id="h-playful">Playful: a café chalkboard</h2>
+      <div class="stack">
+        <sg-now-note today="2026-09-27">
+          <section aria-labelledby="now-playful">
+            <h3 id="now-playful">Now</h3>
+            <p>Placeholder: building an order page for a clothing brand in Aldona, and a tide clock for fun.</p>
+            <p class="sg-now-state"><sg-badge tone="success">Taking on one new project</sg-badge></p>
+            <p class="sg-now-updated">Updated <time datetime="2026-09-24">24 September 2026</time></p>
+          </section>
+        </sg-now-note>
+        <sg-now-note today="2026-09-27">
+          <section aria-labelledby="now-playful-old">
+            <h3 id="now-playful-old">Now</h3>
+            <p>Placeholder: painting the verandah and not answering email.</p>
+            <p class="sg-now-state"><sg-badge tone="warning">Heads-down till July</sg-badge></p>
+            <p class="sg-now-updated">Updated <time datetime="2026-06-02">2 June 2026</time></p>
+          </section>
+        </sg-now-note>
+      </div>
+    </section>
+  </div>
+  <p class="note">These notes count from 27 September 2026 (the <code>today</code> attribute), so the page looks the same whenever it is opened. The second of each pair is older than 45 days.</p>
+</main>
+<script type="module">
+  import './now-note.js';
+  import '../badge/badge.js';
+</script>
+</body>
+</html>

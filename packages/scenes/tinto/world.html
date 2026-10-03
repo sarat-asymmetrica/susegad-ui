@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tinto: words in the world</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 1240px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  h2 { font-size: 1.1rem; margin: 28px 0 4px; }
+  .lede, .note { margin: 0 0 16px; color: var(--sg-text-soft, inherit); max-width: 46rem; }
+  .note { margin: 0 0 10px; }
+  sg-scene { border-radius: 6px; }
+  sg-scene h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  sg-scene p { margin: 0; }
+  form { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin: 0 0 8px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  legend { font-weight: 600; float: left; margin-right: 8px; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  a { color: inherit; }
+  .postcard { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Tinto: words in the world</h1>
+  <p class="lede">The same square and the same words, three ways. First, the words sit on a panel over the picture. Then, with <code>words="world"</code>, they are chalked on a board outside the Taverna, and each shop carries its hours on a plaque under its sign; press one for more. Last, with <code>movable</code>, they sit on a pane of frosted glass you can move. Quiet keeps the words flat and exact, and so does any screen too small for the board or the glass.</p>
+  <form id="controls">
+    <fieldset>
+      <legend>Register</legend>
+      <label><input type="radio" name="register" value="quiet"> Quiet</label>
+      <label><input type="radio" name="register" value="warm"> Warm</label>
+      <label><input type="radio" name="register" value="playful"> Playful</label>
+    </fieldset>
+    <label><input type="checkbox" id="dark"> Dark</label>
+  </form>
+
+  <section id="s-panel">
+  <h2>On a panel</h2>
+  <p class="note">The ordinary Tinto: the page's words in the reading panel, the people held still underneath it.</p>
+  <sg-scene id="panel" name="tinto" label="A village square, with the page's words on a panel">
+    <h2>Come for the rain</h2>
+    <p>Our lowest rate, June to September. The veranda stays dry and the paddy turns green.</p>
+  </sg-scene>
+  </section>
+
+  <section id="s-world">
+  <h2>In the world</h2>
+  <p class="note">The words on the Taverna's chalkboard, and the shops' hours where the shops are. In playful, chalk rain runs down the board round the words.</p>
+  <sg-scene id="world" name="tinto" words="world" label="A village square, with the page's words on a chalkboard outside the Taverna">
+    <h2>Come for the rain</h2>
+    <p>Our lowest rate, June to September. The veranda stays dry and the paddy turns green.</p>
+  </sg-scene>
+  </section>
+
+  <section id="s-glass">
+  <h2>On glass</h2>
+  <p class="note">The same words on a frosted pane you can move. Drag the grip in its corner, or focus it and use the arrow keys (Shift for bigger steps, Home to put the words back), and the people and the rain make room. The place goes into the link, so a copy of it opens with the words where you left them. Quiet keeps the words flat, and so does any screen too small to move them on.</p>
+  <sg-scene id="glass" name="tinto" movable label="A village square, with the page's words on a pane of glass you can move">
+    <h2>Come for the rain</h2>
+    <p>Our lowest rate, June to September. The veranda stays dry and the paddy turns green.</p>
+  </sg-scene>
+  <p class="note postcard"><a id="copy" href="">Copy this view</a> <span id="copied" role="status"></span></p>
+  </section>
+  <p class="note"><a href="demo.html">Tinto's own page</a>: registers, the pinned line and every line written out.</p>
+</main>
+<script type="module">
+  const q = new URLSearchParams(location.search), root = document.documentElement;
+  const world = document.getElementById('world'), panel = document.getElementById('panel'), glass = document.getElementById('glass');
+  const register = q.get('register') || 'warm';
+  root.dataset.register = register;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+  // ?only=world or ?only=glass leaves that one scene (the checks use it); the default shows all three
+  const only = q.get('only'), piece = only === 'glass' ? glass : world;
+  if (only) for (const k of ['panel', 'world', 'glass']) if (k !== only) document.getElementById(`s-${k}`).remove();
+  for (const k of ['seed', 'focus', 'lines']) if (q.has(k)) world.setAttribute(k, q.get(k));
+  if (q.get('content') === '0') world.innerHTML = '';
+  piece.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__piece = piece;
+
+  // A postcard: ?words=x,y is where the glass sits (fractions of the room it has, 0 to 1), and the address follows it.
+  if (glass.isConnected) {
+    const copy = document.getElementById('copy'), copied = document.getElementById('copied');
+    if (q.has('words')) glass.setAttribute('words-at', q.get('words').replace(',', ' '));
+    const keep = () => { copy.href = location.href; };
+    glass.addEventListener('sg-words-moved', e => {
+      const u = new URL(location.href), { x, y, home } = e.detail;
+      home ? u.searchParams.delete('words') : u.searchParams.set('words', `${+x.toFixed(3)},${+y.toFixed(3)}`);
+      history.replaceState(null, '', u.href.replace('%2C', ','));
+      keep();
+    });
+    keep();
+    copy.addEventListener('click', async e => {
+      e.preventDefault(); keep();
+      try { await navigator.clipboard.writeText(location.href); copied.textContent = 'Link copied'; }
+      catch { copied.textContent = 'Copy the address from your browser bar'; }
+    });
+  }
+  await import('./index.js');
+
+  const $ = id => document.getElementById(id), form = $('controls');
+  form.register.value = register;
+  $('dark').checked = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  form.addEventListener('change', e => {
+    const t = e.target;
+    if (t.name === 'register') root.dataset.register = t.value;
+    else if (t.id === 'dark') root.dataset.theme = t.checked ? 'dark' : 'light';
+  });
+</script>
+</body>
+</html>

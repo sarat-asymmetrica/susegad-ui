@@ -1,0 +1,35 @@
+{
+  "name": "scene-mithagar",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": [
+    "hero",
+    "empty-state",
+    "progress"
+  ],
+  "title": "Mithagar",
+  "description": "The Ribandar salt pans at dawn: a geometric grid of clay bunds, shallow brine reflecting the Goan sky, wooden sluice gates, crystalline white salt crusts, and pyramidal salt heaps. Evaporation recedes the brine and grows the harvest. Quiet is a crisp architectural grid; warm ripples the water; playful lets sandpipers scurry and clicks rake salt pyramids.",
+  "version": "0.1.0",
+  "files": [
+    "index.js",
+    "model.js",
+    "render.js",
+    "meta.js",
+    "mithagar.prompt.md"
+  ],
+  "dependencies": [
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "mithagar.prompt.md",
+  "budget": {
+    "jsBytes": 53248,
+    "reason": "The field reflects one continuous sky sampled per pan, the salt takes the ground as a moving front, a raker works the near pan, and the sky and bunds are cached so the scene runs at the baseline. Under the 64 KB ceiling in decision 0003."
+  }
+}

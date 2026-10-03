@@ -1,6 +1,7 @@
 {
   "name": "loader",
   "type": "component",
+  "stability": "experimental",
   "title": "Loader",
   "description": "A polite status region that says in words what is loading, with a small drawing beside it: three pulsing dots in quiet, a light travelling round a kolam and lighting each dot in warm, a spinning bambaram in playful. It never claims how far along the work is.",
   "version": "0.1.0",

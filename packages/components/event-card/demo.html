@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Event card</title>
+<link rel="stylesheet" href="./event-card.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 80rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .page h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: 0 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-5); }
+  .stack { display: grid; grid-template-columns: min(100%, 46rem); gap: var(--sg-space-5); margin-top: var(--sg-space-5); padding: var(--sg-space-2) 8px; }
+  .page > section + section { margin-top: var(--sg-space-6); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Event card</h1>
+  <p class="lede">One workshop, class, supper club or pop-up, and whether it is still on. The card reads the clock in the venue's own time zone, so it says whether it is coming up, today, on now or over, and a finished one stops offering its booking link. A seats line shows only when someone gave a number.</p>
+  <div class="page" id="page">
+    <div class="stack">
+
+      <sg-event-card kind="workshop" start="2026-10-04T11:00" end="2026-10-04T13:00" seats-left="4" now="2026-10-02T10:00">
+        <article aria-labelledby="ev-upcoming">
+          <p class="sg-event-kind">Workshop</p>
+          <h3 id="ev-upcoming">Handmade pasta, from the dough up</h3>
+          <p class="sg-event-when"><time datetime="2026-10-04T11:00:00+05:30">Sun 4 Oct, 11 am to 1 pm</time></p>
+          <p class="sg-event-where"><span class="sg-event-venue">The Courtyard Kitchen</span>, <span class="sg-event-area">Aldona</span> <a href="https://maps.example/courtyard-kitchen">Map</a></p>
+          <section class="sg-event-do"><h4>What you'll do</h4><ul><li>Mix and knead a dough by hand</li><li>Roll it thin and cut two shapes</li><li>Fill and fold a stuffed pasta</li></ul></section>
+          <section class="sg-event-eat"><h4>What you'll eat</h4><ul><li>Your own pasta, with a seasonal sauce</li><li>A green salad</li><li>Something sweet to finish</li></ul></section>
+          <footer class="sg-event-stub">
+            <p class="sg-event-price"><span class="sg-event-amount">₹2,000</span> per person</p>
+            <p class="sg-event-cta"><a href="https://wa.me/919800000000?text=Hello%2C%20I%27d%20like%20to%20save%20a%20seat%20for%20Sunday">Save my seat</a></p>
+          </footer>
+        </article>
+      </sg-event-card>
+
+      <sg-event-card kind="workshop" start="2026-10-11T11:00" end="2026-10-11T13:00" seats-left="0" now="2026-10-02T10:00">
+        <article aria-labelledby="ev-sold">
+          <p class="sg-event-kind">Workshop</p>
+          <h3 id="ev-sold">Filled pasta for beginners</h3>
+          <p class="sg-event-when"><time datetime="2026-10-11T11:00:00+05:30">Sun 11 Oct, 11 am to 1 pm</time></p>
+          <p class="sg-event-where"><span class="sg-event-venue">A friend's studio kitchen</span>, <span class="sg-event-area">Saligao</span></p>
+          <section class="sg-event-do"><h4>What you'll learn</h4><ul><li>A dough that holds a filling</li><li>Three folds, and when to use each</li></ul></section>
+          <section class="sg-event-eat"><h4>What you'll eat</h4><ul><li>What you fold, in brown butter</li></ul></section>
+          <footer class="sg-event-stub">
+            <p class="sg-event-price"><span class="sg-event-amount">₹2,200</span> per person</p>
+            <p class="sg-event-cta"><a href="https://wa.me/919800000000?text=Hello%2C%20is%20there%20a%20seat%20on%2011%20October%3F">Save my seat</a></p>
+            <p data-when="sold-out" hidden><a href="https://wa.me/919800000000?text=Please%20tell%20me%20about%20the%20next%20date">Ask about the next date</a></p>
+          </footer>
+        </article>
+      </sg-event-card>
+
+      <sg-event-card kind="supper-club" start="2026-10-09T19:30" end="2026-10-09T22:00" now="2026-10-02T10:00">
+        <article aria-labelledby="ev-supper">
+          <p class="sg-event-kind">Supper club</p>
+          <h3 id="ev-supper">A long table, four courses</h3>
+          <p class="sg-event-when"><time datetime="2026-10-09T19:30:00+05:30">Fri 9 Oct, 7:30 pm to 10 pm</time></p>
+          <p class="sg-event-where"><span class="sg-event-venue">The Courtyard Kitchen</span>, <span class="sg-event-area">Aldona</span></p>
+          <section class="sg-event-eat"><h4>What you'll eat</h4><ul><li>A small plate to begin</li><li>Two pastas, one filled</li><li>A slow braise, then dessert</li></ul></section>
+          <footer class="sg-event-stub">
+            <p class="sg-event-price"><span class="sg-event-amount">₹2,800</span> per person</p>
+            <p class="sg-event-cta"><a href="https://wa.me/919800000000?text=Hello%2C%20I%27d%20like%20a%20place%20at%20the%20supper%20club">Ask for a place</a></p>
+          </footer>
+        </article>
+      </sg-event-card>
+
+      <sg-event-card kind="pop-up" start="2026-10-02T17:00" end="2026-10-02T21:00" now="2026-10-02T10:00">
+        <article aria-labelledby="ev-today">
+          <p class="sg-event-kind">Pop-up</p>
+          <h3 id="ev-today">Pasta by the plate, one evening</h3>
+          <p class="sg-event-when"><time datetime="2026-10-02T17:00:00+05:30">Fri 2 Oct, 5 pm to 9 pm</time></p>
+          <p class="sg-event-where"><span class="sg-event-venue">A café courtyard</span>, <span class="sg-event-area">Panjim</span> <a href="https://maps.example/cafe-courtyard">Map</a></p>
+          <section class="sg-event-eat"><h4>What you'll eat</h4><ul><li>Two pastas, made that morning</li><li>A sauce of the day</li></ul></section>
+          <footer class="sg-event-stub">
+            <p class="sg-event-price"><span class="sg-event-amount">₹450</span> a plate</p>
+            <p class="sg-event-cta"><a href="https://wa.me/919800000000?text=Hello%2C%20can%20I%20reserve%20a%20plate%20tonight%3F">Reserve a plate</a></p>
+          </footer>
+        </article>
+      </sg-event-card>
+
+      <sg-event-card kind="class" start="2026-10-02T17:00" end="2026-10-02T19:00" seats-left="1" now="2026-10-02T17:30">
+        <article aria-labelledby="ev-now">
+          <p class="sg-event-kind">Class</p>
+          <h3 id="ev-now">An evening of tagliatelle</h3>
+          <p class="sg-event-when"><time datetime="2026-10-02T17:00:00+05:30">Fri 2 Oct, 5 pm to 7 pm</time></p>
+          <p class="sg-event-where"><span class="sg-event-venue">A friend's studio kitchen</span>, <span class="sg-event-area">Saligao</span></p>
+          <section class="sg-event-do"><h4>What you'll do</h4><ul><li>Cut ribbons by hand</li><li>Dress them with butter and pepper</li></ul></section>
+          <footer class="sg-event-stub">
+            <p class="sg-event-price"><span class="sg-event-amount">₹1,500</span> per person</p>
+            <p class="sg-event-cta"><a href="https://wa.me/919800000000?text=Hello%2C%20is%20there%20room%20tonight%3F">Ask about tonight</a></p>
+          </footer>
+        </article>
+      </sg-event-card>
+
+      <sg-event-card kind="workshop" start="2026-09-27T11:00" end="2026-09-27T13:00" seats-left="3" now="2026-10-02T10:00">
+        <article aria-labelledby="ev-past">
+          <p class="sg-event-kind">Workshop</p>
+          <h3 id="ev-past">Handmade pasta, from the dough up</h3>
+          <p class="sg-event-when"><time datetime="2026-09-27T11:00:00+05:30">Sun 27 Sep, 11 am to 1 pm</time></p>
+          <p class="sg-event-where"><span class="sg-event-venue">The Courtyard Kitchen</span>, <span class="sg-event-area">Aldona</span></p>
+          <section class="sg-event-do"><h4>What you'll do</h4><ul><li>Mix and knead a dough by hand</li><li>Roll it thin and cut two shapes</li></ul></section>
+          <section class="sg-event-eat"><h4>What you'll eat</h4><ul><li>Your own pasta, with a seasonal sauce</li></ul></section>
+          <footer class="sg-event-stub">
+            <p class="sg-event-price"><span class="sg-event-amount">₹2,000</span> per person</p>
+            <p class="sg-event-cta"><a href="https://wa.me/919800000000?text=Hello%2C%20I%27d%20like%20to%20save%20a%20seat">Save my seat</a></p>
+          </footer>
+        </article>
+      </sg-event-card>
+
+    </div>
+  </div>
+  <p class="note">These cards count from 2 October 2026 (the <code>now</code> attribute), so the page looks the same whenever it is opened; the "On now" card counts from 5:30 pm. Remove <code>now</code> and a card reads the real clock. In order: coming up with seats left, sold out, coming up with no seats line, today, on now, over. Add <code>?register=quiet</code>, <code>warm</code> or <code>playful</code> to see one register on its own.</p>
+</main>
+<script>
+  // With no ?register, show the three registers side by side (a copy of the cards for each).
+  if (!new URLSearchParams(location.search).has('register')) {
+    const page = document.getElementById('page'), stack = page.querySelector('.stack');
+    const names = { quiet: 'Quiet: a ruled card', warm: 'Warm: a ticket with a stub', playful: 'Playful: the stub tears a little' };
+    page.replaceChildren(...Object.entries(names).map(([r, label]) => {
+      const sec = document.createElement('section');
+      sec.dataset.register = r; sec.setAttribute('aria-labelledby', `h-${r}`);
+      const h = document.createElement('h2'); h.id = `h-${r}`; h.textContent = label;
+      const copy = stack.cloneNode(true);
+      copy.querySelectorAll('[id]').forEach(e => { e.id += `-${r}`; });
+      copy.querySelectorAll('[aria-labelledby]').forEach(e => { e.setAttribute('aria-labelledby', `${e.getAttribute('aria-labelledby')}-${r}`); });
+      sec.append(h, copy);
+      return sec;
+    }));
+  }
+</script>
+<script type="module">
+  import './event-card.js';
+</script>
+</body>
+</html>

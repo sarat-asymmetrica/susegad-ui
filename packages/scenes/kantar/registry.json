@@ -1,0 +1,36 @@
+{
+  "name": "scene-kantar",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": [
+    "hero",
+    "interlude",
+    "background"
+  ],
+  "title": "Kantar",
+  "description": "The tiatr stage and curtain: painted proscenium with gold-fringed pelmet, footlights, orchestra pit, and three backdrops (church square, dusk beach, balc\u00e3o night) behind a heavy red velvet curtain. Quiet is a lit still; warm rises once and rests; playful cycles through scenes, curtain drops, and kantars sung in the spotlight.",
+  "version": "0.1.0",
+  "files": [
+    "index.js",
+    "model.js",
+    "render.js",
+    "meta.js",
+    "kantar.prompt.md"
+  ],
+  "dependencies": [
+    "core",
+    "engine",
+    "kantar-curtain",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "kantar.prompt.md",
+  "budget": {
+    "jsBytes": 61440,
+    "reason": "The singer performs, the house sits in the front row and answers her, the pit plays in the same beat, and the painted flats carry form and shadows. Under the 64 KB ceiling in decision 0003."
+  }
+}

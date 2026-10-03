@@ -1,0 +1,36 @@
+{
+  "name": "postcard",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Postcard",
+  "description": "A card for a piece of work: title, where and when with a status badge beside them, the problem in a line, what was built and the outcome. The heading's link is stretched over the card, so each card is one tab stop with nothing nested. A rubber stamp for the status is opt-in (status-style=\"stamp\"). Quiet is an index card; warm is the back of a picture postcard on deckled card stock with a printed postage square (a postmark on the stamp when there is one); playful is set down crooked and turns over on hover or focus, and lies flat on touch screens and under reduced motion.",
+  "version": "0.1.0",
+  "files": [
+    "postcard.js",
+    "postcard.core.js",
+    "postcard.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "postcard.prompt.md",
+    "postcard.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens",
+    "badge"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "postcard.prompt.md",
+  "docs": "postcard.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 9427 bytes: element 2.8 KB, pure core 2.4 KB, skins quiet 0.2 KB, warm 3.1 KB, playful 1.1 KB. The status is the badge component by default; the stamp is opt-in and the builder adds it."
+  }
+}
