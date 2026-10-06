@@ -1,18 +1,35 @@
 {
   "name": "@susegad/cli",
   "version": "0.1.0",
-  "private": true,
   "description": "Copy Susegad UI pieces into your project, shadcn-style.",
   "license": "MIT",
   "type": "module",
-  "bin": { "susegad": "bin/susegad.mjs" },
-  "files": ["bin", "src", "README.md"],
-  "engines": { "node": ">=22" },
+  "bin": {
+    "susegad": "bin/susegad.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sarat-asymmetrica/susegad-ui.git",
+    "url": "git+https://github.com/sarat-asymmetrica/susegad-ui.git",
     "directory": "packages/cli"
   },
   "homepage": "https://susegad.asymmetrica.ai",
-  "keywords": ["susegad", "cli", "shadcn", "components", "registry", "scaffolding"]
+  "keywords": [
+    "susegad",
+    "cli",
+    "shadcn",
+    "components",
+    "registry",
+    "scaffolding"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }

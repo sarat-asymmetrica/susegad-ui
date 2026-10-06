@@ -1,6 +1,6 @@
 # susegad-mcp
 
-The Susegad UI MCP server. It gives an agent harness five tools over stdio: search the shelf, read one piece in full (including the prompt that teaches an agent how to use it), show its posters, and add pieces into a project or diff what it has copied. The add and diff tools run the susegad CLI's own code (packages/cli/src/commands.js), so what the server writes is exactly what `susegad add` writes, hashes and lockfile included.
+The Susegad UI MCP server. It gives an agent harness five tools over stdio: search the shelf, read one piece in full (including the prompt that teaches an agent how to use it), show its posters, and add pieces into a project or diff what it has copied. The add and diff tools run the susegad CLI's own code (`@susegad/cli`, installed alongside it), so what the server writes is exactly what `susegad add` writes, hashes and lockfile included.
 
 Node 22 or later, no dependencies. The server must run from the Susegad UI repo (it imports the CLI beside it), and its working directory should be the project it adds into.
 

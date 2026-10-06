@@ -6,10 +6,10 @@
 
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { targetPathFor } from '../../cli/src/paths.js';
-import { add, diff } from '../../cli/src/commands.js';
-import { loadRegistry, fetchRemoteFile, CliError } from '../../cli/src/registry.js';
-import { resolveOrder } from '../../cli/src/graph.js';
+import { targetPathFor } from '@susegad/cli/src/paths.js';
+import { add, diff } from '@susegad/cli/src/commands.js';
+import { loadRegistry, fetchRemoteFile, CliError } from '@susegad/cli/src/registry.js';
+import { resolveOrder } from '@susegad/cli/src/graph.js';
 
 // The registers and themes the docs site shoots posters in, and where the
 // posters live on the live site. The naming scheme is apps/docs/posters.mjs's:

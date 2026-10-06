@@ -53,6 +53,7 @@ Rules are in [`docs/ROADMAP.md`](ROADMAP.md#semver-for-a-visual-library):
 - No automated tag-triggered publish. CI (rung 3) runs tests and checks on
   push and pull request; it does not push tags, create GitHub releases, or
   run `npm publish`.
-- No npm publish step at all until the owner reserves a name
-  (`susegad`, `susegad-ui` or `@susegad/cli` were all free as of
-  2026-09-28) and says to use it.
+- npm publishing is by hand, by the owner (2FA): `@susegad/cli` and
+  `@susegad/mcp` went out at 0.1.0 on 2026-10-06. Publish the CLI before
+  the MCP server, which depends on it:
+  `npm publish -w @susegad/cli -w @susegad/mcp --auth-type=web`.

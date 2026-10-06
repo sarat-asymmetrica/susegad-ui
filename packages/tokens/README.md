@@ -73,11 +73,6 @@ the CSS duration of one beat for a pure-CSS stagger. Used in Drawer, Menu
 and the scroll sections. Ported from the sketchbook's Teental plate, per
 `docs/requests/2026-09-25-volume-iii-harvest.md`.
 
-**Owner to confirm:** whether Khaprumama Parvatkar has died. His name is
-used here as the library's other named patrons are (HOMAGE.md's rule 2),
-but nobody on this wave has verified it, and rule 4 only allows a living
-artist's name after they've agreed to it.
-
 ## Utilities
 
 `tokens.css` also carries two classes that every component and recipe may rely on:
