@@ -27,5 +27,10 @@
   "budget": {
     "jsBytes": 26624,
     "reason": "Counted raw (comments included) since the registry measures source bytes: kantar.js (the DOM and timing driver, the spot, the singer) 13.6 KB and kantar.core.js (the pure timeline and the pure geometry, all tested) 10.7 KB, about 24.6 KB. The velvet, folds, shadow and fringe moved out to the shared kantar-curtain package, which the Kantar scene draws from too."
+  },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "Tiatr, the Konkani theatre of Goa: a painted proscenium, footlights, a red velvet curtain and a singer who holds the stage. The home page's hero. (Tier everyday: tiatr is popular entertainment, not ceremony.)"
   }
 }

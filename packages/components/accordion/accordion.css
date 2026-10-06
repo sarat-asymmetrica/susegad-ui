@@ -1,0 +1,115 @@
+/* <sg-accordion>. Without JavaScript this is the quiet look: hairline rules
+   between items, generous space, no ornament. The browser owns the opening:
+   Enter or Space on a summary opens and closes its <details>, and details that
+   share a name stay in step on their own. Warm draws the marker in the hand
+   face and opens with a soft slide; playful gives the marker a drawn glyph
+   that flips, and a spring on open. Nothing moves under reduced motion. */
+
+sg-accordion {
+  display: block;
+  container: accordion / inline-size;
+  max-width: 46rem;
+  interpolate-size: allow-keywords; /* the open transition can animate to auto height */
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body);
+}
+sg-accordion[hidden], sg-accordion [hidden] { display: none !important; }
+
+sg-accordion > details { border-block-end: var(--sg-hairline) solid var(--sg-rule-strong); }
+sg-accordion > details:first-of-type { border-block-start: var(--sg-hairline) solid var(--sg-rule-strong); }
+
+sg-accordion > details > summary {
+  display: flex; align-items: center; gap: var(--sg-space-3);
+  min-height: 3.25rem; padding: var(--sg-space-2) 0;
+  cursor: pointer; user-select: none;
+  list-style: none; /* the marker is drawn, not the browser's triangle */
+  font: var(--sg-weight-medium) var(--sg-step-1) / var(--sg-leading-snug) var(--sg-font-display);
+  text-wrap: balance;
+}
+sg-accordion > details > summary::-webkit-details-marker { display: none; }
+sg-accordion > details > summary:focus-visible {
+  outline: var(--sg-focus-width) solid var(--sg-focus);
+  outline-offset: var(--sg-focus-offset);
+  border-radius: 2px;
+}
+sg-accordion > details > summary:hover { color: var(--sg-text); }
+sg-accordion > details:not([open]) > summary { color: var(--sg-text); }
+
+sg-accordion > details > *:not(summary) { margin: 0 0 var(--sg-space-3); color: var(--sg-text-soft); max-width: var(--sg-measure); }
+sg-accordion > details > :is(ol,ul):not(summary) { padding-inline-start: 1.15em; margin-block-end: var(--sg-space-3); }
+sg-accordion > details > a:not(summary) { color: var(--sg-accent-text); text-underline-offset: 0.2em; }
+
+/* the drawn marker, quiet: a thin chevron that turns, no easing, a state not a motion */
+sg-accordion > details > summary::before {
+  content: ""; flex: none; box-sizing: border-box;
+  width: 0.65em; height: 0.65em; margin-inline-end: 0.2em;
+  border-inline-end: var(--sg-stroke-bold) solid currentColor;
+  border-block-end: var(--sg-stroke-bold) solid currentColor;
+  rotate: -45deg; translate: 0 -0.1em;
+}
+sg-accordion > details[open] > summary::before { rotate: 45deg; translate: 0 0.1em; }
+
+/* the content opening: quiet steps; warm and playful transition, under their motion */
+sg-accordion > details::details-content {
+  block-size: fit-content;
+  overflow: clip;
+  opacity: 1;
+}
+sg-accordion[data-motion="state"] > details::details-content {
+  transition: block-size var(--sg-dur-quick) var(--sg-ease-out), content-visibility var(--sg-dur-quick) allow-discrete, opacity var(--sg-dur-quick) var(--sg-ease-out);
+}
+sg-accordion[data-motion="ambient"] > details::details-content {
+  transition: block-size var(--sg-dur-slow) var(--sg-ease-out), content-visibility var(--sg-dur-slow) allow-discrete, opacity var(--sg-dur-slow) var(--sg-ease-out);
+}
+sg-accordion[data-motion="full"] > details::details-content {
+  transition: block-size var(--sg-dur-slow) var(--sg-ease-spring), content-visibility var(--sg-dur-slow) allow-discrete, opacity var(--sg-dur-slow) var(--sg-ease-out);
+}
+sg-accordion > details:not([open])::details-content {
+  opacity: 0;
+  block-size: 0;
+}
+
+/* ── warm: the marker drawn in the hand face ── a small drawn plus that becomes
+   a minus, as if crossed out with one stroke. */
+sg-accordion[data-skin="warm"] > details > summary::before {
+  content: "+"; width: auto; height: auto;
+  border: 0;
+  font: 400 var(--sg-step-2) / 1 var(--sg-font-hand);
+  rotate: none; translate: 0 -0.05em;
+  color: var(--sg-accent-text);
+}
+sg-accordion[data-skin="warm"] > details[open] > summary::before { content: "–"; }
+sg-accordion[data-skin="warm"] > details { position: relative; }
+sg-accordion[data-skin="warm"] > details > summary { position: relative; font-size: var(--sg-step-1); }
+sg-accordion[data-skin="warm"] > details > summary::after {
+  content: ""; position: absolute; left: 0; right: 100%; bottom: -1px;
+  block-size: 2px; background: color-mix(in oklch, var(--sg-accent) 30%, transparent);
+  pointer-events: none;
+}
+sg-accordion[data-skin="warm"] > details[open] > summary::after { right: 0; }
+sg-accordion[data-motion="ambient"] > details > summary::after { transition: right var(--sg-dur-slow) var(--sg-ease-out); }
+
+/* ── playful: the marker is a drawn glyph that flips ── a hand-face star that
+   turns 180 degrees with a spring when the item opens. */
+sg-accordion[data-skin="playful"] > details > summary::before {
+  content: "✳"; width: auto; height: auto;
+  border: 0; rotate: none; translate: none;
+  font: 400 var(--sg-step-1) / 1 var(--sg-font-hand);
+  color: var(--sg-accent-text);
+  rotate: var(--sg-acc-tilt, 0deg);
+  transition: rotate var(--sg-dur-slow) var(--sg-ease-spring);
+}
+sg-accordion[data-skin="playful"] > details[open] > summary::before { rotate: calc(var(--sg-acc-tilt, 0deg) + 180deg); }
+sg-accordion[data-skin="playful"] > details > summary { font-family: var(--sg-font-hand); font-weight: 400; }
+sg-accordion[data-skin="playful"] > details > *:not(summary) { color: var(--sg-text); }
+
+@media (prefers-reduced-motion: reduce) {
+  sg-accordion > details > summary::before,
+  sg-accordion > details > summary::after,
+  sg-accordion > details::details-content { transition: none; }
+}
+
+@media (forced-colors: active) {
+  sg-accordion > details { border-block-end: 1px solid CanvasText; }
+  sg-accordion > details > summary::before { border-color: CanvasText; }
+}

@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "ferry.prompt.md",
-  "budget": { "jsBytes": 47104, "reason": "a whole river view drawn by hand: far bank, jetties, posts, near bank, a canoe and the ferry, in ink and in hairline" }
+  "budget": { "jsBytes": 47104, "reason": "a whole river view drawn by hand: far bank, jetties, posts, near bank, a canoe and the ferry, in ink and in hairline" },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "Four stops across the Mandovi: a river ferry in ballpoint hatching, with a small jetty on the far side, two channel posts and a big jetty on the near bank, each with a lamp."
+  }
 }

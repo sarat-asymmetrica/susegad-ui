@@ -30,5 +30,10 @@
   "budget": {
     "jsBytes": 36864,
     "reason": "Decision 0005/0010: 12 KB behaviour (tabs.js + tabs.core.js) plus 8 KB for each of three skins. Today 11601 bytes: behaviour 9.2 KB (tabs.js imports the shared packages/transitions/page.js helper rather than repeating its View Transition guard), skins quiet 0.2 KB, warm 0.9 KB, playful 1.1 KB."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

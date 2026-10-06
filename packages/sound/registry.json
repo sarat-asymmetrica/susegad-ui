@@ -9,5 +9,10 @@
   "dependencies": [],
   "registers": ["quiet", "warm", "playful"],
   "budget": { "jsBytes": 14336 },
-  "docs": "README.md"
+  "docs": "README.md",
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
 }

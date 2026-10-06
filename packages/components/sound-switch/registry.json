@@ -19,5 +19,10 @@
   "registers": ["quiet", "warm", "playful"],
   "prompt": "sound-switch.prompt.md",
   "docs": "sound-switch.docs.md",
-  "budget": { "jsBytes": 12288 }
+  "budget": { "jsBytes": 12288 },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
 }

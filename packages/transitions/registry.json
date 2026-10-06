@@ -19,5 +19,10 @@
   "budget": {
     "jsBytes": 4096,
     "reason": "Not a component (no register, no skins): a CSS file plus a small pure helper. Today 3090 bytes of JS (page.js + page.core.js); page.css (1.7 KB) is not counted against the JS budget."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

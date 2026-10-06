@@ -33,5 +33,10 @@
   "budget": {
     "jsBytes": 39936,
     "reason": "Decision 0009: behaviour declared at 15 KB (the ink ribbon lives in the element, because the submitted path must be exactly the ink shown), plus 8 KB for each of three skins. Today: behaviour 14.3 KB (signature.js 8.6, signature.core.js 5.7); the skins share a 9.6 KB painter (skins/paint.js 7.2 and skins/marks.js 2.4: baking, drying, grain, the typed name, the flourish), and each skin file is under 0.4 KB. A page loads one skin and the painter, 10.0 KB, which is over the 8 KB per skin; the painter is one piece of work, split no further."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

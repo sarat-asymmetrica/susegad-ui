@@ -1,0 +1,66 @@
+/* The member-directory recipe. The cards draw themselves; this file lays the
+   page out and styles the filter block, the count and the empty state. */
+
+.sg-directory { max-width: 42rem; container: sg-directory / inline-size; }
+
+/* the filters: the field and the tracks side by side when there is room */
+.sg-directory-filters {
+  display: grid;
+  gap: var(--sg-space-3, 12px);
+  margin: 0 0 var(--sg-space-4, 16px);
+  padding: 0;
+  border: 0;
+}
+@container (min-width: 34rem) {
+  /* the tracks take their own width; the search field takes the rest, so its hint reads whole */
+  .sg-directory-filters { grid-template-columns: auto minmax(14rem, 1fr); align-items: start; }
+  .sg-directory-tracks { grid-row: 1 / span 2; }
+}
+.sg-directory-filters [type="search"] { min-width: 0; width: 100%; }
+.sg-directory-tracks {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--sg-text-soft, inherit);
+  font-size: var(--sg-step--1, 0.9rem);
+}
+.sg-directory-tracks legend {
+  font: var(--sg-weight-medium, 500) var(--sg-step--1, 0.9rem) / 1.3 var(--sg-font-body, inherit);
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.08em;
+  color: var(--sg-text-soft, inherit);
+  margin-bottom: var(--sg-space-1, 4px);
+}
+.sg-directory-tracks label { display: block; margin-block: 0.15em; color: var(--sg-text, inherit); }
+
+/* the count and the share note */
+.sg-directory-count {
+  margin: 0 0 var(--sg-space-3, 12px);
+  font-size: var(--sg-step--1, 0.9rem);
+  color: var(--sg-text-soft, inherit);
+}
+.sg-directory-share {
+  margin: var(--sg-space-3, 12px) 0 0;
+  font-size: var(--sg-step--1, 0.9rem);
+  color: var(--sg-text-soft, inherit);
+}
+
+/* the list of cards */
+.sg-directory-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sg-space-4, 16px);
+}
+.sg-directory-list > li[hidden] { display: none; }
+
+/* the empty state, kind and plain */
+.sg-directory-empty {
+  margin: var(--sg-space-5, 24px) 0;
+  padding: var(--sg-space-4, 16px);
+  border: var(--sg-hairline, 1px) dashed var(--sg-rule-strong, CanvasText);
+  border-radius: var(--sg-radius-2, 6px);
+  background: var(--sg-surface-raised, Canvas);
+}
+.sg-directory-empty p { margin: 0; color: var(--sg-text-soft, inherit); }

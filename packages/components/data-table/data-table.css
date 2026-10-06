@@ -1,0 +1,115 @@
+/* <sg-data-table>. Without JavaScript this is the quiet look: a native table,
+   ruled off, that reads in full in the order it was written. With it, the table
+   scrolls inside its own wrapper at phone width, the sortable columns are real
+   buttons, and td[data-money] is rewritten with the Indian grouping. */
+
+sg-data-table { display: block; color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+sg-data-table[hidden] { display: none !important; }
+
+/* the scroll region: the table scrolls inside it, the page never does */
+sg-data-table .sg-table-wrap {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+sg-data-table .sg-table-wrap:focus-visible {
+  outline: var(--sg-focus-width) solid var(--sg-focus);
+  outline-offset: var(--sg-focus-offset);
+}
+sg-data-table .sg-table-wrap { position: relative; }
+
+/* the table itself */
+sg-data-table table {
+  min-width: max-content;
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+sg-data-table caption {
+  text-align: start;
+  font: var(--sg-weight-medium) var(--sg-step-1) / var(--sg-leading-snug) var(--sg-font-display);
+  padding: 0 0 var(--sg-space-3);
+  color: var(--sg-text);
+}
+sg-data-table th, sg-data-table td {
+  text-align: start;
+  padding: var(--sg-space-3) var(--sg-space-4);
+  border-bottom: var(--sg-hairline) solid var(--sg-rule);
+  vertical-align: baseline;
+}
+sg-data-table thead th {
+  font: var(--sg-weight-medium) var(--sg-step--1) / 1.3 var(--sg-font-body);
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.08em;
+  color: var(--sg-text-soft);
+  border-bottom: var(--sg-stroke-bold) solid var(--sg-rule-strong);
+  white-space: nowrap;
+}
+sg-data-table tbody tr:last-child :is(th, td) { border-bottom: 0; }
+/* money and number columns sit on the right, on the tabular figures */
+sg-data-table td[data-money], sg-data-table th[data-money-col], sg-data-table td[data-value] { text-align: end; }
+sg-data-table td[data-money] { color: var(--sg-text); font-weight: var(--sg-weight-medium); }
+
+/* the sort button: the platform's focus, Enter and Space */
+sg-data-table .sg-table-sort {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  font-variant-caps: inherit;
+  min-height: 2rem;
+  border-radius: 2px;
+}
+sg-data-table .sg-table-sort:hover { color: var(--sg-text); }
+sg-data-table .sg-table-sort:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: 2px; }
+/* the arrow: a shape as well as aria-sort, never colour alone */
+sg-data-table .sg-table-sort::after {
+  content: "";
+  width: 0.5em; height: 0.5em;
+  border-inline-end: var(--sg-stroke-bold) solid currentColor;
+  border-block-end: var(--sg-stroke-bold) solid currentColor;
+  transform: rotate(45deg) translateY(-0.1em);
+  opacity: 0;
+}
+sg-data-table th[aria-sort] .sg-table-sort::after { opacity: 1; }
+sg-data-table th[aria-sort="ascending"] .sg-table-sort::after { transform: rotate(-135deg) translateY(-0.1em); }
+sg-data-table th[aria-sort="descending"] .sg-table-sort::after { transform: rotate(45deg) translateY(-0.1em); }
+sg-data-table th[aria-sort] { color: var(--sg-text); }
+
+/* generous space, hairline rules, zero ornament: quiet is everything above */
+
+/* warm: the hand-drawn rule under the header, drawn by the skin */
+sg-data-table[data-skin="warm"] .sg-table-ink,
+sg-data-table[data-skin="playful"] .sg-table-ink {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  overflow: visible;
+  fill: none;
+  stroke: var(--sg-rule-strong);
+  stroke-linecap: round;
+}
+sg-data-table[data-skin="warm"] caption,
+sg-data-table[data-skin="playful"] caption { font-family: var(--sg-font-hand); font-weight: 400; }
+
+/* playful: colour and delight, a tinted zebra and a coloured sort */
+sg-data-table[data-skin="playful"] tbody tr:nth-child(even) { background: color-mix(in oklch, var(--sg-accent) 7%, transparent); }
+sg-data-table[data-skin="playful"] th[aria-sort] .sg-table-sort { color: var(--sg-accent-text); }
+sg-data-table[data-skin="playful"] th[aria-sort] .sg-table-sort::after { border-color: var(--sg-accent-text); }
+/* money stays in ink in every register: red figures in a ledger read as owed or lost */
+sg-data-table[data-skin="playful"] caption { color: var(--sg-accent-text); }
+
+@media (prefers-reduced-motion: reduce) {
+  sg-data-table .sg-table-sort { transition: none; }
+}
+
+@media (forced-colors: active) {
+  sg-data-table th, sg-data-table td { border-color: CanvasText; }
+  sg-data-table .sg-table-sort::after { border-color: CanvasText; }
+}

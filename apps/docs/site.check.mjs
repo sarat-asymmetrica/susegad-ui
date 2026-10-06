@@ -11,8 +11,12 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import { startServer, REPO_ROOT } from '../../tools/serve.mjs';
+
+const HERE = path.dirname(fileURLToPath(import.meta.url));
 
 const outArg = process.argv.indexOf('--out');
 const OUT = outArg > 0 ? path.resolve(process.argv[outArg + 1]) : path.join(REPO_ROOT, 'out', 'docs');
@@ -185,7 +189,7 @@ try {
   }
 
   // ── 7. accessible and no sideways scroll, on a sample of every kind ─
-  for (const p of ['/', '/scenes', '/components', '/pencil-box', '/scenes/paus', '/components/badge', '/recipes/booking', '/foundations/core']) {
+  for (const p of ['/', '/start', '/scenes', '/components', '/pencil-box', '/scenes/paus', '/components/badge', '/recipes/booking', '/foundations/core']) {
     for (const [width, theme] of [[1440, 'light'], [390, 'dark']]) {
       const { context, page, status } = await open(p, { width, height: width < 600 ? 844 : 900, theme });
       const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
@@ -193,6 +197,19 @@ try {
       check(`${p} at ${width}px ${theme}: axe clean, no sideways scroll`, status === 200 && v.length === 0 && over <= 0, [status !== 200 ? `status ${status}` : '', ...v, over > 0 ? `overflow ${over}px` : ''].filter(Boolean).join(', '));
       await context.close();
     }
+  }
+
+  // ── 8. the cross-origin embed: the use-this-scene box, proven ───────
+  // embed.check.mjs runs its own two servers (the docs origin with the
+  // generated _headers applied, an embedder's page on another port), so it is
+  // spawned as its own process. tools/checks.mjs scans packages/ and recipes/
+  // only and is outside this rung's write boundary, so the site gate is where
+  // this check runs in npm's pipeline.
+  {
+    const r = spawnSync(process.execPath, [path.join(HERE, 'embed.check.mjs')], { encoding: 'utf8', cwd: REPO_ROOT, timeout: 180000 });
+    const out = (r.stdout + r.stderr).trim();
+    out.split('\n').forEach(l => console.log(`  ${l}`));
+    check('cross-origin embed: another origin loads a scene from the docs site and reaches sg-ready', r.status === 0, out.split('\n').at(-1) || `exit ${r.status}`);
   }
 } finally {
   await browser.close();

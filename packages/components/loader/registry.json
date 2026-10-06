@@ -32,5 +32,10 @@
     "jsBytes": 11264,
     "frameMs": 16.7,
     "reason": "The contract's 12 KB behaviour plus 8 KB per skin, declared as the sum used: behaviour (loader.js) about 3.2 KB, including the status line that announces a newly added loader once; skins about 0.9 KB (quiet), 2.9 KB (warm) and 3.3 KB (playful). The warm skin reuses the Kolam scene's geometry."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

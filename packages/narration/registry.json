@@ -32,5 +32,10 @@
   "budget": {
     "jsBytes": 45056,
     "reason": "A package budget in the shape of engine and tokens (decision 0001), not a component's 12/8 KB split: the pure timing core, three providers, the fixture cache and the DOM highlight driver together, today 40355 bytes, with headroom for the Sarvam adapter to grow as the API does."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

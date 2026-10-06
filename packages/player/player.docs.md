@@ -54,7 +54,7 @@ Space or **K** play or pause; **←**/**→** seek 5 seconds (15 with Shift); Ho
 
 ## Events and properties
 
-`<sg-player>` fires nothing of its own; listen to the native `<video>`/`<audio>` events (`play`, `pause`, `timeupdate`, `ended`, …) directly — the element never hides them. `annotations` (get/set) is the current list, normalised. The wrapped media element is `player.querySelector('video, audio')`.
+`<sg-player>` fires nothing of its own; listen to the native `<video>`/`<audio>` events (`play`, `pause`, `timeupdate`, `ended`, …) directly, the element never hides them. `annotations` (get/set) is the current list, normalised. The wrapped media element is `player.querySelector('video, audio')`.
 
 ## Accessibility
 

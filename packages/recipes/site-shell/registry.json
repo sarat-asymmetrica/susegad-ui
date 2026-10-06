@@ -35,5 +35,10 @@
     "playful"
   ],
   "prompt": "recipe.prompt.md",
-  "docs": "README.md"
+  "docs": "README.md",
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
 }

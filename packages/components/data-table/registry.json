@@ -1,0 +1,40 @@
+{
+  "name": "data-table",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Data table",
+  "description": "A native table that sorts and scrolls. A caption names it; columns marked data-sort sort by a real button with aria-sort, ascending then descending then the written order; money cells marked data-money are rewritten in the Indian grouping (125000 as ₹1,25,000, crore aware) on tabular figures; at phone width the table scrolls inside its own region and the page never scrolls sideways. Quiet is hairline rules and generous space; warm adds a hand-drawn header rule; playful adds colour and a tinted zebra.",
+  "version": "0.1.0",
+  "files": [
+    "data-table.js",
+    "data-table.core.js",
+    "data-table.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "data-table.prompt.md",
+    "data-table.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "data-table.prompt.md",
+  "docs": "data-table.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins; the pure core is budgeted apart (0010). Today 12,367 bytes: element 5.5 KB, pure core 4.0 KB (the Indian grouping, the sort state machine, the stable sort), skins quiet 0.1 KB, warm 2.1 KB (the seeded hand-drawn rule), playful 0.6 KB (it reuses warm's rule)."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

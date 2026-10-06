@@ -32,5 +32,10 @@
   "budget": {
     "jsBytes": 36864,
     "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 14455 bytes: behaviour (stamp.js + stamp.core.js) 9.4 KB, skins quiet 0.6 KB, warm 4.0 KB, playful 0.4 KB plus warm."
+  },
+  "motif": {
+    "origin": "india",
+    "tier": "everyday",
+    "gloss": "The hand-pressed stamp: block-printed and rubber-stamped marks on bills, permits and parcels across India."
   }
 }

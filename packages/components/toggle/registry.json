@@ -31,5 +31,10 @@
   "budget": {
     "jsBytes": 36864,
     "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 9352 bytes: behaviour (toggle.js + toggle.core.js) 5.3 KB, skins quiet 0.3 KB, warm 2.2 KB, playful 1.6 KB."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

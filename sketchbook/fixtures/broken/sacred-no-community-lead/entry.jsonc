@@ -1,0 +1,12 @@
+// Fixture only. The motif here is invented for the lint's test suite; it does not
+// describe any real community's sacred motif.
+{
+  "title": "The lamp that was never lit",
+  "rememberedBy": "moonovermapusa",
+  "place": "an imagined shrine room",
+  "motif": { "origin": "a brass lamp on a lotus stand", "tier": "sacred", "gloss": null },
+  "consent": null,
+  "references": [],
+  "status": "sketch",
+  "communityLead": null
+}

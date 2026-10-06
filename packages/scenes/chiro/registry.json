@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "chiro.prompt.md",
-  "budget": { "jsBytes": 51200, "reason": "The plate's simulation, colouring pass and pencil work, ported line for line." }
+  "budget": { "jsBytes": 51200, "reason": "The plate's simulation, colouring pass and pencil work, ported line for line." },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "A Goan laterite compound wall up close through a year: the pits in each cut block grow as a Gray-Scott reaction-diffusion, the monsoon darkens the stone from the top, moss creeps out of the joints and the sun bleaches it back."
+  }
 }

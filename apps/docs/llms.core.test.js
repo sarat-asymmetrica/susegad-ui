@@ -1,6 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { buildLlms } from './llms.core.js';
+
+const HERE = path.dirname(fileURLToPath(import.meta.url));
 
 const index = {
   name: 'susegad-ui',
@@ -43,4 +48,35 @@ test('an empty registry still produces a well-formed llms.txt', () => {
 test('a custom summary is used verbatim', () => {
   const { txt } = buildLlms({ name: 'susegad-ui', items: [] }, () => ({}), { summary: 'Short.' });
   assert.match(txt, /> Short\.\n/);
+});
+
+test('machineFiles get their own section at the end of llms.txt', () => {
+  const { txt, full } = buildLlms(index, texts, {
+    machineFiles: [
+      { href: '/custom-elements.json', note: 'every sg- element' },
+      { href: '/registry/registry.json' },
+    ],
+  });
+  const at = txt.indexOf('## Machine-readable files');
+  assert.ok(at > 0 && at > txt.indexOf('## Packages'), 'after the groups');
+  assert.match(txt, /## Machine-readable files\n\n- \[custom-elements\.json\]\(\/custom-elements\.json\): every sg- element\n- \[registry\/registry\.json\]\(\/registry\/registry\.json\)\n/);
+  assert.doesNotMatch(full, /Machine-readable/, 'llms-full.txt inlines the text itself, so it needs no link list');
+});
+
+test('no machineFiles, no section: the plain llms.txt is unchanged', () => {
+  const { txt } = buildLlms(index, texts);
+  assert.doesNotMatch(txt, /Machine-readable/);
+});
+
+test('the built site ships custom-elements.json, and its llms.txt points at it', () => {
+  const out = path.join(HERE, '../../out/docs');
+  const cemPath = path.join(out, 'custom-elements.json');
+  if (!fs.existsSync(out)) return; // a fresh checkout: run node apps/docs/build.mjs first
+  assert.ok(fs.existsSync(cemPath), 'custom-elements.json at the site root');
+  const cem = JSON.parse(fs.readFileSync(cemPath, 'utf8'));
+  assert.ok(cem.modules.some(m => m.exports?.some(e => e.name === 'sg-scene')), 'the manifest names sg-scene');
+  const llms = fs.readFileSync(path.join(out, 'llms.txt'), 'utf8');
+  assert.match(llms, /## Machine-readable files\n\n- \[custom-elements\.json\]\(\/custom-elements\.json\)/);
+  const headers = fs.readFileSync(path.join(out, '_headers'), 'utf8');
+  assert.match(headers, /^\/packages\/\*\n  Access-Control-Allow-Origin: \*$/m);
 });

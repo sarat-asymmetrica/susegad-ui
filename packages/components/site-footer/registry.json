@@ -1,0 +1,40 @@
+{
+  "name": "site-footer",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Site footer",
+  "description": "The closing block every site needs: a sign-off line in the site's own voice, the links a reader may still want, and the small print. It enhances a native footer, so without JavaScript the markup you wrote is the whole footer. The small print's copyright year moves forward to the clock's year, once, and never back, and the page hears when it did. Quiet is a ruled footer in the display face; warm writes the sign-off in the hand with a fitted pencil rule under it; playful sets the links down like stamped chips with a short hop.",
+  "version": "0.1.0",
+  "files": [
+    "site-footer.js",
+    "site-footer.core.js",
+    "site-footer.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "site-footer.prompt.md",
+    "site-footer.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "site-footer.prompt.md",
+  "docs": "site-footer.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins; the pure core is budgeted apart (0010). Today 10007 bytes: element 3.9 KB, pure core 3.5 KB (the small print's year, the pencil rule, the stamped angles), skins quiet 0.2 KB, warm 1.5 KB, playful 0.7 KB."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

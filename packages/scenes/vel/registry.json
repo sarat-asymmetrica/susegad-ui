@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "vel.prompt.md",
-  "budget": { "jsBytes": 57344, "reason": "Two worlds ported line for line from the plate: the L-system vine with its turtle, taper and growth schedule, and the laterite wall with its sky, palms, pits, stains, cap and ground; the SVG renderer then drives every animation from the scene clock." }
+  "budget": { "jsBytes": 57344, "reason": "Two worlds ported line for line from the plate: the L-system vine with its turtle, taper and growth schedule, and the laterite wall with its sky, palms, pits, stains, cap and ground; the SVG renderer then drives every animation from the scene clock." },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "A magenta bougainvillea grows from behind a laterite compound wall by a seeded L-system, arches up and spills down the lime-washed cap, drawn as inline SVG."
+  }
 }

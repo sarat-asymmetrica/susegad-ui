@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "rampon.prompt.md",
-  "budget": { "jsBytes": 40960 }
+  "budget": { "jsBytes": 40960 },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "Dusk on the Goan shore: a ballpoint sea of short hatching strokes that boils like hand-drawn animation, a sun sinking into haze, palms swaying in seeded wind, a ramponkar's canoe with its net heaped inside, and a few distant birds."
+  }
 }

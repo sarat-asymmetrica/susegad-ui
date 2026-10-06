@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "paus.prompt.md",
-  "budget": { "jsBytes": 61440, "reason": "The heavy baseline scene: drop simulation, fog mask, dusk palette, three registers." }
+  "budget": { "jsBytes": 61440, "reason": "The heavy baseline scene: drop simulation, fog mask, dusk palette, three registers." },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "The monsoon through a Goan window: rain beads, merges and runs down fogged glass."
+  }
 }

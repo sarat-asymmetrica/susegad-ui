@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accordion</title>
+<link rel="stylesheet" href="./accordion.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 80rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .page h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: 0 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-5); }
+  .stack { display: grid; grid-template-columns: min(100%, 46rem); gap: var(--sg-space-5); margin-top: var(--sg-space-5); padding: var(--sg-space-2) 8px; }
+  .page > section + section { margin-top: var(--sg-space-6); }
+  .label { margin: 0 0 var(--sg-space-2); font-size: var(--sg-step--1); color: var(--sg-text-soft); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Accordion</h1>
+  <p class="lede">Frequently asked questions, built on the browser's own details and summary. Every summary opens and closes with Enter or Space, and questions that share a name keep each other company: only one of them is open at a time. It works the same with JavaScript switched off.</p>
+  <div class="page" id="page">
+    <div class="stack">
+
+      <p class="label">An exclusive group, one item open</p>
+      <sg-accordion name="faq">
+        <details name="faq" open>
+          <summary>Where is the homestay, and how do I get there?</summary>
+          <p>In Aldona, a village in the fields north of Panjim. By car or bus it is about half an hour from the city; we send directions when you book.</p>
+        </details>
+        <details name="faq">
+          <summary>Is breakfast included?</summary>
+          <p>Yes. It is served on the veranda from 7:30 to 10, with fruit from the trees behind the house.</p>
+        </details>
+        <details name="faq">
+          <summary>Can I arrive late in the evening?</summary>
+          <p>You can. Tell us the time and someone will be up; the gate is closed but never locked.</p>
+        </details>
+      </sg-accordion>
+
+      <p class="label">All closed</p>
+      <sg-accordion name="closed">
+        <details name="closed">
+          <summary>Is there parking?</summary>
+          <p>Yes, two cars in the shade behind the house, and room for bicycles on the veranda.</p>
+        </details>
+        <details name="closed">
+          <summary>Do you take card payments?</summary>
+          <p>Yes, on arrival. Cash in rupees is welcome too.</p>
+        </details>
+      </sg-accordion>
+
+      <p class="label">Free-standing sections, every one its own</p>
+      <sg-accordion>
+        <details open>
+          <summary>What is the house like?</summary>
+          <p>A laterite house with a tiled roof, three rooms, a long veranda and a garden the kingfishers visit.</p>
+        </details>
+        <details>
+          <summary>Are children welcome?</summary>
+          <p>Very much. The garden is fenced, and there is a shelf of picture books in the sitting room.</p>
+        </details>
+      </sg-accordion>
+
+    </div>
+  </div>
+  <p class="note">The first group is exclusive (one open at a time, a <code>name</code> on every item); the second starts all closed; the third is free-standing, so any number can be open. Add <code>?register=quiet</code>, <code>warm</code> or <code>playful</code> to see one register on its own. Nothing here needs JavaScript to open or close.</p>
+</main>
+<script>
+  // With no ?register, show the three registers side by side (a copy of the accordions for each).
+  if (!new URLSearchParams(location.search).has('register')) {
+    const page = document.getElementById('page'), stack = page.querySelector('.stack');
+    const names = { quiet: 'Quiet: hairline rules, a thin chevron', warm: 'Warm: the marker in the hand face', playful: 'Playful: a glyph that flips' };
+    page.replaceChildren(...Object.entries(names).map(([r, label]) => {
+      const sec = document.createElement('section');
+      sec.dataset.register = r; sec.setAttribute('aria-labelledby', `h-${r}`);
+      const h = document.createElement('h2'); h.id = `h-${r}`; h.textContent = label;
+      const copy = stack.cloneNode(true);
+      copy.querySelectorAll('[id]').forEach(e => { e.id += `-${r}`; });
+      sec.append(h, copy);
+      return sec;
+    }));
+  }
+</script>
+<script type="module">
+  import './accordion.js';
+  window.__demoReady?.();
+</script>
+</body>
+</html>

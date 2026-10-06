@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en" data-register="warm">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Embed fixture</title>
+<!-- The cross-origin embed fixture: this page is served from one local port
+     and loads its scene module from another (the docs server's), exactly the
+     way another site would load a scene from https://susegad.asymmetrica.ai.
+     __DOCS_ORIGIN__ is replaced by apps/docs/embed.check.mjs at serve time.
+     It mirrors the use-this-scene box on a scene page, line for line. -->
+<link rel="stylesheet" href="__DOCS_ORIGIN__/packages/tokens/tokens.css">
+<style>
+  body { margin: 0; padding: 24px 16px; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 40rem; margin: 0 auto; }
+  sg-scene { --sg-reading-place: start start; }
+  sg-scene h2 { margin: 0; font-size: 1.25rem; font-family: var(--sg-font-display, serif); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Embed fixture</h1>
+  <p>A page on another origin: it imports a scene module from the docs site and waits for <code>sg-ready</code>.</p>
+  <sg-scene name="paus" register="warm">
+    <h2>Monsoon at the window</h2>
+    <p>The river runs high, the veranda smells of wet earth.</p>
+  </sg-scene>
+</main>
+<script type="module">
+  import '__DOCS_ORIGIN__/packages/scenes/paus/index.js';
+  document.querySelector('sg-scene').addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+</script>
+</body>
+</html>

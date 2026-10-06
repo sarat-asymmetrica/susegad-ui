@@ -1,0 +1,36 @@
+{
+  "name": "member-directory",
+  "type": "recipe",
+  "stability": "experimental",
+  "title": "Member directory",
+  "description": "A list of person-cards, filtered live by a text field (the library's field) and by track checkboxes, with the filter state in the URL's query so a filtered view is shareable, a count read once by a status region, and a kind empty state that names the two fixes. Without JavaScript the full list shows, unfiltered, and the filters say they do nothing.",
+  "version": "0.1.0",
+  "files": [
+    "recipe.js",
+    "recipe.css",
+    "index.html",
+    "README.md",
+    "recipe.prompt.md"
+  ],
+  "dependencies": [
+    "person-card",
+    "field",
+    "check",
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "recipe.prompt.md",
+  "docs": "README.md",
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

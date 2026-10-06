@@ -4,6 +4,83 @@
   "base": "..",
   "items": [
     {
+      "name": "accordion",
+      "type": "component",
+      "title": "Accordion",
+      "description": "Frequently asked questions on the browser's own details and summary: the summary is a real toggle that takes Tab and turns on Enter and Space, and questions sharing a name form an exclusive group, only one open at a time. The element adopts its own name attribute for the children that have none, keeps an account of what is open, and says so once per turn. Quiet is hairline rules and a thin chevron; warm draws the marker in the hand face and opens with a soft slide; playful sets the questions in the hand and flips a drawn, seeded glyph with a spring.",
+      "version": "0.1.0",
+      "stability": "experimental",
+      "manifest": "packages/components/accordion/registry.json",
+      "files": [
+        {
+          "path": "packages/components/accordion/accordion.core.js",
+          "bytes": 3830,
+          "hash": "sha256-31f63ed791a4318ffc538eaaa2c87a6d91f6dea81457dc9eb89decf4ccc151d0"
+        },
+        {
+          "path": "packages/components/accordion/accordion.css",
+          "bytes": 5882,
+          "hash": "sha256-5842b03939cd35582ffa295ad9f771635cd3eda0a5cb9b577ae1cc6d5e9f5d78"
+        },
+        {
+          "path": "packages/components/accordion/accordion.docs.md",
+          "bytes": 4531,
+          "hash": "sha256-8bb4043335a2121d9a9fffea08f07d265d3923253204347924985d88629704f0"
+        },
+        {
+          "path": "packages/components/accordion/accordion.js",
+          "bytes": 4868,
+          "hash": "sha256-7047a4bcb4df0679f0b356ee8bd49f58f02daf1b41a22d9b55b6d251714f7223"
+        },
+        {
+          "path": "packages/components/accordion/accordion.prompt.md",
+          "bytes": 7403,
+          "hash": "sha256-da56408856296dbe6472da7119cd1b40fc43415d572dbfd78b6b2278760834e6"
+        },
+        {
+          "path": "packages/components/accordion/skins/playful.js",
+          "bytes": 1065,
+          "hash": "sha256-030021cda5d3adf833bb0188ba08530a90253a6ae4268bf19b944befa8a2867d"
+        },
+        {
+          "path": "packages/components/accordion/skins/quiet.js",
+          "bytes": 183,
+          "hash": "sha256-8edad3c77608c908d5a448de90edd112800507c0f7b8bbd1fad809e26986878e"
+        },
+        {
+          "path": "packages/components/accordion/skins/warm.js",
+          "bytes": 486,
+          "hash": "sha256-877c45ee7163c4abed841d65f3b2badc05004790e284071258899a449283302b"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
+      "budget": {
+        "jsBytes": 36864,
+        "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins; the pure core is budgeted apart (0010). Today 10,432 bytes: element 4.8 KB, pure core 3.7 KB (the groups, the open plan, the account), skins quiet 0.2 KB, warm 0.5 KB, playful 1.0 KB (the seeded tilts), so most of the budget is unspent and the drawing lives in the CSS."
+      },
+      "docs": "packages/components/accordion/accordion.docs.md",
+      "prompt": "packages/components/accordion/accordion.prompt.md",
+      "bytes": 28248,
+      "jsBytes": 10432,
+      "codeBytes": 5227,
+      "hash": "sha256-949c5173254bfe979e5e3effcfd70f290ca19b107c9e2bcb735e28f51aa3134e"
+    },
+    {
       "name": "action-menu",
       "type": "component",
       "title": "Action menu",
@@ -63,6 +140,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today about 7.0 KB: behaviour (action-menu.js + action-menu.core.js) 6.7 KB; skins quiet, warm and playful are each a no-op mount (about 0.2 KB each), because the look is entirely in action-menu.css keyed off [data-skin]/[data-open]."
@@ -135,6 +217,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 11014 bytes: behaviour (badge.js + badge.core.js) 7.4 KB, skins quiet 0.2 KB, warm 2.1 KB, playful 1.3 KB."
@@ -218,6 +305,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "docs": "packages/recipes/booking/README.md",
       "prompt": "packages/recipes/booking/recipe.prompt.md",
       "bytes": 44158,
@@ -286,6 +378,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today about 7.0 KB: behaviour (button.js + button.core.js) 4.4 KB, skins quiet 0.2 KB, warm 1.3 KB, playful 1.1 KB."
@@ -358,6 +455,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Element 4.1 KB, pure core 10.2 KB (redaction, markup with replies and reactions, the bubble), skins quiet 0.3 KB, warm 2.5 KB, playful 1.1 KB."
@@ -431,6 +533,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 16519 bytes: behaviour (check.js + check.core.js) 9.5 KB, skins quiet 0.2 KB, warm 2.2 KB, playful 4.2 KB. The playful skin also imports inkMask from stamp.core.js."
@@ -508,6 +615,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 20480,
         "frameMs": 16.7,
@@ -586,6 +698,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 14336,
         "frameMs": 16.7,
@@ -644,6 +761,11 @@
       ],
       "registers": [],
       "stabilityReason": "The scene contract and <sg-scene> have run every scene in the registry since the soft launch, with no breaking change yet.",
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 31744,
         "reason": "Decision 0021: the open keep-away list, the reading-place watcher and the movable hook (the movable behaviour itself is its own item)."
@@ -673,6 +795,11 @@
         "core"
       ],
       "registers": [],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 6144
       },
@@ -703,6 +830,11 @@
       ],
       "dependencies": [],
       "registers": [],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 16384,
         "reason": "Decision 0021: the element side (grip, pointer capture, keys, status, glass) and its pure geometry (movable.core.js, tested in Node, counted apart per decision 0010)."
@@ -749,6 +881,11 @@
       ],
       "dependencies": [],
       "registers": [],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 24576,
         "reason": "The element side (decision 0009, 12 KB) and the two pure cores counted apart (decision 0010, 12 KB together), so 24576. Today 23.2 KB: orient.js 11.9 KB, quat.core.js 5.6 KB, orient.core.js 5.1 KB. The check (orient.check.mjs) and the demo are not counted, as with every other piece."
@@ -759,6 +896,83 @@
       "jsBytes": 23155,
       "codeBytes": 13791,
       "hash": "sha256-56657cece2a0ccba04789ec6be6871ad463dfed729940e4ebbd1abb221aecbb1"
+    },
+    {
+      "name": "data-table",
+      "type": "component",
+      "title": "Data table",
+      "description": "A native table that sorts and scrolls. A caption names it; columns marked data-sort sort by a real button with aria-sort, ascending then descending then the written order; money cells marked data-money are rewritten in the Indian grouping (125000 as ₹1,25,000, crore aware) on tabular figures; at phone width the table scrolls inside its own region and the page never scrolls sideways. Quiet is hairline rules and generous space; warm adds a hand-drawn header rule; playful adds colour and a tinted zebra.",
+      "version": "0.1.0",
+      "stability": "experimental",
+      "manifest": "packages/components/data-table/registry.json",
+      "files": [
+        {
+          "path": "packages/components/data-table/data-table.core.js",
+          "bytes": 4039,
+          "hash": "sha256-a43c60a39f015439db3a4355e4a56be63dc4e5e074d80db8bc1f0de6dd70bb27"
+        },
+        {
+          "path": "packages/components/data-table/data-table.css",
+          "bytes": 4729,
+          "hash": "sha256-1e24cadcee792c8ef28b567e6d2314b3d637b8a9c534044876d811a264bd4c77"
+        },
+        {
+          "path": "packages/components/data-table/data-table.docs.md",
+          "bytes": 3255,
+          "hash": "sha256-52ebf2c3a82c9333dc50aed704909d40950afea6d21a9fb67ea6c1182f6b14f6"
+        },
+        {
+          "path": "packages/components/data-table/data-table.js",
+          "bytes": 5774,
+          "hash": "sha256-ca96cd58c0cf7ce10fc17eedf0a3546b32a612aea80f9e0c6ee5f1288eaac105"
+        },
+        {
+          "path": "packages/components/data-table/data-table.prompt.md",
+          "bytes": 5127,
+          "hash": "sha256-9ddc9dcea5a0f797528d4bc1db17707b367f1fe8613c66433d93713f953a58c0"
+        },
+        {
+          "path": "packages/components/data-table/skins/playful.js",
+          "bytes": 598,
+          "hash": "sha256-27677bacf17e16667ecf0904dde3c2fe5add2429105bcdc1685b09107f8ff6aa"
+        },
+        {
+          "path": "packages/components/data-table/skins/quiet.js",
+          "bytes": 143,
+          "hash": "sha256-a10ff8a3d98a27ae0d3e1d8d09bced7d48c73bd4015abdb2f35e1dfc9dc1a8ce"
+        },
+        {
+          "path": "packages/components/data-table/skins/warm.js",
+          "bytes": 2067,
+          "hash": "sha256-0e38e68c827644d801e2ccfe02f23975aa0ee3b6bdc6f10d4aac6efefeabd865"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
+      "budget": {
+        "jsBytes": 36864,
+        "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins; the pure core is budgeted apart (0010). Today 12,367 bytes: element 5.5 KB, pure core 4.0 KB (the Indian grouping, the sort state machine, the stable sort), skins quiet 0.1 KB, warm 2.1 KB (the seeded hand-drawn rule), playful 0.6 KB (it reuses warm's rule)."
+      },
+      "docs": "packages/components/data-table/data-table.docs.md",
+      "prompt": "packages/components/data-table/data-table.prompt.md",
+      "bytes": 25732,
+      "jsBytes": 12621,
+      "codeBytes": 7924,
+      "hash": "sha256-551daa5c0f00f54d07195e4db1f55bd6051dcba1767353cb54da150d40711586"
     },
     {
       "name": "date-range",
@@ -828,6 +1042,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 40960,
         "reason": "Parts per decision 0010: element date-range.js 15,050 bytes (over 12 KB, under 16 KB: the APG keyboard grid, turnover rules, native validation, the season table, the rates setter and open-from run in every register); pure core date-range.core.js 9,949 bytes (under its own 12 KB); shared skin helper skins/drawing.js 13,604 bytes, counted as one skin, over the 8 KB skin allowance because it holds the ink loops, the season ribbon and its phone-width key; skin files quiet 199, warm 312 and playful 309 bytes."
@@ -919,6 +1138,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "The depth photo: a Goan window glazed with oyster shell, filling its host edge to edge."
+      },
       "budget": {
         "jsBytes": 46080,
         "reason": "Decisions 0009, 0010 and 0017; the step from 40 KB to 45 KB (46,080) was accepted by the Sutradhar on 26 Sep 2026 (story 1). Today 42.8 KB: element 14.9 KB (0009, up to 16 KB: two renderers, the governor, the slow-machine rescue, context-loss recovery, the frame contract), pure core 3.8 KB (0010), the three.js renderer 15.4 KB (a look shader and a two-layer stage shader: near and far layers, dropped stretched pixels and a small inpaint, which the share card's smeared plate rim asked for), the 2D renderer 6.5 KB, register skins 2.2 KB. The rack-focus and frame helpers it took from story 1 are copied into story-shims.js (1.6 KB). Needs npm three 0.186.1 (npmDependencies) for the live tier only."
@@ -991,6 +1215,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 14336,
         "reason": "0010: element (dialog.js) + core (dialog.core.js) together, since the pure core here is small (openersFor, isDismiss, STRINGS) and not worth a separate 12 KB allowance. Today 5781 bytes for behaviour, plus three skins (quiet 0.3 KB, warm 0.8 KB, playful 1.2 KB); Carepa itself is a separate registry item."
@@ -1023,8 +1252,8 @@
         },
         {
           "path": "packages/components/drawer/drawer.docs.md",
-          "bytes": 2298,
-          "hash": "sha256-c062bbff307dba21101e037deebd30500b2c3fcb843b84d1fee8abb0292edddf"
+          "bytes": 2295,
+          "hash": "sha256-f8f076fdf1a8335d423b6fb89f0afb21719e109d9d0263f5090e822a7c3f03a3"
         },
         {
           "path": "packages/components/drawer/drawer.js",
@@ -1063,16 +1292,21 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 13312,
         "reason": "0010: element + core together (5255 bytes today), plus three skins (quiet 0.2 KB, warm 0.7 KB, playful 1.1 KB, which also imports the shared talaDelay from packages/tokens). Carepa and the tokens' Teental export are separate registry items."
       },
       "docs": "packages/components/drawer/drawer.docs.md",
       "prompt": "packages/components/drawer/drawer.prompt.md",
-      "bytes": 20693,
+      "bytes": 20690,
       "jsBytes": 7950,
       "codeBytes": 5297,
-      "hash": "sha256-feb3d90be3fb4f123c6888e75cdb9734a714a2b491e5cf52ea9519577968edc8"
+      "hash": "sha256-5cdd7d99ff88836517619c364a2e63b040d6dc746565f14c9dc1118bde84b928"
     },
     {
       "name": "empty",
@@ -1135,6 +1369,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 10240,
         "frameMs": 16.7,
@@ -1203,7 +1442,7 @@
         },
         {
           "path": "packages/engine/src/light.js",
-          "bytes": 6367,
+          "bytes": 6236,
           "hash": "sha256-74cce7c805ff0653be0a043c7e4223ad20f467f9221334b4f78efd1ed2c58f44"
         },
         {
@@ -1254,13 +1493,18 @@
       ],
       "dependencies": [],
       "registers": [],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 81920,
         "reason": "Raised from 53,248 for light.js, motion.js and wave.js. All three are opt-in by import, so a scene pays only for what it names: mithagar draws on rng, math and color, 4,483 B of it. This figure is the whole pencil box, not a per-scene cost."
       },
       "docs": "packages/engine/README.md",
-      "bytes": 78975,
-      "jsBytes": 75123,
+      "bytes": 78844,
+      "jsBytes": 74992,
       "codeBytes": 40359,
       "hash": "sha256-b5bc4fea01c4c510baaef4fb5dd6cae78779e842a101be2b69afd0debbf6894c"
     },
@@ -1334,6 +1578,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "docs": "packages/recipes/enquiry/README.md",
       "prompt": "packages/recipes/enquiry/recipe.prompt.md",
       "bytes": 40118,
@@ -1402,6 +1651,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins; the pure core is budgeted apart (0010). Today 21,972 bytes: element 7.5 KB, pure core 11.3 KB (zones, the clock, the words, the calendar, the perforation), skins quiet 0.1 KB, warm 2.7 KB, playful 0.3 KB (it reuses warm's ticket)."
@@ -1474,6 +1728,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 8,415 bytes: element 6.8 KB, pure core 1.1 KB (it leans on event-card's core for the clock), skins 0.5 KB in all."
@@ -1527,6 +1786,11 @@
       ],
       "dependencies": [],
       "registers": [],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 21000,
         "reason": "Not a component (no registers, no skins): the whole package's behaviour, at roughly the component figure (0009) since export code runs the same way, a little over it once the real GCE/LZW fix and the pacing fix (webm.js) landed. index.js 0.5 KB, png.js 2.1 KB, webm.js 5.3 KB, gif.js 3.5 KB (the browser edges) plus gif.core.js 8.4 KB (the tested palette/LZW core, its own concern, like a component's *.core.js under 0010): 19.8 KB measured, budgeted with a little headroom."
@@ -1603,6 +1867,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 21005 bytes: behaviour (field.js + field.core.js, and rule.js, the pencil rule select and combobox share) 12.4 KB, skins quiet 0.2 KB, warm 6.7 KB, playful 1.2 KB."
@@ -1674,6 +1943,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 39936,
         "reason": "Decision 0009: 15 KB of behaviour (words in the person's terms, dates the way people say them, and a note that never appears mid-click and never repeats itself), plus 8 KB for each of three skins. Today 21939 bytes: behaviour (field-note.js + field-note.core.js) 14.3 KB, skins quiet 0.5 KB, warm 4.3 KB, playful 2.3 KB."
@@ -1750,6 +2024,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 18432,
         "frameMs": 16.7,
@@ -1824,6 +2103,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "docs": "packages/recipes/file-upload/README.md",
       "prompt": "packages/recipes/file-upload/recipe.prompt.md",
       "bytes": 31100,
@@ -1885,6 +2169,11 @@
         "folio-diagram"
       ],
       "registers": [],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 45056,
         "reason": "Decision 0010 in spirit: the Markdown parser and directive renderer (md/index.js 22.9 KB, which checks a diagram's lines with folio-diagram's grammar,, md/parse.js 14.7 KB) are a pure core that runs in Node at build time and is fully tested; they never ship inside a sealed document. What a document carries is folio-print.js and folio-check.js, 1.9 KB together, and build/seal.mjs (3.6 KB) runs only in Node for folio verify. Declared at 44 KB: today 42.4 KB."
@@ -1955,6 +2244,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 51200,
         "reason": "Decisions 0009 and 0010, with the core over its allowance. The element (diagram.js 12.3 KB) is within 12 KB to 16 KB. The pure core is diagram.grammar.js (5.0 KB: the line grammar, which Folio's Markdown also uses to check a diagram unbuilt) and diagram.core.js (20.7 KB: layered layout, loop routing, label placement and the text alternative), 25.6 KB together, over 0010's 12 KB because the layout is the diagram; it runs in Node at build time and is tested. render.js (7.7 KB) writes the SVG as a string, pure, and diagram.ink.js (3.5 KB) is the hand-inked line, one skin helper. Declared at 50 KB: today about 49 KB. A document built from Markdown carries all of them, since the element redraws in the page."
@@ -2015,6 +2309,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "docs": "packages/recipes/food-order/README.md",
       "prompt": "packages/recipes/food-order/recipe.prompt.md",
       "bytes": 18672,
@@ -2087,6 +2386,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 13510 bytes: behaviour (form.js + form.core.js) 10.8 KB, skins quiet 0.3 KB, warm 1.9 KB, playful 0.3 KB."
@@ -2097,6 +2401,83 @@
       "jsBytes": 13911,
       "codeBytes": 9690,
       "hash": "sha256-152961cd1d69833f357aa7031b9406b16b81412bed960bc6087a5723a4a962fe"
+    },
+    {
+      "name": "gallery",
+      "type": "component",
+      "title": "Gallery",
+      "description": "Photographs, consent first: a grid of slots the author writes, where a slot with consent=\"pending\" shows a drawn frame with photo corners, its caption and the count (\"2 photos, coming soon\"), and never the image; a granted photograph opens larger in the native dialog. Quiet is hairline frames with ruled corners; warm draws hand-drawn photo corners, seeded; playful leans each slot its own seeded half-degree like photos laid on a table.",
+      "version": "0.1.0",
+      "stability": "experimental",
+      "manifest": "packages/components/gallery/registry.json",
+      "files": [
+        {
+          "path": "packages/components/gallery/gallery.core.js",
+          "bytes": 4256,
+          "hash": "sha256-5b3b9a94ca9793541b8fe80f6b30811d5b1f544f51c6672e4b8c60feb83bbf8a"
+        },
+        {
+          "path": "packages/components/gallery/gallery.css",
+          "bytes": 6216,
+          "hash": "sha256-cac96b2158cd0a982d3bfcc217f54ed2943b0763d0d903dd26c7c7a81c96694a"
+        },
+        {
+          "path": "packages/components/gallery/gallery.docs.md",
+          "bytes": 3403,
+          "hash": "sha256-74ac2840081c770cc2f82a72451b1e3c3922fd00526bef7d3bde7fe4367282e7"
+        },
+        {
+          "path": "packages/components/gallery/gallery.js",
+          "bytes": 8022,
+          "hash": "sha256-328151b105d7fa9ef0a7da9d90f0ed6094e50366834962df124f53c6c617cc36"
+        },
+        {
+          "path": "packages/components/gallery/gallery.prompt.md",
+          "bytes": 6234,
+          "hash": "sha256-2ad15b1cd3a6174c367dec7ddad799b2331c2f7059716280aca77f2bdf4417fb"
+        },
+        {
+          "path": "packages/components/gallery/skins/playful.js",
+          "bytes": 776,
+          "hash": "sha256-99f4f776a9fb86423d6a5b80d8b00f5f4072566e0929fe351fe901d6ab2a09be"
+        },
+        {
+          "path": "packages/components/gallery/skins/quiet.js",
+          "bytes": 171,
+          "hash": "sha256-141961d259c53c52a1ba4e2206a881406df0d71b83ffa3eca6278a3967aecb18"
+        },
+        {
+          "path": "packages/components/gallery/skins/warm.js",
+          "bytes": 1438,
+          "hash": "sha256-b8ee086b2733133a2878c93d3eff6b31ac7ba276c5aa1ceb968f0bde35ae97fd"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
+      "budget": {
+        "jsBytes": 36864,
+        "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins; the pure core is budgeted apart (0010)."
+      },
+      "docs": "packages/components/gallery/gallery.docs.md",
+      "prompt": "packages/components/gallery/gallery.prompt.md",
+      "bytes": 30516,
+      "jsBytes": 14663,
+      "codeBytes": 9440,
+      "hash": "sha256-e980899b942cfd2477e8c3f4c8dfc4cd1b99102dd622da30611a42fcb838d693"
     },
     {
       "name": "kantar-curtain",
@@ -2122,6 +2503,11 @@
         "engine"
       ],
       "registers": [],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "The tiatr stage's curtain, drawn: folds, a rippling hem and the proscenium's valance, shared by the Kantar scene and interlude."
+      },
       "budget": {
         "jsBytes": 6144,
         "reason": "One small drawing module shared by the Kantar scene and the Kantar interlude; the velvet strip, the pelmet shadow and the fringe, with the hem supplied by the caller."
@@ -2153,8 +2539,8 @@
         },
         {
           "path": "packages/transitions/kantar/kantar.docs.md",
-          "bytes": 7198,
-          "hash": "sha256-b4c3edd9dcbbf7f3ee127f3a9f3ef93d28fb30907ddc7ef680b1dfa94a6ad4a0"
+          "bytes": 7162,
+          "hash": "sha256-9d9f2cb17636244e6ead112a8c68d5185fbb08621bc2c5288f508c77fe732bd0"
         },
         {
           "path": "packages/transitions/kantar/kantar.js",
@@ -2163,8 +2549,8 @@
         },
         {
           "path": "packages/transitions/kantar/kantar.prompt.md",
-          "bytes": 9512,
-          "hash": "sha256-82d506d4d609042a05209fc26c855773f320e581d2ec0499a849bdb256025de8"
+          "bytes": 9485,
+          "hash": "sha256-8e2167967571ef1f080e769714c55271a42358c50d6bab78bc1b026a6147ae9e"
         }
       ],
       "dependencies": [
@@ -2178,16 +2564,21 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "Tiatr, the Konkani theatre of Goa: a painted proscenium, footlights, a red velvet curtain and a singer who holds the stage. The home page's hero. (Tier everyday: tiatr is popular entertainment, not ceremony.)"
+      },
       "budget": {
         "jsBytes": 26624,
         "reason": "Counted raw (comments included) since the registry measures source bytes: kantar.js (the DOM and timing driver, the spot, the singer) 13.6 KB and kantar.core.js (the pure timeline and the pure geometry, all tested) 10.7 KB, about 24.6 KB. The velvet, folds, shadow and fringe moved out to the shared kantar-curtain package, which the Kantar scene draws from too."
       },
       "docs": "packages/transitions/kantar/kantar.docs.md",
       "prompt": "packages/transitions/kantar/kantar.prompt.md",
-      "bytes": 44382,
+      "bytes": 44319,
       "jsBytes": 24609,
       "codeBytes": 11785,
-      "hash": "sha256-daf980465373274b5af92254d55e1593e4d75f3bf190f40f7d7eb7d41a5a666d"
+      "hash": "sha256-a5e4f539afb3fa7cf1db863ed194c96ca0a19d970a841f7071fb9457d1539b7d"
     },
     {
       "name": "kernels-booking",
@@ -2236,6 +2627,11 @@
       ],
       "dependencies": [],
       "registers": [],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 18432,
         "reason": "The five kernel files are 14,595 bytes; drift.test.js (2,389 bytes) ships with them so a consumer with its own copy can check it for drift, and it never loads in a page."
@@ -2306,6 +2702,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today about 6.1 KB: behaviour (link.js + link.core.js) 3.4 KB, skins quiet 0.2 KB, warm 1.3 KB, playful 1.1 KB."
@@ -2374,6 +2775,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 11264,
         "frameMs": 16.7,
@@ -2385,6 +2791,67 @@
       "jsBytes": 10270,
       "codeBytes": 8049,
       "hash": "sha256-e510634d0501ac3a0bdc251aa066d6f57cb682bb17ec136ebabfe01d94d7947c"
+    },
+    {
+      "name": "member-directory",
+      "type": "recipe",
+      "title": "Member directory",
+      "description": "A list of person-cards, filtered live by a text field (the library's field) and by track checkboxes, with the filter state in the URL's query so a filtered view is shareable, a count read once by a status region, and a kind empty state that names the two fixes. Without JavaScript the full list shows, unfiltered, and the filters say they do nothing.",
+      "version": "0.1.0",
+      "stability": "experimental",
+      "manifest": "packages/recipes/member-directory/registry.json",
+      "files": [
+        {
+          "path": "packages/recipes/member-directory/index.html",
+          "bytes": 6724,
+          "hash": "sha256-793dec87bc1e4b05011ce9312396f9df99db2d6a3e1cda5d008dac445b74f8e8"
+        },
+        {
+          "path": "packages/recipes/member-directory/README.md",
+          "bytes": 3011,
+          "hash": "sha256-b4cc62f0258b924350f9fe3b215ab8dd239b5c173c0823fced66da5c5156ce15"
+        },
+        {
+          "path": "packages/recipes/member-directory/recipe.css",
+          "bytes": 2203,
+          "hash": "sha256-85e4c67c9aa51501735229888eb6aecf30acca1138d40ce47b5edcd7ae07eb77"
+        },
+        {
+          "path": "packages/recipes/member-directory/recipe.js",
+          "bytes": 3802,
+          "hash": "sha256-266ee80d1f1fc05a9006e6882815f47ae0a0f99d13cc0e55d4addeb155f6f031"
+        },
+        {
+          "path": "packages/recipes/member-directory/recipe.prompt.md",
+          "bytes": 3437,
+          "hash": "sha256-d57fab2e502d26fc3e4dc4913528ec951a71c03472c831fec9849661be321732"
+        }
+      ],
+      "dependencies": [
+        "check",
+        "core",
+        "core-component",
+        "engine",
+        "field",
+        "person-card",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
+      "docs": "packages/recipes/member-directory/README.md",
+      "prompt": "packages/recipes/member-directory/recipe.prompt.md",
+      "bytes": 19177,
+      "jsBytes": 3802,
+      "codeBytes": 2867,
+      "hash": "sha256-782f24383d080370e052e07d8e2037daebb2abdcfc4fe3454073e124d45ad55e"
     },
     {
       "name": "menu",
@@ -2448,6 +2915,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 26533 bytes with comments (19083 as code): element, pure core and three skins (warm 3 KB for the ruled frame, playful 1 KB)."
@@ -2490,13 +2962,13 @@
         },
         {
           "path": "packages/narration/narration.docs.md",
-          "bytes": 7121,
-          "hash": "sha256-040a9a56cc265dbfb35be2130aa15c6a65fd5a07db96f4aee565cde18c20aa1b"
+          "bytes": 7076,
+          "hash": "sha256-0786e09ce7fa2a243c4297d0c858a2620f485bcc4ae0aef791ef3446abdd517c"
         },
         {
           "path": "packages/narration/narration.prompt.md",
-          "bytes": 6828,
-          "hash": "sha256-85be7b644dd222b26b1e8992d79d7a7e435cd703ae1b1aaabd35178101effabd"
+          "bytes": 6816,
+          "hash": "sha256-9fb4e34b35e110fbf8c706e6ed07c45549711f319f2315a0175fff6c65168aee"
         },
         {
           "path": "packages/narration/phrase.js",
@@ -2554,16 +3026,21 @@
         "core-component"
       ],
       "registers": [],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 45056,
         "reason": "A package budget in the shape of engine and tokens (decision 0001), not a component's 12/8 KB split: the pure timing core, three providers, the fixture cache and the DOM highlight driver together, today 40355 bytes, with headroom for the Sarvam adapter to grow as the API does."
       },
       "docs": "packages/narration/narration.docs.md",
       "prompt": "packages/narration/narration.prompt.md",
-      "bytes": 56509,
+      "bytes": 56452,
       "jsBytes": 41472,
       "codeBytes": 24187,
-      "hash": "sha256-116271886934eea5120c4aaa6ae1943db6f0875e42eb766b31fbba46fde6cd81"
+      "hash": "sha256-f7581a23bc79d2c7e403ae6392f8bb24884e45b750a7854014af8643c52f0402"
     },
     {
       "name": "now-note",
@@ -2627,6 +3104,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 5921 bytes: element 3.0 KB, pure core 2.2 KB, skins quiet 0.1 KB, warm 0.4 KB, playful 0.2 KB. The state is the badge component."
@@ -2704,6 +3186,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 38912,
         "reason": "Decision 0009: behaviour declared at 14 KB (the box-by-box editing model over one native input, and digits from every Indian script and full width read as ASCII), plus 8 KB for each of three skins. Today: behaviour 13.0 KB (otp.js 7.5, otp.core.js 5.6); skins share 1.6 KB of boxes, quiet adds 0.2 KB, warm 2.4 KB, playful 0.4 KB plus warm."
@@ -2714,6 +3201,83 @@
       "jsBytes": 18257,
       "codeBytes": 12800,
       "hash": "sha256-c487408ccf40cc53ebc89fa9db73845e9d76759d9373e6d5192458102f52ebf9"
+    },
+    {
+      "name": "person-card",
+      "type": "component",
+      "title": "Person card",
+      "description": "One person and what they are building: the name, the role, one line of work and one link. The card shows the person's initials, cut from their name by a pure core, instead of a photo; a photo belongs there only when the author writes it and the person's consent is recorded. Quiet is a hairline card with a plain disc; warm is a soft card with the initials in the hand; playful colours the disc from a seed and tilts the card a little when the pointer or the focus arrives.",
+      "version": "0.1.0",
+      "stability": "experimental",
+      "manifest": "packages/components/person-card/registry.json",
+      "files": [
+        {
+          "path": "packages/components/person-card/person-card.css",
+          "bytes": 5520,
+          "hash": "sha256-eb7e272fb1c0bce791dd0849e912bd8b5686e310c6c70d780db9647d30124d66"
+        },
+        {
+          "path": "packages/components/person-card/person-card.docs.md",
+          "bytes": 2493,
+          "hash": "sha256-ee81cd517cfd5c8fe9d34f14c9a50cb15767fcc7695bd3c9c52eded5d6513b5e"
+        },
+        {
+          "path": "packages/components/person-card/person-card.js",
+          "bytes": 3373,
+          "hash": "sha256-986f8011c73893baa1172b70dec1304ef836f56ca9cb252e9d966150b1806902"
+        },
+        {
+          "path": "packages/components/person-card/person-card.prompt.md",
+          "bytes": 3020,
+          "hash": "sha256-b5c70ddaa0604ce847f500b85e29a6adc7ae5d3575494e65087d4c4003e7abc5"
+        },
+        {
+          "path": "packages/components/person-card/person.core.js",
+          "bytes": 4127,
+          "hash": "sha256-7682d3c52e031afb77d8a68d40375d4476fb484cbb6ca630c64fffa5b99263f0"
+        },
+        {
+          "path": "packages/components/person-card/skins/playful.js",
+          "bytes": 828,
+          "hash": "sha256-e0406bf013d0035d893a2c8f983f0fabe449f77bff7a5aa30429e21cd5b06eaa"
+        },
+        {
+          "path": "packages/components/person-card/skins/quiet.js",
+          "bytes": 144,
+          "hash": "sha256-af364fc4d79aefdd136b35c9777ac0d5646a14a1928a791e9116b2e1d7d9e68f"
+        },
+        {
+          "path": "packages/components/person-card/skins/warm.js",
+          "bytes": 191,
+          "hash": "sha256-45712deafee4b143167778d00c76aea6989e5d1d78e7e5a5a5f1f9acf6a031d0"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
+      "budget": {
+        "jsBytes": 36864,
+        "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins; the pure core is budgeted apart (0010). Today 8.7 KB: element 3.4 KB, pure core 4.1 KB, skins quiet 0.1 KB, warm 0.2 KB, playful 0.8 KB."
+      },
+      "docs": "packages/components/person-card/person-card.docs.md",
+      "prompt": "packages/components/person-card/person-card.prompt.md",
+      "bytes": 19696,
+      "jsBytes": 8663,
+      "codeBytes": 4289,
+      "hash": "sha256-8bd640cb789f4fb334cd7b57a8ca196e6cf04832d9ae761588b3c12a80a2c1d3"
     },
     {
       "name": "player",
@@ -2746,8 +3310,8 @@
         },
         {
           "path": "packages/player/player.docs.md",
-          "bytes": 4281,
-          "hash": "sha256-6ba4b84af896048ba6f7b2585142c09757b427ccd6a52048437668ed0dedea90"
+          "bytes": 4278,
+          "hash": "sha256-46ba0b70d42aa97f2d9cd737b8386e7fa8482385f19376e7d9febd0e4f5d2571"
         },
         {
           "path": "packages/player/player.js",
@@ -2756,8 +3320,8 @@
         },
         {
           "path": "packages/player/player.prompt.md",
-          "bytes": 5349,
-          "hash": "sha256-10ba553f731d0836019201741de005f49ec19e963fb7fbec4bc60547a515f3be"
+          "bytes": 5346,
+          "hash": "sha256-08c37bf6cfbe46f14ab0f76d88bf255861da2c908646b01f5067c2832ee0db46"
         },
         {
           "path": "packages/player/poster.js",
@@ -2802,6 +3366,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 45500,
         "frameMs": 16.7,
@@ -2809,10 +3378,10 @@
       },
       "docs": "packages/player/player.docs.md",
       "prompt": "packages/player/player.prompt.md",
-      "bytes": 61979,
+      "bytes": 61973,
       "jsBytes": 44494,
       "codeBytes": 31520,
-      "hash": "sha256-68cd88a012b88778e8385c51a33acd5e15fc5847e82c668f5e4926b0438dd903"
+      "hash": "sha256-c9e49857d014325e6ba4478c11043c1f6f42b7bddc73ee625144bafb5365a9f0"
     },
     {
       "name": "popover",
@@ -2874,6 +3443,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today about 5.5 KB: behaviour (popover.js + popover.core.js) 4.7 KB; skins quiet, warm and playful are each a no-op mount (about 0.2 KB each), because the look is entirely in popover.css keyed off [data-skin]."
@@ -2947,6 +3521,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "The Goan picture postcard, sold at ferry points and station kiosks through the twentieth century."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 9427 bytes: element 2.8 KB, pure core 2.4 KB, skins quiet 0.2 KB, warm 3.1 KB, playful 1.1 KB. The status is the badge component by default; the stamp is opt-in and the builder adds it."
@@ -2985,6 +3564,11 @@
       ],
       "dependencies": [],
       "registers": [],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 112443,
         "reason": "Vendored and never edited: the exact bytes of the pinned build, so any change to it fails the build until it is recorded (decision 0019)."
@@ -3052,6 +3636,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 15360,
         "frameMs": 16.7,
@@ -3149,6 +3738,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "docs": "packages/recipes/proposal/proposal.docs.md",
       "prompt": "packages/recipes/proposal/proposal.prompt.md",
       "bytes": 72111,
@@ -3217,6 +3811,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 7520 bytes: element 1.4 KB, pure core 3.1 KB, skins quiet 0.2 KB, warm 1.5 KB, playful 1.3 KB."
@@ -3289,6 +3888,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 10824 bytes: behaviour (radio.js + radio.core.js) 6.2 KB, skins quiet 0.2 KB, warm 2.7 KB, playful 1.5 KB."
@@ -3361,6 +3965,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 8457 bytes: element 3.8 KB, pure core 2.1 KB, skins quiet 0.1 KB, warm 0.2 KB, playful 2.3 KB (the ink mask is the stamp's, reused)."
@@ -3430,6 +4039,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "docs": "packages/recipes/room-details/README.md",
       "prompt": "packages/recipes/room-details/recipe.prompt.md",
       "bytes": 27674,
@@ -3497,6 +4111,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "docs": "packages/recipes/saving-footer/README.md",
       "prompt": "packages/recipes/saving-footer/recipe.prompt.md",
       "bytes": 31147,
@@ -3553,6 +4172,11 @@
         "background",
         "section-break"
       ],
+      "motif": {
+        "origin": "deccan",
+        "tier": "regional",
+        "gloss": "Abri, the cloud-paper marbling of the Deccan, being made: drops of indigo, ochre, madder and grey-green land on a tray of size and push each other into rings by the area-preserving marbling map, a stylus combs them, a curl drift billows them, and a sheet is laid, lifted and turned to show its print."
+      },
       "budget": {
         "jsBytes": 40960
       },
@@ -3611,6 +4235,11 @@
         "divider",
         "loader"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "Three small ink drawings on one sheet, meant as a loader, a toggle and a divider: a cutting-chai glass whose steam follows a curl-noise field, a clay diya whose flame leans from the pointer and goes out with a curl of smoke, and a tulsi creeper that grows along a rule."
+      },
       "budget": {
         "jsBytes": 40960
       },
@@ -3669,6 +4298,11 @@
         "background",
         "section-break"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "A Goan laterite compound wall up close through a year: the pits in each cut block grow as a Gray-Scott reaction-diffusion, the monsoon darkens the stone from the top, moss creeps out of the joints and the sun bleaches it back."
+      },
       "budget": {
         "jsBytes": 51200,
         "reason": "The plate's simulation, colouring pass and pencil work, ported line for line."
@@ -3728,6 +4362,11 @@
         "empty-state",
         "hero"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "Yours to keep: a Goan house front in elevation, with a laterite wall under lime plaster, a painted door in a lime-white surround, a window of oyster-shell panes and bougainvillea."
+      },
       "budget": {
         "jsBytes": 40960
       },
@@ -3786,6 +4425,11 @@
         "divider",
         "section-break"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "Four stops across the Mandovi: a river ferry in ballpoint hatching, with a small jetty on the far side, two channel posts and a big jetty on the near bank, each with a lamp."
+      },
       "budget": {
         "jsBytes": 47104,
         "reason": "a whole river view drawn by hand: far bank, jetties, posts, near bank, a canoe and the ferry, in ink and in hairline"
@@ -3845,6 +4489,11 @@
         "background",
         "hero"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "A survey sheet of the Western Ghats above Goa: contours traced out of a noise height field with marching squares, rivers that find their own way to the sea, a ghat road that switchbacks up the escarpment, hand lettering, and monsoon clouds catching on the ridge."
+      },
       "budget": {
         "jsBytes": 61440,
         "reason": "The plate's terrain, drainage, contour, road and lettering code, ported line for line."
@@ -3904,6 +4553,11 @@
         "background",
         "divider"
       ],
+      "motif": {
+        "origin": "india",
+        "tier": "everyday",
+        "gloss": "A printed sari border of kairi, the paisley worn all over India, drawn by a machine of spinning circles: each paisley's outline is a Fourier series, the chain grows one circle at a time until the pencil sketch sharpens, then the pen inks it and madder, indigo and turmeric fill it."
+      },
       "budget": {
         "jsBytes": 40960
       },
@@ -3934,7 +4588,7 @@
         },
         {
           "path": "packages/scenes/kantar/meta.js",
-          "bytes": 5305,
+          "bytes": 5248,
           "hash": "sha256-4c224b7e4957fd27876b1648211d9bcae39300b7795e7465d198d151ed87ffa1"
         },
         {
@@ -3964,13 +4618,18 @@
         "hero",
         "interlude"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "The tiatr stage and curtain: painted proscenium with gold-fringed pelmet, footlights, orchestra pit, and three backdrops (church square, dusk beach, balcão night) behind a heavy red velvet curtain."
+      },
       "budget": {
         "jsBytes": 61440,
         "reason": "The singer performs, the house sits in the front row and answers her, the pit plays in the same beat, and the painted flats carry form and shadows. Under the 64 KB ceiling in decision 0003."
       },
       "prompt": "packages/scenes/kantar/kantar.prompt.md",
-      "bytes": 64416,
-      "jsBytes": 57370,
+      "bytes": 64359,
+      "jsBytes": 57313,
       "codeBytes": 43221,
       "hash": "sha256-96d61246b74ccbfb86191102b51e0df1fd6c6f129eaa7135273e0ffc84065ae7"
     },
@@ -4023,6 +4682,11 @@
         "background",
         "hero"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "Fireflies over a Goan tidal wetland at night: some four hundred phase oscillators with Kuramoto coupling fall into step in slow waves, with additive glows and rippling reflections."
+      },
       "budget": {
         "jsBytes": 40960
       },
@@ -4081,6 +4745,11 @@
         "hero",
         "loader"
       ],
+      "motif": {
+        "origin": "tamil nadu",
+        "tier": "regional",
+        "gloss": "The kolam, the threshold drawing laid fresh each morning in Tamil Nadu and elsewhere in South India; here drawn in rice-flour lines by code."
+      },
       "budget": {
         "jsBytes": 40960
       },
@@ -4138,6 +4807,11 @@
       "useFor": [
         "story"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "A short story about a mango in coloured pencil: it ripens in the May heat while a koel calls, clouds come in, the first monsoon rain falls, and it drops into a puddle on red laterite."
+      },
       "budget": {
         "jsBytes": 49152,
         "reason": "The plate's painters and sprite cache for a whole short story, ported line for line."
@@ -4197,6 +4871,11 @@
         "background",
         "section-break"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "A colour field that paints itself in thin veils, rolled on and scraped back so a warm ground glows through, then rests with only a slow breath of light."
+      },
       "budget": {
         "jsBytes": 40960
       },
@@ -4222,22 +4901,22 @@
         },
         {
           "path": "packages/scenes/mithagar/meta.js",
-          "bytes": 5785,
+          "bytes": 5740,
           "hash": "sha256-6e587b84d1d1006d0992ed68d7cc29093786051bbfe7903ae8533fc8599a0fa8"
         },
         {
           "path": "packages/scenes/mithagar/mithagar.prompt.md",
-          "bytes": 5674,
+          "bytes": 5623,
           "hash": "sha256-1d5247a5255c4ada655b626f1a9cd13995a4a05b6107032d66e5eeed2c945aae"
         },
         {
           "path": "packages/scenes/mithagar/model.js",
-          "bytes": 16890,
+          "bytes": 16355,
           "hash": "sha256-14ba07f2da27d21b7bcc491daf87c51c79f9edbbe450a2198dddabc92ffc042a"
         },
         {
           "path": "packages/scenes/mithagar/render.js",
-          "bytes": 27552,
+          "bytes": 26714,
           "hash": "sha256-a9ef4fe2271eeeb05f29df43d198215191bae56299612dc479717c914b20ccc8"
         }
       ],
@@ -4256,13 +4935,18 @@
         "hero",
         "progress"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "The Ribandar salt pans at dawn: a geometric grid of clay bunds, shallow brine reflecting the Goan sky, wooden sluice gates, crystalline white salt crusts, and pyramidal salt heaps."
+      },
       "budget": {
         "jsBytes": 53248,
         "reason": "The field reflects one continuous sky sampled per pan, the salt takes the ground as a moving front, a raker works the near pan, and the sky and bunds are cached so the scene runs at the baseline. Under the 64 KB ceiling in decision 0003."
       },
       "prompt": "packages/scenes/mithagar/mithagar.prompt.md",
-      "bytes": 56744,
-      "jsBytes": 51070,
+      "bytes": 55275,
+      "jsBytes": 49652,
       "codeBytes": 39226,
       "hash": "sha256-b75ef2f03f2647d4c7f81462ae8c48f741994cb5c93c422ef2ca4dbf949abf1d"
     },
@@ -4315,6 +4999,11 @@
         "background",
         "divider"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "The cement-tile floor of an old Goan balcão, seen from above: one Truchet tile laid in two turns, so the oxide-red bands join into long winding ribbons, worn and chipped under late window light."
+      },
       "budget": {
         "jsBytes": 40960
       },
@@ -4373,6 +5062,11 @@
         "background",
         "divider"
       ],
+      "motif": {
+        "origin": "rajasthan",
+        "tier": "regional",
+        "gloss": "Hand block printing on khadi cotton, in the way of the Sanganer and Bagru printers of Rajasthan: a carved buti block generated from the seed is pressed one impression at a time, indigo outlines first, then a second colour off register, every impression a little starved and turned."
+      },
       "budget": {
         "jsBytes": 40960
       },
@@ -4430,6 +5124,11 @@
       "useFor": [
         "story"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "The helper that asks first: a cutting chai steams beside a phone on a marble café table; a message arrives, a helper drafts a reply in a dashed card with an empty tick, and it goes out only when a person nods."
+      },
       "budget": {
         "jsBytes": 40960
       },
@@ -4488,6 +5187,11 @@
         "background",
         "hero"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "The desk at dawn: a barred window at half past four over a laptop and a steel tumbler."
+      },
       "budget": {
         "jsBytes": 40960
       },
@@ -4545,6 +5249,11 @@
       "useFor": [
         "hero"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "The monsoon through a Goan window: rain beads, merges and runs down fogged glass."
+      },
       "budget": {
         "jsBytes": 61440,
         "reason": "The heavy baseline scene: drop simulation, fog mask, dusk palette, three registers."
@@ -4571,7 +5280,7 @@
         },
         {
           "path": "packages/scenes/posta/meta.js",
-          "bytes": 6485,
+          "bytes": 6441,
           "hash": "sha256-e54207950afdd01cf7f255599366f32afe94bf5f5be6e393f10073adf36de023"
         },
         {
@@ -4581,7 +5290,7 @@
         },
         {
           "path": "packages/scenes/posta/posta.prompt.md",
-          "bytes": 6332,
+          "bytes": 6283,
           "hash": "sha256-fe922fa444133fc6214293c516eba586364e002611474b32784463dafd1365b6"
         },
         {
@@ -4606,13 +5315,18 @@
         "hero",
         "progress"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "The Old Post Office in Fontainhas: a vintage rosewood sorting desk beneath an oyster shell carepa window with sunbeams, wooden cubbies holding jute-tied letter bundles, a crimson postbox with brass flap, and a brass balance scale."
+      },
       "budget": {
         "jsBytes": 57344,
         "reason": "The room now carries a customer at the window and a beam that swings and narrows with the day, and the three contact sounds are shaped per voice instead of being one beep. Under the 64 KB ceiling in decision 0003."
       },
       "prompt": "packages/scenes/posta/posta.prompt.md",
-      "bytes": 58823,
-      "jsBytes": 52491,
+      "bytes": 58730,
+      "jsBytes": 52447,
       "codeBytes": 43245,
       "hash": "sha256-254ccf05f98316639bb98d07524b34fc6aa78aa867cd3e3bf90c31964fc8091a"
     },
@@ -4665,6 +5379,11 @@
         "background",
         "hero"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "A day over a Goan river village in the eight watches of raga time: the sky blended in OKLab, every land layer tinted to the light, the sun and moon on their arcs, lamps after dusk, and a ruler of the eight prahars with each raga in English and Devanagari."
+      },
       "budget": {
         "jsBytes": 40960
       },
@@ -4723,6 +5442,11 @@
         "background",
         "hero"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "Dusk on the Goan shore: a ballpoint sea of short hatching strokes that boils like hand-drawn animation, a sun sinking into haze, palms swaying in seeded wind, a ramponkar's canoe with its net heaped inside, and a few distant birds."
+      },
       "budget": {
         "jsBytes": 40960
       },
@@ -4781,6 +5505,11 @@
         "background",
         "hero"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "Dusk over flooded paddy: a sky mixed in OKLCH from apricot through rose to indigo, a line of ink palms, and a murmuration of six hundred rosy starlings flown by boids, which pours into the palms to roost and leaves at dawn."
+      },
       "budget": {
         "jsBytes": 49152,
         "reason": "The plate's own OKLCH colour, boids flock, paddy plots and palms, ported line for line."
@@ -4846,6 +5575,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "One year of a Goan paddy field seen from a low rise: cracked April mud, the first rain darkening it drop by drop, flooded plots, green rice combed by wind, ripe gold, the harvest, and the mud cracking again, with two cattle egrets that come with the water."
+      },
       "budget": {
         "jsBytes": 98304,
         "firstSightBytes": 65536,
@@ -4878,7 +5612,7 @@
         },
         {
           "path": "packages/scenes/taverna/meta.js",
-          "bytes": 5690,
+          "bytes": 5649,
           "hash": "sha256-16906a5c077ddf8e2e2f5378c62205827e3e56def154d9da9af94ca1fcba5bc9"
         },
         {
@@ -4893,7 +5627,7 @@
         },
         {
           "path": "packages/scenes/taverna/taverna.prompt.md",
-          "bytes": 5589,
+          "bytes": 5542,
           "hash": "sha256-ff612bae62679cf233dd6d7b90e59de955096d066e0e9ba3af9c7b73b03b94e8"
         }
       ],
@@ -4913,13 +5647,18 @@
         "empty-state",
         "hero"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "Rain on bottle glass: a village taverna window on a rainy monsoon night with dark wooden bars, dark green wine bottles, a ceramic jug, and a slate blackboard."
+      },
       "budget": {
         "jsBytes": 57344,
         "reason": "Adds the person crossing the alley under a lantern, the bar shadows it throws across the sill, and a struck-glass chime instead of a single tone. Under the 64 KB ceiling in decision 0003."
       },
       "prompt": "packages/scenes/taverna/taverna.prompt.md",
-      "bytes": 58121,
-      "jsBytes": 52532,
+      "bytes": 58033,
+      "jsBytes": 52491,
       "codeBytes": 43846,
       "hash": "sha256-b70b86b8dd8f622f23606d782a359b27c17be322d79faa5e41fa79aa1f1bdb41"
     },
@@ -4972,6 +5711,11 @@
         "background",
         "divider"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "Rain on a taro leaf seen from above: a WebGL shader draws the velvet leaf, its inked veins and the beads as signed distance fields joined by a smooth minimum, each a lens over the leaf; a full 2D painting takes over when WebGL is missing, lost or too slow."
+      },
       "budget": {
         "jsBytes": 45056,
         "reason": "Two complete renderers: the WebGL shader and a full 2D fallback, with the plate's physics."
@@ -5037,6 +5781,11 @@
         "background",
         "hero"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "A crowded Goan village square at half past ten, where every figure has a line: the poder on his round, a fish seller and her cat, a card game under the tree, the bus to Mapusa."
+      },
       "budget": {
         "jsBytes": 63488,
         "reason": "Seventeen vignettes ported line for line from the plate, and words in the world: the chalkboard, the plaques and the lazy type tier (the tier and Pretext are counted apart)."
@@ -5096,6 +5845,11 @@
         "background",
         "hero"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "Looking down into a Goan pool at noon: a WebGL net of light over pale tiles, a frangipani that drops a flower now and then, and a full 2D painting when WebGL is missing, lost or too slow."
+      },
       "budget": {
         "jsBytes": 45056,
         "reason": "Two complete renderers: the WebGL shader and a full 2D fallback."
@@ -5155,6 +5909,11 @@
         "divider",
         "section-break"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "A Goan doorway on the morning of Chovoth, with a garland of marigolds and mango leaves strung across it from three nails: a Verlet rope that sags, swings in a noise breeze and settles."
+      },
       "budget": {
         "jsBytes": 61440,
         "reason": "The plate's whole doorway (wall, frame, teak door, step, balcão, eave, lota, chappals) and its marigold sprites are painted in code, ported line for line."
@@ -5215,6 +5974,11 @@
         "background",
         "hero"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "A banyan grows in pen and ink by space colonisation: branch tips reach for the nearest points of an umbrella canopy, limbs thicken by the pipe model, leaf masses are hatched over a green wash, and aerial roots drop and thicken into pillar trunks round a stone platform."
+      },
       "budget": {
         "jsBytes": 40960
       },
@@ -5272,6 +6036,11 @@
       "useFor": [
         "story"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "The pile becomes a ledger: loose receipts, invoices, a bill book and a scrawled chit lift one at a time from a teak table, drift over an open account book while their line is written, and settle on a neat stack; then the book closes and its string is wound."
+      },
       "budget": {
         "jsBytes": 61440,
         "reason": "four kinds of paper, the book that closes, a pen, a clip and a string, each painted by hand in ink and in hairline"
@@ -5331,6 +6100,11 @@
         "hero",
         "section-break"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "A magenta bougainvillea grows from behind a laterite compound wall by a seeded L-system, arches up and spills down the lime-washed cap, drawn as inline SVG."
+      },
       "budget": {
         "jsBytes": 57344,
         "reason": "Two worlds ported line for line from the plate: the L-system vine with its turtle, taper and growth schedule, and the laterite wall with its sky, palms, pits, stains, cap and ground; the SVG renderer then drives every animation from the scene clock."
@@ -5405,6 +6179,11 @@
         "background",
         "hero"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "A Goan veranda drawn in ink and wash, seen from a seat on it: laterite pillars with a balcão between them, a teak door and a shuttered window in a lime-washed wall, a brass lamp under the rafters, and the garden and paddy beyond."
+      },
       "budget": {
         "jsBytes": 98304,
         "firstSightBytes": 65536,
@@ -5442,8 +6221,8 @@
         },
         {
           "path": "packages/components/scroll-section/scroll-section.docs.md",
-          "bytes": 4711,
-          "hash": "sha256-5e590db9bcfd18cfed4b0c7a3a33a4b461e482804fc525472503a29aef13b857"
+          "bytes": 4693,
+          "hash": "sha256-4f76bcc9c048c515fdff847437cf4944344ade16c473f0f2d9667ec9a268aced"
         },
         {
           "path": "packages/components/scroll-section/scroll-section.js",
@@ -5452,8 +6231,8 @@
         },
         {
           "path": "packages/components/scroll-section/scroll-section.prompt.md",
-          "bytes": 4933,
-          "hash": "sha256-d686d804d5589d683c6ff3a38e3b971bde32c6a4ac3ea215c234d21a793f6610"
+          "bytes": 4921,
+          "hash": "sha256-28e0c579c4f773799acc06d6508005248f1828150eabf3c42985dc153450be51"
         },
         {
           "path": "packages/components/scroll-section/skins/playful.js",
@@ -5481,16 +6260,21 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005/0010: 12 KB behaviour (scroll-section.js + scroll-section.core.js) plus 8 KB for each of three skins. Today 9679 bytes: behaviour 8.5 KB, skins quiet 0.3 KB, warm 0.5 KB, playful 0.3 KB."
       },
       "docs": "packages/components/scroll-section/scroll-section.docs.md",
       "prompt": "packages/components/scroll-section/scroll-section.prompt.md",
-      "bytes": 21301,
+      "bytes": 21271,
       "jsBytes": 9679,
       "codeBytes": 4321,
-      "hash": "sha256-82e6deb4e32e7464448242b42c3b6ab021c4ecba56407ba275ad5869b5237f8d"
+      "hash": "sha256-1e411b69a2fcd1ae698ce79361c3cb9ad1e958f4e44ec57f62b686aa11dac016"
     },
     {
       "name": "select",
@@ -5548,6 +6332,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 6144,
         "frameMs": 16.7,
@@ -5631,6 +6420,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 39936,
         "reason": "Decision 0009: behaviour declared at 15 KB (the ink ribbon lives in the element, because the submitted path must be exactly the ink shown), plus 8 KB for each of three skins. Today: behaviour 14.3 KB (signature.js 8.6, signature.core.js 5.7); the skins share a 9.6 KB painter (skins/paint.js 7.2 and skins/marks.js 2.4: baking, drying, grain, the typed name, the flourish), and each skin file is under 0.4 KB. A page loads one skin and the painter, 10.0 KB, which is over the 8 KB per skin; the painter is one piece of work, split no further."
@@ -5641,6 +6435,83 @@
       "jsBytes": 25117,
       "codeBytes": 18931,
       "hash": "sha256-f589faafb05f6684e08b6d78938428c91f3e453867c03f47ab547271a038a3e2"
+    },
+    {
+      "name": "site-footer",
+      "type": "component",
+      "title": "Site footer",
+      "description": "The closing block every site needs: a sign-off line in the site's own voice, the links a reader may still want, and the small print. It enhances a native footer, so without JavaScript the markup you wrote is the whole footer. The small print's copyright year moves forward to the clock's year, once, and never back, and the page hears when it did. Quiet is a ruled footer in the display face; warm writes the sign-off in the hand with a fitted pencil rule under it; playful sets the links down like stamped chips with a short hop.",
+      "version": "0.1.0",
+      "stability": "experimental",
+      "manifest": "packages/components/site-footer/registry.json",
+      "files": [
+        {
+          "path": "packages/components/site-footer/site-footer.core.js",
+          "bytes": 3556,
+          "hash": "sha256-ee010575ec5f1353534cde827ff4a68e6c6d63531ad7974e3a5521070f94a0b9"
+        },
+        {
+          "path": "packages/components/site-footer/site-footer.css",
+          "bytes": 4354,
+          "hash": "sha256-b6c540d9047bc7484a72afb6688afe2b65af0f875611f4debec18e0acafef46e"
+        },
+        {
+          "path": "packages/components/site-footer/site-footer.docs.md",
+          "bytes": 2929,
+          "hash": "sha256-786a76f9ecbf8ef78778ac5cbfdca07dff4c11e12e524ece40d9854e35e0107c"
+        },
+        {
+          "path": "packages/components/site-footer/site-footer.js",
+          "bytes": 3982,
+          "hash": "sha256-d9bba52f70e6e1fb54dc6aa4aa387f236c67059cfbd6024b9a026816d8e397a0"
+        },
+        {
+          "path": "packages/components/site-footer/site-footer.prompt.md",
+          "bytes": 5059,
+          "hash": "sha256-672aca750ab7fee9f4dd1aaf975da90ed49c6f57f93bc7d42a94a008d3991209"
+        },
+        {
+          "path": "packages/components/site-footer/skins/playful.js",
+          "bytes": 836,
+          "hash": "sha256-cb2e10d361fa50da85cce14180e6bf761eb7539cedf5b272203ca18192422be6"
+        },
+        {
+          "path": "packages/components/site-footer/skins/quiet.js",
+          "bytes": 190,
+          "hash": "sha256-5717149a0e8160b43eb285fe0dd2ff7c787d344a72b6350ffd5842410672a277"
+        },
+        {
+          "path": "packages/components/site-footer/skins/warm.js",
+          "bytes": 2043,
+          "hash": "sha256-8401d6fb29e40499aa3c2d09d8d547caab3a7a9b6c879fb65548294896881b7f"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-component",
+        "engine",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
+      "budget": {
+        "jsBytes": 36864,
+        "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins; the pure core is budgeted apart (0010). Today 10007 bytes: element 3.9 KB, pure core 3.5 KB (the small print's year, the pencil rule, the stamped angles), skins quiet 0.2 KB, warm 1.5 KB, playful 0.7 KB."
+      },
+      "docs": "packages/components/site-footer/site-footer.docs.md",
+      "prompt": "packages/components/site-footer/site-footer.prompt.md",
+      "bytes": 22949,
+      "jsBytes": 10607,
+      "codeBytes": 5805,
+      "hash": "sha256-374c7ad63f4fcbc6ca019bc628853ced895b89cf43376f82c6d87c5cf6813192"
     },
     {
       "name": "site-nav",
@@ -5703,6 +6574,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 8623 bytes: element 3.7 KB, pure core 2.5 KB, skins quiet 0.2 KB, warm 1.6 KB, playful 0.6 KB."
@@ -5750,8 +6626,8 @@
         },
         {
           "path": "packages/recipes/site-shell/recipe.prompt.md",
-          "bytes": 4081,
-          "hash": "sha256-34da3d0b64b3bfe45bb928947708d0f258645233859a42cb857ba2d56fd28489"
+          "bytes": 4072,
+          "hash": "sha256-c18007442030b3570b9b3763eb8b51c8535b5d259260e7858a08116c4d13dffa"
         },
         {
           "path": "packages/recipes/site-shell/site-shell.core.js",
@@ -5780,12 +6656,17 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "docs": "packages/recipes/site-shell/README.md",
       "prompt": "packages/recipes/site-shell/recipe.prompt.md",
-      "bytes": 19934,
+      "bytes": 19925,
       "jsBytes": 4144,
       "codeBytes": 2162,
-      "hash": "sha256-a486efaa1bcd5dc1ade782ff1ac80c763986b23f758a2ba5bbbaed972d7454ec"
+      "hash": "sha256-d4519811874a217915c1a1bb3ff1eea6da0e94464dc92b63199287742b0c21c4"
     },
     {
       "name": "skeleton",
@@ -5853,6 +6734,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 18432,
         "frameMs": 16.7,
@@ -5911,6 +6797,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 14336
       },
@@ -5945,6 +6836,11 @@
         "sound"
       ],
       "registers": [],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "Soundscapes tied to Goan scenes: the monsoon rain behind Paus and the dawn koel behind Rampon, each off until the user opts in."
+      },
       "budget": {
         "jsBytes": 6144
       },
@@ -5978,6 +6874,11 @@
         "sound"
       ],
       "registers": [],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "The koel calling across a Goan village at dawn, with the rampon fishermen's rhythm underneath."
+      },
       "budget": {
         "jsBytes": 6144
       },
@@ -6022,8 +6923,8 @@
         },
         {
           "path": "packages/components/sound-switch/sound-switch.docs.md",
-          "bytes": 3195,
-          "hash": "sha256-c9d8fbb40b2811e0e0db608a635aeb8730762fe0ac3714cbcd9bbb8ce77ac11a"
+          "bytes": 3192,
+          "hash": "sha256-dcb6f11400d4a45564e456912b310470f49fdeb263de4d39ca0298cbed8f1343"
         },
         {
           "path": "packages/components/sound-switch/sound-switch.js",
@@ -6047,15 +6948,20 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 12288
       },
       "docs": "packages/components/sound-switch/sound-switch.docs.md",
       "prompt": "packages/components/sound-switch/sound-switch.prompt.md",
-      "bytes": 20083,
+      "bytes": 20080,
       "jsBytes": 7357,
       "codeBytes": 4496,
-      "hash": "sha256-c1a8b29934c822431176e19429c70590b9ef989217359a88ff11b9753bb27198"
+      "hash": "sha256-9bb1ba02059fe835b0611ea47329a41bb5a73b77cad83c658403d130f3c395ed"
     },
     {
       "name": "stage3d",
@@ -6092,6 +6998,11 @@
         "three": "0.186.1"
       },
       "registers": [],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 12288,
         "reason": "Decision 0017: the tier is budgeted apart from the dependency-free layers. Today 10.0 KB: stage3d.js 4.3 KB (lazy loader, WebGL and software-renderer detection, visibility), stage3d.core.js 5.8 KB (pure, tested in Node). three itself (npmDependencies) is recorded per story as bundled."
@@ -6165,6 +7076,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "india",
+        "tier": "everyday",
+        "gloss": "The hand-pressed stamp: block-printed and rubber-stamped marks on bills, permits and parcels across India."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 14455 bytes: behaviour (stamp.js + stamp.core.js) 9.4 KB, skins quiet 0.6 KB, warm 4.0 KB, playful 0.4 KB plus warm."
@@ -6242,6 +7158,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 20480,
         "frameMs": 16.7,
@@ -6295,8 +7216,8 @@
         },
         {
           "path": "packages/recipes/storybook-spread/recipe.prompt.md",
-          "bytes": 4229,
-          "hash": "sha256-70724256e1a687de3088caa73803e94645822adea2e21a30c1b2e631343e826c"
+          "bytes": 4220,
+          "hash": "sha256-66cb8123bdfaf4d868d2f27a6870bbfbf7b2f134903dd7586a701279749dcbc2"
         },
         {
           "path": "packages/recipes/storybook-spread/spread.en.vtt",
@@ -6338,12 +7259,17 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "docs": "packages/recipes/storybook-spread/README.md",
       "prompt": "packages/recipes/storybook-spread/recipe.prompt.md",
-      "bytes": 4242828,
+      "bytes": 4242819,
       "jsBytes": 10949,
       "codeBytes": 6274,
-      "hash": "sha256-0b6ae97a744107b13551188f494a0f4d2f4bd4d7b6ff7bfb1759c15f4f26813f"
+      "hash": "sha256-014b7e06b9eddbcf2ddc398aec7a6bb9e995e64fc46c9eb36304f5a484d11244"
     },
     {
       "name": "studio-home",
@@ -6398,6 +7324,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "docs": "packages/recipes/studio-home/README.md",
       "prompt": "packages/recipes/studio-home/recipe.prompt.md",
       "bytes": 61469,
@@ -6421,8 +7352,8 @@
         },
         {
           "path": "packages/surfaces/carepa/carepa.prompt.md",
-          "bytes": 3943,
-          "hash": "sha256-a7bf6515f4379df62ef86107e637ba2ce05ba68305609336c64265e7f3bb8fdc"
+          "bytes": 3940,
+          "hash": "sha256-7756ff5e8b493458e42219ce9ad91411d61dc05091bf0ea237fb90ecc279631e"
         },
         {
           "path": "packages/surfaces/carepa/index.js",
@@ -6453,16 +7384,21 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "Carepa work, Goa's paper-craft tradition of moulded and painted flowers and festoons."
+      },
       "budget": {
         "jsBytes": 30720,
         "reason": "model.js (pure) + render.js (the renderer, cover-fit mount, the dusk palette for dark theme, cached pane paths, the idle skip and a Paus-style quality governor) + meta.js + index.js: 28,803 bytes. Raised from 23,552 when the governor landed (8edd386); still under a scene's 40 KB default. Decision 0016."
       },
       "docs": "packages/surfaces/carepa/carepa.docs.md",
       "prompt": "packages/surfaces/carepa/carepa.prompt.md",
-      "bytes": 33683,
+      "bytes": 33680,
       "jsBytes": 28803,
       "codeBytes": 18566,
-      "hash": "sha256-6fd9fb0f4cc4f38684abcefa96e5619b2449e739689280fc6bc89ef5aa4cbb98"
+      "hash": "sha256-ff0bcb38c0e38af444b9408aee33da5f532f3bcf9f9a8255c3f6dca06ba8509a"
     },
     {
       "name": "tabs",
@@ -6510,8 +7446,8 @@
         },
         {
           "path": "packages/components/tabs/tabs.prompt.md",
-          "bytes": 5022,
-          "hash": "sha256-f40a2ad2689285b9abc4aff1c5a323c29fdc06c1a27ee39be3596aee5f37c297"
+          "bytes": 5019,
+          "hash": "sha256-993bfb327b1ea526a89c896464c414708e98b5d31f627a59bb336a74876dbe9d"
         }
       ],
       "dependencies": [
@@ -6525,16 +7461,21 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005/0010: 12 KB behaviour (tabs.js + tabs.core.js) plus 8 KB for each of three skins. Today 11601 bytes: behaviour 9.2 KB (tabs.js imports the shared packages/transitions/page.js helper rather than repeating its View Transition guard), skins quiet 0.2 KB, warm 0.9 KB, playful 1.1 KB."
       },
       "docs": "packages/components/tabs/tabs.docs.md",
       "prompt": "packages/components/tabs/tabs.prompt.md",
-      "bytes": 23114,
+      "bytes": 23111,
       "jsBytes": 11601,
       "codeBytes": 7422,
-      "hash": "sha256-6833a617fa46c26bee4a7622aaf32b344f2d0b5b196a5761cd228fc91b5bdac6"
+      "hash": "sha256-814c9d703d8bf11877d087cd9e4260594ce28e3a25045047f5b116df30f01415"
     },
     {
       "name": "three-named",
@@ -6568,6 +7509,11 @@
       ],
       "dependencies": [],
       "registers": [],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 540000,
         "reason": "Vendored and never edited: the exact bytes of the pinned build, recorded apart from our own code (decision 0017). Any change to it must be recorded in PROVENANCE.md."
@@ -6731,6 +7677,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 53248,
         "reason": "Decisions 0007 and 0009: two elements (<sg-toast-region> and <sg-toast>) at 14 KB of behaviour each, 28 KB for the pair (WCAG 2.2.1 timing, two live regions, the pile, and room for the pile so focus is never hidden, 2.4.11), plus 8 KB for each of three skins. Today 32445 bytes: behaviour (toast.js + toast.core.js) 25.1 KB, skins quiet 0.9 KB, warm 2.1 KB, playful 3.6 KB."
@@ -6803,6 +7754,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 9352 bytes: behaviour (toggle.js + toggle.core.js) 5.3 KB, skins quiet 0.3 KB, warm 2.2 KB, playful 1.6 KB."
@@ -6962,6 +7918,11 @@
       "dependencies": [],
       "registers": [],
       "stabilityReason": "Colour, type, space, motion and the register cascade: every other piece is built on it, and it has carried real pages since the soft launch.",
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "bytes": 752226,
       "jsBytes": 38016,
       "codeBytes": 26620,
@@ -7027,6 +7988,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today about 7.3 KB: behaviour (tooltip.js + tooltip.core.js) 6.6 KB; skins quiet, warm and playful are each a no-op mount (about 0.2 KB each), because the look is entirely in tooltip.css keyed off [data-skin]/[data-open]/[data-above]."
@@ -7059,8 +8025,8 @@
         },
         {
           "path": "packages/transitions/page.docs.md",
-          "bytes": 3725,
-          "hash": "sha256-151864c9dc691aaad99969cab8140d2fbcc4eb594b3d38483ebc612b5f89e172"
+          "bytes": 3710,
+          "hash": "sha256-2d3c62200d5d1cce2d99217b75fcece3cd74e361d6002d3804a3138b379cb518"
         },
         {
           "path": "packages/transitions/page.js",
@@ -7069,24 +8035,29 @@
         },
         {
           "path": "packages/transitions/page.prompt.md",
-          "bytes": 3834,
-          "hash": "sha256-2a29e0e8d7fcb9d8173014de0bb08925200848cc84984e7279f003b5f414e658"
+          "bytes": 3822,
+          "hash": "sha256-86d90256111ca5ac1aeab1281c4aa83119a04843526a349ae088a134da6f85ee"
         }
       ],
       "dependencies": [
         "tokens"
       ],
       "registers": [],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 4096,
         "reason": "Not a component (no register, no skins): a CSS file plus a small pure helper. Today 3090 bytes of JS (page.js + page.core.js); page.css (1.7 KB) is not counted against the JS budget."
       },
       "docs": "packages/transitions/page.docs.md",
       "prompt": "packages/transitions/page.prompt.md",
-      "bytes": 12368,
+      "bytes": 12341,
       "jsBytes": 3090,
       "codeBytes": 764,
-      "hash": "sha256-212e6c3f39744c5bc3d2eaefb42d2226df407779c3b8ba267dab08ce88b434c9"
+      "hash": "sha256-b47214b74242144a732f5694b31bf6e34bf84c9443054687e44e646538c4c23f"
     },
     {
       "name": "type",
@@ -7127,6 +8098,11 @@
         "pretext"
       ],
       "registers": [],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 24576,
         "reason": "A pure layout core (layout.js) and its DOM edge (lines, junctions and surfaces), budgeted apart from Pretext's own bytes (decisions 0010 and 0019)."
@@ -7193,6 +8169,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "The Goan veranda's stage: the balcão where the house meets the street, drawn in depth."
+      },
       "budget": {
         "jsBytes": 90112,
         "reason": "83 KB of source with comments across four files: the element 47 KB (the pane, its depth mask made for the camera as it stands, the settle that keeps the words clear of other words, the lens, the notes and the walk), matka-view.js 13 KB (three.js pot, its glass pane and the flowing paragraph, loaded only when a data-flow paragraph is present), and two pure cores, pane.core.js 18 KB and matka.core.js 4 KB, tested in Node and budgeted apart per decision 0010. It was 65,536 before the fix round that made the words never sit over other words and never hide while the camera moves (+17 KB, 11 KB of it the pure core, which the comments explain at length because three of the bugs it prevents were found only by looking at pixels); raised by the worker so the build passes, and flagged: the element is well over what a component usually declares, and the lens, notes and walk could move into a lazily loaded file, which is for the Sutradhar to decide. three.js is recorded apart (decision 0017): 135,588 B gzipped in the vendored build."
@@ -7277,6 +8258,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today about 17.3 KB: element 5.9 KB, pure core 4.6 KB, the build-time peaks tool 2.7 KB, skins share bars.js 2.5 KB (one shared helper counts as one skin, decision 0010) with quiet 0.2 KB, warm 0.3 KB, playful 0.8 KB. The time maths, cue lookup, VTT parser and WAV reader are reused from player and narration, not copied."
@@ -7351,6 +8337,11 @@
         "warm",
         "playful"
       ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
       "budget": {
         "jsBytes": 36864,
         "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 29534 bytes with comments (22252 as code): element 11 KB, pure core 15 KB (numbers, dates, the message, shortening), skins small."

@@ -29,5 +29,10 @@
   "budget": {
     "jsBytes": 36864,
     "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today about 7.0 KB: behaviour (action-menu.js + action-menu.core.js) 6.7 KB; skins quiet, warm and playful are each a no-op mount (about 0.2 KB each), because the look is entirely in action-menu.css keyed off [data-skin]/[data-open]."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

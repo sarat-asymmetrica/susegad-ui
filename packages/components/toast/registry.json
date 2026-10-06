@@ -31,5 +31,10 @@
   "budget": {
     "jsBytes": 53248,
     "reason": "Decisions 0007 and 0009: two elements (<sg-toast-region> and <sg-toast>) at 14 KB of behaviour each, 28 KB for the pair (WCAG 2.2.1 timing, two live regions, the pile, and room for the pile so focus is never hidden, 2.4.11), plus 8 KB for each of three skins. Today 32445 bytes: behaviour (toast.js + toast.core.js) 25.1 KB, skins quiet 0.9 KB, warm 2.1 KB, playful 3.6 KB."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

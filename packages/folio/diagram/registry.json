@@ -30,5 +30,10 @@
   "budget": {
     "jsBytes": 51200,
     "reason": "Decisions 0009 and 0010, with the core over its allowance. The element (diagram.js 12.3 KB) is within 12 KB to 16 KB. The pure core is diagram.grammar.js (5.0 KB: the line grammar, which Folio's Markdown also uses to check a diagram unbuilt) and diagram.core.js (20.7 KB: layered layout, loop routing, label placement and the text alternative), 25.6 KB together, over 0010's 12 KB because the layout is the diagram; it runs in Node at build time and is tested. render.js (7.7 KB) writes the SVG as a string, pure, and diagram.ink.js (3.5 KB) is the hand-inked line, one skin helper. Declared at 50 KB: today about 49 KB. A document built from Markdown carries all of them, since the element redraws in the page."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

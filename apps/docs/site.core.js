@@ -27,6 +27,7 @@ KINDS.surface = KINDS.package;
 
 /** The top navigation, in order. The brand is the way home. */
 export const NAV = [
+  { key: 'start', label: 'Start here' },
   { key: 'scenes', label: 'Scenes' },
   { key: 'components', label: 'Components' },
   { key: 'recipes', label: 'Recipes' },
@@ -44,6 +45,39 @@ export const slugOf = item => (item.type === 'scene' ? item.name.replace(/^scene
 
 /** Root-relative path of an item's page, without .html (Workers serves x.html at /x). */
 export const pathOf = item => `${KINDS[item.type].key}/${slugOf(item)}`;
+
+/** Where the site lives; link previews need absolute URLs. */
+export const SITE = 'https://susegad.asymmetrica.ai';
+
+/** The default link-preview card (apps/docs/og.jpg, made by tools/readme-art.mjs). */
+export const OG_DEFAULT = { src: 'og.jpg?v=2', w: 1200, h: 630, alt: 'Susegad UI: the title above a tiatr stage drawn in code, its curtain risen on a Goan church square, between a banyan and a tiled pool.' };
+
+/**
+ * The link preview (Open Graph and Twitter card) for a page at `path`
+ * ('' for the home page), with `image` relative to the site root.
+ */
+export function social({ title, description, path = '', image = OG_DEFAULT }) {
+  const url = `${SITE}/${path}`;
+  const img = `${SITE}/${image.src}`;
+  return [
+    `<link rel="canonical" href="${esc(url)}">`,
+    '<meta property="og:type" content="website">',
+    '<meta property="og:site_name" content="Susegad UI">',
+    `<meta property="og:title" content="${esc(title)}">`,
+    `<meta property="og:description" content="${esc(description)}">`,
+    `<meta property="og:url" content="${esc(url)}">`,
+    `<meta property="og:image" content="${esc(img)}">`,
+    `<meta property="og:image:width" content="${image.w}">`,
+    `<meta property="og:image:height" content="${image.h}">`,
+    `<meta property="og:image:alt" content="${esc(image.alt)}">`,
+    '<meta name="twitter:card" content="summary_large_image">',
+  ].map(l => `  ${l}`).join('\n');
+}
+
+/** An item's poster as a link-preview image, or the default card. */
+export const posterImage = (item, poster) => poster
+  ? { src: `posters/${item.name}.warm.light.jpg`, w: poster.w, h: poster.h, alt: item.title }
+  : OG_DEFAULT;
 
 /** The prefix from a page at `depth` folders down back to the site root. */
 export const up = depth => '../'.repeat(depth);
@@ -158,7 +192,7 @@ export function foot(depth) {
  * @param {{ title: string, description: string, depth: number, active?: string, main: string, scripts?: string[], after?: string }} p
  *   `scripts` are module paths relative to the site root.
  */
-export function page({ title, description, depth, active = '', main, scripts = [], after = '', readyLater = false }) {
+export function page({ title, description, depth, active = '', main, scripts = [], after = '', readyLater = false, path = '', image }) {
   const u = up(depth);
   return `<!doctype html>
 <html lang="en" data-register="warm" data-palette="susegad">
@@ -167,6 +201,7 @@ export function page({ title, description, depth, active = '', main, scripts = [
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${esc(title)} · Susegad UI</title>
   <meta name="description" content="${esc(description)}">
+${social({ title: `${title} · Susegad UI`, description, path, image })}
   <meta name="color-scheme" content="light dark">
   <script src="${u}prefs.js"></script>
   <link rel="stylesheet" href="${u}packages/tokens/fonts.css">
@@ -260,6 +295,7 @@ export function indexPage(type, { items, groups, posters, lines = {} }) {
     title: k.title,
     description: k.blurb,
     depth,
+    path: k.key,
     active: k.key,
     main: `${head(`${count} ${count === 1 ? k.one : k.key}`, k.title, k.blurb, groups ? '' : searchBox(type, count))}
 ${body}`,
@@ -289,6 +325,29 @@ export const letter = (id, html, open = false) => `<details class="fold"${open ?
           <div class="letter-body" id="${esc(id)}-text">${html}</div>
         </div>
       </details>`;
+
+/** Where the built site is served, for the snippets an embedder copies. */
+export const SITE_URL = SITE;
+
+/**
+ * The use-this-scene box: the three lines another site needs, copyable with
+ * the shell's button.copy. The stylesheet brings the tokens the scene's
+ * colours and type stand on; the module script registers the scene (its own
+ * relative imports resolve against our origin, so this is the only line that
+ * names us); the tag draws it.
+ */
+export function sceneUseBox(item) {
+  const name = slugOf(item);
+  const code = `<link rel="stylesheet" href="${SITE_URL}/packages/tokens/tokens.css">
+<script type="module" src="${SITE_URL}/packages/scenes/${name}/index.js"></script>
+<sg-scene name="${name}" register="warm"></sg-scene>`;
+  return `<div class="scene-use">
+        <h2 class="use-title">Use this scene</h2>
+        <p class="use-note">Copy these three lines into your page. The scene draws itself, and rests when it leaves the screen.</p>
+        <pre class="use-code" id="use-${esc(name)}-text" tabindex="0" role="region" aria-label="Snippet to copy"><code>${esc(code)}</code></pre>
+        <button class="copy" type="button" data-copy="use-${esc(name)}-text">Copy</button>
+      </div>`;
+}
 
 /**
  * A scene's page. The words are all here as HTML (they read without
@@ -336,6 +395,7 @@ export function scenePage(item, meta, ctx) {
           <h2 class="more-title">More of it</h2>
           <ul>${ctx.demo ? `<li><a href="${esc(ctx.demo)}">Its demo page: every register and param</a></li>` : ''}${ctx.extras.map(x => `<li><a href="${esc(x.href)}">${esc(x.title)}</a></li>`).join('')}</ul>
         </div>` : ''}
+        ${sceneUseBox(item)}
         <p class="install"><code>npx susegad add ${esc(item.name)}</code> <button class="copy" type="button" data-copy-text="npx susegad add ${esc(item.name)}">Copy</button></p>
       </div>
     </article>
@@ -344,6 +404,8 @@ ${prevNext(ctx.list, ctx.index, depth, 'More scenes')}`;
     title: meta.title || item.title,
     description: trim(item.description, 160),
     depth,
+    path: pathOf(item),
+    image: posterImage(item, ctx.poster),
     active: k.key,
     main,
     scripts: ['scene-page.js'],
@@ -395,7 +457,7 @@ export function itemPage(item, ctx) {
       ${ctx.docsHtml ? `<div class="item-docs prose">${ctx.docsHtml}</div>` : `<p class="note">This piece has no written docs yet. Its demo and its source are the reference for now.</p>`}
     </article>
 ${prevNext(ctx.list, ctx.index, depth, `More ${k.key}`)}`;
-  return page({ title: item.title, description: trim(item.description, 160), depth, active: k.key, main });
+  return page({ title: item.title, description: trim(item.description, 160), depth, active: k.key, main, path: pathOf(item), image: posterImage(item, ctx.poster) });
 }
 
 // ── the pencil box ──────────────────────────────────────────────────
@@ -415,6 +477,7 @@ export function pencilBoxPage(techniques, scenes) {
   }).join('\n      ');
   return page({
     title: 'The pencil box',
+    path: 'pencil-box',
     description: 'A handful of techniques do nearly all the work in Susegad UI. Each is listed with the scenes that use it.',
     depth,
     active: 'pencil-box',

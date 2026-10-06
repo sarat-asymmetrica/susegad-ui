@@ -7,5 +7,10 @@
   "version": "0.1.0",
   "files": ["paus-rain.js", "paus-rain.core.js"],
   "dependencies": ["sound", "scene-paus"],
-  "budget": { "jsBytes": 6144 }
+  "budget": { "jsBytes": 6144 },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "Soundscapes tied to Goan scenes: the monsoon rain behind Paus and the dawn koel behind Rampon, each off until the user opts in."
+  }
 }

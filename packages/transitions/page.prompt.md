@@ -1,6 +1,6 @@
 # Page transitions
 
-*Every navigation on the site gets a cross-fade, and two elements — the header, the scene — carry across it instead of blinking out and back in.*
+*Every navigation on the site gets a cross-fade, and two elements, the header, the scene, carry across it instead of blinking out and back in.*
 
 ```html
 <link rel="stylesheet" href="susegad/transitions/page.css">
@@ -10,7 +10,7 @@
 
 ## The prompt
 
-Turn on a View Transition for every same-origin navigation with one CSS at-rule, `@view-transition { navigation: auto; }`, so the whole page cross-fades on its own with no JavaScript. Give exactly two elements a name that survives the navigation instead of cross-fading — a `data-vt="header"` attribute for the site's header and `data-vt="scene"` for whichever scene a page uses as its hero — so the browser animates their position and size across the page change rather than fading them out and in. Set the cross-fade's duration from the shared motion tokens, a shorter one for the whole-page fade and a slightly longer one for the two persistent elements finding their new place. Under `prefers-reduced-motion: reduce`, let the transition still happen (nothing about the page swap should break) but turn off every one of its animations, so it reads as instant. Then write one small shared function, `sameDocumentTransition(update, { pending, reducedMotion })`, for the few components (Tabs, the Kantar interlude) that swap something in place rather than navigating: it runs `update` inside `document.startViewTransition()` when the browser has one and the visitor has not asked for less motion, or directly otherwise, and it never starts a second transition while an earlier one from the same caller is still resolving.
+Turn on a View Transition for every same-origin navigation with one CSS at-rule, `@view-transition { navigation: auto; }`, so the whole page cross-fades on its own with no JavaScript. Give exactly two elements a name that survives the navigation instead of cross-fading, a `data-vt="header"` attribute for the site's header and `data-vt="scene"` for whichever scene a page uses as its hero, so the browser animates their position and size across the page change rather than fading them out and in. Set the cross-fade's duration from the shared motion tokens, a shorter one for the whole-page fade and a slightly longer one for the two persistent elements finding their new place. Under `prefers-reduced-motion: reduce`, let the transition still happen (nothing about the page swap should break) but turn off every one of its animations, so it reads as instant. Then write one small shared function, `sameDocumentTransition(update, { pending, reducedMotion })`, for the few components (Tabs, the Kantar interlude) that swap something in place rather than navigating: it runs `update` inside `document.startViewTransition()` when the browser has one and the visitor has not asked for less motion, or directly otherwise, and it never starts a second transition while an earlier one from the same caller is still resolving.
 
 ## Words to code
 

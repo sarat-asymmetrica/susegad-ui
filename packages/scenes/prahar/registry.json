@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "prahar.prompt.md",
-  "budget": { "jsBytes": 40960 }
+  "budget": { "jsBytes": 40960 },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "A day over a Goan river village in the eight watches of raga time: the sky blended in OKLab, every land layer tinted to the light, the sun and moon on their arcs, lamps after dusk, and a ruler of the eight prahars with each raga in English and Devanagari."
+  }
 }

@@ -9,5 +9,10 @@
   "dependencies": ["file-drop", "progress", "field-note", "toast", "stamp", "empty", "core-component", "core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "recipe.prompt.md",
-  "docs": "README.md"
+  "docs": "README.md",
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
 }

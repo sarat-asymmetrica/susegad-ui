@@ -21,5 +21,10 @@
   "budget": {
     "jsBytes": 13312,
     "reason": "0010: element + core together (5255 bytes today), plus three skins (quiet 0.2 KB, warm 0.7 KB, playful 1.1 KB, which also imports the shared talaDelay from packages/tokens). Carepa and the tokens' Teental export are separate registry items."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

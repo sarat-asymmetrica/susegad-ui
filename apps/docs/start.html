@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en" data-register="warm" data-palette="susegad">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Start here · Susegad UI</title>
+  <meta name="description" content="From an empty folder to a page with a scene, a card and a footer: three ways, by hand, with the CLI and with an agent.">
+  <link rel="canonical" href="https://susegad.asymmetrica.ai/start">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Susegad UI">
+  <meta property="og:title" content="Start here · Susegad UI">
+  <meta property="og:description" content="From an empty folder to a page with a scene, a card and a footer: three ways, by hand, with the CLI and with an agent.">
+  <meta property="og:url" content="https://susegad.asymmetrica.ai/start">
+  <meta property="og:image" content="https://susegad.asymmetrica.ai/og.jpg?v=2">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Susegad UI: the title above a tiatr stage drawn in code, its curtain risen on a Goan church square, between a banyan and a tiled pool.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="color-scheme" content="light dark">
+  <script src="./prefs.js"></script>
+  <link rel="stylesheet" href="../../packages/tokens/fonts.css">
+  <link rel="stylesheet" href="../../packages/tokens/tokens.css">
+  <link rel="stylesheet" href="./docs.css">
+  <link rel="stylesheet" href="./site.css">
+  <script type="module" src="./shell.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+
+  <header class="bar">
+    <div class="bar-in">
+      <a class="brand" href="./" aria-label="Susegad UI, home">Susegad <span>UI</span></a>
+      <nav class="nav" aria-label="Sections">
+        <a href="start" aria-current="page">Start here</a>
+        <a href="scenes">Scenes</a>
+        <a href="components">Components</a>
+        <a href="recipes">Recipes</a>
+        <a href="foundations">Foundations</a>
+        <a href="pencil-box">Pencil box</a>
+      </nav>
+      <a class="src" href="https://github.com/sarat-asymmetrica/susegad-ui" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
+      <form class="prefs" id="prefs" aria-label="How this page looks">
+        <fieldset class="seg seg-register" data-pref="register">
+          <legend>Register</legend>
+          <div class="seg-row">
+            <label><input type="radio" name="register" value="quiet"><span>Quiet</span></label>
+            <label><input type="radio" name="register" value="warm"><span>Warm</span></label>
+            <label><input type="radio" name="register" value="playful"><span>Playful</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="seg" data-pref="theme">
+          <legend>Theme</legend>
+          <div class="seg-row">
+            <label><input type="radio" name="theme" value="auto"><span>Auto</span></label>
+            <label><input type="radio" name="theme" value="light"><span>Light</span></label>
+            <label><input type="radio" name="theme" value="dark"><span>Dark</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="seg" data-pref="palette">
+          <legend>Palette</legend>
+          <div class="seg-row">
+            <label><input type="radio" name="palette" value="susegad"><span>Susegad</span></label>
+            <label><input type="radio" name="palette" value="casa"><span>Casa</span></label>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="toran" aria-hidden="true"></div>
+  </header>
+
+  <main class="wrap" id="main" tabindex="-1">
+    <section class="s-head" aria-labelledby="s-title">
+      <p class="kicker">one page, three ways</p>
+      <h1 id="s-title" class="s-title">Start here</h1>
+      <p class="lede">From an empty folder to one page with a drawing, a card and a footer. Pick whichever of the three ways suits you; they all arrive at the same place. The sample here is a homestay in Aldona, but any page of yours will do.</p>
+    </section>
+
+    <section class="prose" aria-labelledby="goal-title">
+      <h2 id="goal-title">The goal</h2>
+      <p>One file, <code>index.html</code>, in a folder with nothing else in it. When you are done, opening it shows the Paus drawing (rain on a window, drawn live), a small card of status, and a footer that says who made the page.</p>
+
+      <h2>Way 1: by hand</h2>
+      <p>Make an <code>index.html</code> and paste these lines into it:</p>
+      <pre class="use-code" tabindex="0" role="region" aria-label="The whole page, way one" id="by-hand"><code>&lt;!doctype html&gt;
+&lt;html lang="en" data-register="warm"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;title&gt;A homestay in Aldona&lt;/title&gt;
+  &lt;link rel="stylesheet" href="https://susegad.asymmetrica.ai/packages/tokens/tokens.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;sg-scene name="paus" register="warm"&gt;
+    &lt;h2&gt;Monsoon at the window&lt;/h2&gt;
+    &lt;p&gt;The river runs high, the veranda smells of wet earth.&lt;/p&gt;
+  &lt;/sg-scene&gt;
+  &lt;p&gt;&lt;sg-badge tone="info" busy&gt;Two rooms free for December&lt;/sg-badge&gt;&lt;/p&gt;
+  &lt;footer&gt;
+    &lt;p&gt;Made with Susegad UI, in Aldona.&lt;/p&gt;
+  &lt;/footer&gt;
+  &lt;script type="module"&gt;
+    import "https://susegad.asymmetrica.ai/packages/core/index.js";
+    import "https://susegad.asymmetrica.ai/packages/scenes/paus/index.js";
+    import "https://susegad.asymmetrica.ai/packages/components/badge/badge.js";
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      <p><button class="copy" type="button" data-copy="by-hand">Copy</button></p>
+      <p>Save, open the file in a browser, and the rain falls. The <code>data-register</code> on <code>&lt;html&gt;</code> sets the mood for the whole page; change <code>warm</code> to <code>quiet</code> and the drawing stills into a frame.</p>
+
+      <h2>Way 2: with the CLI</h2>
+      <p>The command line copies the pieces into your project, where they become your code. Change anything you like afterwards.</p>
+      <pre class="use-code" tabindex="0" role="region" aria-label="The install command, way two" id="way-cli"><code>npx susegad add scene-paus sg-badge --dir src/lib</code></pre>
+      <p><button class="copy" type="button" data-copy="way-cli">Copy</button></p>
+      <p>Your folder now holds <code>src/lib/susegad/</code> with the scene, the badge and everything they stand on. The same page then reads:</p>
+      <pre class="use-code" tabindex="0" role="region" aria-label="The imports for your page, way two" id="way-cli-page"><code>&lt;script type="module"&gt;
+  import "./src/lib/susegad/core/index.js";
+  import "./src/lib/susegad/scenes/paus/index.js";
+  import "./src/lib/susegad/components/badge/badge.js";
+&lt;/script&gt;</code></pre>
+      <p><button class="copy" type="button" data-copy="way-cli-page">Copy</button></p>
+      <p><code>susegad list</code> shows everything on the shelf, and <code>susegad info scene-paus</code> explains one piece before you take it.</p>
+
+      <h2>Way 3: with an agent</h2>
+      <p>Give your coding agent the library's <code>SKILL.md</code> from the top of the repository and say what you want, the way you would say it to a person. The skill carries the register, the install lines and the scene contract, so the agent lands on the same page this walkthrough does. A prompt that works:</p>
+      <blockquote class="letter-body">
+        <p>Build me a single page for a homestay in Aldona. Use Susegad UI: the paus scene over the top, a badge for room availability, and a quiet footer. The register is warm.</p>
+      </blockquote>
+      <p>The <code>susegad skill</code> command installs that skill into your agent's folder for you: <code>npx susegad skill --harness claude --global</code>. An MCP server that speaks the registry directly is on its way.</p>
+
+      <h2>What you should see</h2>
+      <p>A page where rain runs down a window and your words sit calm inside it. A badge that says what is still happening. A footer with your name on it. From there: every piece has its own page on this site, with its prompt, its demo and its install line. Start with <a href="scenes">Scenes</a>, or look the techniques up in the <a href="pencil-box">pencil box</a>.</p>
+    </section>
+  </main>
+
+  <footer class="foot wrap">
+    <p class="sig">made by Claude with Sarat, Asymmetrica, Goa, 2026</p>
+    <p class="for"><a href="for-rafe.html">For Rafe</a>, who lent us his Activa and went fishing.</p>
+    <p class="src-line">The code, the prompts and the drawings are open on <a href="https://github.com/sarat-asymmetrica/susegad-ui" rel="noopener">GitHub</a>. Take what you like.</p>
+    <p>MIT licensed code; documentation under CC BY 4.0. This page makes no requests to anyone else's servers and keeps your settings only in your own browser.</p>
+  </footer>
+
+  <p class="sr-only" id="announce" aria-live="polite"></p>
+</body>
+</html>

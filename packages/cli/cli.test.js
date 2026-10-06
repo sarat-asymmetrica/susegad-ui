@@ -207,7 +207,7 @@ test('--registry accepts a file URL to the index', async t => {
   assert.match(out.join('\n'), /scene-dot/);
 });
 
-test('--registry accepts an http(s) URL: list and info fetch it, add and diff refuse it plainly', async t => {
+test('--registry accepts an http(s) URL: list and info fetch it, and a 404 says so', async t => {
   const { repo, project } = workspace(t);
   const { startServer } = await import('../../tools/serve.mjs');
   const server = await startServer({ root: repo, quiet: true });
@@ -223,11 +223,6 @@ test('--registry accepts an http(s) URL: list and info fetch it, add and diff re
   const infoCode = await run(['info', 'scene-dot', '--registry', url], { cwd: project, out: s => infoOut.push(s), err: s => infoOut.push(s) });
   assert.equal(infoCode, 0, infoOut.join('\n'));
   assert.match(infoOut.join('\n'), /Depends on: {2}core, engine/);
-
-  const addErr = [];
-  const addCode = await run(['add', 'scene-dot', '--registry', url], { cwd: project, out: () => {}, err: s => addErr.push(s) });
-  assert.equal(addCode, 1);
-  assert.match(addErr.join('\n'), /add cannot copy files from an HTTP registry yet/);
 
   const badOut = [], badErr = [];
   const badCode = await run(['list', '--registry', `${server.url}/registry/no-such-index.json`], { cwd: project, out: s => badOut.push(s), err: s => badErr.push(s) });

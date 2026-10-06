@@ -14,5 +14,10 @@
     "jsBytes": 14336,
     "frameMs": 16.7,
     "reason": "The contract's 12 KB behaviour plus 8 KB per skin, declared as the sum used: behaviour (connecting.js and connecting.core.js) about 6.6 KB, the warm and playful skins about 5.7 KB each including the shared fireflies.js, quiet under 0.4 KB."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

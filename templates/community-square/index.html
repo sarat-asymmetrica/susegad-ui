@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en" data-register="warm">
+<head>
+<script>
+  // ?register=quiet|warm|playful and ?theme=light|dark set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute('data-' + k, v);
+  window.__ready = false;
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Riverside Makers Guild, Aldona</title>
+<meta name="description" content="A template draft for a community's home page: the lane, the square and the balcão, with a hero scene, gatherings, people, a consent-first gallery, a shared ledger and a site footer.">
+<link rel="stylesheet" href="../../packages/tokens/fonts.css">
+<link rel="stylesheet" href="../../packages/tokens/tokens.css">
+<link rel="stylesheet" href="../../packages/components/event-card/event-card.css">
+<link rel="stylesheet" href="../../packages/components/person-card/person-card.css">
+<link rel="stylesheet" href="../../packages/components/gallery/gallery.css">
+<link rel="stylesheet" href="../../packages/components/data-table/data-table.css">
+<link rel="stylesheet" href="../../packages/components/accordion/accordion.css">
+<link rel="stylesheet" href="../../packages/components/site-footer/site-footer.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  /* One column for the whole page, so every section shares a left edge. Reading
+     text keeps its own measure inside it; the cards, people and photos use the
+     full width. */
+  .lane { box-sizing: border-box; max-width: 64rem; margin-inline: auto; padding-inline: 16px; }
+  header.lane { padding-block: var(--sg-space-6, 48px) var(--sg-space-4); }
+  main > .lane { padding-block: var(--sg-space-6, 48px) 0; }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); max-width: 46rem; }
+  h2 { font: 400 var(--sg-step-3) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-3); }
+  .lede { margin: 0 0 var(--sg-space-3); max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { margin: var(--sg-space-4) 0 0; font-size: var(--sg-step--1); color: var(--sg-text-soft); max-width: var(--sg-measure); }
+  .cards { display: grid; gap: var(--sg-space-5); grid-template-columns: min(100%, 46rem); margin-top: var(--sg-space-4); }
+  .people { display: grid; gap: var(--sg-space-5); grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); margin-top: var(--sg-space-4); }
+  #balcao sg-accordion { display: block; max-width: 46rem; }
+  .hero-scene { max-width: 46rem; }
+  .hero-scene sg-scene { display: block; border-radius: var(--sg-radius-3, 8px); overflow: hidden; }
+  .hero-copy { margin-top: var(--sg-space-4); }
+  .hero-copy a { color: var(--sg-accent-text); text-underline-offset: 0.2em; }
+  .hero-copy a:hover { text-decoration-thickness: 2px; }
+  sg-site-footer { box-sizing: border-box; max-width: 64rem; margin: var(--sg-space-6, 48px) auto 0; padding-inline: 16px; }
+</style>
+</head>
+<body>
+
+<!-- The lane: who we are. A scene from the library opens the page, imported repo-relative the way the demos do. -->
+<header class="lane" id="top">
+  <h1>The Riverside Makers Guild, Aldona</h1>
+  <p class="lede">A village square for people who make things. Potters, weavers, boat builders and printers, on the banks of the river, learning from each other one Saturday at a time.</p>
+  <div class="hero-scene">
+    <sg-scene name="tinto" register="warm" label="The square on a Saturday morning: the guild's stalls set out, the chai seller, and everyone arriving">
+      <p>Everyone in the square. The bread man is on his second round, two members are playing cards under the tree, and the chai is ready.</p>
+    </sg-scene>
+  </div>
+  <div class="hero-copy">
+    <p><a href="#gatherings">Come to a gathering</a> or <a href="#balcao">pull up a chair</a>.</p>
+  </div>
+</header>
+
+<main>
+
+<!-- The square: what we do together, and who is here. -->
+<section id="gatherings" class="lane" aria-labelledby="gatherings-h">
+  <h2 id="gatherings-h">Gatherings</h2>
+  <p class="lede">We meet most Saturdays and once a season for the mela. Everything below is made-up copy for the template.</p>
+  <div class="cards">
+
+    <sg-event-card kind="workshop" start="2026-10-10T10:00" end="2026-10-10T13:00" seats-left="6" now="2026-10-03T09:00">
+      <article aria-labelledby="ev-clay">
+        <p class="sg-event-kind">Workshop</p>
+        <h3 id="ev-clay">Monsoon clay: throwing your first bowl</h3>
+        <p class="sg-event-when"><time datetime="2026-10-10T10:00:00+05:30">Sat 10 Oct, 10 am to 1 pm</time></p>
+        <p class="sg-event-where"><span class="sg-event-venue">The guild shed</span>, <span class="sg-event-area">by the ghat, Aldona</span></p>
+        <section class="sg-event-do"><h4>What you'll do</h4><ul><li>Centre a lump of river clay</li><li>Throw and trim one small bowl</li><li>Leave it to dry for the November firing</li></ul></section>
+        <footer class="sg-event-stub">
+          <p class="sg-event-price"><span class="sg-event-amount">₹300</span> a member, ₹500 a guest</p>
+          <p class="sg-event-cta"><a href="#balcao">Reserve a wheel</a></p>
+        </footer>
+      </article>
+    </sg-event-card>
+
+    <sg-event-card kind="supper-club" start="2026-10-24T17:00" end="2026-10-24T21:00" now="2026-10-03T09:00">
+      <article aria-labelledby="ev-mela">
+        <p class="sg-event-kind">Mela</p>
+        <h3 id="ev-mela">The Makers' Mela, an evening by the river</h3>
+        <p class="sg-event-when"><time datetime="2026-10-24T17:00:00+05:30">Sat 24 Oct, 5 pm to 9 pm</time></p>
+        <p class="sg-event-where"><span class="sg-event-venue">The riverside ground</span>, <span class="sg-event-area">Aldona</span></p>
+        <section class="sg-event-eat"><h4>What you'll find</h4><ul><li>Stalls of pots, cloth and prints</li><li>Urunc and chai at the long table</li><li>A lantern round at dusk</li></ul></section>
+        <footer class="sg-event-stub">
+          <p class="sg-event-cta"><a href="#balcao">Ask for a stall</a></p>
+        </footer>
+      </article>
+    </sg-event-card>
+
+    <sg-event-card kind="class" start="2026-09-19T10:00" end="2026-09-19T12:00" seats-left="0" now="2026-10-03T09:00">
+      <article aria-labelledby="ev-loom">
+        <p class="sg-event-kind">Class</p>
+        <h3 id="ev-loom">Banana fibre, from stalk to strand</h3>
+        <p class="sg-event-when"><time datetime="2026-09-19T10:00:00+05:30">Sat 19 Sep, 10 am to 12 pm</time></p>
+        <p class="sg-event-where"><span class="sg-event-venue">The loom room</span>, <span class="sg-event-area">Aldona</span></p>
+        <section class="sg-event-do"><h4>What we did</h4><ul><li>Striped and softened the fibre</li><li>Twisted it into thread on a hand spindle</li></ul></section>
+        <footer class="sg-event-stub">
+          <p class="sg-event-cta"><a href="#balcao">Ask about the next date</a></p>
+        </footer>
+      </article>
+    </sg-event-card>
+
+  </div>
+</section>
+
+<section id="people" class="lane" aria-labelledby="people-h">
+  <h2 id="people-h">People</h2>
+  <p class="lede">Some of the guild, and what each is building. Every person here is invented for the template; the cards show initials, and a photograph goes on a card only when that person has given it.</p>
+  <div class="people">
+
+    <sg-person-card data-track="Clay and kilns">
+      <article aria-labelledby="pc-1">
+        <h3 id="pc-1">Anjali Fernandes</h3>
+        <p class="sg-person-role">Potter, Aldona</p>
+        <p class="sg-person-building">A wood-fired kiln the whole guild shares, and a firing calendar so nobody double-books the shed</p>
+        <p class="sg-person-link"><a href="https://example.com/anjali">Her kiln notes</a></p>
+      </article>
+    </sg-person-card>
+
+    <sg-person-card data-track="Wood and boats">
+      <article aria-labelledby="pc-2">
+        <h3 id="pc-2">Rohan Barreto</h3>
+        <p class="sg-person-role">Boat builder, Aldona</p>
+        <p class="sg-person-building">A pocket handbook of river dinghy repairs, in Konkani and English</p>
+        <p class="sg-person-link"><a href="https://example.com/rohan">His handbook</a></p>
+      </article>
+    </sg-person-card>
+
+    <sg-person-card data-track="Fibre and looms">
+      <article aria-labelledby="pc-3">
+        <h3 id="pc-3">Meera Colaco</h3>
+        <p class="sg-person-role">Weaver, Moira</p>
+        <p class="sg-person-building">Banana-fibre weaving sessions for the village school's craft hour</p>
+        <p class="sg-person-link"><a href="https://example.com/meera">Her loom room</a></p>
+      </article>
+    </sg-person-card>
+
+    <sg-person-card data-track="Print and paper">
+      <article aria-labelledby="pc-4">
+        <h3 id="pc-4">Cyril D'Abreo</h3>
+        <p class="sg-person-role">Screen printer, Aldona</p>
+        <p class="sg-person-building">Block-printed cloth for the mela stalls, printed on the veranda in batches</p>
+        <p class="sg-person-link"><a href="https://example.com/cyril">His prints</a></p>
+      </article>
+    </sg-person-card>
+
+  </div>
+</section>
+
+<!-- The gallery: consent first. Granted slots show drawings (the template's own, as stand-ins); pending slots never show a picture. -->
+<section id="gallery" class="lane" aria-labelledby="gallery-h">
+  <h2 id="gallery-h">From the shed and the riverbank</h2>
+  <p class="lede">Photographs come in only when the person in them has said yes. Until then, a pending slot stays a drawn frame with its caption and the count.</p>
+  <sg-gallery seed="riverside">
+    <figure class="sg-gallery-slot" consent="granted">
+      <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20760%20475%22%3E%3Crect%20width%3D%22760%22%20height%3D%22475%22%20fill%3D%22%23f7ecd9%22/%3E%3Crect%20y%3D%22300%22%20width%3D%22760%22%20height%3D%22175%22%20fill%3D%22%239fb8a8%22/%3E%3Cpath%20d%3D%22M0%20300%20Q190%20285%20380%20300%20T760%20300%22%20stroke%3D%22%235c7a68%22%20stroke-width%3D%224%22%20fill%3D%22none%22/%3E%3Crect%20x%3D%2290%22%20y%3D%22180%22%20width%3D%22130%22%20height%3D%22120%22%20fill%3D%22%23c9542e%22%20opacity%3D%220.85%22/%3E%3Cpath%20d%3D%22M80%20185%20L155%20130%20L230%20185%20Z%22%20fill%3D%22%236b5444%22/%3E%3Ccircle%20cx%3D%22620%22%20cy%3D%22140%22%20r%3D%2242%22%20fill%3D%22%23d89a4f%22/%3E%3Crect%20x%3D%22300%22%20y%3D%22330%22%20width%3D%22180%22%20height%3D%2210%22%20rx%3D%225%22%20fill%3D%22%235c7a68%22/%3E%3C/svg%3E" alt="A drawing of the river at first light, with a red-tiled house on the bank" width="760" height="475">
+      <figcaption>The river at first light, from the ghat</figcaption>
+    </figure>
+    <figure class="sg-gallery-slot" consent="granted">
+      <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20760%20475%22%3E%3Crect%20width%3D%22760%22%20height%3D%22475%22%20fill%3D%22%23f2e6d0%22/%3E%3Cellipse%20cx%3D%22380%22%20cy%3D%22300%22%20rx%3D%22240%22%20ry%3D%2270%22%20fill%3D%22%23b98a5f%22/%3E%3Ccircle%20cx%3D%22380%22%20cy%3D%22255%22%20r%3D%2246%22%20fill%3D%22%23a3714b%22/%3E%3Ccircle%20cx%3D%22380%22%20cy%3D%22282%22%20r%3D%2258%22%20fill%3D%22%237d5638%22/%3E%3Crect%20x%3D%22360%22%20y%3D%22150%22%20width%3D%2240%22%20height%3D%22110%22%20rx%3D%2218%22%20fill%3D%22%236b5444%22/%3E%3Ccircle%20cx%3D%22380%22%20cy%3D%22140%22%20r%3D%2226%22%20fill%3D%22%23e9d3b3%22/%3E%3Crect%20y%3D%22430%22%20width%3D%22760%22%20height%3D%2245%22%20fill%3D%22%235c7a68%22/%3E%3C/svg%3E" alt="A drawing of a potter's wheel, a bowl rising under a pair of hands" width="760" height="475">
+      <figcaption>A bowl rising at the wheel, a Saturday in August</figcaption>
+    </figure>
+    <figure class="sg-gallery-slot" consent="pending">
+      <figcaption>Members at the long table, mela evening</figcaption>
+    </figure>
+    <figure class="sg-gallery-slot" consent="pending">
+      <figcaption>The loom room at work</figcaption>
+    </figure>
+  </sg-gallery>
+  <p class="note">2 photos, coming soon. The two granted slots carry the template's own drawings, standing in for photographs; no faces are shown until consent is recorded in the data.</p>
+</section>
+
+<!-- The ledger: a small made-up account, sorted and totalled by the table. -->
+<section id="ledger" class="lane" aria-labelledby="ledger-h">
+  <h2 id="ledger-h">The shared ledger</h2>
+  <p class="lede">What the guild collected and spent this season. The money is written the Indian way, lakh and crore, on tabular figures so the columns of digits line up. Click a heading, or reach it with Tab and press Enter, to sort.</p>
+  <sg-data-table>
+    <table>
+      <caption>The guild's shared ledger, April to September 2026: member payments in and spending out</caption>
+      <thead>
+        <tr>
+          <th scope="col" data-sort="month">Month</th>
+          <th scope="col" data-sort="members" data-value-col>Payments</th>
+          <th scope="col" data-sort="collected" data-money-col>Collected</th>
+          <th scope="col" data-sort="spent" data-money-col>Spent</th>
+          <th scope="col" data-sort="purchase">Big purchase</th>
+          <th scope="col">Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>April 2026</td><td data-value="14">14</td><td data-money="42000">₹42,000</td><td data-money="28000">₹28,000</td><td>Two new hand drills</td><td>Season opens</td></tr>
+        <tr><td>May 2026</td><td data-value="14">14</td><td data-money="48000">₹48,000</td><td data-money="35000">₹35,000</td><td>Loom repair, Saligao</td><td>Mela preparations</td></tr>
+        <tr><td>June 2026</td><td data-value="11">11</td><td data-money="36000">₹36,000</td><td data-money="41000">₹41,000</td><td>Tarpaulins for the shed</td><td>Monsoon, repairs heavy</td></tr>
+        <tr><td>July 2026</td><td data-value="15">15</td><td data-money="52000">₹52,000</td><td data-money="30000">₹30,000</td><td>Bamboo stock from Ponda</td><td>Kiln wood stacked</td></tr>
+        <tr><td>August 2026</td><td data-value="16">16</td><td data-money="58000">₹58,000</td><td data-money="62000">₹62,000</td><td>A second potter's wheel</td><td>Mela month</td></tr>
+        <tr><td>September 2026</td><td data-value="17">17</td><td data-money="61000">₹61,000</td><td data-money="39000">₹39,000</td><td>Dye vats and mordants</td><td>Dyeing workshops begin</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td>Total</td><td data-value="87">87</td><td data-money="297000">₹2,97,000</td><td data-money="235000">₹2,35,000</td><td colspan="2">Across six months</td></tr>
+      </tfoot>
+    </table>
+  </sg-data-table>
+  <p class="note">Every figure here is invented for the template. The foot (tfoot) is never sorted; only the body moves.</p>
+</section>
+
+<!-- The balcão: there is a seat for you. Questions first, no form in this draft. -->
+<section id="balcao" class="lane" aria-labelledby="balcao-h">
+  <h2 id="balcao-h">Pull up a chair</h2>
+  <p class="lede">New hands are welcome. Nobody is turned away for not knowing how. Write to us at the next gathering, or read how the guild works first.</p>
+  <sg-accordion name="join">
+    <details name="join" open>
+      <summary>Who can join?</summary>
+      <p>Anyone in or near Aldona who makes things, or wants to. Members from Siolim, Moira and Mapusa come across the river too.</p>
+    </details>
+    <details name="join">
+      <summary>What does it cost?</summary>
+      <p>₹3,000 for the season, paid in rupees. Guests pay ₹500 a workshop. If the fee is a problem, write to us; a member will sponsor you quietly.</p>
+    </details>
+    <details name="join">
+      <summary>Can I just watch the first time?</summary>
+      <p>Of course. Come on a Saturday, sit on the bench by the shed, and ask as many questions as you like.</p>
+    </details>
+  </sg-accordion>
+</section>
+
+</main>
+
+<sg-site-footer seed="The Riverside Makers Guild, Aldona" now="2026-10-03">
+  <footer aria-label="Site footer">
+    <p class="sg-site-footer-sign">Thrown, woven, planed and printed by the river.</p>
+    <nav class="sg-site-footer-links" aria-label="Footer">
+      <ul>
+        <li><a href="#gatherings">Gatherings</a></li>
+        <li><a href="#people">People</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#ledger">Ledger</a></li>
+        <li><a href="#balcao">Pull up a chair</a></li>
+      </ul>
+    </nav>
+    <p class="sg-site-footer-small">&copy; <time datetime="2026">2026</time> The Riverside Makers Guild, Aldona. A made-up community, drawn as a template.</p>
+  </footer>
+</sg-site-footer>
+
+<script type="module">
+  import '../../packages/scenes/tinto/index.js';
+  import '../../packages/components/event-card/event-card.js';
+  import '../../packages/components/person-card/person-card.js';
+  import '../../packages/components/gallery/gallery.js';
+  import '../../packages/components/data-table/data-table.js';
+  import '../../packages/components/accordion/accordion.js';
+  import '../../packages/components/site-footer/site-footer.js';
+  await document.fonts.ready;
+  await Promise.all([...new Set([...document.querySelectorAll('*')].map(e => e.localName).filter(n => n.startsWith('sg-')))].map(t => customElements.whenDefined(t)));
+  window.__ready = true;
+</script>
+</body>
+</html>

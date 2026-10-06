@@ -1,0 +1,9 @@
+{
+  "items": [
+    { "name": "clean-everyday", "motif": { "origin": "goa", "tier": "everyday", "gloss": "A Goan window." } },
+    { "name": "clean-regional", "motif": { "origin": "tamil nadu", "tier": "regional", "gloss": "The threshold drawing laid fresh each morning in Tamil Nadu." } },
+    { "name": "sacred-with-lead", "motif": { "origin": "goa", "tier": "sacred", "gloss": "A temple banner.", "communityLead": true } },
+    { "name": "no-motif-at-all", "files": ["packages/engine/index.js"] },
+    { "name": "hero-item", "motif": { "origin": "goa", "tier": "everyday", "gloss": "The tiatr stage." } }
+  ]
+}

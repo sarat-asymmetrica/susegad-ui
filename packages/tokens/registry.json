@@ -35,5 +35,10 @@
     "fonts/tirokannada/OFL.txt",
     "fonts/tirokannada/tiro-kannada-400-kannada.woff2"
   ],
-  "dependencies": []
+  "dependencies": [],
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
 }

@@ -3,7 +3,7 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { resolveOrder, GraphError } from './graph.js';
 import { hashContent } from './hash.js';
 import { targetPathFor, toPosix } from './paths.js';
-import { CliError, loadRegistry, suggest } from './registry.js';
+import { CliError, fetchRemoteFile, loadRegistry, suggest } from './registry.js';
 import { LOCKFILE, lockedHashes, readLock, writeLock } from './lockfile.js';
 import { diffLines, formatPatch } from './linediff.js';
 
@@ -99,24 +99,46 @@ export async function info(args, ctx) {
 
 // add -------------------------------------------------------------------------
 
+/** Read a file the way a local registry serves it: bytes, or null when missing. */
+const localRead = reg => p => {
+  const src = join(reg.root, p);
+  return existsSync(src) ? readFileSync(src) : null;
+};
+
+/** Read a file the way a remote registry serves it: fetched bytes, or null on 404. */
+const remoteRead = reg => p => fetchRemoteFile(reg, p);
+
+const readerFor = reg => (reg.remote ? remoteRead(reg) : localRead(reg));
+
 /**
- * Work out what `add` would do, touching nothing.
+ * Work out what `add` would do, touching nothing. The only way the planner
+ * reaches files is the `readFile` seam (a repo-relative path in, bytes or null
+ * out), so planning stays testable with no network and no disk: local reads
+ * and HTTP fetches feed the exact same plan.
  * Each file is new, same (already identical), update (untouched since we copied it,
  * and the registry has moved on) or changed (the builder edited it).
  */
-export function planAdd(reg, names, target) {
+export async function planAdd(reg, names, target, readFile) {
+  const read = readFile ?? readerFor(reg);
   for (const name of names) knownItem(reg, name);
   const lock = readLock(target);
   const baseline = lockedHashes(lock);
   const stale = [];
-  const items = order(reg, names).map(name => {
+  const items = [];
+  for (const name of order(reg, names)) {
     const item = reg.items.get(name);
-    const files = item.files.map(f => {
-      const src = join(reg.root, f.path);
-      if (!existsSync(src)) { stale.push(`${f.path} is listed but missing`); return null; }
-      const content = readFileSync(src);
+    const files = [];
+    for (const f of item.files) {
+      const content = await read(f.path);
+      if (content === null) { stale.push(`${f.path} is listed but missing`); files.push(null); continue; }
       const hash = hashContent(content);
-      if (hash !== f.hash) stale.push(`${f.path} has changed since the index was built`);
+      if (hash !== f.hash) {
+        stale.push(reg.remote
+          ? `${f.path} arrived with bytes the registry did not record (hash ${hash}, expected ${f.hash}). It may be damaged or tampered with, so I will not copy it.`
+          : `${f.path} has changed since the index was built`);
+        files.push(null);
+        continue;
+      }
       const to = targetPathFor(f.path);
       const dest = join(target, to);
       let status = 'new';
@@ -126,14 +148,18 @@ export function planAdd(reg, names, target) {
         else if (baseline.get(to) === current) status = 'update';
         else status = 'changed';
       }
-      return { from: f.path, to, dest, content, hash, status };
-    });
-    return { item, files, requested: names.includes(name) };
-  });
+      files.push({ from: f.path, to, dest, content, hash, status });
+    }
+    items.push({ item, files, requested: names.includes(name) });
+  }
   if (stale.length) {
-    throw new CliError(`The registry index at ${reg.file} is out of date:\n` +
-      stale.map(s => `  ${s}`).join('\n') +
-      `\nRebuild it with node registry/build.mjs in ${reg.root}, then run this again.`);
+    throw new CliError(reg.remote
+      ? `The files on ${reg.file} do not match the hashes in its index, so I refuse to copy any of them:\n` +
+        stale.map(s => `  ${s}`).join('\n') +
+        `\nFetch the index again and try once more. If it keeps happening, something between you and the server is changing the files.`
+      : `The registry index at ${reg.file} is out of date:\n` +
+        stale.map(s => `  ${s}`).join('\n') +
+        `\nRebuild it with node registry/build.mjs in ${reg.root}, then run this again.`);
   }
   return { items, lock };
 }
@@ -141,10 +167,9 @@ export function planAdd(reg, names, target) {
 export async function add(args, ctx) {
   if (!args.items.length) throw new CliError('Tell me what to add, for example: susegad add scene-kolam\nRun susegad list to see everything on the shelf.');
   const reg = await loadRegistry(ctx.registry, ctx.cwd);
-  if (reg.remote) throw new CliError(`add cannot copy files from an HTTP registry yet (${reg.file}). list and info work against it; add and diff still need a local path or --ref.`);
   const target = resolve(ctx.cwd, args.dir ?? DEFAULT_DIR);
   const shown = p => toPosix(relative(ctx.cwd, p)) || '.';
-  const { items, lock } = planAdd(reg, args.items, target);
+  const { items, lock } = await planAdd(reg, args.items, target);
 
   const extras = items.filter(p => !p.requested).map(p => p.item.name);
   ctx.out(`Adding ${listing(args.items)}` +
@@ -254,7 +279,6 @@ function usageHint(reg, planned, target, cwd, pageRoot) {
 
 export async function diff(args, ctx) {
   const reg = await loadRegistry(ctx.registry, ctx.cwd);
-  if (reg.remote) throw new CliError(`diff cannot read files from an HTTP registry yet (${reg.file}). list and info work against it; add and diff still need a local path or --ref.`);
   const target = resolve(ctx.cwd, args.dir ?? DEFAULT_DIR);
   const lock = readLock(target);
   const names = args.items.length ? args.items : Object.keys(lock.items).sort();
@@ -263,6 +287,7 @@ export async function diff(args, ctx) {
     return 0;
   }
 
+  const read = readerFor(reg);
   let differs = 0;
   for (const [n, name] of names.entries()) {
     const item = knownItem(reg, name);
@@ -280,7 +305,6 @@ export async function diff(args, ctx) {
       const to = targetPathFor(f.path);
       seen.add(to);
       const dest = join(target, to);
-      const src = join(reg.root, f.path);
       if (!existsSync(dest)) {
         rows.push(to in locked.files
           ? ['missing', to, 'not in your project; susegad add puts it back']
@@ -290,8 +314,9 @@ export async function diff(args, ctx) {
       const mine = readFileSync(dest);
       const hash = hashContent(mine);
       if (hash === f.hash) { rows.push(['same', to, '']); continue; }
-      const theirs = existsSync(src) ? readFileSync(src, 'utf8') : '';
-      const d = diffLines(theirs, mine.toString('utf8'));
+      // Only now do we need the registry's copy, so a clean diff fetches nothing.
+      const theirs = await read(f.path);
+      const d = diffLines(theirs ? theirs.toString('utf8') : '', mine.toString('utf8'));
       const counts = `+${d.added} -${d.removed} lines`;
       if (!(to in locked.files)) rows.push(['differs', to, `new in the registry, and your file there is different; ${counts}`, d]);
       else if (hash === locked.files[to]) rows.push(['older', to, `the registry has moved on; ${counts}`, d]);

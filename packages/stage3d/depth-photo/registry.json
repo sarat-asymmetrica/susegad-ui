@@ -38,5 +38,10 @@
   },
   "npmDependencies": {
     "three": "0.186.1"
+  },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "The depth photo: a Goan window glazed with oyster shell, filling its host edge to edge."
   }
 }

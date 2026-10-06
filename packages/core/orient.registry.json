@@ -18,5 +18,10 @@
   "budget": {
     "jsBytes": 24576,
     "reason": "The element side (decision 0009, 12 KB) and the two pure cores counted apart (decision 0010, 12 KB together), so 24576. Today 23.2 KB: orient.js 11.9 KB, quat.core.js 5.6 KB, orient.core.js 5.1 KB. The check (orient.check.mjs) and the demo are not counted, as with every other piece."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

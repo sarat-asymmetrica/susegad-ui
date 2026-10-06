@@ -1,0 +1,40 @@
+{
+  "name": "gallery",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Gallery",
+  "description": "Photographs, consent first: a grid of slots the author writes, where a slot with consent=\"pending\" shows a drawn frame with photo corners, its caption and the count (\"2 photos, coming soon\"), and never the image; a granted photograph opens larger in the native dialog. Quiet is hairline frames with ruled corners; warm draws hand-drawn photo corners, seeded; playful leans each slot its own seeded half-degree like photos laid on a table.",
+  "version": "0.1.0",
+  "files": [
+    "gallery.js",
+    "gallery.core.js",
+    "gallery.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "gallery.prompt.md",
+    "gallery.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "gallery.prompt.md",
+  "docs": "gallery.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins; the pure core is budgeted apart (0010)."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

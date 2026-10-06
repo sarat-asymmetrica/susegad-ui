@@ -4,6 +4,44 @@
   "modules": [
     {
       "kind": "javascript-module",
+      "path": "packages/components/accordion/accordion.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgAccordion",
+          "tagName": "sg-accordion",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "name"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-accordion-change",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-accordion",
+          "declaration": {
+            "name": "SgAccordion",
+            "module": "packages/components/accordion/accordion.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "packages/components/action-menu/action-menu.js",
       "declarations": [
         {
@@ -251,6 +289,41 @@
           "declaration": {
             "name": "SgConnecting",
             "module": "packages/components/connecting/connecting.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/data-table/data-table.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgDataTable",
+          "tagName": "sg-data-table",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-table-sort",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-data-table",
+          "declaration": {
+            "name": "SgDataTable",
+            "module": "packages/components/data-table/data-table.js"
           }
         }
       ]
@@ -686,6 +759,45 @@
     },
     {
       "kind": "javascript-module",
+      "path": "packages/components/gallery/gallery.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgGallery",
+          "tagName": "sg-gallery",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": [],
+          "cssProperties": [
+            {
+              "name": "--sg-gallery-cols"
+            },
+            {
+              "name": "--sg-gallery-tilt"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-gallery",
+          "declaration": {
+            "name": "SgGallery",
+            "module": "packages/components/gallery/gallery.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "packages/components/link/link.js",
       "declarations": [
         {
@@ -881,6 +993,47 @@
           "declaration": {
             "name": "SgOtp",
             "module": "packages/components/otp/otp.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/person-card/person-card.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgPersonCard",
+          "tagName": "sg-person-card",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "seed"
+            },
+            {
+              "name": "data-track"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-person-ready",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-person-card",
+          "declaration": {
+            "name": "SgPersonCard",
+            "module": "packages/components/person-card/person-card.js"
           }
         }
       ]
@@ -1220,6 +1373,47 @@
           "declaration": {
             "name": "SgSignature",
             "module": "packages/components/signature/signature.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/site-footer/site-footer.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgSiteFooter",
+          "tagName": "sg-site-footer",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "now"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-site-footer-year",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-site-footer",
+          "declaration": {
+            "name": "SgSiteFooter",
+            "module": "packages/components/site-footer/site-footer.js"
           }
         }
       ]

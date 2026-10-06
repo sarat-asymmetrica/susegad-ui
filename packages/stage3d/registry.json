@@ -20,5 +20,10 @@
   },
   "npmDependencies": {
     "three": "0.186.1"
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

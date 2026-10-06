@@ -1,0 +1,40 @@
+{
+  "name": "person-card",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Person card",
+  "description": "One person and what they are building: the name, the role, one line of work and one link. The card shows the person's initials, cut from their name by a pure core, instead of a photo; a photo belongs there only when the author writes it and the person's consent is recorded. Quiet is a hairline card with a plain disc; warm is a soft card with the initials in the hand; playful colours the disc from a seed and tilts the card a little when the pointer or the focus arrives.",
+  "version": "0.1.0",
+  "files": [
+    "person-card.js",
+    "person.core.js",
+    "person-card.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "person-card.prompt.md",
+    "person-card.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "person-card.prompt.md",
+  "docs": "person-card.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins; the pure core is budgeted apart (0010). Today 8.7 KB: element 3.4 KB, pure core 4.1 KB, skins quiet 0.1 KB, warm 0.2 KB, playful 0.8 KB."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

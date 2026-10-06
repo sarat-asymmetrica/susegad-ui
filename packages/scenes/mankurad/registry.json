@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "mankurad.prompt.md",
-  "budget": { "jsBytes": 49152, "reason": "The plate's painters and sprite cache for a whole short story, ported line for line." }
+  "budget": { "jsBytes": 49152, "reason": "The plate's painters and sprite cache for a whole short story, ported line for line." },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "A short story about a mango in coloured pencil: it ripens in the May heat while a koel calls, clouds come in, the first monsoon rain falls, and it drops into a puddle on red laterite."
+  }
 }

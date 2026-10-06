@@ -12,7 +12,7 @@ Link `page.css`. Nothing else is required:
 
 `@view-transition { navigation: auto; }` turns on a View Transition for every same-origin navigation the browser initiates, in browsers that support it (Chromium today); everywhere else, navigation is the ordinary instant kind it has always been. Nothing else needs to change.
 
-By default, the whole page cross-fades as one group (`::view-transition-old(root)` / `::view-transition-new(root)`). To make an element persist across the navigation instead — carrying its position and size across, rather than fading out and back in — give it a `data-vt` attribute:
+By default, the whole page cross-fades as one group (`::view-transition-old(root)` / `::view-transition-new(root)`). To make an element persist across the navigation instead, carrying its position and size across, rather than fading out and back in, give it a `data-vt` attribute:
 
 ```html
 <header data-vt="header">…</header>
@@ -23,7 +23,7 @@ By default, the whole page cross-fades as one group (`::view-transition-old(root
 
 ## A same-document swap
 
-Tabs and the Kantar interlude both swap something in place rather than navigating, and both need the same three guards: don't try when the browser has no View Transitions, don't try under reduced motion, and don't start a second transition while one is still resolving (the browser would only abort the first, which produces an unhandled rejection for no visible benefit — land the change directly instead). `sameDocumentTransition()` is that guard, written once:
+Tabs and the Kantar interlude both swap something in place rather than navigating, and both need the same three guards: don't try when the browser has no View Transitions, don't try under reduced motion, and don't start a second transition while one is still resolving (the browser would only abort the first, which produces an unhandled rejection for no visible benefit, land the change directly instead). `sameDocumentTransition()` is that guard, written once:
 
 ```js
 import { sameDocumentTransition, nextTransitionName } from './src/lib/susegad/transitions/page.js';
@@ -39,11 +39,11 @@ function selectTab(next) {
 
 `sameDocumentTransition(update, { pending, reducedMotion })` runs `update()` either inside a `document.startViewTransition()` or directly, and always returns either the new `ViewTransition` (track it in your own `pending`, as above) or `null` (nothing to track: the update already ran). `reducedMotion` defaults to reading `prefers-reduced-motion` itself; pass it explicitly if you already have a motion value from `packages/core/register.js` (Tabs does, from its own `this.motion`).
 
-`nextTransitionName(prefix)` hands out `sg-vt-1`, `sg-vt-2`, … — a unique `view-transition-name` per call, for the common case of naming just the one element that is mid-swap so two instances of the same component never fight over one name (Tabs names only its currently visible panel, and clears the name from the one it replaces).
+`nextTransitionName(prefix)` hands out `sg-vt-1`, `sg-vt-2`, …, a unique `view-transition-name` per call, for the common case of naming just the one element that is mid-swap so two instances of the same component never fight over one name (Tabs names only its currently visible panel, and clears the name from the one it replaces).
 
 ## Reduced motion
 
-`page.css`'s `@media (prefers-reduced-motion: reduce)` block disables every View Transition's animation (`animation: none !important` on every `::view-transition-*` pseudo-element), so the browser still runs the transition machinery (nothing breaks), but nothing visibly moves — the swap reads as instant either way. `sameDocumentTransition()` makes the same choice from the JavaScript side, so a same-document swap doesn't even start a transition under reduced motion.
+`page.css`'s `@media (prefers-reduced-motion: reduce)` block disables every View Transition's animation (`animation: none !important` on every `::view-transition-*` pseudo-element), so the browser still runs the transition machinery (nothing breaks), but nothing visibly moves, the swap reads as instant either way. `sameDocumentTransition()` makes the same choice from the JavaScript side, so a same-document swap doesn't even start a transition under reduced motion.
 
 ## Lineage
 

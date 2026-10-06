@@ -5,13 +5,18 @@ import { fileURLToPath } from 'node:url';
 /** The index in the repo this CLI lives in: packages/cli/src -> registry/registry.json. */
 export const defaultRegistry = fileURLToPath(new URL('../../../registry/registry.json', import.meta.url));
 
+/** The live index, the fallback when this CLI is installed away from the repo. */
+export const LIVE_REGISTRY = 'https://susegad.asymmetrica.ai/registry/registry.json';
+
 export class CliError extends Error {}
 
 /**
  * Find the index file from --registry: a file URL, an index file, or a folder
  * (a repo root with registry/registry.json, or a folder holding registry.json).
  */
-export function locateIndex(location = defaultRegistry, cwd = process.cwd()) {
+export function locateIndex(location, cwd) {
+  location ??= defaultRegistry;
+  cwd ??= process.cwd();
   let p = location.startsWith('file:') ? fileURLToPath(location) : resolve(cwd, location);
   if (existsSync(p) && statSync(p).isDirectory()) {
     const candidates = [join(p, 'registry', 'registry.json'), join(p, 'registry.json')];
@@ -23,6 +28,50 @@ export function locateIndex(location = defaultRegistry, cwd = process.cwd()) {
 /** Is this --registry value a URL the CLI should fetch, rather than a local path? */
 export function isHttpUrl(location) {
   return typeof location === 'string' && /^https?:\/\//i.test(location);
+}
+
+/**
+ * Join a repo-relative file path (the `path` a manifest or index records, for
+ * example packages/scenes/kolam/render.js) onto a remote registry's base URL.
+ * Pure, so tests can run it without network. A `..` that stays inside is
+ * clamped away like any URL join; one that would escape the base is refused.
+ */
+export function remoteFileUrl(base, repoPath) {
+  const p = String(repoPath).replace(/\\/g, '/');
+  if (!p || p.startsWith('/') || /^[A-Za-z]:/.test(p)) {
+    throw new CliError(`${repoPath} is not a relative path inside the registry, so I cannot fetch it.`);
+  }
+  const parts = [];
+  for (const seg of p.split('/')) {
+    if (!seg || seg === '.') continue;
+    if (seg === '..') {
+      if (!parts.length) throw new CliError(`${repoPath} points outside the registry, so I will not fetch it.`);
+      parts.pop();
+      continue;
+    }
+    parts.push(seg);
+  }
+  if (!parts.length) throw new CliError(`${repoPath} is empty after resolving, so there is no file to fetch.`);
+  return new URL(parts.map(encodeURIComponent).join('/'), base.endsWith('/') ? base : base + '/').href;
+}
+
+/**
+ * Fetch one file the index lists, relative to the index's base URL.
+ * Returns the bytes, or null when the server has no such file (so the caller
+ * can report it the same way as a missing local file). Network errors and
+ * other statuses name the file and the URL in the message.
+ */
+export async function fetchRemoteFile(reg, repoPath) {
+  const url = remoteFileUrl(reg.root, repoPath);
+  let res;
+  try {
+    res = await fetch(url);
+  } catch (err) {
+    throw new CliError(`I could not fetch ${url} (${err.message}). Check the URL and your network.`);
+  }
+  if (res.status === 404) return null;
+  if (!res.ok) throw new CliError(`${url} answered ${res.status} ${res.statusText}. The index lists it, but the server does not have it.`);
+  return Buffer.from(await res.arrayBuffer());
 }
 
 /**
@@ -82,6 +131,15 @@ async function loadRemoteRegistry(url) {
  * @returns {Promise<{ file: string, root: string, index: object, items: Map<string, object>, remote: boolean }>}
  */
 export async function loadRegistry(location, cwd) {
+  // null means "nothing given" too (the MCP server passes null without --registry),
+  // and a default parameter only catches undefined
+  location ??= defaultRegistry;
+  cwd ??= process.cwd();
+  // The default: the repo's own index when this CLI lives in the repo, the
+  // live site when it does not (installed standalone). --registry always wins.
+  if (!isHttpUrl(location) && location === defaultRegistry && !existsSync(locateIndex(location, cwd))) {
+    return loadRemoteRegistry(LIVE_REGISTRY);
+  }
   return isHttpUrl(location) ? loadRemoteRegistry(location) : loadLocalRegistry(location, cwd);
 }
 

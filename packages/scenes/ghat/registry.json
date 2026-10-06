@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "ghat.prompt.md",
-  "budget": { "jsBytes": 61440, "reason": "The plate's terrain, drainage, contour, road and lettering code, ported line for line." }
+  "budget": { "jsBytes": 61440, "reason": "The plate's terrain, drainage, contour, road and lettering code, ported line for line." },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "A survey sheet of the Western Ghats above Goa: contours traced out of a noise height field with marching squares, rivers that find their own way to the sea, a ghat road that switchbacks up the escarpment, hand lettering, and monsoon clouds catching on the ridge."
+  }
 }

@@ -30,5 +30,10 @@
   "budget": {
     "jsBytes": 39936,
     "reason": "Decision 0009: 15 KB of behaviour (words in the person's terms, dates the way people say them, and a note that never appears mid-click and never repeats itself), plus 8 KB for each of three skins. Today 21939 bytes: behaviour (field-note.js + field-note.core.js) 14.3 KB, skins quiet 0.5 KB, warm 4.3 KB, playful 2.3 KB."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

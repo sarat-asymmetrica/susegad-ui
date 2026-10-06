@@ -9,7 +9,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test \"packages/**/*.test.js\" \"tools/**/*.test.mjs\" \"registry/**/*.test.mjs\" \"apps/**/*.test.js\" \"apps/**/*.test.mjs\"",
+    "test": "node --test \"packages/**/*.test.js\" \"tools/**/*.test.mjs\" \"registry/**/*.test.mjs\" \"apps/**/*.test.js\" \"apps/**/*.test.mjs\" \"sketchbook/**/*.test.js\"",
     "serve": "node tools/serve.mjs",
     "check": "node tools/checks.mjs",
     "cem": "node tools/cem.mjs",

@@ -64,11 +64,18 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
 //    two grabs half a second apart on the same page
 {
   const drift = async q => {
-    const { ctx, page } = await open(scene(q));
-    // early in the drift, so a slow frame cannot carry the second grab into the sheet's laying
-    await page.waitForFunction(() => { const u = +window.__piece.shadowRoot.querySelector('.stage').dataset.u; return u > 31.8 && u < 34; }, null, { timeout: 120000, polling: 50 }).catch(() => {});
-    const a = await grab(page); await page.waitForTimeout(500); const b = await grab(page);
-    await ctx.close();
+    // A grab that lands outside the drift says nothing about calm either way, so a pair that misses
+    // the window (a slow screenshot carries the second into the laying, or round to the next comb)
+    // is taken again on a fresh page, up to three times; the last pair is reported as it is.
+    let a, b;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const { ctx, page } = await open(scene(q));
+      // early in the drift, so a slow frame cannot carry the second grab into the sheet's laying
+      await page.waitForFunction(() => { const u = +window.__piece.shadowRoot.querySelector('.stage').dataset.u; return u > 31.8 && u < 34; }, null, { timeout: 120000, polling: 50 }).catch(() => {});
+      a = await grab(page); await page.waitForTimeout(500); b = await grab(page);
+      await ctx.close();
+      if (a.stage === 'drift' && b.stage === 'drift') break;
+    }
     return [a, b];
   };
   const [w1, w2] = await drift('register=playful&seed=1&content=1'), [b1, b2] = await drift('register=playful&seed=1');

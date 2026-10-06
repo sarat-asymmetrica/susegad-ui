@@ -1,9 +1,9 @@
 import { CliError } from './registry.js';
 
-const VALUE_FLAGS = { '--dir': 'dir', '--registry': 'registry', '--ref': 'ref', '--base': 'base' };
+const VALUE_FLAGS = { '--dir': 'dir', '--registry': 'registry', '--ref': 'ref', '--base': 'base', '--harness': 'harness' };
 const BOOL_FLAGS = {
   '--dry-run': 'dryRun', '--overwrite': 'overwrite', '--patch': 'patch', '--json': 'json',
-  '--help': 'help', '-h': 'help', '--version': 'version', '-v': 'version',
+  '--help': 'help', '-h': 'help', '--version': 'version', '-v': 'version', '--global': 'global',
 };
 
 /**
@@ -39,6 +39,9 @@ export const HELP = `susegad: copy Susegad UI pieces into your project, where th
   susegad info <item...>           files, dependencies, budget and prompt for an item
   susegad add <item...>            copy items and everything they need into your project
   susegad diff [item...]           which copied files differ from the registry
+  susegad skill                    install Susegad UI's skill for an agent harness
+  susegad check [item...]          the lighter gate for a change: tier, lints and the
+                                   evidence pack (library contributors, from the repo)
 
 Options
   --dir <folder>        where to put things (default src/lib; files land in <folder>/susegad/)
@@ -47,8 +50,9 @@ Options
                         the folder --dir is inside) when that differs from where you run
                         the command, so the hint matches what the page actually needs.
   --registry <path>     another registry: a repo folder, an index file, a file: URL, or an
-                        http(s):// URL to an index (list and info only; add and diff still
-                        need a local path or --ref)
+                        http(s):// URL to an index. With no --registry, the CLI reads the
+                        repo's index when it lives in the repo and the live registry
+                        (https://susegad.asymmetrica.ai/registry/registry.json) otherwise
   --ref <commit>        read the registry as committed at a commit, branch or tag (through
                         git archive), never the working tree: no uncommitted work, no stale index
   --dry-run             add: show what would happen and write nothing
@@ -56,9 +60,16 @@ Options
   --patch               diff: show the changed lines too
   --json                list and info: print JSON, for scripts and agents
 
+susegad skill
+  --harness <name>      claude (default), codex, hermes or opencode
+  --global              install to your user-level skills folder instead of this project's
+  --dir <folder>        where to put it, overriding the table of known destinations
+  --overwrite           replace a skill that is already installed
+
 Examples
   susegad add scene-kolam
   susegad add scene-paus --dir app/vendor --dry-run
   susegad add scene-kolam --dir site/vendor --base site   # site/ is the page's web root
   susegad diff scene-kolam --patch
-  susegad add enquiry date-range --dir public/vendor --ref main`;
+  susegad add enquiry date-range --dir public/vendor --ref main
+  susegad skill --harness claude --global`;

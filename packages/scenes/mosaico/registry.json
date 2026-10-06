@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "mosaico.prompt.md",
-  "budget": { "jsBytes": 40960 }
+  "budget": { "jsBytes": 40960 },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "The cement-tile floor of an old Goan balcão, seen from above: one Truchet tile laid in two turns, so the oxide-red bands join into long winding ribbons, worn and chipped under late window light."
+  }
 }

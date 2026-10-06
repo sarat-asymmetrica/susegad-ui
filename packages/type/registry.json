@@ -7,5 +7,10 @@
   "files": ["index.js", "layout.js", "junctions.js", "surface.js", "README.md"],
   "dependencies": ["pretext"],
   "budget": { "jsBytes": 24576, "reason": "A pure layout core (layout.js) and its DOM edge (lines, junctions and surfaces), budgeted apart from Pretext's own bytes (decisions 0010 and 0019)." },
-  "docs": "README.md"
+  "docs": "README.md",
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
 }

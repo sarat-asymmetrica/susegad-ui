@@ -9,5 +9,10 @@
   "files": ["index.js", "register.js", "define-scene.js", "scene-element.js", "colors.js", "README.md"],
   "dependencies": ["engine", "core-movable"],
   "budget": { "jsBytes": 31744, "reason": "Decision 0021: the open keep-away list, the reading-place watcher and the movable hook (the movable behaviour itself is its own item)." },
-  "docs": "README.md"
+  "docs": "README.md",
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
 }

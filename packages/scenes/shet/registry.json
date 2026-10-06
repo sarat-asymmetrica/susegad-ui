@@ -10,5 +10,10 @@
   "prompt": "shet.prompt.md",
   "tier": "scape",
   "entry": ["index.js"],
-  "budget": { "jsBytes": 98304, "firstSightBytes": 65536, "reason": "A year in a field, the plate's own code: its still is under 64 KB of code (first sight), the whole year under 96 KB of source, comments kept." }
+  "budget": { "jsBytes": 98304, "firstSightBytes": 65536, "reason": "A year in a field, the plate's own code: its still is under 64 KB of code (first sight), the whole year under 96 KB of source, comments kept." },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "One year of a Goan paddy field seen from a low rise: cracked April mud, the first rain darkening it drop by drop, flooded plots, green rice combed by wind, ripe gold, the harvest, and the mud cracking again, with two cattle egrets that come with the water."
+  }
 }

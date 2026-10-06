@@ -35,5 +35,10 @@
     "playful"
   ],
   "prompt": "proposal.prompt.md",
-  "docs": "proposal.docs.md"
+  "docs": "proposal.docs.md",
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
 }

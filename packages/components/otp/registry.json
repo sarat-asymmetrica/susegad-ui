@@ -32,5 +32,10 @@
   "budget": {
     "jsBytes": 38912,
     "reason": "Decision 0009: behaviour declared at 14 KB (the box-by-box editing model over one native input, and digits from every Indian script and full width read as ASCII), plus 8 KB for each of three skins. Today: behaviour 13.0 KB (otp.js 7.5, otp.core.js 5.6); skins share 1.6 KB of boxes, quiet adds 0.2 KB, warm 2.4 KB, playful 0.4 KB plus warm."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

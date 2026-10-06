@@ -1,0 +1,11 @@
+{
+  "items": [
+    { "name": "clean-everyday", "motif": { "origin": "goa", "tier": "everyday", "gloss": "A Goan window." } },
+    { "name": "clean-regional", "motif": { "origin": "tamil nadu", "tier": "regional", "gloss": "The threshold drawing laid fresh each morning in Tamil Nadu." } },
+    { "name": "sacred-with-lead", "motif": { "origin": "goa", "tier": "sacred", "gloss": "A temple banner.", "clientLed": true } },
+    { "name": "sacred-without-lead", "motif": { "origin": "goa", "tier": "sacred", "gloss": "A temple banner." } },
+    { "name": "regional-unnamed", "motif": { "origin": "bengal", "tier": "regional", "gloss": "A painted scroll for a travelling singer." } },
+    { "name": "bad-tier", "motif": { "origin": "goa", "tier": "important", "gloss": "x" } },
+    { "name": "hero-item", "motif": { "origin": "kolam", "tier": "everyday", "gloss": "x" } }
+  ]
+}

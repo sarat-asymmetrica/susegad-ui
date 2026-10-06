@@ -14,5 +14,10 @@
     "jsBytes": 18432,
     "frameMs": 16.7,
     "reason": "Behaviour about 10.2 KB (file-drop.js 6.1 KB, file-drop.core.js 4.1 KB); skins 0.2 KB (quiet), 4.5 KB of post box shared by warm and playful (skins/post.js), 0.3 KB each for warm and playful."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

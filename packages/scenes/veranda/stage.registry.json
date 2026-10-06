@@ -34,5 +34,10 @@
     "reason": "83 KB of source with comments across four files: the element 47 KB (the pane, its depth mask made for the camera as it stands, the settle that keeps the words clear of other words, the lens, the notes and the walk), matka-view.js 13 KB (three.js pot, its glass pane and the flowing paragraph, loaded only when a data-flow paragraph is present), and two pure cores, pane.core.js 18 KB and matka.core.js 4 KB, tested in Node and budgeted apart per decision 0010. It was 65,536 before the fix round that made the words never sit over other words and never hide while the camera moves (+17 KB, 11 KB of it the pure core, which the comments explain at length because three of the bugs it prevents were found only by looking at pixels); raised by the worker so the build passes, and flagged: the element is well over what a component usually declares, and the lens, notes and walk could move into a lazily loaded file, which is for the Sutradhar to decide. three.js is recorded apart (decision 0017): 135,588 B gzipped in the vendored build."
   },
   "prompt": "veranda-stage.prompt.md",
-  "docs": "veranda-stage.docs.md"
+  "docs": "veranda-stage.docs.md",
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "The Goan veranda's stage: the balcão where the house meets the street, drawn in depth."
+  }
 }

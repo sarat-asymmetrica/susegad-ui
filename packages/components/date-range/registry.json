@@ -34,5 +34,10 @@
   "budget": {
     "jsBytes": 40960,
     "reason": "Parts per decision 0010: element date-range.js 15,050 bytes (over 12 KB, under 16 KB: the APG keyboard grid, turnover rules, native validation, the season table, the rates setter and open-from run in every register); pure core date-range.core.js 9,949 bytes (under its own 12 KB); shared skin helper skins/drawing.js 13,604 bytes, counted as one skin, over the 8 KB skin allowance because it holds the ink loops, the season ribbon and its phone-width key; skin files quiet 199, warm 312 and playful 309 bytes."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

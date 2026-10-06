@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data table</title>
+<link rel="stylesheet" href="./data-table.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 60rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .page h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: 0 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-5); }
+  .page > section { margin-top: var(--sg-space-6); padding: 0 8px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Data table</h1>
+  <p class="lede">A native table that sorts and scrolls. The money is written the Indian way, lakh and crore (₹1,25,000, never 125,000), on tabular figures so the columns of digits line up. At phone width the table scrolls inside itself and the page stays still. Click a column heading, or reach it with Tab and press Enter.</p>
+  <div class="page" id="page">
+
+    <section aria-labelledby="h-ledger">
+      <h2 id="h-ledger">The ledger</h2>
+      <sg-data-table>
+        <table>
+          <caption>Furtado's Cashew &amp; Provisions, Aldona: what came in and what is still owed</caption>
+          <thead>
+            <tr>
+              <th scope="col" data-sort="month">Month</th>
+              <th scope="col" data-sort="invoices" data-value-col>Invoices</th>
+              <th scope="col" data-sort="collected" data-money-col>Collected</th>
+              <th scope="col" data-sort="outstanding" data-money-col>Outstanding</th>
+              <th scope="col" data-sort="buyer">Top buyer</th>
+              <th scope="col">Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>April 2026</td><td data-value="38">38</td><td data-money="245000">₹2,45,000</td><td data-money="38500">₹38,500</td><td>St. Anne's convent kitchen</td><td>Season opens</td></tr>
+            <tr><td>May 2026</td><td data-value="42">42</td><td data-money="310000">₹3,10,000</td><td data-money="52000">₹52,000</td><td>Miguel's Bakery, Mapusa</td><td>Wedding orders</td></tr>
+            <tr><td>June 2026</td><td data-value="29">29</td><td data-money="125000">₹1,25,000</td><td data-money="112400">₹1,12,400</td><td>A village shop, Moira</td><td>Monsoon, slow</td></tr>
+            <tr><td>July 2026</td><td data-value="31">31</td><td data-money="168000">₹1,68,000</td><td data-money="86000">₹86,000</td><td>St. Anne's convent kitchen</td><td>A cheque returned, then paid</td></tr>
+            <tr><td>August 2026</td><td data-value="35">35</td><td data-money="202750">₹2,02,750</td><td data-money="64300">₹64,300</td><td>A guesthouse, Siolim</td><td>Feast preparations</td></tr>
+            <tr><td>September 2026</td><td data-value="40">40</td><td data-money="256300">₹2,56,300</td><td data-money="41000">₹41,000</td><td>Miguel's Bakery, Mapusa</td><td>Two new wholesale lines</td></tr>
+          </tbody>
+          <tfoot>
+            <tr><td>Total</td><td data-value="215">215</td><td data-money="1307050">₹13,07,050</td><td data-money="394200">₹3,94,200</td><td colspan="2">Across six months</td></tr>
+          </tfoot>
+        </table>
+      </sg-data-table>
+    </section>
+
+  </div>
+  <p class="note">The figures are made up for the demo. The foot (tfoot) is never sorted; only the body moves. Sort twice for largest first, a third time to return to the order written here. Add <code>?register=quiet</code>, <code>warm</code> or <code>playful</code> to see one register on its own.</p>
+</main>
+<script>
+  // With no ?register, show the three registers side by side (a copy for each).
+  if (!new URLSearchParams(location.search).has('register')) {
+    const page = document.getElementById('page'), ledger = page.querySelector('section');
+    const names = { quiet: 'Quiet: hairline rules, generous space', warm: 'Warm: a hand-ruled header', playful: 'Playful: colour and a hand-lettered sort' };
+    page.replaceChildren(...Object.entries(names).map(([r, label]) => {
+      const sec = document.createElement('section');
+      sec.dataset.register = r; sec.setAttribute('aria-labelledby', `h-${r}`);
+      const h = document.createElement('h2'); h.id = `h-${r}`; h.textContent = label;
+      const copy = ledger.cloneNode(true);
+      copy.setAttribute('aria-labelledby', `h-${r}`);
+      const inner = copy.querySelector('h2'); inner.remove();
+      copy.querySelectorAll('[id]').forEach(e => { e.removeAttribute('id'); });
+      sec.append(h, copy);
+      return sec;
+    }));
+  }
+</script>
+<script type="module">
+  import './data-table.js';
+  document.documentElement.setAttribute('data-ready', 'true');
+  window.__ready = true;
+</script>
+</body>
+</html>

@@ -146,6 +146,11 @@ dl.map dd .term::after { content: ":"; }
 .install { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 18px 0 0; font-size: 14px; }
 .install code { font-family: var(--mono); font-size: 13.5px; padding: 4px 8px; border-radius: 4px; background: color-mix(in oklab, var(--ink) 6%, transparent); color: var(--ink); overflow-wrap: anywhere; }
 .install .copy { border-color: var(--rule-strong); }
+.use-title, .more-title { font-family: var(--display); font-size: 1.15rem; margin: 18px 0 4px; }
+.scene-use { margin-top: 18px; border-top: 1px solid var(--rule); padding-top: 12px; }
+.use-note { color: var(--ink-2); font-size: 14px; margin: 0 0 10px; }
+.use-code { margin: 0 0 10px; padding: 12px 14px; border-radius: 6px; background: color-mix(in oklab, var(--ink) 5%, transparent); overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.55; }
+.use-code code { font-family: inherit; }
 
 /* prev and next, like turning a page */
 .pn { display: flex; justify-content: space-between; gap: 16px; border-top: 1px solid var(--rule); padding-block: 16px 8px; margin-top: 16px; }

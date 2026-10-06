@@ -32,5 +32,10 @@
   "budget": {
     "jsBytes": 36864,
     "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 5921 bytes: element 3.0 KB, pure core 2.2 KB, skins quiet 0.1 KB, warm 0.4 KB, playful 0.2 KB. The state is the badge component."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

@@ -32,5 +32,10 @@
   "budget": {
     "jsBytes": 61440,
     "reason": "The singer performs, the house sits in the front row and answers her, the pit plays in the same beat, and the painted flats carry form and shadows. Under the 64 KB ceiling in decision 0003."
+  },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "The tiatr stage and curtain: painted proscenium with gold-fringed pelmet, footlights, orchestra pit, and three backdrops (church square, dusk beach, balcão night) behind a heavy red velvet curtain."
   }
 }

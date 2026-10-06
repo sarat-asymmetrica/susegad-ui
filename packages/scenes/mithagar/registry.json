@@ -31,5 +31,10 @@
   "budget": {
     "jsBytes": 53248,
     "reason": "The field reflects one continuous sky sampled per pan, the salt takes the ground as a moving front, a raker works the near pan, and the sky and bunds are cached so the scene runs at the baseline. Under the 64 KB ceiling in decision 0003."
+  },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "The Ribandar salt pans at dawn: a geometric grid of clay bunds, shallow brine reflecting the Goan sky, wooden sluice gates, crystalline white salt crusts, and pyramidal salt heaps."
   }
 }

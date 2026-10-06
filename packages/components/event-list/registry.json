@@ -31,5 +31,10 @@
   "budget": {
     "jsBytes": 36864,
     "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 8,415 bytes: element 6.8 KB, pure core 1.1 KB (it leans on event-card's core for the clock), skins 0.5 KB in all."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

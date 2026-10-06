@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "maun.prompt.md",
-  "budget": { "jsBytes": 40960 }
+  "budget": { "jsBytes": 40960 },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "A colour field that paints itself in thin veils, rolled on and scraped back so a warm ground glows through, then rests with only a slow breath of light."
+  }
 }

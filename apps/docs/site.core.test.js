@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   KINDS, NAV, slugOf, pathOf, up, roman, sceneGroups, neighbours, navLinks, page, posterImg, card,
-  indexPage, scenePage, itemPage, pencilBoxPage, homeDoors, redirectFor, esc,
+  indexPage, scenePage, itemPage, pencilBoxPage, homeDoors, redirectFor, esc, social, posterImage, OG_DEFAULT,
 } from './site.core.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -185,4 +185,37 @@ test('sentences: whole sentences up to the limit, never a cut mid-sentence when 
   assert.equal(sentences('A very long first sentence indeed.', 10), 'A very lon…', 'but never a whole paragraph');
   assert.equal(sentences('No full stop at all', 50), 'No full stop at all');
   assert.equal(sentences('Uses 0.5 and v1.2 inside. Then more.', 30), 'Uses 0.5 and v1.2 inside.', 'a dot inside a number is not an end');
+});
+
+test('the use-this-scene box: the site URL in every line, copyable, keyboard reachable', () => {
+  const list = [scene('paus')];
+  const html = scenePage(list[0], meta, { list, index: 0, plate: null, group: 'More scenes', poster: undefined, extras: [], demo: null, techniqueName: id => id });
+  assert.match(html, /<div class="scene-use">/);
+  assert.match(html, /<h2 class="use-title">Use this scene<\/h2>/);
+  // every line loads from the site, never a repo-relative path that only works here
+  const box = html.match(/<pre class="use-code"[^>]*>([\s\S]*?)<\/pre>/)[1];
+  assert.match(box, /&lt;link rel=&quot;stylesheet&quot; href=&quot;https:\/\/susegad\.asymmetrica\.ai\/packages\/tokens\/tokens\.css&quot;&gt;/);
+  assert.match(box, /&lt;script type=&quot;module&quot; src=&quot;https:\/\/susegad\.asymmetrica\.ai\/packages\/scenes\/paus\/index\.js&quot;&gt;&lt;\/script&gt;/);
+  assert.match(box, /&lt;sg-scene name=&quot;paus&quot; register=&quot;warm&quot;&gt;&lt;\/sg-scene&gt;/);
+  assert.doesNotMatch(box, /src="\.\/|href="\.\./, 'nothing repo-relative in what gets copied');
+  assert.match(html, /<button class="copy" type="button" data-copy="use-paus-text">Copy<\/button>/);
+  assert.match(html, /tabindex="0" role="region" aria-label="Snippet to copy"/, 'a keyboard can reach a scrollable snippet');
+});
+
+test('the nav carries Start here, and index.html matches it', () => {
+  assert.equal(NAV[0].key, 'start');
+  const home = fs.readFileSync(path.join(HERE, 'index.html'), 'utf8');
+  const got = [...home.match(/<nav class="nav"[^>]*>([\s\S]*?)<\/nav>/)[1].matchAll(/href="([^"]+)"[^>]*>([^<]+)</g)].map(m => [m[1], m[2]]);
+  assert.deepEqual(got, NAV.map(n => [n.key, n.label]));
+});
+
+test('link previews: absolute URLs, the default card, a piece previews with its own poster', () => {
+  const home = page({ title: 'Scenes', description: 'All the scenes', depth: 0, main: '', path: 'scenes' });
+  assert.match(home, /<meta property="og:url" content="https:\/\/susegad\.asymmetrica\.ai\/scenes">/);
+  assert.match(home, /<meta property="og:image" content="https:\/\/susegad\.asymmetrica\.ai\/og\.jpg\?v=2">/);
+  assert.match(home, /<meta name="twitter:card" content="summary_large_image">/);
+  const own = social({ title: 'Vad', description: 'd', path: 'scenes/vad', image: posterImage({ name: 'scene-vad', title: 'Vad' }, { w: 688, h: 459 }) });
+  assert.match(own, /og:image" content="https:\/\/susegad\.asymmetrica\.ai\/posters\/scene-vad\.warm\.light\.jpg"/);
+  assert.match(own, /og:image:width" content="688"/);
+  assert.equal(posterImage({ name: 'x', title: 'x' }, undefined), OG_DEFAULT);
 });

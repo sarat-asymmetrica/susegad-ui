@@ -1,0 +1,159 @@
+/* <sg-gallery>: photographs, consent first. Without JavaScript this is the
+   quiet look: a grid, hairline frames, and consent-pending slots as drawn
+   frames with their captions and the count. Warm adds hand-drawn photo corners
+   (drawn by the skin, seeded); playful leans the slots like photos on a table. */
+
+sg-gallery {
+  display: grid;
+  grid-template-columns: repeat(var(--sg-gallery-cols, 3), minmax(0, 1fr));
+  gap: var(--sg-space-4);
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body);
+}
+
+/* a slot: the photograph, or the drawn frame that stands where it will be */
+sg-gallery .sg-gallery-slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sg-space-2);
+  margin: 0;
+  min-width: 0;
+  rotate: 0deg;
+  transform-origin: 50% 90%;
+}
+
+/* the photograph itself, and the button that opens it */
+sg-gallery .sg-gallery-open {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  background: none;
+  color: inherit;
+  cursor: zoom-in;
+  font: inherit;
+  line-height: 0;
+}
+sg-gallery .sg-gallery-open img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+sg-gallery .sg-gallery-open:focus-visible {
+  outline: var(--sg-focus-width) solid var(--sg-focus);
+  outline-offset: var(--sg-focus-offset);
+}
+sg-gallery .sg-gallery-open:hover img { opacity: 0.92; }
+
+sg-gallery figcaption, sg-gallery .sg-gallery-count {
+  margin: 0;
+  font-size: var(--sg-step--1);
+  color: var(--sg-text-soft);
+}
+sg-gallery figcaption { color: var(--sg-text); }
+
+/* ── consent pending: a drawn frame with photo corners, never the image.
+   The frame is decoration (an aria-hidden SVG, drawn by the element and the
+   skins); the caption and the count are the real content. The slot is not a
+   control: nothing in it takes focus or opens anything. ── */
+sg-gallery .sg-gallery-slot[data-consent="pending"] {
+  justify-content: center;
+  min-height: 11rem;
+  padding: var(--sg-space-5) var(--sg-space-4);
+  background: var(--sg-surface-sunk);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+}
+/* quiet's small photo corners, inked with two rules; warm and playful draw
+   theirs by hand in the SVG the element places instead */
+sg-gallery:not([data-skin="warm"], [data-skin="playful"])
+  .sg-gallery-slot[data-consent="pending"] { border: 0; background: none; }
+sg-gallery:not([data-skin="warm"], [data-skin="playful"])
+  .sg-gallery-slot[data-consent="pending"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  background:
+    linear-gradient(var(--sg-rule-strong) 0 0) top left / 2.2rem var(--sg-hairline),
+    linear-gradient(var(--sg-rule-strong) 0 0) top left / var(--sg-hairline) 2.2rem,
+    linear-gradient(var(--sg-rule-strong) 0 0) top right / 2.2rem var(--sg-hairline),
+    linear-gradient(var(--sg-rule-strong) 0 0) top right / var(--sg-hairline) 2.2rem,
+    linear-gradient(var(--sg-rule-strong) 0 0) bottom right / 2.2rem var(--sg-hairline),
+    linear-gradient(var(--sg-rule-strong) 0 0) bottom right / var(--sg-hairline) 2.2rem,
+    linear-gradient(var(--sg-rule-strong) 0 0) bottom left / 2.2rem var(--sg-hairline),
+    linear-gradient(var(--sg-rule-strong) 0 0) bottom left / var(--sg-hairline) 2.2rem,
+    var(--sg-surface-sunk);
+  background-repeat: no-repeat;
+}
+/* the drawing is painted by the slot's background layer; keep the words above it */
+sg-gallery .sg-gallery-slot[data-consent="pending"] :is(figcaption, .sg-gallery-count) { position: relative; z-index: 1; }
+sg-gallery .sg-gallery-slot[data-consent="pending"] .sg-gallery-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+  color: var(--sg-text-soft);
+}
+sg-gallery .sg-gallery-frame path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+/* pending slots sit lower than photographs, so they read as a promise, not a hole */
+sg-gallery .sg-gallery-slot[data-consent="pending"] .sg-gallery-count {
+  order: 2;
+  font-variant-numeric: lining-nums;
+}
+sg-gallery .sg-gallery-slot[data-consent="pending"] figcaption { order: 1; }
+
+/* the dialog: the photograph large, its caption, and a way out */
+sg-gallery .sg-gallery-dialog {
+  max-width: min(92vw, 56rem);
+  padding: var(--sg-space-4);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  background: var(--sg-surface-raised);
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body);
+}
+sg-gallery .sg-gallery-dialog::backdrop { background: color-mix(in oklch, var(--sg-shadow) 62%, transparent); }
+sg-gallery .sg-gallery-dialog figure { margin: 0; display: grid; gap: var(--sg-space-2); }
+sg-gallery .sg-gallery-dialog img { display: block; width: 100%; height: auto; max-height: 72vh; object-fit: contain; }
+sg-gallery .sg-gallery-dialog figcaption { color: var(--sg-text-soft); }
+sg-gallery .sg-gallery-close {
+  margin-top: var(--sg-space-2);
+  justify-self: end;
+  min-height: 2.5rem;
+  padding: 0 var(--sg-space-3);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-2);
+  background: transparent;
+  color: var(--sg-text);
+  font: inherit;
+  cursor: pointer;
+}
+sg-gallery .sg-gallery-close:hover { background: var(--sg-surface-sunk); }
+sg-gallery .sg-gallery-close:focus-visible {
+  outline: var(--sg-focus-width) solid var(--sg-focus);
+  outline-offset: var(--sg-focus-offset);
+}
+
+/* playful: a slot lifts a hair under the pointer and settles, once. Nothing
+   under reduced motion, and nothing that loops. */
+@media (prefers-reduced-motion: no-preference) {
+  sg-gallery[data-skin="playful"][data-motion="full"] .sg-gallery-slot {
+    rotate: var(--sg-gallery-tilt, 0deg);
+    transition: rotate var(--sg-dur-slow) var(--sg-ease-spring), translate var(--sg-dur-slow) var(--sg-ease-spring);
+  }
+  sg-gallery[data-skin="playful"][data-motion="full"] .sg-gallery-open:hover { translate: 0 -3px; }
+}
+
+@media (forced-colors: active) {
+  sg-gallery .sg-gallery-open, sg-gallery .sg-gallery-dialog { border: 1px solid CanvasText; }
+}

@@ -31,5 +31,10 @@
     "jsBytes": 6144,
     "frameMs": 16.7,
     "reason": "Behaviour (select.js) about 2.3 KB; skins about 0.2 KB (quiet), 1.6 KB (warm) and 0.6 KB (playful). Most of the look is CSS on the native element. The warm skin draws with field/rule.js (about 3.1 KB, counted in field)."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

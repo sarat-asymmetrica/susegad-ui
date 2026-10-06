@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "dar.prompt.md",
-  "budget": { "jsBytes": 40960 }
+  "budget": { "jsBytes": 40960 },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "Yours to keep: a Goan house front in elevation, with a laterite wall under lime plaster, a painted door in a lime-white surround, a window of oyster-shell panes and bougainvillea."
+  }
 }

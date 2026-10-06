@@ -38,5 +38,10 @@
     "jsBytes": 98304,
     "firstSightBytes": 65536,
     "reason": "A ray-cast drawing, 70 KB of source with its comments: the world and its ray caster 15.8 KB, the painter 35.0 KB, the renderer 6.5 KB, the model 2.7 KB, meta 6.3 KB. First sight is the still, 55.7 KB of code (under 64 KB); assets.js (2.9 KB), which writes the depth and layers maps for the 3D stage, loads only on a page that stages it."
+  },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "A Goan veranda drawn in ink and wash, seen from a seat on it: laterite pillars with a balcão between them, a teak door and a shuttered window in a lime-washed wall, a brass lamp under the rafters, and the garden and paddy beyond."
   }
 }

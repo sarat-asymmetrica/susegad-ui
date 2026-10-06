@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "vahi.prompt.md",
-  "budget": { "jsBytes": 61440, "reason": "four kinds of paper, the book that closes, a pen, a clip and a string, each painted by hand in ink and in hairline" }
+  "budget": { "jsBytes": 61440, "reason": "four kinds of paper, the book that closes, a pen, a clip and a string, each painted by hand in ink and in hairline" },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "The pile becomes a ledger: loose receipts, invoices, a bill book and a scrawled chit lift one at a time from a teak table, drift over an open account book while their line is written, and settle on a neat stack; then the book closes and its string is wound."
+  }
 }

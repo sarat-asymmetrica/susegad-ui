@@ -32,5 +32,10 @@
   "budget": {
     "jsBytes": 36864,
     "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 9427 bytes: element 2.8 KB, pure core 2.4 KB, skins quiet 0.2 KB, warm 3.1 KB, playful 1.1 KB. The status is the badge component by default; the stamp is opt-in and the builder adds it."
+  },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "The Goan picture postcard, sold at ferry points and station kiosks through the twentieth century."
   }
 }

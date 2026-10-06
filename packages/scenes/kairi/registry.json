@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "kairi.prompt.md",
-  "budget": { "jsBytes": 40960 }
+  "budget": { "jsBytes": 40960 },
+  "motif": {
+    "origin": "india",
+    "tier": "everyday",
+    "gloss": "A printed sari border of kairi, the paisley worn all over India, drawn by a machine of spinning circles: each paisley's outline is a Fourier series, the chain grows one circle at a time until the pencil sketch sharpens, then the pen inks it and madder, indigo and turmeric fill it."
+  }
 }

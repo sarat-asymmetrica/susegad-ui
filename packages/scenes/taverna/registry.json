@@ -32,5 +32,10 @@
   "budget": {
     "jsBytes": 57344,
     "reason": "Adds the person crossing the alley under a lantern, the bar shadows it throws across the sill, and a struck-glass chime instead of a single tone. Under the 64 KB ceiling in decision 0003."
+  },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "Rain on bottle glass: a village taverna window on a rainy monsoon night with dark wooden bars, dark green wine bottles, a ceramic jug, and a slate blackboard."
   }
 }

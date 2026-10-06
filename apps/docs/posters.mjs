@@ -23,7 +23,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { REGISTERS, THEMES, slugOf } from './site.core.js';
 
-const VERSION = '3'; // bump to re-shoot everything (a change to how posters are taken)
+const VERSION = '4'; // bump to re-shoot everything (a change to how posters are taken)
 const DESK = { width: 760, height: 475 }; // a demo is shot at this viewport (narrow enough that its words read on a card)...
 const DEMO_SCALE = 640 / 760; // ...and this device scale: a 640 x 400 picture
 const SCENE_VIEW = { width: 720, height: 900 };
@@ -33,8 +33,12 @@ const CONCURRENCY = 4;
 export function posterSource(item, fileExists) {
   if (item.type === 'scene') return { kind: 'scene', url: `/tools/harness/scene.html?name=${encodeURIComponent(slugOf(item))}&seed=1` };
   const dir = path.posix.dirname(item.manifest);
-  for (const f of ['demo.html', 'index.html']) {
-    if (fileExists(`${dir}/${f}`)) return { kind: 'demo', url: `/${dir}/${f}`, file: `${dir}/${f}`, pastHeading: f === 'demo.html' };
+  // a second manifest in a folder (veranda/stage.registry.json) is photographed
+  // from its own page, never from the folder's main demo, which shows another piece
+  const own = path.posix.basename(item.manifest).match(/^(.+)\.registry\.json$/)?.[1];
+  const pages = own ? [`${own}.demo.html`, `${own}.html`] : ['demo.html', 'index.html'];
+  for (const f of pages) {
+    if (fileExists(`${dir}/${f}`)) return { kind: 'demo', url: `/${dir}/${f}`, file: `${dir}/${f}`, pastHeading: f !== 'index.html' };
   }
   return null;
 }
@@ -118,9 +122,13 @@ async function capture(browser, base, { item, src, stem }) {
       const page = await context.newPage();
       const sep = src.url.includes('?') ? '&' : '?';
       await page.goto(`${base}${src.url}${sep}register=${register}&theme=${theme}`, { waitUntil: 'load', timeout: 30000 });
-      // a page that declares itself unready (__ready === false) and never finishes has
-      // nothing finished to photograph; one that does not take part (undefined) is loaded
-      await page.waitForFunction(() => window.__ready !== false, null, { timeout: 20000 });
+      // a scene page is undefined until the harness sets __ready = true after
+      // sg-ready, so `!== false` here passed at once and the shot fired before
+      // the scene had painted anything (D2, the blank posters). A scene must
+      // actually be ready; a demo declares __ready = false first, so for it
+      // `!== false` still waits properly and only refuses a page stuck unready.
+      if (scene) await page.waitForFunction(() => window.__ready === true, null, { timeout: 35000 });
+      else await page.waitForFunction(() => window.__ready !== false, null, { timeout: 20000 });
       await page.evaluate(() => document.fonts.ready);
       await page.evaluate(settleMedia);
       // a scene's own play/pause corner button is a control, not part of the picture

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  // ?register=quiet|warm|playful and ?theme=light|dark set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute(`data-${k}`, v);
+  window.__ready = false; // set once the directory is wired, so the tools wait for it
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Members, building near Aldona</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="../../components/field/field.css">
+<link rel="stylesheet" href="../../components/check/check.css">
+<link rel="stylesheet" href="../../components/person-card/person-card.css">
+<link rel="stylesheet" href="./recipe.css">
+<style>
+  body { margin: 0; background: var(--sg-paper, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem)/var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 62rem; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font: 600 var(--sg-step-3, 1.6rem)/1.15 var(--sg-font-display, inherit); margin: 0 0 6px; }
+  .lede { color: var(--sg-text-soft, inherit); max-width: var(--sg-measure, 62ch); margin: 0 0 24px; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Members, building near Aldona</h1>
+  <p class="lede">The people who come to the atelier, what each of them is building, and how to reach them. Filter by a name or a role, or by track, or both.</p>
+
+  <div class="sg-directory" id="directory">
+    <form class="sg-directory-filters" action="./">
+      <sg-field>
+        <label for="q">Search the members</label>
+        <input id="q" name="q" type="search" placeholder="A name, a role, what they build" autocomplete="off">
+      </sg-field>
+      <fieldset class="sg-directory-tracks">
+        <legend>Track</legend>
+        <sg-check><label><input type="checkbox" name="track" value="AI for Senior Citizens"> AI for Senior Citizens</label></sg-check>
+        <sg-check><label><input type="checkbox" name="track" value="AI for Kids"> AI for Kids</label></sg-check>
+        <sg-check><label><input type="checkbox" name="track" value="Tech for Good"> Tech for Good</label></sg-check>
+        <sg-check><label><input type="checkbox" name="track" value="Builders Moving to Goa"> Builders Moving to Goa</label></sg-check>
+        <sg-check><label><input type="checkbox" name="track" value="Workshops for Founders"> Workshops for Founders</label></sg-check>
+      </fieldset>
+      <noscript><p class="sg-directory-note">Without JavaScript the filters do nothing; every member shows, unfiltered.</p></noscript>
+    </form>
+
+    <p class="sg-directory-count" role="status">Showing 7 members</p>
+
+    <ul class="sg-directory-list" id="list">
+      <li><sg-person-card data-track="AI for Kids">
+        <article aria-labelledby="m1">
+          <h3 id="m1">Priyanka Naik</h3>
+          <p class="sg-person-role">Teacher, Aldona</p>
+          <p class="sg-person-building">A Konkani storybook reader that reads aloud to children</p>
+          <p class="sg-person-link"><a href="https://example.com/priyanka">Her notes</a></p>
+        </article>
+      </sg-person-card></li>
+      <li><sg-person-card data-track="Tech for Good">
+        <article aria-labelledby="m2">
+          <h3 id="m2">Melwyn Fernandes</h3>
+          <p class="sg-person-role">Retired engineer, Aldona</p>
+          <p class="sg-person-building">A booking board for the village hall, on paper and on screen</p>
+          <p class="sg-person-link"><a href="mailto:melwyn@example.com">Write to Melwyn</a></p>
+        </article>
+      </sg-person-card></li>
+      <li><sg-person-card data-track="AI for Senior Citizens">
+        <article aria-labelledby="m3">
+          <h3 id="m3">Sarita Kamat</h3>
+          <p class="sg-person-role">Librarian, Saligao</p>
+          <p class="sg-person-building">A voice calendar that reminds without a screen</p>
+          <p class="sg-person-link"><a href="https://example.com/sarita">Her page</a></p>
+        </article>
+      </sg-person-card></li>
+      <li><sg-person-card data-track="Builders Moving to Goa">
+        <article aria-labelledby="m4">
+          <h3 id="m4">Aldrich Pinto</h3>
+          <p class="sg-person-role">Developer, Socorro</p>
+          <p class="sg-person-building">A moved-here notebook: offices, prices, what actually works</p>
+          <p class="sg-person-link"><a href="https://example.com/aldrich">His notebook</a></p>
+        </article>
+      </sg-person-card></li>
+      <li><sg-person-card data-track="Workshops for Founders">
+        <article aria-labelledby="m5">
+          <h3 id="m5">Fernanda D'Souza</h3>
+          <p class="sg-person-role">Baker and founder, Siolim</p>
+          <p class="sg-person-building">A pricing guide for one-oven bakeries</p>
+          <p class="sg-person-link"><a href="https://example.com/fernanda">Her guide</a></p>
+        </article>
+      </sg-person-card></li>
+      <li><sg-person-card data-track="Tech for Good">
+        <article aria-labelledby="m6">
+          <h3 id="m6">Deepa Shirodkar</h3>
+          <p class="sg-person-role">Nurse, Aldona</p>
+          <p class="sg-person-building">A one-page reminder card for medicines, in Konkani</p>
+          <p class="sg-person-link"><a href="https://example.com/deepa">Her page</a></p>
+        </article>
+      </sg-person-card></li>
+      <li><sg-person-card data-track="AI for Senior Citizens">
+        <article aria-labelledby="m7">
+          <h3 id="m7">Roque Barros</h3>
+          <p class="sg-person-role">Fisherman, Moira</p>
+          <p class="sg-person-building">A tide and catch log his father can read without glasses</p>
+          <p class="sg-person-link"><a href="https://example.com/roque">His log</a></p>
+        </article>
+      </sg-person-card></li>
+    </ul>
+
+    <div class="sg-directory-empty" hidden>
+      <p>No one matches that yet. Try a shorter word, or a different track.</p>
+    </div>
+    <p class="sg-directory-share" hidden>This filtered view is in the address; copy it and anyone opening it sees the same members.</p>
+  </div>
+</main>
+<script type="module">
+  import { mountDirectory } from './recipe.js';
+  const tags = ['sg-field', 'sg-check', 'sg-person-card'];
+  await Promise.all(tags.map(t => customElements.whenDefined(t)));
+  mountDirectory(document.getElementById('directory'));
+  await document.fonts.ready;
+  window.__ready = true;
+</script>
+</body>
+</html>

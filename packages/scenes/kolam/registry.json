@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "kolam.prompt.md",
-  "budget": { "jsBytes": 40960 }
+  "budget": { "jsBytes": 40960 },
+  "motif": {
+    "origin": "tamil nadu",
+    "tier": "regional",
+    "gloss": "The kolam, the threshold drawing laid fresh each morning in Tamil Nadu and elsewhere in South India; here drawn in rice-flour lines by code."
+  }
 }

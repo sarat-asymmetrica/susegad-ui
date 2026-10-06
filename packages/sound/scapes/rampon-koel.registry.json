@@ -7,5 +7,10 @@
   "version": "0.1.0",
   "files": ["rampon-koel.js", "rampon-koel.core.js"],
   "dependencies": ["sound", "scene-rampon"],
-  "budget": { "jsBytes": 6144 }
+  "budget": { "jsBytes": 6144 },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "The koel calling across a Goan village at dawn, with the rampon fishermen's rhythm underneath."
+  }
 }

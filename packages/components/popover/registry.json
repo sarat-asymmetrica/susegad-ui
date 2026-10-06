@@ -29,5 +29,10 @@
   "budget": {
     "jsBytes": 36864,
     "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today about 5.5 KB: behaviour (popover.js + popover.core.js) 4.7 KB; skins quiet, warm and playful are each a no-op mount (about 0.2 KB each), because the look is entirely in popover.css keyed off [data-skin]."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

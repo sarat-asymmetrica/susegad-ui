@@ -35,5 +35,10 @@
   "budget": {
     "jsBytes": 36864,
     "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today about 17.3 KB: element 5.9 KB, pure core 4.6 KB, the build-time peaks tool 2.7 KB, skins share bars.js 2.5 KB (one shared helper counts as one skin, decision 0010) with quiet 0.2 KB, warm 0.3 KB, playful 0.8 KB. The time maths, cue lookup, VTT parser and WAV reader are reused from player and narration, not copied."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

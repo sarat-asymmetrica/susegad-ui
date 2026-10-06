@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "tollem.prompt.md",
-  "budget": { "jsBytes": 45056, "reason": "Two complete renderers: the WebGL shader and a full 2D fallback." }
+  "budget": { "jsBytes": 45056, "reason": "Two complete renderers: the WebGL shader and a full 2D fallback." },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "Looking down into a Goan pool at noon: a WebGL net of light over pale tiles, a frangipani that drops a flower now and then, and a full 2D painting when WebGL is missing, lost or too slow."
+  }
 }

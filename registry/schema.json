@@ -76,7 +76,11 @@
           "properties": {
             "origin": { "type": "string", "minLength": 1 },
             "tier": { "type": "string", "minLength": 1 },
-            "gloss": { "type": "string", "minLength": 1 }
+            "gloss": { "type": "string", "minLength": 1 },
+            "clientLed": {
+              "description": "Sacred motifs only: true means the client asked for the motif and leads how it is used. The motif lint requires it on every sacred motif.",
+              "type": "boolean"
+            }
           },
           "additionalProperties": false
         },
@@ -148,7 +152,11 @@
           "properties": {
             "origin": { "type": "string", "minLength": 1 },
             "tier": { "type": "string", "minLength": 1 },
-            "gloss": { "type": "string", "minLength": 1 }
+            "gloss": { "type": "string", "minLength": 1 },
+            "clientLed": {
+              "description": "Sacred motifs only: true means the client asked for the motif and leads how it is used. The motif lint requires it on every sacred motif.",
+              "type": "boolean"
+            }
           },
           "additionalProperties": false
         },

@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "themb.prompt.md",
-  "budget": { "jsBytes": 45056, "reason": "Two complete renderers: the WebGL shader and a full 2D fallback, with the plate's physics." }
+  "budget": { "jsBytes": 45056, "reason": "Two complete renderers: the WebGL shader and a full 2D fallback, with the plate's physics." },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "Rain on a taro leaf seen from above: a WebGL shader draws the velvet leaf, its inked veins and the beads as signed distance fields joined by a smooth minimum, each a lens over the leaf; a full 2D painting takes over when WebGL is missing, lost or too slow."
+  }
 }

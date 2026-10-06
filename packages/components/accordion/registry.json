@@ -1,0 +1,40 @@
+{
+  "name": "accordion",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Accordion",
+  "description": "Frequently asked questions on the browser's own details and summary: the summary is a real toggle that takes Tab and turns on Enter and Space, and questions sharing a name form an exclusive group, only one open at a time. The element adopts its own name attribute for the children that have none, keeps an account of what is open, and says so once per turn. Quiet is hairline rules and a thin chevron; warm draws the marker in the hand face and opens with a soft slide; playful sets the questions in the hand and flips a drawn, seeded glyph with a spring.",
+  "version": "0.1.0",
+  "files": [
+    "accordion.js",
+    "accordion.core.js",
+    "accordion.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "accordion.prompt.md",
+    "accordion.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "accordion.prompt.md",
+  "docs": "accordion.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins; the pure core is budgeted apart (0010). Today 10,432 bytes: element 4.8 KB, pure core 3.7 KB (the groups, the open plan, the account), skins quiet 0.2 KB, warm 0.5 KB, playful 1.0 KB (the seeded tilts), so most of the budget is unspent and the drawing lives in the CSS."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

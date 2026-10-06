@@ -3,10 +3,12 @@
 import { readFileSync } from 'node:fs';
 import { parseArgs, HELP } from '../src/args.js';
 import { add, diff, info, list } from '../src/commands.js';
+import { check } from '../src/check.js';
+import { skill } from '../src/skill.js';
 import { CliError } from '../src/registry.js';
 import { snapshotAt } from '../src/ref.js';
 
-const COMMANDS = { list, ls: list, add, diff, info };
+const COMMANDS = { list, ls: list, add, diff, info, skill, check };
 
 export async function run(argv, { cwd = process.cwd(), out = s => console.log(s ?? ''), err = s => console.error(s ?? '') } = {}) {
   let snap = null;
@@ -20,7 +22,7 @@ export async function run(argv, { cwd = process.cwd(), out = s => console.log(s 
     if (args.help || !args.command || args.command === 'help') { out(HELP); return args.command && args.command !== 'help' ? 1 : 0; }
     const command = COMMANDS[args.command];
     if (!command) {
-      err(`I do not know the command "${args.command}". I can list, info, add and diff.`);
+      err(`I do not know the command "${args.command}". I can list, info, add, diff, skill and check.`);
       err('Run susegad --help for the details.');
       return 1;
     }

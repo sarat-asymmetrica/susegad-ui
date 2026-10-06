@@ -24,7 +24,7 @@ Build narration for a document or a story: a phrase splitter that never exceeds 
 | When you say | Technique | What happens |
 |---|---|---|
 | never exceeds a provider's character limit and never breaks a word | phrase splitting | `splitPhrases(text, { maxChars })` breaks at sentence ends first, then clause punctuation, then word boundaries, joining pieces back up to just under the limit. |
-| measure each phrase's real audio duration from its WAV header | honesty | `parseWav(bytes)` walks the RIFF chunks (fmt and data aren't always adjacent) and divides the data chunk's byte length by the frame size and sample rate — the true duration, not an estimate. |
+| measure each phrase's real audio duration from its WAV header | honesty | `parseWav(bytes)` walks the RIFF chunks (fmt and data aren't always adjacent) and divides the data chunk's byte length by the frame size and sample rate, the true duration, not an estimate. |
 | a script-aware weight … a proper akshara count | the akshara rules | `wordWeight(word)` in `weights.js`: for Devanagari and Kannada, a state machine walks the codepoints, counting a consonant unless the previous character was a virama (which joins it into a conjunct with the consonant before), and letting matras, anusvara and visarga attach without incrementing the count; an independent vowel always counts. |
 | hold a pause after punctuation, longer at a sentence end than a comma | pacing | `timing.js`'s `PAUSE_AFTER` table gives each punctuation mark a pause in word-weight-units (the danda and double danda included), added to the total the phrase's duration is divided by. |
 | a highlight driver can mark the current one … a caption renderer that doesn't understand the tags still shows plain words | WebVTT karaoke tags | `writeVtt` puts a `<HH:MM:SS.mmm>` tag before every word after a cue's first, exactly the form the WebVTT spec defines for this; `parseVtt` reads it back the same way. |
@@ -39,9 +39,9 @@ Build narration for a document or a story: a phrase splitter that never exceeds 
 
 - Captions are always present; the highlight never carries information the captions don't already give.
 - The play control is the consent (decision 0015); narration never autoplays and is never gated by the ambient sound switch.
-- `aria-current="true"` is the only signal on a word span — no colour-only cue.
+- `aria-current="true"` is the only signal on a word span, no colour-only cue.
 - Pronunciation, register and word choice for a real script are a native speaker's job; `story/spread.json`'s `owner_to_confirm` and `pronunciation_notes` are the pattern for flagging what needs that review before it ships.
 
 ## Credit
 
-The word-timing method — measure real audio, then spread by a script-aware syllable weight — is a workaround for a real gap: no mainstream Indian-language text-to-speech API publishes word-level timestamps as of this writing. It is an estimate, tested to read naturally, not a claim of precision.
+The word-timing method, measure real audio, then spread by a script-aware syllable weight, is a workaround for a real gap: no mainstream Indian-language text-to-speech API publishes word-level timestamps as of this writing. It is an estimate, tested to read naturally, not a claim of precision.

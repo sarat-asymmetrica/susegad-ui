@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Person card</title>
+<link rel="stylesheet" href="./person-card.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 80rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .page h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: 0 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-5); }
+  .stack { display: grid; grid-template-columns: min(100%, 30rem); gap: var(--sg-space-5); margin-top: var(--sg-space-5); padding: var(--sg-space-2) 8px; }
+  .page > section + section { margin-top: var(--sg-space-6); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Person card</h1>
+  <p class="lede">One person, and what they are building: the name, the role, one line of work and a link. By default the card shows the person's initials, cut from their name, in place of a photo. A photo belongs on the card only when that person has given it, and said so; write the <code>img</code> yourself and the disc steps aside.</p>
+  <div class="page" id="page">
+    <div class="stack">
+
+      <sg-person-card data-track="AI for Kids">
+        <article aria-labelledby="pc-1">
+          <h3 id="pc-1">Priyanka Naik</h3>
+          <p class="sg-person-role">Teacher, Aldona</p>
+          <p class="sg-person-building">A Konkani storybook reader that reads aloud to children</p>
+          <p class="sg-person-link"><a href="https://example.com/priyanka">Her notes</a></p>
+        </article>
+      </sg-person-card>
+
+      <sg-person-card data-track="Tech for Good">
+        <article aria-labelledby="pc-2">
+          <h3 id="pc-2">Melwyn Fernandes</h3>
+          <p class="sg-person-role">Retired engineer, Aldona</p>
+          <p class="sg-person-building">A booking board for the village hall, on paper and on screen</p>
+          <p class="sg-person-link"><a href="mailto:melwyn@example.com">Write to Melwyn</a></p>
+        </article>
+      </sg-person-card>
+
+      <sg-person-card data-track="Workshops for Founders">
+        <article aria-labelledby="pc-3">
+          <h3 id="pc-3">Sarita Kamat</h3>
+          <p class="sg-person-role">Founder, Siolim</p>
+          <p class="sg-person-building">A pricing workshop for one-person studios</p>
+          <p class="sg-person-link"><a href="https://example.com/sarita">Her studio</a></p>
+        </article>
+      </sg-person-card>
+
+      <sg-person-card data-track="Tech for Good">
+        <article aria-labelledby="pc-4">
+          <h3 id="pc-4">Ana D'Souza</h3>
+          <p class="sg-person-role">Nurse, Aldona</p>
+          <p class="sg-person-building">A one-page reminder card for medicines, in Konkani</p>
+          <p class="sg-person-link"><a href="https://example.com/ana">Her page</a></p>
+          <img class="sg-person-photo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' fill='%23c9a683'/%3E%3Ccircle cx='48' cy='38' r='17' fill='%23f3e3cf'/%3E%3Cpath d='M16 96c4-22 18-32 32-32s28 10 32 32z' fill='%23f3e3cf'/%3E%3C/svg%3E" alt="Ana D'Souza">
+        </article>
+      </sg-person-card>
+
+    </div>
+  </div>
+  <p class="note">The fourth card shows the optional photo slot, written by the author, with consent; it is a stand-in drawing here. The others show initials only. Add <code>?register=quiet</code>, <code>warm</code> or <code>playful</code> to see one register on its own.</p>
+</main>
+<script>
+  // With no ?register, show the three registers side by side (a copy of the cards for each).
+  if (!new URLSearchParams(location.search).has('register')) {
+    const page = document.getElementById('page'), stack = page.querySelector('.stack');
+    const names = { quiet: 'Quiet: a hairline card', warm: 'Warm: a soft card, the initials in the hand', playful: 'Playful: a colour disc, a small tilt' };
+    page.replaceChildren(...Object.entries(names).map(([r, label]) => {
+      const sec = document.createElement('section');
+      sec.dataset.register = r; sec.setAttribute('aria-labelledby', `h-${r}`);
+      const h = document.createElement('h2'); h.id = `h-${r}`; h.textContent = label;
+      const copy = stack.cloneNode(true);
+      copy.querySelectorAll('[id]').forEach(e => { e.id += `-${r}`; });
+      copy.querySelectorAll('[aria-labelledby]').forEach(e => { e.setAttribute('aria-labelledby', `${e.getAttribute('aria-labelledby')}-${r}`); });
+      sec.append(h, copy);
+      return sec;
+    }));
+  }
+</script>
+<script type="module">
+  import './person-card.js';
+</script>
+</body>
+</html>

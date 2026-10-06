@@ -1,0 +1,109 @@
+/* <sg-site-footer>. Without JavaScript this is the quiet look: a footer under
+   a hairline rule, the sign-off in the display face, the links in a row and
+   the small print in soft text. Warm writes the sign-off in the hand and draws
+   a pencil rule under it; playful sets the links down like stamped chips. */
+
+sg-site-footer {
+  display: block;
+  container: site-footer / inline-size;
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body);
+}
+sg-site-footer[hidden] { display: none; }
+
+sg-site-footer footer {
+  display: grid;
+  gap: var(--sg-space-3);
+  padding-block: var(--sg-space-5) var(--sg-space-4);
+  border-top: var(--sg-hairline) solid var(--sg-rule-strong);
+}
+sg-site-footer footer > * { margin: 0; min-width: 0; }
+sg-site-footer a { color: var(--sg-text); }
+sg-site-footer a:focus-visible {
+  outline: var(--sg-focus-width) solid var(--sg-focus);
+  outline-offset: var(--sg-focus-offset);
+  border-radius: var(--sg-radius-1);
+}
+
+sg-site-footer .sg-site-footer-sign {
+  font: 400 var(--sg-step-1) / var(--sg-leading-snug) var(--sg-font-display);
+  position: relative;
+  align-self: start;
+  max-width: var(--sg-measure);
+}
+sg-site-footer .sg-site-footer-links ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sg-space-1) var(--sg-space-4);
+}
+sg-site-footer .sg-site-footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  text-decoration: none;
+  text-underline-offset: 0.25em;
+}
+sg-site-footer .sg-site-footer-links a:hover { text-decoration: underline; text-decoration-thickness: var(--sg-hairline); }
+sg-site-footer .sg-site-footer-small {
+  font-size: var(--sg-step--1);
+  color: var(--sg-text-soft);
+}
+sg-site-footer .sg-site-footer-small time { font-variant-numeric: lining-nums; }
+
+/* ── warm: written on the paper, a pencil rule under the sign-off ── */
+sg-site-footer[data-skin="warm"] footer {
+  border-top-color: transparent;
+  background: linear-gradient(var(--sg-pencil), var(--sg-pencil)) 0 0 / 100% 1px no-repeat;
+}
+sg-site-footer[data-skin="warm"] .sg-site-footer-sign { font-family: var(--sg-font-hand); font-size: var(--sg-step-2); }
+sg-site-footer .sg-site-footer-rule {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 0.15rem);
+  height: 8px;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--sg-accent-text);
+  stroke-linecap: round;
+}
+sg-site-footer .sg-site-footer-rule path:first-child { stroke-width: 1.8; }
+sg-site-footer .sg-site-footer-rule path:last-child { stroke-width: 0.9; opacity: 0.55; }
+
+/* ── playful: links set down like stamped chips, each at its own small angle ── */
+sg-site-footer[data-skin="playful"] footer { border-top: var(--sg-stroke-bold) solid var(--sg-text); }
+sg-site-footer[data-skin="playful"] .sg-site-footer-sign { font-family: var(--sg-font-hand); font-size: var(--sg-step-3); }
+sg-site-footer[data-skin="playful"] .sg-site-footer-links {
+  padding-top: var(--sg-space-1);
+  padding-bottom: var(--sg-space-2);
+}
+sg-site-footer[data-skin="playful"] .sg-site-footer-links a {
+  padding: 0 var(--sg-space-3);
+  border: var(--sg-stroke-bold) solid var(--sg-text);
+  border-radius: var(--sg-radius-2);
+  background: var(--sg-surface-raised);
+  box-shadow: inset 0 0 0 2px var(--sg-surface), inset 0 0 0 3px var(--sg-text);
+  font: var(--sg-weight-medium) var(--sg-step--1) / 1 var(--sg-font-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  rotate: var(--sg-footer-tilt, 0deg);
+  transform-origin: 50% 60%;
+}
+sg-site-footer[data-skin="playful"] .sg-site-footer-links a:hover { text-decoration: none; }
+/* the playful lift: a short hop when pointed at, and nothing under reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  sg-site-footer[data-skin="playful"][data-motion="full"] .sg-site-footer-links a {
+    transition: translate var(--sg-dur-slow) var(--sg-ease-spring);
+  }
+  sg-site-footer[data-skin="playful"][data-motion="full"] .sg-site-footer-links a:hover { translate: 0 -2px; }
+}
+
+@media (forced-colors: active) {
+  sg-site-footer footer { border-top: 1px solid CanvasText; }
+  sg-site-footer[data-skin="playful"] .sg-site-footer-links a { border: 1px solid ButtonText; box-shadow: none; }
+  sg-site-footer .sg-site-footer-rule { stroke: LinkText; }
+}

@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "saanj.prompt.md",
-  "budget": { "jsBytes": 49152, "reason": "The plate's own OKLCH colour, boids flock, paddy plots and palms, ported line for line." }
+  "budget": { "jsBytes": 49152, "reason": "The plate's own OKLCH colour, boids flock, paddy plots and palms, ported line for line." },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "Dusk over flooded paddy: a sky mixed in OKLCH from apricot through rose to indigo, a line of ink palms, and a murmuration of six hundred rosy starlings flown by boids, which pours into the palms to roost and leaves at dawn."
+  }
 }

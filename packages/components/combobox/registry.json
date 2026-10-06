@@ -33,5 +33,10 @@
     "jsBytes": 20480,
     "frameMs": 16.7,
     "reason": "Behaviour 13.2 KB (0009 allows up to 16 KB with a reason): the APG editable-combobox keyboard model plus matching that folds Latin accents without touching Indic vowel signs, aliases across scripts and loose romanisation. Skins share a 1.2 KB caret and add 0.3 KB (quiet), 1.5 KB (warm) and 0.7 KB (playful); warm draws with field/rule.js, counted in field. Raised from 17 KB to 20 KB for the warm pencil rule (S5), well inside decision 0005's 12 KB plus 8 KB a skin, with about 15% headroom."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

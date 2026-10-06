@@ -8,5 +8,10 @@
   "files": ["three.named.js", "three-entry.js", "PROVENANCE.md", "LICENSE"],
   "dependencies": [],
   "budget": { "jsBytes": 540000, "reason": "Vendored and never edited: the exact bytes of the pinned build, recorded apart from our own code (decision 0017). Any change to it must be recorded in PROVENANCE.md." },
-  "docs": "PROVENANCE.md"
+  "docs": "PROVENANCE.md",
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
 }

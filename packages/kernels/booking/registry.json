@@ -7,5 +7,10 @@
   "version": "0.1.0",
   "files": ["index.js", "dates.js", "rates.js", "pricing.js", "availability.js", "drift.test.js", "drift.fixture.json"],
   "dependencies": [],
-  "budget": { "jsBytes": 18432, "reason": "The five kernel files are 14,595 bytes; drift.test.js (2,389 bytes) ships with them so a consumer with its own copy can check it for drift, and it never loads in a page." }
+  "budget": { "jsBytes": 18432, "reason": "The five kernel files are 14,595 bytes; drift.test.js (2,389 bytes) ships with them so a consumer with its own copy can check it for drift, and it never loads in a page." },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
 }

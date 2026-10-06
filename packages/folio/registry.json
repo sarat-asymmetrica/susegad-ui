@@ -22,5 +22,10 @@
     "jsBytes": 45056,
     "reason": "Decision 0010 in spirit: the Markdown parser and directive renderer (md/index.js 22.9 KB, which checks a diagram's lines with folio-diagram's grammar,, md/parse.js 14.7 KB) are a pure core that runs in Node at build time and is fully tested; they never ship inside a sealed document. What a document carries is folio-print.js and folio-check.js, 1.9 KB together, and build/seal.mjs (3.6 KB) runs only in Node for folio verify. Declared at 44 KB: today 42.4 KB."
   },
-  "docs": "README.md"
+  "docs": "README.md",
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
 }

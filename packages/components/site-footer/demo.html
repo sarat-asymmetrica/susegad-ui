@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Site footer</title>
+<link rel="stylesheet" href="./site-footer.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 60rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .page h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: 0 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-5); }
+  .stack { display: grid; grid-template-columns: min(100%, 46rem); gap: var(--sg-space-5); margin-top: var(--sg-space-5); padding: var(--sg-space-2) 8px; }
+  .page > section + section { margin-top: var(--sg-space-6); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Site footer</h1>
+  <p class="lede">The closing block every site needs: a sign-off line, the links a reader may still want, and the small print. It is a native footer, so it reads fine with no JavaScript at all. The small print's copyright year moves forward to the clock's year, once, and never back.</p>
+  <div class="page" id="page">
+    <div class="stack">
+
+      <sg-site-footer seed="The Paper Boat Studio" now="2026-10-03">
+        <footer aria-label="Site footer">
+          <p class="sg-site-footer-sign">Drawn, printed and posted from Aldona.</p>
+          <nav class="sg-site-footer-links" aria-label="Footer">
+            <ul>
+              <li><a href="#page">Work</a></li>
+              <li><a href="#page">Journal</a></li>
+              <li><a href="#page">Workshops</a></li>
+              <li><a href="#page">Visit</a></li>
+              <li><a href="#page">Privacy</a></li>
+            </ul>
+          </nav>
+          <p class="sg-site-footer-small">&copy; <time datetime="2026">2026</time> The Paper Boat Studio, Aldona. All drawings belong to the studio.</p>
+        </footer>
+      </sg-site-footer>
+
+      <sg-site-footer seed="The Paper Boat Studio, older year" now="2026-10-03">
+        <footer aria-label="Site footer">
+          <p class="sg-site-footer-sign">The press never fully rests.</p>
+          <nav class="sg-site-footer-links" aria-label="Footer">
+            <ul>
+              <li><a href="#page">Work</a></li>
+              <li><a href="#page">Contact</a></li>
+            </ul>
+          </nav>
+          <p class="sg-site-footer-small">&copy; <time datetime="2024">2024</time> The Paper Boat Studio, Aldona. Set by hand, kept by hand.</p>
+        </footer>
+      </sg-site-footer>
+
+      <sg-site-footer seed="The Paper Boat Studio, small footer" now="2026-10-03">
+        <footer aria-label="Site footer">
+          <p class="sg-site-footer-sign">Come by on a Sunday, when the kilns are quiet.</p>
+          <p class="sg-site-footer-small">The Paper Boat Studio, Aldona. Letters welcome.</p>
+        </footer>
+      </sg-site-footer>
+
+    </div>
+  </div>
+  <p class="note">All three footers count from 3 October 2026 (the <code>now</code> attribute), so the page looks the same whenever it is opened. In order: a full footer with the year already right, one whose small print still says 2024 (the element moves it to 2026 and tells the page with <code>sg-site-footer-year</code>), and a minimal footer with no links and no year to move. Add <code>?register=quiet</code>, <code>warm</code> or <code>playful</code> to see one register on its own.</p>
+</main>
+<script>
+  // With no ?register, show the three registers side by side (a copy of the footers for each).
+  if (!new URLSearchParams(location.search).has('register')) {
+    const page = document.getElementById('page'), stack = page.querySelector('.stack');
+    const names = { quiet: 'Quiet: a ruled footer', warm: 'Warm: the hand and a pencil rule', playful: 'Playful: stamped chips' };
+    page.replaceChildren(...Object.entries(names).map(([r, label]) => {
+      const sec = document.createElement('section');
+      sec.dataset.register = r; sec.setAttribute('aria-labelledby', `h-${r}`);
+      const h = document.createElement('h2'); h.id = `h-${r}`; h.textContent = label;
+      const copy = stack.cloneNode(true);
+      copy.querySelectorAll('[id]').forEach(e => { e.id += `-${r}`; });
+      copy.querySelectorAll('[aria-labelledby]').forEach(e => { e.setAttribute('aria-labelledby', `${e.getAttribute('aria-labelledby')}-${r}`); });
+      sec.append(h, copy);
+      return sec;
+    }));
+  }
+</script>
+<script type="module">
+  import './site-footer.js';
+</script>
+</body>
+</html>

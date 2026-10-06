@@ -31,5 +31,10 @@
   "budget": {
     "jsBytes": 36864,
     "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 7520 bytes: element 1.4 KB, pure core 3.1 KB, skins quiet 0.2 KB, warm 1.5 KB, playful 1.3 KB."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

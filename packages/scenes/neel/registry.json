@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "neel.prompt.md",
-  "budget": { "jsBytes": 40960 }
+  "budget": { "jsBytes": 40960 },
+  "motif": {
+    "origin": "rajasthan",
+    "tier": "regional",
+    "gloss": "Hand block printing on khadi cotton, in the way of the Sanganer and Bagru printers of Rajasthan: a carved buti block generated from the seed is pressed one impression at a time, indigo outlines first, then a second colour off register, every impression a little starved and turned."
+  }
 }

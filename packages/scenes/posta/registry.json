@@ -32,5 +32,10 @@
   "budget": {
     "jsBytes": 57344,
     "reason": "The room now carries a customer at the window and a beam that swings and narrows with the day, and the three contact sounds are shaped per voice instead of being one beep. Under the 64 KB ceiling in decision 0003."
+  },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "The Old Post Office in Fontainhas: a vintage rosewood sorting desk beneath an oyster shell carepa window with sunbeams, wooden cubbies holding jute-tied letter bundles, a crimson postbox with brass flap, and a brass balance scale."
   }
 }

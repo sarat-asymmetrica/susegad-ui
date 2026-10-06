@@ -20,7 +20,7 @@ Put one anywhere a page offers the setting: a header, a settings panel, the firs
 
 - On connect, the checkbox is set to `soundOn()`. Checking or unchecking it calls `setSoundOn()` from inside the browser's own `change` event, so that click or key press is the user gesture `switch.js` needs to resume the shared `AudioContext`: turning sound on and hearing the first sound can be the same tap. Turning it on also plays `confirm`, the switch's own first sound.
 - Every `<sg-sound-switch>` on the page listens for `sg-sound-change` and follows: check one, and the rest (and anything else reading `soundOn()`) update without a page reload.
-- **Without JavaScript** the checkbox is still there, still announced as a switch, and still takes Space — but nothing it does has an effect, because there is no sound without JavaScript. A `<small class="sg-sound-switch-note">` beside it says so in words; this element hides that note once it is running.
+- **Without JavaScript** the checkbox is still there, still announced as a switch, and still takes Space, but nothing it does has an effect, because there is no sound without JavaScript. A `<small class="sg-sound-switch-note">` beside it says so in words; this element hides that note once it is running.
 
 ## Attributes
 

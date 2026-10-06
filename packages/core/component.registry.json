@@ -7,5 +7,10 @@
   "version": "0.1.0",
   "files": ["component.js"],
   "dependencies": ["core"],
-  "budget": { "jsBytes": 6144 }
+  "budget": { "jsBytes": 6144 },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
 }

@@ -1,0 +1,16 @@
+{
+  // Metadata for a sketchbook entry. Copy this folder to sketchbook/entries/<your-entry>/
+  // and fill in the fields. Comments are allowed in this file (JSONC); the lint strips them.
+  "title": "",
+  "rememberedBy": "",
+  "place": "",
+  "motif": {
+    "origin": "",
+    "tier": "everyday",
+    "gloss": null
+  },
+  "consent": null,
+  "references": [],
+  "status": "sketch",
+  "communityLead": null
+}

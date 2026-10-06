@@ -38,7 +38,7 @@ the slide's start to the Teental stagger's first beat.
   at any panel height) over the Carepa scrim.
 - **Playful**: the same, brighter, with the slide's start delayed by
   `talaDelay(1)` from `packages/tokens/tokens.js` (one beat into the
-  sixteen-beat cycle, not the very first) — a small anticipatory pause
+  sixteen-beat cycle, not the very first), a small anticipatory pause
   before the panel moves, never more than 130ms, well under the charter's
   600ms cap for a stagger's last item.
 

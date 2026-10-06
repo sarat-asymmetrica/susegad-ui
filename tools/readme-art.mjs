@@ -7,6 +7,7 @@
 //   hero.light.gif / hero.dark.gif   the home page as the tiatr curtain rises
 //   scenes.light.jpg / .dark.jpg     twelve scenes, named
 //   registers.light.jpg / .dark.jpg  one piece in quiet, warm and playful
+// and apps/docs/og.jpg, the 1200 x 630 link-preview card (commit it, then rebuild)
 //
 // The grids are laid out as an HTML page in the site's own fonts and
 // screenshotted; the GIF is a Playwright video turned into a palette GIF by
@@ -94,6 +95,39 @@ try {
       await page.close();
       execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', png, '-vf', 'scale=1400:-1', '-q:v', '4', join(OUT, `${name}.${theme}.jpg`)]);
     }
+  }
+
+  // ── the link-preview card: big words and the tiatr, legible as a thumbnail ──
+  {
+    const file = '_readme-og.html';
+    writeFileSync(join(SITE, file), `<!doctype html><html lang="en" data-register="warm" data-palette="susegad" data-theme="light"><head><meta charset="utf-8">
+<link rel="stylesheet" href="packages/tokens/fonts.css"><link rel="stylesheet" href="packages/tokens/tokens.css"><link rel="stylesheet" href="docs.css">
+<style>
+  /* Chat apps show this either wide (1200 x 630) or cut to the centre square
+     (x 285 to 915). Everything that matters sits in that square; the two side
+     scenes only add to the wide view. */
+  body { margin: 0; width: 1200px; height: 630px; background: #f1ebe1; color: #1d2440; position: relative; overflow: hidden; }
+  .side { position: absolute; top: 50%; transform: translateY(-50%); width: 250px; height: 380px; object-fit: cover; border-radius: 8px; opacity: .9; }
+  .left { left: 18px; } .right { right: 18px; }
+  .mid { position: absolute; left: 315px; width: 570px; top: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .kick { font-family: var(--r-hand); font-size: 30px; color: #a8452c; margin: 0; }
+  h1 { font-family: var(--display); font-weight: 400; font-size: 92px; line-height: 1; margin: 0 0 22px; }
+  h1 span { font-family: var(--body); font-size: 24px; font-weight: 600; letter-spacing: .14em; color: #a8452c; vertical-align: .95em; margin-left: 8px; }
+  .stage { width: 100%; border-radius: 8px; box-shadow: 0 6px 26px rgba(0,0,0,.18); display: block; }
+</style></head><body>
+  <img class="side left" src="posters/scene-vad.warm.light.jpg" alt="">
+  <img class="side right" src="posters/scene-tollem.warm.light.jpg" alt="">
+  <div class="mid"><p class="kick">drawn in code in Goa</p><h1>Susegad<span>UI</span></h1>
+  <img class="stage" src="posters/scene-kantar.warm.light.jpg" alt=""></div>
+</body></html>`);
+    tmpPages.push(join(SITE, file));
+    const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1, colorScheme: 'light' });
+    await page.goto(`${base}/${file}`);
+    await page.evaluate(() => Promise.all([document.fonts.ready, ...[...document.images].map(i => i.decode())]));
+    const png = join(tmpdir(), 'sg-og.png');
+    await page.screenshot({ path: png });
+    await page.close();
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', png, '-q:v', '3', join(REPO_ROOT, 'apps', 'docs', 'og.jpg')]);
   }
 
   // ── the hero: the home page as the curtain rises ───────────────────

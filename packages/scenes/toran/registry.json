@@ -10,5 +10,10 @@
   "dependencies": ["core", "engine", "tokens"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "toran.prompt.md",
-  "budget": { "jsBytes": 61440, "reason": "The plate's whole doorway (wall, frame, teak door, step, balcão, eave, lota, chappals) and its marigold sprites are painted in code, ported line for line." }
+  "budget": { "jsBytes": 61440, "reason": "The plate's whole doorway (wall, frame, teak door, step, balcão, eave, lota, chappals) and its marigold sprites are painted in code, ported line for line." },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "A Goan doorway on the morning of Chovoth, with a garland of marigolds and mango leaves strung across it from three nails: a Verlet rope that sags, swings in a noise breeze and settles."
+  }
 }

@@ -15,5 +15,10 @@
   "budget": {
     "jsBytes": 6144,
     "reason": "One small drawing module shared by the Kantar scene and the Kantar interlude; the velvet strip, the pelmet shadow and the fringe, with the hem supplied by the caller."
+  },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "The tiatr stage's curtain, drawn: folds, a rippling hem and the proscenium's valance, shared by the Kantar scene and interlude."
   }
 }

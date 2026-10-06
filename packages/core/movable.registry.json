@@ -7,5 +7,10 @@
   "version": "0.1.0",
   "files": ["movable.js", "movable.core.js"],
   "dependencies": [],
-  "budget": { "jsBytes": 16384, "reason": "Decision 0021: the element side (grip, pointer capture, keys, status, glass) and its pure geometry (movable.core.js, tested in Node, counted apart per decision 0010)." }
+  "budget": { "jsBytes": 16384, "reason": "Decision 0021: the element side (grip, pointer capture, keys, status, glass) and its pure geometry (movable.core.js, tested in Node, counted apart per decision 0010)." },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
 }

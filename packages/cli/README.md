@@ -15,8 +15,10 @@ node packages/cli/bin/susegad.mjs add scene-kolam
 | `susegad info <item…>` | Files, dependencies, registers, budget, and the prompt path. |
 | `susegad add <item…>` | Copies the items and everything they depend on. |
 | `susegad diff [item…]` | Which copied files differ from the registry, and why. With no items, checks everything you have added. |
+| `susegad check [item…]` | The library's lighter gate for a change, in one command: the tier read from the diff, the lints (motif, canvas text, copy) and the evidence pack. With no items it takes the pieces your diff touches. Run it from the susegad-ui checkout; open the pack's contact sheet before you open a PR. |
+| `susegad skill` | Installs Susegad UI's skill (SKILL.md and references/) for an agent harness, so the harness knows how to use the library. |
 
-Options: `--dir <folder>` (default `src/lib`), `--registry <repo folder, index file or file: URL>`, `--ref <commit, branch or tag>`, `--dry-run`, `--overwrite`, `--patch` (for diff), `--json` (for list and info).
+Options: `--dir <folder>` (default `src/lib`), `--registry <repo folder, index file, file: URL or https:// index URL>`, `--ref <commit, branch or tag>`, `--dry-run`, `--overwrite`, `--patch` (for diff), `--json` (for list and info). `susegad skill` takes `--harness <name>` (default claude), `--global` and `--dir`.
 
 ## Install from a commit
 
@@ -25,6 +27,35 @@ node ../susegad-ui/packages/cli/bin/susegad.mjs add enquiry date-range --dir pub
 ```
 
 `--ref` reads the registry as it was committed, never the working tree. The CLI runs `git archive` for the index and `packages/` at that commit, unpacks them into a temporary folder (with its own small tar reader), runs the command against that, and removes the folder. So uncommitted work in the library's checkout never reaches your project, and a stale index there never blocks you. It works with every command: `list`, `info`, `add` and `diff`. The registry has to be a git repository, and the commit has to include `registry/registry.json`. Files arrive exactly as committed, with no line-ending conversion.
+
+## Over HTTP, and the live registry
+
+`add` and `diff` work against an `http://` or `https://` registry the same way they work against a local one: `--registry https://susegad.asymmetrica.ai/registry/registry.json` and every file the index lists is fetched relative to that index's own base URL. Each file's `sha256` hash is checked against what the index recorded, and nothing is written unless every file matches; a mismatch names the file and refuses the whole command. A file the index lists but the server does not have is reported as missing rather than guessed at. `--dry-run`, `--overwrite` and the lockfile behave exactly as locally, so the same protections (your edits are never replaced without `--overwrite`) hold over the network too.
+
+When no `--registry` is given, the CLI reads the index in the repo it lives in (`registry/registry.json`, built with `node registry/build.mjs`). If that file is not there (the CLI installed on its own, away from the repo), it falls back to the live registry at `https://susegad.asymmetrica.ai/registry/registry.json`. `--registry` overrides both.
+
+## The skill command
+
+```sh
+susegad skill --harness claude --global
+susegad skill --harness opencode            # this project's skills folder
+susegad skill --dir somewhere/else          # where you want it, no table consulted
+```
+
+It copies the repo's `SKILL.md` and its `references/` folder into `<skills folder>/susegad-ui/`, and leaves an existing install alone unless you pass `--overwrite`.
+
+The destinations come from a table in `src/harnesses.js`, and every path in it was checked against that harness's own documentation, which the entry cites:
+
+| Harness | Without `--global` | With `--global` | Verified against |
+|---|---|---|---|
+| `claude` (default) | `.claude/skills/` | `~/.claude/skills/` | https://code.claude.com/docs/en/skills |
+| `opencode` | `.opencode/skills/` | `~/.config/opencode/skills/` | https://opencode.ai/docs/skills/ |
+| `hermes` | `.hermes/skills/` | `~/.hermes/skills/` | https://hermes-agent.nousresearch.com/docs/user-guide/features/skills/ |
+| `codex` | none | none | https://developers.openai.com/codex/guides/agents-md |
+
+Codex reads `AGENTS.md` files, not a skills folder, so its entry is marked unverified and the command refuses to guess: it asks you for `--dir <folder>` instead. The rule is general: any harness without a documented skills folder gets an honest "I do not know" rather than a made-up path that happens to look right.
+
+One limit: the skill lives in the library's checkout (its `SKILL.md` and `references/` beside the repo root), so `susegad skill` needs a clone or a checkout there. A tarball install that shipped without them says so plainly instead of failing mysteriously.
 
 ## Where files go
 

@@ -14,5 +14,10 @@
     "jsBytes": 10240,
     "frameMs": 16.7,
     "reason": "Behaviour about 5.3 KB (empty.js 2.2 KB, empty.core.js 3.1 KB); skins about 0.9 KB (quiet), 2.4 KB (warm: the scene loads only once the empty state is on screen, and sits after the words in the document) and 0.3 KB (playful, which reuses warm). Declared with about 10% headroom. The scene it shows is its own registry item with its own budget."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }

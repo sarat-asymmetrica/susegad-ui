@@ -32,5 +32,10 @@
   "budget": {
     "jsBytes": 36864,
     "reason": "Decision 0005: 12 KB of behaviour plus 8 KB for each of three skins. Today 21005 bytes: behaviour (field.js + field.core.js, and rule.js, the pencil rule select and combobox share) 12.4 KB, skins quiet 0.2 KB, warm 6.7 KB, playful 1.2 KB."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
   }
 }
