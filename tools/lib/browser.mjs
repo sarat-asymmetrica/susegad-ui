@@ -5,53 +5,10 @@ import { startServer } from '../serve.mjs';
 import { targetPath } from './target.mjs';
 import { contextOptions, engineName, launchArgs, pickEngine } from './engine.mjs';
 import { acquireSlot } from './slots.mjs';
+import { HOLD_SCRIPT } from './virtual-time.mjs';
 
 export const PHONE = { width: 390, height: 844, dpr: 3, touch: true };
 export const DESKTOP = { width: 1280, height: 900, dpr: 1, touch: false };
-
-/**
- * Installed before any page script: lets a capture hold every requestAnimationFrame loop
- * without touching the piece's own state or UI (a paused scene would show its play toggle).
- * While held, new rAF callbacks queue instead of running; release() schedules them again.
- * step(n) is for the strip and onion tools: while held, it plays n frames by hand. Each frame runs
- * the queued callbacks with a fresh timestamp (the harness clock's wrapper counts one virtual
- * frame per new timestamp, so one step is one 1/60 s tick of that clock) and then lets every
- * promise and message settle, so a scene that awaits a frame sees every one. No vsync wait.
- */
-const HOLD_SCRIPT = `(() => {
-  const raf = window.requestAnimationFrame.bind(window), caf = window.cancelAnimationFrame.bind(window);
-  const queued = new Map();
-  let holding = false, nextId = 1e9, fakeTs = 1e6;
-  const port = new MessageChannel();
-  const settle = () => new Promise(r => { port.port1.onmessage = () => r(); port.port2.postMessage(0); });
-  window.requestAnimationFrame = cb => {
-    if (!holding) return raf(cb);
-    const id = nextId++;
-    queued.set(id, cb);
-    return id;
-  };
-  window.cancelAnimationFrame = id => { if (!queued.delete(id)) caf(id); };
-  Object.defineProperty(window, '__tools', { value: Object.freeze({
-    get held() { return holding; },
-    hold() { holding = true; },
-    async step(n = 1) {
-      if (!holding) throw new Error('__tools.step needs __tools.hold() first');
-      for (let i = 0; i < n; i++) {
-        const cbs = [...queued.values()];
-        queued.clear();
-        fakeTs += 1000 / 60;
-        for (const cb of cbs) { try { cb(fakeTs); } catch (e) { setTimeout(() => { throw e; }); } }
-        await settle();
-      }
-    },
-    release() {
-      holding = false;
-      const cbs = [...queued.values()];
-      queued.clear();
-      for (const cb of cbs) raf(cb);
-    },
-  }) });
-})();`;
 
 /**
  * Start the server and the browser together; `done()` closes both. Takes a machine-wide browser slot
@@ -159,7 +116,12 @@ export async function waitReady(page, t, { timeout = 15000 } = {}) {
     if (theme) d.theme = theme;
     if (palette) d.palette = palette;
   }, { register: t.register, theme: t.theme, palette: t.palette });
-  await page.evaluate(() => document.fonts.ready);
+  // Firefox never settles document.fonts.ready on a page whose JavaScript is off, and a setTimeout inside such a page never
+  // fires (12 October 2026, Firefox 155 in WSL: depth-photo's no-JS section hung in each until the 600 s kill). So a no-JS
+  // page is waited for from here, for a bounded time, not from inside the page.
+  const bounded = (promise, ms) => { let timer; return Promise.race([promise.catch(() => {}), new Promise(r => { timer = setTimeout(r, ms); })]).finally(() => clearTimeout(timer)); };
+  if (t.noJs) await bounded(page.evaluate(() => document.fonts.ready), 5000);
+  else await page.evaluate(() => document.fonts.ready);
   // A page that declares window.__ready (false until done) is waited for.
   if (!t.noJs && await page.evaluate(() => '__ready' in window)) {
     try { await page.waitForFunction(() => window.__ready === true, null, { timeout }); }
@@ -167,7 +129,9 @@ export async function waitReady(page, t, { timeout = 15000 } = {}) {
   }
   // Lists that arrive on the tala (menu, event-list, gallery, data-table) are mid-fade for their first
   // second; every gate reads the page once they have arrived, never mid-fade. Finite ones only, capped.
-  await page.evaluate(() => Promise.race([
+  const arrived = () => Promise.all(document.getAnimations().filter(a => a.animationName === 'sg-arrive').map(a => a.finished.catch(() => {})));
+  if (t.noJs) await bounded(page.evaluate(arrived), 2000);
+  else await page.evaluate(() => Promise.race([
     Promise.all(document.getAnimations().filter(a => a.animationName === 'sg-arrive').map(a => a.finished.catch(() => {}))),
     new Promise(r => setTimeout(r, 2000)),
   ]));

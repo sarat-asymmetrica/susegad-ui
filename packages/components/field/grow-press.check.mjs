@@ -108,7 +108,10 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   await p.fill('#bare', lines(80));
   const eighty = await height(p, '#bare');
   check('a bare textarea in a form grows with what is typed', one.fs === 'content' && ten.h > one.h + 60, `${one.h}px -> ${ten.h}px`);
-  check('a bare textarea in a form has a ceiling', eighty.h <= 20 * 16 + 4 && eighty.scroll > eighty.client, `${eighty.h}px`);
+  // the ceiling is 20em of the textarea's own font (form.css), around which sit its padding and border; a bare textarea has the
+  // browser's default font, whose size differs by platform (13.3 px on Windows, 16 px on Linux), so measure against what it has
+  const box = await p.evaluate(() => { const cs = getComputedStyle(document.getElementById('bare')); return { em: parseFloat(cs.fontSize), around: ['paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth'].reduce((n, k) => n + parseFloat(cs[k]), 0) }; });
+  check('a bare textarea in a form has a ceiling', eighty.h <= 20 * box.em + box.around + 1 && eighty.scroll > eighty.client, `${eighty.h}px, 20em of ${box.em}px plus ${box.around}px around it`);
   await ctx.close();
 }
 

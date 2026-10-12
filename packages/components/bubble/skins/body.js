@@ -91,7 +91,12 @@ export function mountBody(host, ctx, look) {
       const { family, weight } = fontOf(cs);
       let done = null;
       spacing = spacingOf(cs);
-      try { await document.fonts?.load?.(`${weight} ${maxPx}px ${family}`); } catch { /* measure with what there is */ }
+      try { await document.fonts?.load?.(`${weight} ${maxPx}px ${family}`); } catch {
+        // load() rejects the moment one face of the stack has failed, with the others still on their way (a metric-matched
+        // fallback whose local() font this machine lacks fails at once): wait for those, or the first lay-out is in the fallback
+        let timer; // fonts.ready is every face in flight on the page: give it a ceiling, as the type tier does
+        try { await Promise.race([document.fonts.ready, new Promise(r => { timer = setTimeout(r, 4000); })]); } catch { /* measure with what there is */ } finally { clearTimeout(timer); }
+      }
       if (my !== gen) return;
       // a hand that lays lines by arithmetic cannot know letter or word spacing the page adds (WCAG 1.4.12): the browser lays those
       if (ctx.motion === 'still' || hasMarkup() || spacing !== 'normal|0px') done = hug(base, avail, minPx, maxPx);

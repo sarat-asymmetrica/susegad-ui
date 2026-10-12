@@ -1,42 +1,42 @@
 // Browser checks for Chiro that a Node test cannot reach:
 //
 //   node packages/scenes/chiro/chiro.check.mjs
+//   node packages/scenes/chiro/chiro.check.mjs --break   (planted faults: the checks marked --break must FAIL)
 //
 // 1. the still is the plate's monsoon green, the same pixels in quiet and in
 //    warm under reduced motion, on two separate pages (control: the running
 //    scene two seconds in, pits half grown, is different);
 // 2. the rain keeps off the page's words (control: the same boxes with no
-//    words do catch it);
-// 3. playful: Enter presses a hand to the wall where the keyboard hand is;
+//    words do catch it; --break: the rain falls across the words);
+// 3. playful: Enter presses a hand to the wall where the keyboard hand is
+//    (--break: Enter does nothing);
 // 4. no request leaves the page; axe (WCAG 2.2 AA) on the demo in every
 //    register, light and dark; no console errors.
+//
+// Scene time is stepped, not waited for (tools/lib/virtual-time.mjs): the pages
+// that move run on virtual frames, each step a sixtieth of a second of the
+// scene's time, and a frozen moment is the same pixels the real clock gives.
+// On the real clock still: the stills (nothing moves), "no request leaves the
+// page" (it watches the network), and axe.
 
 import { harness } from '../../../tools/lib/component-check.mjs';
+import { frames, frozenAt, grabPixels, openStepped, plantFault, until } from '../../../tools/lib/virtual-time.mjs';
 
+const BREAK = process.argv.includes('--break');
 const h = await harness();
 const { check } = h;
 const scene = q => `/tools/harness/scene.html?name=chiro&${q}`;
+/** A planted fault: one of Chiro's files with `from` replaced; fails loudly if the line has moved. */
+const plant = (...rows) => plantFault(import.meta.url, check, ...rows);
+/** A page on the real clock (the stills, the network and axe). */
 const open = async (path, opts) => {
   const r = await h.open(path, opts);
   await r.page.waitForFunction(() => window.__ready === true, null, { timeout: 30000 })
     .catch(async () => { check(`ready: ${path}`, false, 'no sg-ready in 30 s'); await h.done(); });
   return r;
 };
-const grab = page => page.evaluate(() => {
-  const cv = window.__piece.shadowRoot.querySelector('canvas'), d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
-  const s = 2, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), px = new Array(w * hh * 3);
-  for (let y = 0; y < hh; y++) for (let x = 0; x < w; x++) { const i = (y * s * cv.width + x * s) * 4, o = (y * w + x) * 3; px[o] = d[i]; px[o + 1] = d[i + 1]; px[o + 2] = d[i + 2]; }
-  const el = window.__piece, st = el.shadowRoot.querySelector('.stage').getBoundingClientRect(), k = 1200 / st.width;
-  const words = [...el.children].map(c => { const r = c.getBoundingClientRect(); return { x: (r.left - st.left) * k, y: (r.top - st.top) * k, w: r.width * k, h: r.height * k }; });
-  return { w, h: hh, kx: 1200 / w, ky: 800 / hh, px, words };
-});
-async function frozen(q) {
-  const { ctx, page } = await h.open(scene(q));
-  await page.waitForFunction(() => window.__frozen === true, null, { timeout: 90000 });
-  const img = await grab(page);
-  await ctx.close();
-  return img;
-}
+const grab = page => grabPixels(page);
+const frozen = (q, opts) => frozenAt(h, scene(q), opts);
 function diff(a, b, box = { x: 0, y: 0, w: 1200, h: 800 }, th = 40) {
   let n = 0, c = 0;
   for (let y = 0; y < a.h; y++) for (let x = 0; x < a.w; x++) {
@@ -63,28 +63,33 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
 }
 
 // 2. the rain keeps off the words (warm: the first rain falls about 21 s in). Two frames 0.05 s apart:
-//    the rain moves about 30 units in that time, the wet front and the moss hardly at all
+//    the rain moves about 30 units in that time, the wet front and the moss hardly at all.
+//    One page per pair: 24 s on the way to a 24.05 s freeze is the picture ?freeze=24 freezes.
 {
-  const w1 = await frozen('register=warm&seed=1&freeze=24&content=1'), w2 = await frozen('register=warm&seed=1&freeze=24.05&content=1');
-  const b1 = await frozen('register=warm&seed=1&freeze=24'), b2 = await frozen('register=warm&seed=1&freeze=24.05');
+  // --break: the rain falls across the words
+  const rainsOn = BREAK ? plant(['render.js', 'if (calm.length && (inCalm(x, y, calm) || inCalm(x - len * 0.14, y - len, calm))) continue;', 'if (false) continue;']) : [];
+  const [w1, w2] = await frozen('register=warm&seed=1&freeze=24.05&content=1', { at: [24], routes: rainsOn });
+  const [b1, b2] = await frozen('register=warm&seed=1&freeze=24.05', { at: [24] });
   const avg = (a, b) => w1.words.reduce((m, box) => m + diff(a, b, box), 0) / w1.words.length;
   const under = avg(w1, w2), bare = avg(b1, b2), rest = diff(w1, w2, { x: 700, y: 100, w: 450, h: 400 });
   check('rain: under the words nothing moves while it rains elsewhere', under < 0.001 && rest > 0.005, `${pct(under)} under the words, ${pct(rest)} elsewhere`);
   check('control: the same boxes with no words catch the rain', bare > 0.005, pct(bare));
 }
 
-// 3. playful: Enter presses a hand to the wall
+// 3. playful: Enter presses a hand to the wall (a fifth of a second is 12 frames of the scene's time, 150 ms is 9)
 {
-  const { ctx, page, errors } = await open('/packages/scenes/chiro/demo.html?register=playful&content=0');
-  // the pits are grown; the first rain is still to come. Under load this can take a minute; if it never
-  // gets there, say so rather than compare two frames of a wall still growing (that reads as 100% changed)
-  const grown = await page.waitForFunction(() => window.__piece.shadowRoot.querySelector('.stage').dataset.steps === '1500', null, { timeout: 90000 }).then(() => true, () => false);
+  // --break: Enter does nothing
+  const { ctx, page, errors } = await openStepped(h, '/packages/scenes/chiro/demo.html?register=playful&content=0',
+    { ms: 30000, routes: BREAK ? plant(['render.js', 'if (!p || !core) return;', 'if (p || !core) return;']) : [] });
+  // the pits are grown; the first rain is still to come. If it never gets there, say so rather than compare
+  // two frames of a wall still growing (that reads as 100% changed)
+  const grown = await until(page, () => window.__piece.shadowRoot.querySelector('.stage').dataset.steps === '1500', { ms: 90000, batch: 30 });
   if (!grown) check('playful: the pits finished growing before the Enter test (instrument)', false, `steps ${await page.evaluate(() => window.__piece.shadowRoot.querySelector('.stage').dataset.steps)} of 1500 after 90 s`);
   const stage = page.locator('sg-scene').locator('.stage');
   await stage.focus();
-  await page.keyboard.press('ArrowUp'); await page.waitForTimeout(200);
+  await page.keyboard.press('ArrowUp'); await frames(page, 12);
   const before = await grab(page);
-  await page.keyboard.press('Enter'); await page.waitForTimeout(150);
+  await page.keyboard.press('Enter'); await frames(page, 9);
   const after = await grab(page);
   const hand = diff(before, after, { x: 540, y: 290, w: 120, h: 150 }, 20), far = diff(before, after, { x: 0, y: 450, w: 400, h: 200 }, 20);
   // the frond's shadow sways over the whole wall, so 'nowhere else' means an order of magnitude less
@@ -111,4 +116,5 @@ for (const register of ['quiet', 'warm', 'playful']) for (const theme of ['light
   await ctx.close();
 }
 
+if (BREAK) console.log('\n--break: "rain: under the words nothing moves" and "playful: Enter leaves a damp print" should FAIL');
 await h.done();

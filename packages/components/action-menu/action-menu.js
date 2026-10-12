@@ -147,11 +147,14 @@ export class SgActionMenu extends SgElement {
     try { this.native.hidePopover(); } catch { /* already closed */ }
   }
 
+  #popoverOpen() { try { return this.native.matches(':popover-open'); } catch { return this.#open; } }
+
   #onTriggerKey(e) {
     if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
     e.preventDefault();
     this.#pendingFocus = e.key === 'ArrowDown' ? 'first' : 'last';
-    if (this.#open) this.#move(this.#pendingFocus === 'last' ? this.#items.length - 1 : 0);
+    // ask the popover, not #open: that mirror is set by the toggle event, which arrives a task after the popover has closed
+    if (this.#popoverOpen()) this.#move(this.#pendingFocus === 'last' ? this.#items.length - 1 : 0);
     else try { this.native.showPopover(); } catch { /* no popover support */ }
   }
 

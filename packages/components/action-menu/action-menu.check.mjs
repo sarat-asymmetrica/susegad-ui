@@ -152,8 +152,10 @@ for (const register of ['quiet', 'warm', 'playful']) {
   const settled = await p.evaluate(() => [...document.querySelectorAll('#account-menu [role="menuitem"]')].map(el => getComputedStyle(el).opacity));
   check(`${tag} every item, including the last, reaches full opacity once its entrance finishes`, settled.every(o => o === '1'), JSON.stringify(settled));
   await p.keyboard.press('Escape');
-  // the next block reopens at once: wait for this close to really finish, or the ArrowDown can land mid-close
-  await p.waitForFunction(() => !document.querySelector('#account-menu').matches(':popover-open'));
+  // the next block reopens at once: wait for this close to really finish, or the ArrowDown can land mid-close. The popover stops
+  // matching :popover-open a task before its toggle event reaches the component, and until then the component still believes it
+  // is open (aria-expanded, data-open): an ArrowDown in that gap moves focus inside a closed menu and nothing opens
+  await p.waitForFunction(() => !document.querySelector('#account-menu').matches(':popover-open') && document.querySelector('#account-trigger').getAttribute('aria-expanded') === 'false');
 
   // playful only: the stamped landing (S2, Rasika's Wave 5 review) — a
   // real impression per item, on the same teental beat as the entrance,
@@ -216,6 +218,33 @@ for (const register of ['quiet', 'warm', 'playful']) {
   // WebKit does not focus a button on a mouse click, so there is no focus to return to; the keyboard-opened case above asks the same question there
   if (engine === 'webkit' && !open && focused === '') unsupportedIn(engine, 'focus return after a mouse open', 'a click does not focus the button in WebKit (docs/BROWSERS.md); see the keyboard-opened check');
   else check('Escape closes the menu and returns focus to the trigger', !open && focused === 'account-trigger', focused);
+  await ctx.close();
+}
+
+// ── an ArrowDown in the same task as a close still opens the menu ───────────
+// The popover stops matching :popover-open a task before its toggle event reaches the component. A key that lands in that gap used to
+// be answered from the component's stale idea of itself (open), so focus moved inside a closed menu and nothing opened. Here the gap is
+// made on purpose: hidePopover() and the key in one task, where the toggle event cannot have run yet.
+{
+  const ctx = await browser.newContext();
+  const p = await ctx.newPage();
+  await p.goto(`${demo}?register=quiet`);
+  await p.waitForFunction(() => window.__ready);
+  await p.focus('#account-trigger');
+  await p.keyboard.press('ArrowDown');
+  await p.waitForFunction(() => document.getElementById('account-trigger').closest('sg-action-menu').open);
+  const sameTask = await p.evaluate(() => {
+    const trigger = document.getElementById('account-trigger'), menu = document.getElementById('account-menu');
+    menu.hidePopover();
+    const closed = !menu.matches(':popover-open'), believesOpen = trigger.closest('sg-action-menu').open;
+    trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true }));
+    return { closed, believesOpen };
+  });
+  await p.waitForFunction(() => document.getElementById('account-menu').matches(':popover-open'), null, { timeout: 3000 }).catch(() => {});
+  await p.waitForTimeout(100);
+  const after = await p.evaluate(() => ({ open: document.getElementById('account-menu').matches(':popover-open'), focus: document.activeElement.id }));
+  check('control: the gap is real (closed by hidePopover(), the component still believes it is open)', sameTask.closed && sameTask.believesOpen, JSON.stringify(sameTask));
+  check('ArrowDown in the same task as hidePopover() opens the menu again, focus on the first item', after.open && after.focus === 'mi-profile', JSON.stringify(after));
   await ctx.close();
 }
 

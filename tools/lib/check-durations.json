@@ -257,7 +257,7 @@
   "firefox": 9.8
  },
  "packages/scenes/abri/abri.check.mjs": {
-  "chromium": 118.6,
+  "chromium": 136,
   "webkit": 115.5,
   "firefox": 111.4
  },
@@ -267,7 +267,7 @@
   "firefox": 36
  },
  "packages/scenes/chiro/chiro.check.mjs": {
-  "chromium": 148.8,
+  "chromium": 73,
   "webkit": 135.8,
   "firefox": 139.7
  },
@@ -293,12 +293,12 @@
   "firefox": 49.1
  },
  "packages/scenes/mankurad/mankurad.check.mjs": {
-  "chromium": 158.5,
+  "chromium": 106,
   "webkit": 165.4,
   "firefox": 146.4
  },
  "packages/scenes/maun/maun.check.mjs": {
-  "chromium": 183.1,
+  "chromium": 56,
   "webkit": 179.4,
   "firefox": 181.9
  },
@@ -329,7 +329,7 @@
   "firefox": 64.7
  },
  "packages/scenes/shet/shet.check.mjs": {
-  "chromium": 276,
+  "chromium": 156,
   "webkit": 266.3,
   "firefox": 251.8
  },
@@ -365,7 +365,7 @@
   "chromium": 10.4
  },
  "packages/scenes/vel/vel.check.mjs": {
-  "chromium": 159.8,
+  "chromium": 68,
   "firefox": 159.4
  },
  "packages/scenes/veranda/arrange.check.mjs": {

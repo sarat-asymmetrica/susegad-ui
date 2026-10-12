@@ -127,6 +127,9 @@ test('the live connection is quiet on load and speaks only when it changes (R3)'
   await withBrowser(async (browser, url) => {
     for (const register of ['quiet', 'warm', 'playful']) {
       const page = await browser.newPage();
+      const problems = [];
+      page.on('pageerror', e => problems.push(e.message));
+      page.on('console', m => { if (m.type() === 'error') problems.push(m.text()); });
       // every write to a connection's words while its region is live, from the first script on
       await page.addInitScript(() => {
         window.__heard = [];
@@ -142,7 +145,11 @@ test('the live connection is quiet on load and speaks only when it changes (R3)'
       await page.waitForTimeout(500);
       assert.deepEqual(await page.evaluate(() => window.__heard), [], `${register}: nothing is read out on load`);
       await page.evaluate(() => document.getElementById('network').click());
-      await page.waitForFunction(() => window.__heard.length > 0, null, { timeout: 8000 });
+      // a state wait with a generous ceiling; if it still runs out, say everything the page showed (a CI run lost this wait once and left nothing to go on)
+      await page.waitForFunction(() => window.__heard.length > 0, null, { timeout: 20000 }).catch(async e => {
+        const seen = await page.evaluate(() => ({ heard: window.__heard, pressed: document.getElementById('network').getAttribute('aria-pressed'), connecting: document.querySelector('#notes sg-connecting')?.outerHTML, footer: document.querySelector('#notes .saving-footer')?.textContent?.trim() })).catch(x => String(x));
+        assert.fail(`${register}: nothing was read out within 20 s of turning the network off (${String(e.message).slice(0, 80)}); the page showed ${JSON.stringify(seen)}; page errors ${JSON.stringify(problems)}`);
+      });
       const heard = await page.evaluate(() => window.__heard);
       assert.ok(heard.every(t => /^Connection: /.test(t)) && !heard.includes('Connection: connected'), `${register}: heard ${JSON.stringify(heard)}`);
       await page.close();

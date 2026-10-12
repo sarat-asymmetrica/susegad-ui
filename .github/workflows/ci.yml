@@ -98,15 +98,20 @@ jobs:
       - run: npm ci
       - id: pw
         run: echo "version=$(node -p "require('playwright/package.json').version")" >> "$GITHUB_OUTPUT"
+      # Every shard installs Chromium as well as its own engine: a good part of the checks
+      # (everything that opens a scene through tools/lib/scene-probe.mjs, and the files that
+      # call chromium.launch() themselves) drive Chromium whatever --engine says, as they do
+      # on the machines the suite is written on. Without it those checks died at launch in
+      # the Firefox and WebKit shards ("Executable doesn't exist ... chrome-headless-shell").
       - id: browsers
         uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ matrix.engine }}-${{ steps.pw.outputs.version }}
+          key: playwright-${{ runner.os }}-${{ matrix.engine }}+chromium-${{ steps.pw.outputs.version }}
       - if: steps.browsers.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps ${{ matrix.engine }}
+        run: npx playwright install --with-deps ${{ matrix.engine }} chromium
       - if: steps.browsers.outputs.cache-hit == 'true'
-        run: npx playwright install-deps ${{ matrix.engine }}
+        run: npx playwright install-deps ${{ matrix.engine }} chromium
       # shell: bash runs with pipefail, so tee keeps the checks' exit code
       - name: checks (${{ matrix.engine }}, shard ${{ matrix.shard }} of 4)
         shell: bash

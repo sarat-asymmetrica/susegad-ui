@@ -30,8 +30,6 @@
 // and no request leaving the page. The stale-calm gate is in core/calm.check.mjs.
 
 import { readFileSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
 import { harness } from '../../../tools/lib/component-check.mjs';
 import { contextOptions } from '../../../tools/lib/engine.mjs';
 import { room, offsetOf, placeOf, STEP, BIG_STEP } from '../../core/movable.core.js';
@@ -39,7 +37,6 @@ import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const h = await harness();
 const { check, browser, server, engine } = h;
-const REPO = fileURLToPath(new URL('../../../', import.meta.url));
 const src = p => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 const GLASS = '/packages/scenes/tinto/world.html?only=glass';
 const HARNESS = '/tools/harness/scene.html?name=tinto&content=1';
@@ -130,8 +127,9 @@ async function press(page, key, n) { for (let i = 0; i < n; i++) await page.keyb
 
 // ── 1. without `movable`, nothing changes ─────────────────────────────────────
 if (want('1')) {
-  const MAIN = (() => { try { return execFileSync('git', ['show', '654935d:packages/core/scene-element.js'], { cwd: REPO, encoding: 'utf8', maxBuffer: 1 << 24 }); } catch (e) { return null; } })();
-  check('main’s core (654935d) is readable for the pixel comparison', !!MAIN, MAIN ? `${MAIN.length} chars` : 'git show failed');
+  // main's core as it stood at 654935d, kept as a file: the public repository has no history to `git show` it from
+  const MAIN = (() => { try { return readFileSync(new URL('../../../tools/fixtures/tinto-glass/scene-element.main-654935d.js', import.meta.url), 'utf8'); } catch (e) { return null; } })();
+  check('main’s core (654935d) is readable for the pixel comparison', !!MAIN, MAIN ? `${MAIN.length} chars` : 'the fixture file is missing');
   const shot = async (register, opts) => {
     const { ctx, page, errors } = await openAt(`${HARNESS}&register=${register}&freeze=4`, { wait: 'frozen', ...opts });
     const png = await page.locator('#box').screenshot();

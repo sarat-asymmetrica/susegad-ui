@@ -44,7 +44,8 @@ const out = await p.evaluate(async () => {
   badge.textContent = 'New';
   document.body.append(scene, badge);
   await new Promise(r => { const t = setTimeout(r, 8000); scene.addEventListener('sg-ready', () => { clearTimeout(t); r(); }, { once: true }); });
-  await new Promise(r => setTimeout(r, 600)); // the movable module loads after the scene mounts
+  // the movable module loads after the scene mounts: wait for its grip (up to 8 s), not a fixed 600 ms that a slower engine overran
+  for (const t0 = Date.now(); !scene.shadowRoot.querySelector('.grip') && Date.now() - t0 < 8000;) await new Promise(r => setTimeout(r, 50));
   // a light-DOM root (the veranda stage hands movable.attach itself, not a shadow root)
   const { adopt } = await import('/packages/core/sheet.js');
   const host = document.createElement('div'); host.className = 'sg-csp-light'; document.body.append(host);

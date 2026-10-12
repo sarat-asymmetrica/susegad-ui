@@ -8,8 +8,9 @@
 
 import { coc } from './story-shims.js';
 
+// blur a hard edge and look: WebKit (Linux) keeps 'blur(2px)' as the value and draws it sharp
 const canFilter = (() => {
-  try { const c = document.createElement('canvas').getContext('2d'); c.filter = 'blur(2px)'; return c.filter === 'blur(2px)'; } catch { return false; }
+  try { const m = () => Object.assign(document.createElement('canvas'), { width: 8, height: 8 }), a = m().getContext('2d'), x = m().getContext('2d'); a.fillRect(0, 0, 4, 8); x.filter = 'blur(2px)'; x.drawImage(a.canvas, 0, 0); return x.getImageData(3, 4, 1, 1).data[3] < 255; } catch { return false; }
 })();
 
 const make = (w, h) => Object.assign(document.createElement('canvas'), { width: Math.max(1, w | 0), height: Math.max(1, h | 0) });

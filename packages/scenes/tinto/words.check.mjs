@@ -434,12 +434,13 @@ const probeContrast = page => page.evaluate(() => {
   const slow = await timeline(2000), fast = await timeline(0);
   check('a slow face: no frame has the board laid while the Kannada face is missing', slow.early === 0 && slow.laid > 0, `${slow.early} of ${slow.frames} frames laid early; board laid in ${slow.laid} frames`);
   check('a slow face: the board ends at the size the fast load gives', fast.px > 0 && Math.abs(slow.px - fast.px) < 0.01, `slow ${slow.px} px, fast ${fast.px} px`);
-  const broken = await timeline(2000, { 'words.js': [['if (fontsOk !== need) {', 'if (false) {'], ["document.fonts?.addEventListener?.('loadingdone', onFonts);", '']] });
+  // fontReady's wait for faces still in flight (type/index.js) is taken out too: it would otherwise hold even this build back until the Kannada face arrives
+  const broken = await timeline(2000, { 'words.js': [['if (fontsOk !== need) {', 'if (false) {'], ["document.fonts?.addEventListener?.('loadingdone', onFonts);", '']], '../../type/index.js': [['try { await Promise.race([fonts.ready, new Promise(r => { timer = setTimeout(r, waitMs); })]); forget(); } catch', 'try { } catch']] });
   // WebKit does not make the control deterministic: it sometimes measures in the real face as soon as canvas text asks for it (0 early frames, the same
-  // final size) and sometimes in the fallback (7 early frames, 23.49 px). So the control must fail in Chromium, and in WebKit it only reports what it saw.
-  const chromium = browser.browserType().name() === 'chromium';
+  // final size) and sometimes in the fallback (7 early frames, 23.49 px). So the control must fail in Chromium and Firefox (Firefox: 76 frames laid early, 26.375 px against 25.656), and in WebKit it only reports what it saw.
+  const required = browser.browserType().name() !== 'webkit';
   const caught = broken.early > 0 || Math.abs(broken.px - fast.px) > 0.01;
-  check(`control: a build that neither waits for the face nor lays out again when it arrives keeps the fallback face, and is caught${chromium ? '' : ' (WebKit: reported, not required)'}`, chromium ? caught : true, `${broken.early} frames laid early; ends at ${broken.px} px against ${fast.px} px`);
+  check(`control: a build that neither waits for the face nor lays out again when it arrives keeps the fallback face, and is caught${required ? '' : ' (WebKit: reported, not required)'}`, required ? caught : true, `${broken.early} frames laid early; ends at ${broken.px} px against ${fast.px} px`);
 }
 
 // ── Escape, lazy loading, requests, axe ─────────────────────────────────────

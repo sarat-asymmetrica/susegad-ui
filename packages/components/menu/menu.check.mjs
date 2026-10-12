@@ -252,6 +252,9 @@ for (const reduced of [false, true]) {
       document.querySelector('#menu [data-id=ravioli] .sg-menu-plus').click();
       const seen = [];
       for (let i = 0; i < 9; i++) { seen.push(getComputedStyle(c).transform); await new Promise(r => setTimeout(r, 50)); }
+      // the last sample is the count at rest once the settle has finished, not the ninth tick of a timer (a busy 4-vCPU runner stretches 9 x 50 ms past the settle's end)
+      await Promise.all(c.getAnimations().map(a => a.finished.catch(() => {})));
+      seen.push(getComputedStyle(c).transform);
       return seen;
     });
     check('playful: the count really moves (the transform changes during the settle and ends at rest)', new Set(strip).size >= 3 && (strip.at(-1) === 'none' || /matrix\(1, 0, 0, 1, 0, 0\)/.test(strip.at(-1))), JSON.stringify([...new Set(strip)].slice(0, 4)));

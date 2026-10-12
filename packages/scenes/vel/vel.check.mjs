@@ -1,6 +1,7 @@
 // Browser checks for Vel that a Node test cannot reach:
 //
 //   node packages/scenes/vel/vel.check.mjs
+//   node packages/scenes/vel/vel.check.mjs --break   (a planted fault: the check marked --break must FAIL)
 //
 // 1. the vine grows: two seconds in, stems are still drawing on; by twenty
 //    seconds every growth animation has run its course and been let go;
@@ -10,18 +11,29 @@
 //    or idle and two shots a second apart are the same (control: playing, they
 //    differ; and play resumes it);
 // 4. a bract that falls where the page's words are rests instead (control: the
-//    same moment with no words, it crosses the box);
+//    same moment with no words, it crosses the box; --break: the bract falls
+//    through the words);
 // 5. playful: an arrow key stirs the branch at the hand, Enter shakes a
 //    bract loose there, hovering a cane stirs it and a click drops a bract
 //    (control: in warm, Enter drops nothing);
 // 6. no request leaves the page; axe (WCAG 2.2 AA) on the demo in every
 //    register, light and dark; no console errors.
+//
+// The frozen moments run on virtual frames (tools/lib/virtual-time.mjs): the harness clock is stepped
+// at the page's speed, not waited for, and the picture is the one ?freeze= gives. Everything else stays
+// on the real clock, on purpose: the vine and the bracts are Web Animations, which run on the document
+// timeline (requestAnimationFrame does not move it), so "grown by now", "paused for a second" and
+// "stirred, then calm again" are waited for in real time; and the network and axe.
 
 import { harness } from '../../../tools/lib/component-check.mjs';
 import { sceneOf } from './model.js';
+import { openStepped, plantFault, untilFrozen } from '../../../tools/lib/virtual-time.mjs';
 
+const BREAK = process.argv.includes('--break');
 const h = await harness();
 const { check } = h;
+/** A planted fault: one of Vel's files with `from` replaced; fails loudly if the line has moved. */
+const plant = (...rows) => plantFault(import.meta.url, check, ...rows);
 const scene = q => `/tools/harness/scene.html?name=vel&${q}`;
 const open = async (path, opts) => {
   const r = await h.open(path, opts);
@@ -44,9 +56,9 @@ const info = page => page.evaluate(() => {
   };
 });
 const shot = (page, clip) => clip ? page.screenshot({ clip }) : page.locator('sg-scene').screenshot();
-async function frozen(q, words = false) {
-  const { ctx, page } = await h.open(scene(q));
-  await page.waitForFunction(() => window.__frozen === true, null, { timeout: 60000 });
+async function frozen(q, words = false, routes = []) {
+  const { ctx, page } = await openStepped(h, scene(q), { ms: 60000, routes });
+  if (!(await untilFrozen(page, { ms: 60000 }))) check(`frozen: ${q}`, false, 'never froze in 60 s');
   await page.evaluate(() => { const b = window.__piece.shadowRoot.querySelector('button'); if (b) b.style.visibility = 'hidden'; });
   const out = { info: await info(page) };
   if (words) {
@@ -118,8 +130,10 @@ const same = (a, b) => Buffer.compare(a, b) === 0;
     const u = Math.pow(Math.max(0, mid - f.y) / (f.land - f.y), 1 / 1.15);
     const t = (f.delay + 0.01 * f.period + u * (fallTime - 0.01 * f.period)).toFixed(2), t0 = (f.delay - 0.6).toFixed(2);
     const clipOf = (fr) => { const all = fr.boxes.map(b => b.page); const x = Math.min(...all.map(b => b.x)), y = Math.min(...all.map(b => b.y)); return { x, y, width: Math.max(...all.map(b => b.x + b.width)) - x, height: Math.max(...all.map(b => b.y + b.height)) - y }; };
-    const grab = async (q, words) => { const fr = await frozen(q, words); const img = await fr.page.screenshot({ clip: clipOf(words ? fr : probe) }); await fr.ctx.close(); return img; };
-    const w0 = await grab(`register=warm&seed=1&freeze=${t0}&content=1`, true), w1 = await grab(`register=warm&seed=1&freeze=${t}&content=1`, true);
+    const grab = async (q, words, routes) => { const fr = await frozen(q, words, routes); const img = await fr.page.screenshot({ clip: clipOf(words ? fr : probe) }); await fr.ctx.close(); return img; };
+    // --break: the bract falls through the words
+    const falls = BREAK ? plant(['render.js', 'l.a.currentTime = quiet ? 0 : T;', 'l.a.currentTime = T;']) : [];
+    const w0 = await grab(`register=warm&seed=1&freeze=${t0}&content=1`, true, falls), w1 = await grab(`register=warm&seed=1&freeze=${t}&content=1`, true, falls);
     const b0 = await grab(`register=warm&seed=1&freeze=${t0}`, false), b1 = await grab(`register=warm&seed=1&freeze=${t}`, false);
     check('under the words, the bract that would fall there rests', same(w0, w1), `${t0} s and ${t} s: same pixels ${same(w0, w1)}`);
     check('control: the same moment with no words, it crosses the box', !same(b0, b1), `same pixels ${same(b0, b1)}`);
@@ -182,4 +196,5 @@ for (const register of ['quiet', 'warm', 'playful']) for (const theme of ['light
   await ctx.close();
 }
 
+if (BREAK) console.log('\n--break: "under the words, the bract that would fall there rests" should FAIL');
 await h.done();

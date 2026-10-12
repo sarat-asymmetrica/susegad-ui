@@ -39,8 +39,18 @@ export function readBlocks(el) {
 }
 
 /** Wait for a face before measuring it: Pretext measures whatever the canvas has now. `text` makes the load fetch the faces that cover those characters (a stack's Kannada face is split by unicode-range). */
-export async function fontReady(font, text) {
-  try { if (globalThis.document?.fonts?.load) { await document.fonts.load(font, text); forget(); } } catch { /* measure with the fallback */ }
+export const FONT_WAIT_MS = 4000;
+export async function fontReady(font, text, { waitMs = FONT_WAIT_MS } = {}) {
+  const fonts = globalThis.document?.fonts;
+  try { if (fonts?.load) { await fonts.load(font, text); forget(); } } catch {
+    // load() rejects as soon as ONE matching face has failed, while the others are still being fetched. A
+    // metric-matched fallback whose local() source the machine lacks ('Kalam Fallback' wants Segoe Print, so
+    // every Mac, Linux and Android machine) fails at once and made this return before the Kannada face had
+    // arrived. Wait for what is still in flight; whatever failed for good is measured in its fallback.
+    // (fonts.ready is every face in flight on the page, so it has a ceiling: a stalled request must not keep the words away for ever)
+    let timer;
+    try { await Promise.race([fonts.ready, new Promise(r => { timer = setTimeout(r, waitMs); })]); forget(); } catch { /* measure with the fallback */ } finally { clearTimeout(timer); }
+  }
 }
 
 /**

@@ -108,6 +108,8 @@ for (const register of ['quiet', 'warm', 'playful']) {
   check(`${tag} two <sg-tabs> on the page do not collide`, true); // no page error thrown by the second instance below
   await p.focus('#dates a[role="tab"]');
   await press('ArrowRight');
+  // the arrow moves the selection: wait for that (a slower engine takes longer than press()'s 60 ms), and read it either way
+  await p.waitForFunction(() => [...document.querySelectorAll('#dates a[role="tab"]')].findIndex(a => a.getAttribute('aria-selected') === 'true') === 1, null, { timeout: 5000 }).catch(() => {});
   const other = await p.evaluate(() => [...document.querySelectorAll('#dates a[role="tab"]')].findIndex(a => a.getAttribute('aria-selected') === 'true'));
   check(`${tag} the second tablist keeps its own selection independent of the first`, other === 1 && (await selected(p)) === 0);
 

@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { chromium, firefox, webkit } from 'playwright';
-import { contextOptions, dropBenignErrors, ENGINE_NAMES, engineName, grantsPermission, launchArgs, pickEngine, unsupportedIn } from './engine.mjs';
+import { contextOptions, dropBenignErrors, ENGINE_NAMES, engineName, grantsPermission, launchArgs, localeEnv, pickEngine, unsupportedIn } from './engine.mjs';
 
 test('defaults to chromium with no name and no SG_ENGINE', () => {
   const before = process.env.SG_ENGINE;
@@ -123,4 +123,11 @@ test('launchArgs keeps Chromium switches for chromium and passes none to firefox
   assert.deepEqual(launchArgs('webkit', gpu), []);
   assert.deepEqual(launchArgs('firefox', gpu), []);
   assert.deepEqual(launchArgs('webkit'), []);
+});
+
+test('localeEnv keeps the environment and sets LC_ALL, to en_IN unless told otherwise', () => {
+  const e = localeEnv();
+  assert.equal(e.LC_ALL, 'en_IN');
+  assert.equal(e.PATH, process.env.PATH);
+  assert.equal(localeEnv('en_GB').LC_ALL, 'en_GB');
 });

@@ -347,7 +347,9 @@ for (const theme of ['light', 'dark']) {
   });
   const p = await c.newPage();
   await p.goto(`${server.url}${DEMO}?register=playful`);
-  await p.waitForTimeout(2500);
+  // until the first bubble has finished arriving (opacity 1 after it was below), not a fixed 2.5 s: a busy runner draws 10 frames a second and was still at 0
+  await p.waitForFunction(() => window.__ops.length > 5 && window.__ops.at(-1) === 1 && window.__ops.some(o => o < 0.5), null, { timeout: 20000 }).catch(() => {});
+  await p.waitForTimeout(1000); // and a second more, so a flash after the first arrival would still be seen
   const ops = await p.evaluate(() => window.__ops);
   let up = true, high = false;
   for (const o of ops) { if (high && o < 0.2) up = false; if (o > 0.6) high = true; }

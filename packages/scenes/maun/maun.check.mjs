@@ -1,6 +1,7 @@
 // Browser checks for Maun that a Node test cannot reach:
 //
 //   node packages/scenes/maun/maun.check.mjs
+//   node packages/scenes/maun/maun.check.mjs --break   (planted faults: the checks marked --break must FAIL)
 //
 // 1. the same seed paints the same pixels on two separate pages (control: the
 //    next seed paints different ones);
@@ -8,18 +9,31 @@
 //    34 passes and the same pixels as quiet (control: a frozen clock at the
 //    start of the making shows one pass and different pixels);
 // 3. once finished, the painting barely moves (the breath), where the making
-//    changes it plainly from one second to the next;
+//    changes it plainly from one second to the next (--break: the breath
+//    inverts the painting where it falls, and whips round);
 // 4. the breath keeps away from the words laid over the painting (control: the
-//    same box with no words does change);
-// 5. playful: Enter scrapes a band back where the keyboard hand is;
+//    same box with no words does change; --break: the breath is not kept away);
+// 5. playful: Enter scrapes a band back where the keyboard hand is (--break:
+//    Enter does nothing);
 // 6. no request leaves the page; axe (WCAG 2.2 AA) on the demo in every
 //    register, light and dark; no console errors.
+//
+// Scene time is stepped, not waited for (tools/lib/virtual-time.mjs): the pages
+// that move run on virtual frames, each step a sixtieth of a second of the
+// scene's time, and a frozen moment is the same pixels the real clock gives.
+// On the real clock still: the still under reduced motion (nothing moves),
+// "no request leaves the page" (it watches the network), and axe.
 
 import { harness } from '../../../tools/lib/component-check.mjs';
+import { frames, frozenAt, grabPixels, hashPixels, openStepped, plantFault, until } from '../../../tools/lib/virtual-time.mjs';
 
+const BREAK = process.argv.includes('--break');
 const h = await harness();
 const { check } = h;
 const scene = q => `/tools/harness/scene.html?name=maun&${q}`;
+/** A planted fault: one of Maun's files with `from` replaced; fails loudly if the line has moved. */
+const plant = (...rows) => plantFault(import.meta.url, check, ...rows);
+/** A page on the real clock (the still under reduced motion, the network and axe). */
 const open = async (path, opts) => {
   const r = await h.open(path, opts);
   // a scene that never draws its first frame never becomes ready: say so, then stop
@@ -27,25 +41,10 @@ const open = async (path, opts) => {
     .catch(async () => { check(`ready: ${path}`, false, 'no sg-ready in 20 s'); await h.done(); });
   return r;
 };
-const grab = page => page.evaluate(() => {
-  const cv = window.__piece.shadowRoot.querySelector('canvas'), d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
-  const s = 4, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), px = new Array(w * hh * 3);
-  let hash = 0;
-  for (let y = 0; y < hh; y++) for (let x = 0; x < w; x++) { const i = (y * s * cv.width + x * s) * 4, o = (y * w + x) * 3; px[o] = d[i]; px[o + 1] = d[i + 1]; px[o + 2] = d[i + 2]; hash = (hash * 31 + d[i] * 3 + d[i + 1] * 5 + d[i + 2] * 7) >>> 0; }
-  return { w, h: hh, kx: 1200 / w, ky: 800 / hh, px, hash, passes: window.__piece.shadowRoot.querySelector('.stage').dataset.passes };
-});
-async function frozen(q) {
-  const { ctx, page } = await h.open(scene(q));
-  await page.waitForFunction(() => window.__frozen === true, null, { timeout: 60000 });
-  const img = await grab(page);
-  // the words' own boxes in the scene's units: what the element reports as calm
-  img.words = await page.evaluate(() => {
-    const el = window.__piece, s = el.shadowRoot.querySelector('.stage').getBoundingClientRect(), k = 1200 / s.width;
-    return [...el.children].map(c => { const r = c.getBoundingClientRect(); return { x: (r.left - s.left) * k, y: (r.top - s.top) * k, w: r.width * k, h: r.height * k }; });
-  });
-  await ctx.close();
-  return img;
-}
+const stepped = (path, opts) => openStepped(h, path, { ms: 20000, ...opts });
+const grab = page => grabPixels(page, { stride: 4 });
+const frozen = (q, opts) => frozenAt(h, scene(q), { ...opts, grab: { stride: 4 } });
+const finished = page => until(page, () => window.__piece.shadowRoot.querySelector('.stage').dataset.passes === '34/34', { ms: 8000 });
 function diff(a, b, box = { x: 0, y: 0, w: 1200, h: 800 }, th = 6) {
   let n = 0, c = 0;
   for (let y = 0; y < a.h; y++) for (let x = 0; x < a.w; x++) {
@@ -60,37 +59,44 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
 
 // 1. a seed is a painting
 {
-  const once = async seed => { const { ctx, page } = await open(scene(`register=quiet&seed=${seed}`)); await page.waitForFunction(() => window.__piece.shadowRoot.querySelector('.stage').dataset.passes === '34/34', null, { timeout: 8000 }).catch(() => {}); const g = await grab(page); await ctx.close(); return g; };
+  const once = async seed => { const { ctx, page } = await stepped(scene(`register=quiet&seed=${seed}`)); await finished(page); const g = await grab(page); await ctx.close(); return g; };
   const a = await once(5), b = await once(5), c = await once(6);
-  check('the same seed paints the same pixels on two pages', a.hash === b.hash, `${a.hash} and ${b.hash}`);
-  check('control: the next seed paints different pixels', a.hash !== c.hash, `${a.hash} and ${c.hash}`);
+  check('the same seed paints the same pixels on two pages', hashPixels(a) === hashPixels(b), `${hashPixels(a)} and ${hashPixels(b)}`);
+  check('control: the next seed paints different pixels', hashPixels(a) !== hashPixels(c), `${hashPixels(a)} and ${hashPixels(c)}`);
 }
 
 // 2. the still is the finished painting
 {
-  const q = await open(scene('register=quiet&seed=2'));
-  await q.page.waitForFunction(() => window.__piece.shadowRoot.querySelector('.stage').dataset.passes === '34/34', null, { timeout: 8000 }).catch(() => {});
+  const q = await stepped(scene('register=quiet&seed=2'));
+  await finished(q.page);
   const quiet = await grab(q.page); await q.ctx.close();
   const r = await open(scene('register=warm&seed=2'), { reduced: true });
   await r.page.waitForFunction(() => window.__piece.shadowRoot.querySelector('.stage').dataset.passes === '34/34', null, { timeout: 5000 }).catch(() => {});
   const still = await grab(r.page); await r.ctx.close();
-  check('reduced motion: warm shows the finished painting, the same pixels as quiet', still.passes === '34/34' && diff(still, quiet) < 0.001, `${still.passes} passes, ${pct(diff(still, quiet))} of pixels differ from quiet`);
+  check('reduced motion: warm shows the finished painting, the same pixels as quiet', still.data.passes === '34/34' && diff(still, quiet) < 0.001, `${still.data.passes} passes, ${pct(diff(still, quiet))} of pixels differ from quiet`);
   const start = await frozen('register=warm&seed=2&freeze=0.05');
-  check('control: at the start of the making, one pass and different pixels', start.passes === '1/34' && diff(start, quiet) > 0.2, `${start.passes} passes, ${pct(diff(start, quiet))} differ`);
+  check('control: at the start of the making, one pass and different pixels', start.data.passes === '1/34' && diff(start, quiet) > 0.2, `${start.data.passes} passes, ${pct(diff(start, quiet))} differ`);
 }
 
-// 3. finished, it barely moves
+// 3. finished, it barely moves (one page per pair: the second before the freeze is the picture ?freeze= of that second freezes)
 {
-  const m1 = await frozen('register=warm&seed=2&freeze=3'), m2 = await frozen('register=warm&seed=2&freeze=4');
-  const f1 = await frozen('register=warm&seed=2&freeze=20'), f2 = await frozen('register=warm&seed=2&freeze=21');
+  // --break: the breath inverts the painting where it falls, and whips round it, so a finished one changes plainly from one second to the next
+  const strong = BREAK ? plant(
+    ['render.js', 'strength = 0.1 * (complete ? 1 : 0.4)', 'strength = 1 * (complete ? 1 : 0.4)'],
+    ['render.js', "g.globalCompositeOperation = 'soft-light'; g.fillStyle = br;", "g.globalCompositeOperation = 'difference'; g.fillStyle = br;"],
+    ['model.js', 'W * (0.5 + 0.28 * Math.sin(t * 0.05))', 'W * (0.5 + 0.28 * Math.sin(t * 6))']) : [];
+  const [m1, m2] = await frozen('register=warm&seed=2&freeze=4', { at: [3] });
+  const [f1, f2] = await frozen('register=warm&seed=2&freeze=21', { at: [20], routes: strong });
   const making = diff(m1, m2, undefined, 40), resting = diff(f1, f2, undefined, 40);
   check('finished, a second changes under 2% of the painting; making, far more', resting < 0.02 && making > 5 * Math.max(resting, 0.002), `making ${pct(making)} a second, resting ${pct(resting)}`);
 }
 
 // 4. the breath keeps away from the words
 {
-  const w1 = await frozen('register=warm&seed=2&freeze=14&content=1'), w2 = await frozen('register=warm&seed=2&freeze=44&content=1');
-  const b1 = await frozen('register=warm&seed=2&freeze=14'), b2 = await frozen('register=warm&seed=2&freeze=44');
+  // --break: the breath is not kept away from the words
+  const breathes = BREAK ? plant(['render.js', 'if (calm.length) {\n        // under the page', 'if (false) {\n        // under the page']) : [];
+  const [w1, w2] = await frozen('register=warm&seed=2&freeze=44&content=1', { at: [14], routes: breathes });
+  const [b1, b2] = await frozen('register=warm&seed=2&freeze=44', { at: [14] });
   // the breath is the plate's: soft-light at 10% moves a pixel by 1 to 3 levels, so count any change at all,
   // inside the heading's and the paragraph's own boxes
   const avg = f => w1.words.reduce((m, box) => m + f(box), 0) / w1.words.length;
@@ -99,15 +105,17 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
   check('control: the same box with no words does change', bare > 0.02, `${pct(bare)}`);
 }
 
-// 5. playful: Enter scrapes where the hand is
+// 5. playful: Enter scrapes where the hand is (a third of a second is 18 frames of the scene's time)
 {
-  const { ctx, page, errors } = await open('/packages/scenes/maun/demo.html?register=playful&content=0');
+  // --break: Enter does nothing
+  const { ctx, page, errors } = await stepped('/packages/scenes/maun/demo.html?register=playful&content=0',
+    { routes: BREAK ? plant(['render.js', 'activate(p) {\n      if (!p) return;', 'activate(p) {\n      if (p) return;']) : [] });
   await page.evaluate(() => window.__piece.still());
-  await page.waitForFunction(() => window.__piece.shadowRoot.querySelector('.stage').dataset.passes === '34/34', null, { timeout: 8000 }).catch(() => {});
+  await finished(page);
   const before = await grab(page);
   await page.locator('sg-scene').locator('.stage').focus();
   await page.keyboard.press('ArrowUp'); await page.keyboard.press('Enter');
-  await page.waitForTimeout(300);
+  await frames(page, 18);
   const after = await grab(page);
   const band = diff(before, after, { x: 300, y: 330, w: 600, h: 70 }, 12), far = diff(before, after, { x: 0, y: 600, w: 1200, h: 200 }, 12);
   check('playful: Enter scrapes a band back where the hand is, and nowhere else', band > 0.2 && far < 0.005, `${pct(band)} of the band changed, ${pct(far)} far from it`);
@@ -133,4 +141,5 @@ for (const register of ['quiet', 'warm', 'playful']) for (const theme of ['light
   await ctx.close();
 }
 
+if (BREAK) console.log('\n--break: "finished, a second changes under 2%", "under the words the painting holds still" and "playful: Enter scrapes a band back" should FAIL');
 await h.done();

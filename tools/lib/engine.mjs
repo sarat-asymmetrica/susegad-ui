@@ -73,6 +73,19 @@ export function launchArgs(engine, args = []) {
   return engine === 'chromium' ? args : [];
 }
 
+/**
+ * The environment to launch a browser with, so its own interface locale is the one the check says it is
+ * testing. `locale: 'en-IN'` on a context only changes what pages are told (navigator.language, Intl);
+ * the order of a native date field's day and month comes from the browser's process locale, which on a
+ * Linux runner is C or en_US, so typing 04102026 into a date field reads 4 October on a machine set to
+ * India and 10 April on a runner (confirmed on Chromium and Firefox in WSL Ubuntu, 12 October 2026).
+ * LC_ALL is read by both, with no locale files installed. Use: `pickEngine().launch({ env: localeEnv() })`.
+ * @param {string} [posix] a POSIX locale name, en_IN by default
+ */
+export function localeEnv(posix = 'en_IN') {
+  return { ...process.env, LC_ALL: posix };
+}
+
 /** Can `engine` grant this permission at all? For a check that must skip an assertion, not just proceed without it. */
 export function grantsPermission(engine, permission) {
   return engine === 'chromium' || !CHROMIUM_ONLY_PERMISSIONS.has(permission);

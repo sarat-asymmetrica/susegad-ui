@@ -15,7 +15,7 @@
 
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
-import { pickEngine } from '../../../tools/lib/engine.mjs';
+import { localeEnv, pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 import { contrastReport } from '../../../tools/lib/contrast.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
@@ -25,7 +25,7 @@ const BREAK = process.argv.find(a => a.startsWith('--break='))?.slice('--break='
 const shots = process.argv.includes('--shots');
 if (shots) fs.mkdirSync('.shots/food-order', { recursive: true });
 const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
+const browser = await pickEngine().launch({ env: localeEnv() }); // a date field's day-month order is the browser's own locale, not the context's
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const PAGE = (reg, extra = '') => `${server.url}/packages/recipes/food-order/index.html?register=${reg}${extra}`;

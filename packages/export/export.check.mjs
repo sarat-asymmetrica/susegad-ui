@@ -4,12 +4,12 @@
 //
 //   node packages/export/export.check.mjs
 
-import { engineName, pickEngine, unsupportedIn } from '../../tools/lib/engine.mjs';
+import { engineName, launchArgs, pickEngine, unsupportedIn } from '../../tools/lib/engine.mjs';
 import { startServer } from '../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
 const engine = engineName();
-const browser = await pickEngine(engine).launch({ args: ['--use-fake-ui-for-media-stream', '--autoplay-policy=no-user-gesture-required'] });
+const browser = await pickEngine(engine).launch({ args: launchArgs(engine, ['--use-fake-ui-for-media-stream', '--autoplay-policy=no-user-gesture-required']) }); // Chromium switches: WebKit on Linux refuses to start on an option it does not know
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 

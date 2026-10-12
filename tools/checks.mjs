@@ -46,6 +46,7 @@ import { parseShard, shardChecks, durationOf } from './lib/shard.core.js';
 import { parseKnownFlakes, knownFlake, verdict } from './lib/flakes.core.js';
 import { spawnSync } from 'node:child_process';
 import { parseSkips } from './lib/gpu.core.js';
+import { drivesChromium } from './lib/chromium-only.core.js';
 
 const engineFlag = process.argv.find(a => a.startsWith('--engine='))?.slice('--engine='.length);
 const engineName = (engineFlag ?? process.env.SG_ENGINE ?? 'chromium').trim().toLowerCase();
@@ -115,7 +116,12 @@ if (shard) {
 }
 if (dry) process.exit(0);
 if (!chosen.length && !chosenNode.length) { console.log('No checks needed for this diff.'); process.exit(0); }
-const toRun = found.filter((f, i) => chosen.includes(rels[i]));
+const picked = found.filter((f, i) => chosen.includes(rels[i]));
+// A check that launches Chromium itself ignores --engine: under another engine's banner it would print a Chromium result as that engine's pass.
+// It is not run there, and it is neither a pass nor a red (docs/BROWSERS.md lists them).
+const chromiumOnly = engineName === 'chromium' ? [] : picked.filter(f => drivesChromium(fs.readFileSync(f, 'utf8')));
+const toRun = picked.filter(f => !chromiumOnly.includes(f));
+for (const f of chromiumOnly) console.log(`skip  ${path.relative(root, f).replaceAll('\\', '/')}  (drives Chromium itself; --engine=${engineName} does not reach it)`);
 
 const failed = [];
 const results = []; // { check, ok } in run order, for the verdict

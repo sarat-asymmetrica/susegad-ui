@@ -106,8 +106,8 @@
         },
         {
           "path": "packages/components/action-menu/action-menu.js",
-          "bytes": 8058,
-          "hash": "sha256-adab26cd7569dd1254a7eb79acb68720f341b1e8f632f6cb41cec41762648def"
+          "bytes": 8296,
+          "hash": "sha256-7130212ba14097dade071ee95f3bee1d8abe34e10f29d58ab09e1be6f5c6ee07"
         },
         {
           "path": "packages/components/action-menu/action-menu.prompt.md",
@@ -151,10 +151,10 @@
       },
       "docs": "packages/components/action-menu/action-menu.docs.md",
       "prompt": "packages/components/action-menu/action-menu.prompt.md",
-      "bytes": 42270,
-      "jsBytes": 13986,
-      "codeBytes": 8458,
-      "hash": "sha256-47186c911275cc4fa02af81721a49a7eedc34dc03ebb5d5f7252f0f1474003df"
+      "bytes": 42508,
+      "jsBytes": 14224,
+      "codeBytes": 8570,
+      "hash": "sha256-ae41a0e32517fa4f645758c0384f2e58cc338c577f45dbac3e073ee858cf9a8c"
     },
     {
       "name": "agenda",
@@ -522,8 +522,8 @@
         },
         {
           "path": "packages/components/bubble/skins/body.js",
-          "bytes": 15685,
-          "hash": "sha256-a8cf180227a4b3cdcc374f637555f334218fd946fbc0aef5d947b9e026aa1143"
+          "bytes": 16212,
+          "hash": "sha256-8542010b922f2ae76ace890363693f11cb5a1e4ec657d726c0c4e2d378d69cb5"
         },
         {
           "path": "packages/components/bubble/skins/bubble.live.js",
@@ -569,10 +569,10 @@
       },
       "docs": "packages/components/bubble/bubble.docs.md",
       "prompt": "packages/components/bubble/bubble.prompt.md",
-      "bytes": 72218,
-      "jsBytes": 50306,
-      "codeBytes": 32163,
-      "hash": "sha256-d453a78dc843256943741d777ee3bbe0c05e33e62a6f2d5d6b80040972a39882"
+      "bytes": 72745,
+      "jsBytes": 50833,
+      "codeBytes": 32343,
+      "hash": "sha256-7010578c472be881d7839ab4a9998586900e04e68c4b0eed4a36810158d7d961"
     },
     {
       "name": "button",
@@ -1599,8 +1599,8 @@
       "files": [
         {
           "path": "packages/stage3d/depth-photo/depth-photo.2d.js",
-          "bytes": 6561,
-          "hash": "sha256-a141e3bb6a17350198ecae7365c035b99062915bea80ccb41b29e3775fe3aeeb"
+          "bytes": 6806,
+          "hash": "sha256-c9d00b9e295e7806cf128a5b9503ded0b78f81eb9200a6eb2c35d97e2d8d8d69"
         },
         {
           "path": "packages/stage3d/depth-photo/depth-photo.core.js",
@@ -1679,10 +1679,10 @@
       },
       "docs": "packages/stage3d/depth-photo/depth-photo.docs.md",
       "prompt": "packages/stage3d/depth-photo/depth-photo.prompt.md",
-      "bytes": 61008,
-      "jsBytes": 45813,
-      "codeBytes": 34959,
-      "hash": "sha256-3104b82f7b91a3eb5c5b73aa46a6cd6b62d42340b78820db8cf1b038a6f2661d"
+      "bytes": 61253,
+      "jsBytes": 46058,
+      "codeBytes": 35109,
+      "hash": "sha256-0e88def5bfa9b954dfd583dc1b39e7ecd98a6799d68a701cf05ce431b8fbd6ad"
     },
     {
       "name": "dialog",
@@ -9477,8 +9477,8 @@
       "files": [
         {
           "path": "packages/type/index.js",
-          "bytes": 3653,
-          "hash": "sha256-1d0e7d491abe13c4db01c08a9abeb0c41be9fb777dd8ab6d53c8537363ea89cb"
+          "bytes": 4468,
+          "hash": "sha256-8409ce7e519df17d263084e91504172142e6f52dfa39423497ea16e49c1e9daa"
         },
         {
           "path": "packages/type/junctions.js",
@@ -9540,10 +9540,10 @@
         "reason": "The oracle door for pages without a usable OffscreenCanvas (Safari before 17: a detached DOM canvas stand-in, NoMeasuringCanvas) raises it from 57344 to 61440 (57798 raw JS bytes on 9 October), under the owner's flexible-budgets ruling; to be optimized later. Rung 3 (shapes as data and text zones: ellipse, polygon, shapeOf, boundsOf, layZones, about 10 KB with their comments) raises it from 49152 to 57344; to be optimized later. On the tree merged with the text gate (stacks.js) the item counts 53932 raw JS bytes of 10 files (29172 of code), 94 percent of the budget. Before that: A pure layout core (layout.core.js), the oracle boundary (measure.js) and the DOM edge (lines, junctions and surfaces), budgeted apart from Pretext's own bytes (decisions 0010 and 0019); the raise to 49152 is the pure named operators (layout.operators.js, 12 KB) with generous headroom while the foundations go in, a shared core budgeted apart like the first (decisions 0010 and 0029); to be optimized later."
       },
       "docs": "packages/type/README.md",
-      "bytes": 79375,
-      "jsBytes": 58136,
-      "codeBytes": 31285,
-      "hash": "sha256-4dc3d080699fb6f188c23c1cc6cfcce5ce69f2ba21987a302f9ba31712a0ec78"
+      "bytes": 80190,
+      "jsBytes": 58951,
+      "codeBytes": 31536,
+      "hash": "sha256-c1b2944e84f6aec4ed83ab1305d9173747076145ba60f0857a586912b80db33b"
     },
     {
       "name": "venue",
