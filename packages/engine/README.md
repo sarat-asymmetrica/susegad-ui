@@ -26,6 +26,7 @@ Pure modules touch no DOM and are tested in Node.
 | `src/light.js` | `sunAt` (where the sun is over a day), `shadowLength` (`h / tan(e)`, the one number checkable against a sundial), `shadowDir`, `daylight` |
 | `src/motion.js` | `follow` / `followAll` (exponential, frame-rate independent), `spring` / `makeSpring` (damped oscillator, damping as a ratio), `lagged`, `lagAndTension`, `pendulum`, `cycle`, `visit` |
 | `src/wave.js` | `front` / `radialFront` / `linearFront` / `weightedFront` (a wavefront over real distance), `arrivalTime`, `phaseShifted`, `spread` (discrete cellular) |
+| `src/phyllotaxis.js` | `vogel` (Vogel's model: point i at i × the golden angle, radius scale × √i; the first k points of vogel(n) are vogel(k)), `GOLDEN` (exact, not 137.5), `fit`, `floretSize`, `variation` (a seeded turn, jitter within `JITTER_CAP`, and a count; never a different angle) |
 
 Canvas edge modules need a browser.
 

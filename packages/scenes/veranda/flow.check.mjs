@@ -9,26 +9,35 @@
 //  2. the layout moves in steps: over four seconds the lines are re-laid a handful of times (sixteen steps a turn), never every
 //     frame, and no line jumps more than a few pixels when it does;
 //  3. real text: the paragraph is whole and in order in the accessibility tree, live, in 2D and in quiet;
-//  4. the still: on the 2D tier, in quiet and under reduced motion the pot is drawn once and the lines are laid once (the layout
-//     does not change over three seconds), and no request for three.js is made where the page does not need it;
+//  4. the stills: on the 2D tier the pot is drawn once and the lines are laid once as spans; in quiet and under reduced motion the paragraph
+//     is plain text flowing round a CSS shape-outside hug (nothing laid, nothing measured); no request for three.js where the page does not need it;
 //  5. what three drew is the silhouette the layout used: three's projected vertices against the pure silhouette at the same turn.
+//  6. the turn re-lays only where a break decision flips (rung M1): the flip map is built, and a turn driven step by step costs at
+//     most one re-lay per critical angle, against the fixed 1/16 grid's sixteen. The goal's "<= 2 distinct states" target is NOT met
+//     at this pose (4 measured); the miss is recorded in docs/reports/m1-count-addendum-2026-10-10.md and the check asserts what holds.
 //
-// --break: a flow that ignores the pot (1), a layout redone every frame (2).
+// --break: a flow that ignores the pot (1), a layout redone every frame (2), the pre-rung 1/16 grid (6).
 
 import { chromium } from 'playwright';
 import { startServer } from '../../../tools/serve.mjs';
+import { gpuOf } from '../../../tools/lib/gpu.mjs';
 
 const BREAK = process.argv.includes('--break');
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const server = await startServer({ quiet: true });
 const browser = await chromium.launch({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] });
+// On a software renderer (a CI runner, or SG_FORCE_SOFTWARE_GL=1) the pot is drawn once in 2D and never turns: the clauses about the
+// turning pot three draws (1, 1b, 2, 5, and the live part of 3) skip (`skip  <clause>  (no GPU: <renderer>)`, tools/lib/gpu.mjs).
+const gate = await gpuOf(browser);
 const THREE = /node_modules\/three\/|three\.named\.js|three(\.module|\.core)?\.js/;
 const TEXT = 'The clay pot on the seat is where the water is kept cool. It has stood there since before the roof was retiled, and it turns, slowly, when nobody is looking, so that every side of it gets the same share of the evening light.';
 
 const BREAKS = {
   ignoresPot: [/matka-view\.js$/, s => s.replace('(top, bottom) => extentIn(pot, top, bottom)', '() => null')],
-  everyFrame: [/matka-view\.js$/, s => s.replace('if (step !== laidStep || key !== laidKey) {', 'if (true) {').replace('lay(s, f, quantise(th, STEPS));', 'lay(s, f, th);')],
+  everyFrame: [/matka-view\.js$/, s => s.replace('if (step !== laidStep || key !== laidKey) {', 'if (true) {').replace('lay(s, f, breaks ? step : quantise(th, STEPS));', 'lay(s, f, th);')],
+  // the wiring as it was before rung M1: the layout re-runs at every fixed 1/16 step, whether or not a break decision flipped there
+  oldWiring: [/matka-view\.js$/, s => s.replace('      const step = breaks ? breaks.quantize(th) : quantise(th, STEPS);', '      const step = quantise(th, STEPS);').replace('        lay(s, f, breaks ? step : quantise(th, STEPS));', '        lay(s, f, quantise(th, STEPS));')],
 };
 async function open({ query = 'register=warm', reduced = false, noGL = false, patches = [] } = {}) {
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: reduced ? 'reduce' : 'no-preference', deviceScaleFactor: 1 });
@@ -52,7 +61,8 @@ async function open({ query = 'register=warm', reduced = false, noGL = false, pa
 const SIG = () => [...window.__stage.matka.card.querySelectorAll('span[data-line]')].map(s => `${s.textContent}@${s.style.left},${s.style.top}`).join('|');
 
 // 1. the lines clear the pot
-{
+const SK1 = ['the lines clear the pot: at four turns of it no line box meets a pixel three drew', "the pot stands at the pane's corner: its silhouette crosses the pane's edge and at least three lines are shortened by it"].map(c => gate.skip(c));
+if (!SK1[0]) {
   const p = await open({ patches: ['ignoresPot'] });
   const worst = [];
   for (let k = 0; k < 4; k++) {
@@ -86,51 +96,61 @@ const SIG = () => [...window.__stage.matka.card.querySelectorAll('span[data-line
 }
 
 // 2. the layout moves in steps
-{
+if (!gate.skip('the layout moves in steps: over 4.5 s the lines are re-laid a handful of times, never every frame, and never jump far')) {
   const p = await open({ patches: ['everyFrame'] });
   const r = await p.page.evaluate(async sig => {
     const f = new Function('return ' + sig)();
     let last = f(), changes = 0, frames = 0, worst = 0, prev = [...window.__stage.matka.card.querySelectorAll('span[data-line]')].map(s => parseFloat(s.style.left));
+    // The layout's own counter, not just the words' positions: the spans sit still when the layout
+    // is redone at a nearby angle, so positions alone cannot tell a re-laid frame from a quiet one
+    // (a build that re-lays every frame used to pass this clause; the counter catches it).
+    const lays0 = window.__stage.matka.stats.lays;
     const t0 = performance.now();
     await new Promise(res => { const tick = () => { frames++; const now = f(); if (now !== last) { changes++; last = now; const cur = [...window.__stage.matka.card.querySelectorAll('span[data-line]')].map(s => parseFloat(s.style.left)); for (let i = 0; i < Math.min(cur.length, prev.length); i++) worst = Math.max(worst, Math.abs(cur[i] - prev[i])); prev = cur; } if (performance.now() - t0 < 4500) requestAnimationFrame(tick); else res(); }; requestAnimationFrame(tick); });
-    return { changes, frames, worst: Math.round(worst) };
+    return { changes, frames, worst: Math.round(worst), lays: window.__stage.matka.stats.lays - lays0 };
   }, SIG.toString());
-  check('the layout moves in steps: over 4.5 s the lines are re-laid a handful of times, never every frame, and never jump far', r.changes <= 10 && r.frames > 100 && r.worst <= 40, `${r.changes} re-layouts in ${r.frames} frames, the biggest shift of a line ${r.worst} px`);
+  check('the layout moves in steps: over 4.5 s the lines are re-laid a handful of times, never every frame, and never jump far', r.changes <= 10 && r.frames > 100 && r.worst <= 40 && r.lays <= 10, `${r.changes} break changes and ${r.lays} layout runs in ${r.frames} frames, the biggest shift of a line ${r.worst} px`);
   await p.context.close();
 }
 
 // 3. real text
 {
   const seen = [];
+  const LIVE3 = 'real text: the whole paragraph is in the page, in order, live, in 2D and in quiet', soft3 = gate.gpu.software;
+  if (soft3) gate.skip(LIVE3);
   for (const [tier, opts] of [['live', {}], ['2D', { noGL: true }], ['quiet', { query: 'register=quiet' }]]) {
+    if (soft3 && tier === 'live') continue;
     const p = await open(opts);
     const words = await p.page.evaluate(() => window.__stage.matka.card.textContent.replace(/\s+/g, ' ').trim());
     const snap = (await p.page.locator('sg-veranda-stage .flow-card').ariaSnapshot()).replace(/\n/g, ' ').replace(/\s+/g, ' ');
     seen.push({ tier, ok: words === TEXT && snap.includes('The clay pot on the seat is where the water is kept cool.') && snap.includes('every side of it gets the same share of the evening light.'), mode: await p.page.evaluate(() => window.__stage.dataset.flow) });
     await p.context.close();
   }
-  check('real text: the whole paragraph is in the page, in order, live, in 2D and in quiet', seen.every(s => s.ok), seen.map(s => `${s.tier}: ${s.ok} (${s.mode})`).join('; '));
+  check(soft3 ? 'real text: the whole paragraph is in the page, in order, in 2D and in quiet' : LIVE3, seen.every(s => s.ok), seen.map(s => `${s.tier}: ${s.ok} (${s.mode})`).join('; '));
 }
 
-// 4. the still
+// 4. the stills and the 2D tier
 {
   const rows = [];
-  for (const [label, opts] of [['2D tier', { noGL: true }], ['quiet', { query: 'register=quiet' }], ['reduced motion', { reduced: true }]]) {
+  for (const [label, opts, want] of [['2D tier', { noGL: true }, 'spans'], ['quiet', { query: 'register=quiet' }, 'still'], ['reduced motion', { reduced: true }, 'still']]) {
     const p = await open(opts);
     const r = await p.page.evaluate(async sig => {
-      const f = new Function('return ' + sig)(), m = window.__stage.matka, a = f();
+      const f = new Function('return ' + sig)(), m = window.__stage.matka, a = f(), cardA = m.card.getBoundingClientRect().toJSON();
       await new Promise(r => setTimeout(r, 3000));
       const px = m.pixels(); let opaque = 0; for (const v of px.alpha) if (v > 40) opaque++;
-      return { same: f() === a, mode: window.__stage.dataset.flow, opaque, lines: m.card.querySelectorAll('span[data-line]').length };
+      const hug = m.card.querySelector('.flow-hug'), cardB = m.card.getBoundingClientRect().toJSON();
+      return { same: f() === a && cardA.width === cardB.width && cardA.height === cardB.height, mode: window.__stage.dataset.flow, paint: m.paint, opaque, lines: m.card.querySelectorAll('span[data-line]').length, shape: hug ? getComputedStyle(hug).shapeOutside : '' };
     }, SIG.toString());
-    rows.push({ label, ...r, three: p.three().length });
+    rows.push({ label, want, ...r, three: p.three().length });
     await p.context.close();
   }
-  check('the still: on the 2D tier, in quiet and under reduced motion the pot is drawn once and the lines are laid once, with no three.js asked for', rows.every(r => r.same && r.mode === 'still' && r.opaque > 400 && r.lines >= 4 && r.three === 0), rows.map(r => `${r.label}: laid once ${r.same}, ${r.opaque} pot pixels, ${r.three} three requests`).join('; '));
+  check('the stills: the 2D tier lays once as spans; quiet and reduced motion keep the paragraph as plain text round a CSS shape-outside hug, nothing laid and no three.js asked for',
+    rows.every(r => r.same && r.mode === r.want && r.opaque > 400 && r.three === 0 && (r.want === 'spans' ? r.lines >= 4 && r.shape === '' : r.lines === 0 && /^polygon\(/.test(r.shape))),
+    rows.map(r => `${r.label}: mode ${r.mode}, ${r.lines} spans, ${r.opaque} pot pixels, ${r.three} three requests, shape-outside ${r.shape ? r.shape.slice(0, 18) + '…' : 'none'}`).join('; '));
 }
 
 // 5. what three drew is the silhouette the layout used
-{
+if (!gate.skip('what three drew is the silhouette the layout used: its projected vertices against the pure silhouette at the same turn')) {
   const p = await open();
   const r = await p.page.evaluate(async () => {
     const core = await import('/packages/scenes/veranda/matka.core.js'), m = window.__stage.matka;
@@ -154,7 +174,33 @@ const SIG = () => [...window.__stage.matka.card.querySelectorAll('span[data-line
   await p.context.close();
 }
 
+// 6. the turn re-lays only where a break decision flips (rung M1)
+{
+  const p = await open({ patches: ['oldWiring'] });
+  const r = await p.page.evaluate(async () => {
+    const m = window.__stage.matka, TAU = Math.PI * 2;
+    const pat = () => [...m.card.querySelectorAll('span[data-line]')].map(s => s.textContent.trim()).join('|');
+    const states = m.breakStatesPerTurn, angles = m.criticalAngles?.length ?? 0;
+    const before = m.stats.lays, seen = new Map();
+    for (let i = 0; i < 64; i++) { // a full turn, driven a step at a time so the cost is read without the clock
+      m.hold(true, i / 64 * TAU);
+      await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
+      const q = pat(); if (!seen.has(q)) seen.set(q, i);
+    }
+    m.hold(false);
+    return { states, angles, relays: m.stats.lays - before, patterns: seen.size };
+  });
+  // What the rung claims: a re-lay happens only where a break decision flips, so a full turn costs
+  // at most one per critical angle (the fixed 1/16 grid cost sixteen, whatever the breaks did).
+  // What the rung does NOT achieve: the goal's "<= 2 distinct states", which is 4 at this pose; that
+  // miss is the written finding in docs/reports/m1-count-addendum-2026-10-10.md, not a green here.
+  check('the turn re-lays only where a break decision flips: the flip map is built and a turn driven in 64 steps costs at most one re-lay per critical angle',
+    r.states !== null && r.states >= 1 && r.angles > 0 && r.relays <= r.angles + 2,
+    `map states ${r.states}, critical angles ${r.angles}, ${r.relays} re-lays over a turn in 64 steps, ${r.patterns} distinct patterns laid (the rung's <= 2 target is not met at this pose: see the addendum)`);
+  await p.context.close();
+}
+
 await browser.close(); await server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${results.length - failed} of ${results.length} pass${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
+console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
 process.exit(BREAK ? 0 : failed ? 1 : 0);

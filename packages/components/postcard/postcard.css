@@ -225,3 +225,13 @@ sg-postcard > article > sg-stamp:not([data-skin]) > .sg-stamp-words > strong,
 sg-postcard > article > sg-stamp[data-skin="quiet"] > .sg-stamp-words > strong { font-size: var(--sg-step--1); }
 /* Room for the playful tilt and its shadow, so the card never pushes the page sideways. */
 sg-postcard[data-skin="playful"] { padding: 4px 10px 10px 4px; }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-postcard article a { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-postcard article a:active { translate: 0 1px; color: color-mix(in oklab, var(--sg-accent-text, currentColor), var(--sg-text, CanvasText) 25%); text-decoration: underline; text-decoration-thickness: 2px; transition: none !important; }
+sg-postcard[data-skin="warm"] article a:active { translate: none; }
+sg-postcard[data-skin="playful"] article a:active { translate: none; scale: 0.98; }
+@media (prefers-reduced-motion: reduce) {
+  sg-postcard article a { transition: none; }
+  sg-postcard article a:active { translate: none !important; scale: none !important; }
+}

@@ -42,6 +42,10 @@ Paint the Ribandar salt pans at dawn in ink and wash on paper, using canvas with
 - "Let the brine water recede as our database migration completes."
 - "Show a quiet architectural grid of Goan salt pans with no motion."
 
+## On a page
+
+A bare `<sg-scene name="mithagar">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/mithagar/index.js">` with `<sg-scene name="mithagar" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing carries no essential text; slotted DOM carries the title and description. In quiet and under reduced motion, the scene shows a finished architectural still with crisp hairlines and no movement. In playful, the canvas receives focus: arrow keys navigate the bunds and Space or Enter rakes the nearest salt pyramid.

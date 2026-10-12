@@ -8,7 +8,7 @@ Colour, type, space, motion, sound and the register for Susegad UI, as CSS custo
 <html data-palette="casa" data-theme="dark" data-register="quiet">
 ```
 
-- `data-palette="susegad|casa|azulejo"`: the colour palette. Default `susegad`.
+- `data-palette="susegad|casa|azulejo|haldi"`: the colour palette. Default `susegad`.
 - `data-theme="light|dark"`: leave it off to follow the reader's system setting.
 - `data-register="quiet|warm|playful"` (or `register="..."`): default `warm`.
 
@@ -102,6 +102,8 @@ Dark is the house's own night chapter: `#14161C` with `#E8E2D6` ink.
 
 **Azulejo** is the painted tile of Goa's Portuguese-era houses and churches, with its majolica cousin: a cream glaze, cobalt ink, and lemon and leaf green. It was made for the `tile-band` component and is a palette like the others: every text role passes AA on all three surfaces in both themes. Cobalt is the primary act and the focus ring by day; at night the ground is deep cobalt, the ink is cream, the accent is cobalt lifted to `#8FB2F2` and the focus ring is lemon. The tile pigments (`--sg-cobalt`, `--sg-cobalt-bright`, `--sg-lemon`, `--sg-leaf`, `--sg-glaze`, `--sg-wash`) are for drawing: lemon and leaf are never text on cream. Tiles keep their own colours in both themes, as a real tile would, so `tile-band` reads the pigments and not the page's grounds. Two choices to know: `warning` is lemon at night but a darkened mustard (`#7A5500`) by day, because lemon cannot be read on cream; and `danger` is a plain terracotta red, a colour azulejo itself does not have.
 
+**Haldi** is a kitchen poster: turmeric and marigold fields, curry-leaf green and tomato red for ink and accents, on warm cream, for food, festival, kids' and market brands that want warm and bright. Light is the poster by day. Dark is the same kitchen at night: deep curry-leaf green paper (`#183312`), cream ink, the yellows kept as pigment, and turmeric as the accent and the focus ring. The pigments (`--sg-turmeric`, `--sg-marigold`, `--sg-curry-leaf`, `--sg-tomato`, `--sg-cream`, `--sg-coral`, `--sg-leaf-bright`) are for drawing and fills; turmeric, marigold and coral are never text on cream. Set from the reference poster values, with these moves for contrast: `ink` is curry leaf taken darker (`#1F3A14`, 9.8:1 or more; the printed `#2F5D1E` stays as the pigment and is `success` and the focus ring by day); `warning` is marigold darkened to a burnt mustard (`#7A4A00`) by day, because marigold cannot be read on cream; `danger` is tomato taken deeper (`#9E1F18`) and `info` is a leaf-teal (`#2A5F57`), because the poster has no blue. Tomato (`#B3261E`, unmoved) is the primary act by day, 5.1:1 or more as text. At night `accent`, `accent-text`, `info` and `focus` are turmeric, `danger` is coral and `success` is `--sg-leaf-bright`.
+
 ### Lowest contrast of each text role, on its worst surface
 
 | | text | soft | faint | accent | success | warning | danger | info |
@@ -112,6 +114,8 @@ Dark is the house's own night chapter: `#14161C` with `#E8E2D6` ink.
 | Casa dark | 12.61 | 7.55 | 4.72 | 5.61 | 4.62 | 4.59 | 4.62 | 7.31 |
 | Azulejo light | 11.37 | 6.59 | 4.77 | 6.74 | 5.17 | 5.39 | 6.04 | 5.14 |
 | Azulejo dark | 12.33 | 8.87 | 5.98 | 6.70 | 7.08 | 9.03 | 6.68 | 6.70 |
+| Haldi light | 9.75 | 6.04 | 5.21 | 5.08 | 6.03 | 5.81 | 6.12 | 5.68 |
+| Haldi dark | 9.55 | 7.36 | 5.49 | 6.71 | 6.50 | 5.08 | 5.88 | 6.71 |
 
 These numbers use the 8-bit colour the browser paints. The tests also check on-accent against the accent fill, text and soft text on the selection and on the scrim over pure black and pure white, and focus and control borders at 3:1.
 
@@ -183,3 +187,39 @@ After changing `tokens.js`, run `node packages/tokens/tools/build-css.mjs`. Then
 - The hex fallback covers `:root` only. A nested palette or theme needs `light-dark()` (Chrome 123, Firefox 120, Safari 17.5).
 - Kannada has no hand face yet, so `--sg-font-hand` falls back to Noto Sans Kannada for it.
 - `rule` in the light themes is a hairline at about 1.3:1. Anything a user must see to operate, such as input borders, uses `rule-strong`.
+
+## Bake and reflow
+
+Colour is prepared once and recomposed by arithmetic. `bake.js` names that
+shape. `bake(palette)` keeps every role's OKLCH axes (light, dark, the
+translucent roles) as plain JSON; `recolor(cache, options)` is the arithmetic
+over it, with no DOM and no parsing. With no options it gives the same colours
+`resolveRoles` gives for every shipped palette, role by role: the same L, C and H
+(to the last bit) and the same hex. A translucent role (`scrim`, `shadow`) has the
+same colour and alpha, and its `css` string carries the alpha
+(`oklch(94.67% 0.0127 86.83 / 0.86)`), where `resolveRoles` leaves it off. A palette from
+`palette-from-photo` bakes the same way (`--cache cache.json` writes one).
+
+```js
+import { bake, recolor, ramp, flatness } from './bake.js';
+
+const cache = bake('casa');                                   // once
+const night = recolor(cache, { dark: true, register: 'quiet' }); // per use
+night.roles.text.hex;                                          // the same as roleHex('casa', 'dark').text
+
+// a retint: shift the hue and the contrast floors are held (a text role that
+// falls under 4.5:1 is pulled back, and `night.violations` says if any are left)
+recolor(cache, { hueShift: 40, chromaScale: 0.8 });
+
+// a ramp between any two roles, on the straight line between them in OKLab, so
+// each step looks the same size (a line can, rarely, leave sRGB; checkRamps flags it); `flatness(ramp(...))` says how even it is
+ramp(cache, { from: 'surface', to: 'accent', steps: 9 });
+```
+
+`gamut: 'srgb'` lowers chroma until each colour fits sRGB (for canvas); the default
+leaves colours as authored, as `tokens.css` does. `register` is carried along with
+its glass settings; colour itself does not change with the register today, so the
+option is inert for colour. The generated ramps are gated for evenness (`checkRamps`);
+the hand-set paper-to-ink ladder is uneven by design and is gated by its contrast
+floors instead. `palette-from-photo --cache` runs `checkRamps` on the cache it writes
+and exits non-zero if a ramp bunches.

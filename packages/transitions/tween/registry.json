@@ -1,0 +1,23 @@
+{
+  "name": "tween",
+  "type": "package",
+  "stability": "experimental",
+  "title": "Tween",
+  "description": "Bake and reflow for motion. bake(easing) evaluates an easing curve once (a function such as the Kantar curtain's easeOutCubic, a CSS cubic-bezier() or linear() string from the tokens, or a damped spring) into a plain-JSON table of samples. tween(cache, t) is then a table lookup and one multiply, the same value the curve gives to within 3e-5 for the token curves and 3.3e-4 for the playful spring. still(cache) is the end state, which is all reduced motion shows. Pure, no DOM, runs in Node. Does not replace any existing easing; it holds them as data.",
+  "version": "0.1.0",
+  "files": [
+    "tween.core.js",
+    "tween.docs.md"
+  ],
+  "dependencies": [],
+  "docs": "tween.docs.md",
+  "budget": {
+    "jsBytes": 8192,
+    "reason": "One pure file, counted raw with its comments: the table baker, a cubic-bezier solver, a linear() reader and the closed-form spring, about 7.2 KB."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

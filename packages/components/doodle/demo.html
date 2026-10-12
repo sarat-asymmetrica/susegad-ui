@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doodle</title>
+<link rel="stylesheet" href="./doodle.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 80rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .page h2.reg { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: 0 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-5); }
+  .band-label { margin: var(--sg-space-4) 0 var(--sg-space-2); font: var(--sg-weight-medium) var(--sg-step--1) / 1.3 var(--sg-font-body); font-variant-caps: all-small-caps; letter-spacing: 0.08em; color: var(--sg-text-soft); }
+  .motifs { display: grid; grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); gap: var(--sg-space-3); margin: 0; padding: 0; list-style: none; }
+  .motifs li { display: grid; justify-items: center; gap: var(--sg-space-1); color: var(--sg-accent-text); }
+  .motifs sg-doodle { --sg-doodle-size: 6rem; }
+  .motifs span { font-size: var(--sg-step--1); color: var(--sg-text-soft); }
+  .menu { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--sg-space-4); align-items: center; max-width: 40rem; margin-top: var(--sg-space-3); }
+  .menu sg-doodle { --sg-doodle-size: 5rem; color: var(--sg-text); }
+  .menu h3 { margin: 0; font: 400 var(--sg-step-2) / var(--sg-leading-tight) var(--sg-font-display); }
+  .menu p { margin: 0; color: var(--sg-text-soft); }
+  .tomato { color: var(--sg-accent-text); }
+  .big { --sg-doodle-size: 6rem; }
+  .leaf { color: var(--sg-success); }
+  .page > section + section { margin-top: var(--sg-space-6); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Doodle</h1>
+  <p class="lede">Single-line food drawings, as if done with a marker, in whatever colour the text around them is. The kitchen here is made up: Saffron Spoon, a home pasta table. Add <code>?palette=haldi</code> for the poster palette.</p>
+  <div class="page" id="page">
+    <div class="set">
+      <p class="band-label">All ten motifs</p>
+      <ul class="motifs">
+        <li><sg-doodle motif="fork-twirl"></sg-doodle><span>fork-twirl</span></li>
+        <li><sg-doodle motif="ravioli"></sg-doodle><span>ravioli</span></li>
+        <li><sg-doodle motif="gnocchi"></sg-doodle><span>gnocchi</span></li>
+        <li><sg-doodle motif="lemon"></sg-doodle><span>lemon</span></li>
+        <li><sg-doodle motif="tomato"></sg-doodle><span>tomato</span></li>
+        <li><sg-doodle motif="basil"></sg-doodle><span>basil</span></li>
+        <li><sg-doodle motif="whisk"></sg-doodle><span>whisk</span></li>
+        <li><sg-doodle motif="rolling-pin"></sg-doodle><span>rolling-pin</span></li>
+        <li><sg-doodle motif="wheat"></sg-doodle><span>wheat</span></li>
+        <li><sg-doodle motif="steam"></sg-doodle><span>steam</span></li>
+      </ul>
+      <p class="band-label">A band, as a section divider</p>
+      <sg-doodle band seed="saffron-spoon"></sg-doodle>
+      <p class="band-label">A band from a few motifs, in tomato red</p>
+      <sg-doodle class="tomato" band seed="supper" motifs="tomato basil ravioli lemon"></sg-doodle>
+      <div class="menu">
+        <sg-doodle motif="fork-twirl" label="A fork lifting a twirl of spaghetti"></sg-doodle>
+        <div>
+          <h3>Spaghetti, slow tomato</h3>
+          <p>A doodle with a label is one image with that name. Without one it is decoration, hidden from screen readers.</p>
+        </div>
+      </div>
+      <p class="band-label">Bigger, in curry leaf</p>
+      <sg-doodle class="leaf big" band seed="market" motifs="wheat basil lemon whisk"></sg-doodle>
+    </div>
+  </div>
+  <p class="note">A band is laid from a seed, so the same page draws the same row every time. Add <code>?register=quiet</code>, <code>warm</code> or <code>playful</code> to see one register on its own. In warm and playful each doodle draws itself as it scrolls into view and then boils a little. In playful, pass the pointer over one, or tap it, and it wiggles.</p>
+</main>
+<script>
+  if (!new URLSearchParams(location.search).has('register')) {
+    const page = document.getElementById('page'), set = page.querySelector('.set');
+    const names = { quiet: 'Quiet: a still hairline drawing', warm: 'Warm: draws itself as it scrolls into view, then boils a little', playful: 'Playful: a bolder line, and a wiggle when you touch one' };
+    page.replaceChildren(...Object.entries(names).map(([r, label]) => {
+      const sec = document.createElement('section');
+      sec.dataset.register = r; sec.setAttribute('aria-labelledby', `h-${r}`);
+      const h = document.createElement('h2'); h.id = `h-${r}`; h.className = 'reg'; h.textContent = label;
+      sec.append(h, set.cloneNode(true));
+      return sec;
+    }));
+  }
+</script>
+<script type="module">
+  import './doodle.js';
+</script>
+</body>
+</html>

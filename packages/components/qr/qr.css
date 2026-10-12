@@ -1,0 +1,121 @@
+/* <sg-qr>. Without JavaScript the words show and the picture does not. With it,
+   the code sits on a plate that is light in every theme: a QR code scans as
+   dark modules on a light ground, so the plate never follows dark mode and
+   never takes the system's forced colours. The warm and playful skins add a
+   frame in the plate's padding, outside the quiet zone; the modules are the
+   same in all three registers. */
+
+sg-qr {
+  --sg-qr-size: 12rem;
+  --sg-qr-light: #fff;
+  --sg-qr-dark: #14110e;
+  --sg-qr-fill: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sg-space-4, 1.25rem);
+  max-width: 100%;
+  color: var(--sg-text);
+}
+sg-qr[hidden] { display: none; }
+
+sg-qr .sg-qr-plate {
+  flex: none;
+  position: relative;
+  box-sizing: border-box;
+  width: var(--sg-qr-size);
+  max-width: 100%;
+  /* never so small that a module is under 2 CSS px: the element sets --sg-qr-units (the drawn width in
+     modules, quiet zone included) and the skin says how much of the plate the picture takes */
+  min-width: min(100%, calc(var(--sg-qr-units, 0) * 2px / var(--sg-qr-fill, 1) + 3px));
+  aspect-ratio: 1;
+  background: var(--sg-qr-light);
+  border: var(--sg-hairline, 1px) solid var(--sg-rule-strong, #888);
+  border-radius: var(--sg-radius-2, 4px);
+  display: grid;
+  place-items: center;
+  forced-color-adjust: none;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+sg-qr .sg-qr-plate[hidden] { display: none; }
+
+sg-qr .sg-qr-code {
+  display: block;
+  width: calc(100% * var(--sg-qr-fill));
+  /* a whole number of CSS px per module, rounded down: a fractional pitch blurs the modules and
+     costs a phone camera reads; the leftover is light margin on the same plate */
+  width: round(down, calc(100% * var(--sg-qr-fill)), calc(var(--sg-qr-units, 1) * 1px));
+  height: auto;
+  aspect-ratio: 1;
+  forced-color-adjust: none;
+}
+sg-qr .sg-qr-light { fill: var(--sg-qr-light); }
+sg-qr .sg-qr-dark { fill: var(--sg-qr-dark); }
+
+/* on a phone the plate sits on its own line: centre it there */
+@media (max-width: 36rem) {
+  sg-qr { justify-content: center; }
+}
+
+sg-qr .sg-qr-text {
+  flex: 1 1 14rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font: var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.5) var(--sg-font-body, sans-serif);
+}
+sg-qr .sg-qr-text > :first-child { margin-top: 0; }
+sg-qr .sg-qr-text > :last-child { margin-bottom: 0; }
+
+/* ── warm and playful: paper, and a hand-ruled frame in the padding ───── */
+
+sg-qr:is([data-skin="warm"], [data-skin="playful"]) {
+  --sg-qr-light: #fcf6e6;
+  --sg-qr-dark: #1b1611;
+  --sg-qr-frame: #6a4a30;
+  --sg-qr-fill: 0.86;
+}
+sg-qr[data-skin="playful"] {
+  --sg-qr-light: #fdf4dc;
+  --sg-qr-frame: #b0431f;
+}
+sg-qr:is([data-skin="warm"], [data-skin="playful"]) .sg-qr-plate {
+  border-color: transparent;
+  border-radius: 3px;
+  box-shadow: var(--sg-lift, 0 1px 3px rgb(0 0 0 / 0.2));
+}
+sg-qr .sg-qr-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+  forced-color-adjust: none;
+}
+sg-qr .sg-qr-rule {
+  fill: none;
+  stroke: var(--sg-qr-frame);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+sg-qr .sg-qr-rule-fine { stroke-width: 0.45; }
+sg-qr .sg-qr-stud {
+  fill: var(--sg-qr-frame);
+  stroke: var(--sg-qr-light);
+  stroke-width: 0.8;
+  paint-order: stroke;
+}
+sg-qr .sg-qr-stud-corner { stroke-width: 1.2; }
+
+/* In forced colours the plate keeps its own light ground and dark modules; the
+   edge is drawn in the system's text colour so it still reads against the page. */
+@media (forced-colors: active) {
+  sg-qr .sg-qr-plate { border: 1px solid CanvasText; }
+  sg-qr:is([data-skin="warm"], [data-skin="playful"]) .sg-qr-plate { border-color: CanvasText; box-shadow: none; }
+}
+
+@media print {
+  sg-qr .sg-qr-plate { box-shadow: none; }
+}

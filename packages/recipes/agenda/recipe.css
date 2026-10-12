@@ -1,0 +1,126 @@
+/* The agenda recipe. Plain HTML styled here; recipe.js only adds words ("Now on stage",
+   "Next, at 2 pm") and a data-phase on each session. The marker is always words first, then
+   a shape beside them (a filled dot for now, a ring for next, a bar down the side of the
+   session that is on), so colour is never the only thing saying it.
+   Past sessions go quiet by taking the softer text colour, never by fading, so they stay
+   readable. Nothing here moves: there is nothing to press and nothing to animate. */
+
+.sg-agenda { max-width: 46rem; container: sg-agenda / inline-size; }
+.sg-agenda h2 { font: 400 var(--sg-step-2, 1.4rem) / 1.15 var(--sg-font-display, inherit); margin: 0 0 var(--sg-space-2, 8px); }
+.sg-agenda-zone, .sg-agenda-status { margin: 0 0 var(--sg-space-2, 8px); color: var(--sg-text-soft, inherit); font-size: var(--sg-step--1, 0.9rem); }
+.sg-agenda-status { color: var(--sg-text, inherit); font-size: var(--sg-step-0, 1rem); margin-bottom: var(--sg-space-4, 24px); }
+.sg-agenda-status[hidden] { display: none; }
+
+.sg-agenda-day { margin-top: var(--sg-space-4, 24px); }
+.sg-agenda-day > h3 {
+  margin: 0 0 var(--sg-space-2, 8px);
+  font: var(--sg-weight-bold, 600) var(--sg-step-0, 1rem) / 1.3 var(--sg-font-body, inherit);
+  letter-spacing: 0.04em;
+  color: var(--sg-text, inherit);
+}
+
+.sg-agenda-sessions { list-style: none; margin: 0; padding: 0; }
+
+/* one session: the time to the left when there is room, everything stacked when there is not */
+.sg-session {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px 0;
+  padding: var(--sg-space-3, 12px) var(--sg-space-2, 8px) var(--sg-space-3, 12px) var(--sg-space-3, 12px);
+  border-top: var(--sg-hairline, 1px) solid var(--sg-rule, currentColor);
+}
+.sg-session > * { margin: 0; min-width: 0; }
+@container sg-agenda (min-width: 36rem) {
+  .sg-session { grid-template-columns: 11rem minmax(0, 1fr); column-gap: var(--sg-space-3, 12px); }
+  .sg-session > .sg-session-time { grid-column: 1; grid-row: 1 / span 4; }
+  .sg-session > :not(.sg-session-time) { grid-column: 2; }
+}
+.sg-session-time { font-variant-numeric: tabular-nums; color: var(--sg-text-soft, inherit); font-size: var(--sg-step--1, 0.9rem); }
+.sg-session-title { font: var(--sg-weight-medium, 500) var(--sg-step-1, 1.15rem) / var(--sg-leading-snug, 1.3) var(--sg-font-body, inherit); }
+.sg-session-who { font-size: var(--sg-step-0, 1rem); }
+.sg-session-where { font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); }
+/* a middle dot between the room and the track; empty alt text where supported */
+.sg-session-track::before { content: "\00b7\00a0"; content: "\00b7\00a0" / ""; }
+
+.sg-session-time abbr { text-decoration: none; letter-spacing: 0.06em; }
+
+/* the state words, first in the session */
+.sg-session-state {
+  display: inline-flex; align-items: center; gap: 0.5em; justify-self: start;
+  font: var(--sg-weight-bold, 600) var(--sg-step--1, 0.9rem) / 1.3 var(--sg-font-body, inherit);
+  color: var(--sg-accent-text, currentColor);
+}
+.sg-session-state[hidden] { display: none; }
+.sg-session[data-phase="now"] .sg-session-state::before,
+.sg-session[data-phase="upcoming"] .sg-session-state:not(.sg-visually-hidden)::before {
+  content: ""; flex: none; box-sizing: border-box; width: 0.7em; height: 0.7em; border-radius: 50%;
+  border: 2px solid currentColor;
+}
+.sg-session[data-phase="now"] .sg-session-state::before { background: currentColor; } /* filled: it is on */
+/* the words of the one that is on take the plain text colour (the dot and the bar carry the accent), so they hold 4.5:1 on its tinted ground in every theme */
+.sg-session[data-phase="now"] .sg-session-state { color: var(--sg-text, currentColor); }
+.sg-session[data-phase="now"] .sg-session-state::before { color: var(--sg-accent-text, currentColor); }
+.sg-session[data-phase="now"] { border-inline-start: 4px solid var(--sg-accent, currentColor); padding-inline-start: calc(var(--sg-space-3, 12px) - 4px); }
+.sg-session[data-phase="now"] .sg-session-title { font-weight: var(--sg-weight-bold, 600); }
+
+/* past: quieter, still fully readable (the softer text colour, no opacity) */
+.sg-session[data-phase="past"] .sg-session-title,
+.sg-session[data-phase="past"] .sg-session-who { color: var(--sg-text-soft, inherit); }
+.sg-session[data-phase="past"] .sg-session-title { font-weight: var(--sg-weight-regular, 400); }
+
+/* a speaker's link lands here: leave room above it, and mark it with an outline (a line, not only a colour; Highlight in forced colours) */
+.sg-session { scroll-margin-top: var(--sg-space-5, 2.5rem); }
+.sg-session:target { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: 2px; }
+
+/* said to a screen reader and to nobody else */
+.sg-visually-hidden {
+  position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+
+/* ── quiet: ruled lines and small-caps state words ── */
+/* quiet keeps the state words at the body size, plain: it is the one thing a visitor came to learn (small capitals had made it the smallest text on the page) */
+[data-register="quiet"] .sg-session-state { font-size: var(--sg-step-0, 1rem); letter-spacing: 0.02em; }
+
+/* ── warm: each session a small raised card; the one on stage warmed with the accent ── */
+[data-register="warm"] .sg-agenda-sessions { display: grid; gap: var(--sg-space-2, 8px); }
+[data-register="warm"] .sg-session {
+  border: var(--sg-hairline, 1px) solid var(--sg-rule, currentColor);
+  border-radius: var(--sg-radius-3, 8px);
+  background: var(--sg-surface-raised, Canvas);
+}
+[data-register="warm"] .sg-session[data-phase="now"] {
+  border-inline-start: 4px solid var(--sg-accent, currentColor);
+  background: color-mix(in oklab, var(--sg-accent, #888) 10%, var(--sg-surface-raised, Canvas));
+}
+[data-register="warm"] .sg-session[data-phase="past"] { background: transparent; }
+[data-register="warm"] .sg-session-state { font-family: var(--sg-font-hand, inherit); font-size: var(--sg-step-0, 1rem); font-weight: var(--sg-weight-regular, 400); }
+
+/* ── playful: the state words become a small pill, tilted a hair ── */
+[data-register="playful"] .sg-agenda-sessions { display: grid; gap: var(--sg-space-3, 12px); }
+[data-register="playful"] .sg-session {
+  border: var(--sg-stroke-bold, 2px) solid var(--sg-rule-strong, currentColor);
+  border-radius: var(--sg-radius-4, 14px);
+  background: var(--sg-surface-raised, Canvas);
+}
+[data-register="playful"] .sg-session[data-phase="now"] { border-color: var(--sg-accent, currentColor); border-inline-start-width: 4px; padding-inline-start: calc(var(--sg-space-3, 12px) - 2px); }
+[data-register="playful"] .sg-session[data-phase="past"] { border-style: dashed; background: transparent; }
+[data-register="playful"] .sg-session-state:not(.sg-visually-hidden) {
+  padding: 0.1em 0.75em 0.1em 0.6em; border-radius: var(--sg-radius-pill, 999px);
+  border: 2px solid var(--sg-accent-text, currentColor);
+  font-family: var(--sg-font-hand, inherit); font-size: var(--sg-step-0, 1rem); font-weight: var(--sg-weight-regular, 400);
+  rotate: -1deg; margin-bottom: 4px;
+}
+[data-register="playful"] .sg-session[data-phase="now"] .sg-session-state:not(.sg-visually-hidden) {
+  background: var(--sg-accent, currentColor); color: var(--sg-on-accent, Canvas);
+}
+[data-register="playful"] .sg-session[data-phase="now"] .sg-session-state::before { background: var(--sg-on-accent, Canvas); }
+
+@media (forced-colors: active) {
+  .sg-session[data-phase="now"] { border-inline-start-color: Highlight; }
+  .sg-session:target { outline-color: Highlight; }
+  /* the dot for "now" stays filled (and "Next" stays a ring) when the system takes the colours */
+  .sg-session[data-phase="now"] .sg-session-state::before,
+  [data-register] .sg-session[data-phase="now"] .sg-session-state::before { forced-color-adjust: none; background: CanvasText; border-color: CanvasText; } /* the second selector matches the weight of playful's own dot rule, which would otherwise win */
+}

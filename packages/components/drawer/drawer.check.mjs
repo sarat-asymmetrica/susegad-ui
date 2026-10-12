@@ -6,11 +6,11 @@
 //
 //   node packages/components/drawer/drawer.check.mjs
 
-import { chromium } from 'playwright';
+import { pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const browser = await pickEngine().launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 
@@ -105,6 +105,11 @@ for (const register of ['quiet', 'warm', 'playful']) {
     return anims.every(a => a.playState !== 'running');
   });
   check(`${register}: clicking the opener shows the drawer modally`, await p.evaluate(() => document.querySelector('#rooms dialog').open));
+
+  // 4.1.2: the open <dialog> carries a name, read from the browser's own accessibility tree (the
+  // component points aria-labelledby at the first heading when the author gave no name).
+  const snap = await p.locator('#rooms dialog').ariaSnapshot();
+  check(`${register}: the open drawer is named "The rooms" in the accessibility tree`, /^- dialog "The rooms"/m.test(snap), snap.split(String.fromCharCode(10))[0]);
 
   // Chromium's wrap-step quirk (see dialog.check.mjs): document.body is a
   // transient, non-actionable stop, at most once per wrap, never a real leak.

@@ -6,6 +6,7 @@
 //   node packages/components/site-nav/site-nav.check.mjs
 
 import { harness, settle } from '../../../tools/lib/component-check.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { check, open, openHtml, axe, axeNoJs, done } = await harness();
 const DEMO = '/packages/components/site-nav/demo.html';
@@ -80,7 +81,7 @@ for (const width of [1280, 390]) {
   check('narrow: Tab goes into the open menu; Escape closes it and focus returns to Menu', inMenu === 'Home' && !r.open && r.focus === 'summary', JSON.stringify({ inMenu, ...r }));
   const sizes = await page.evaluate(() => [...document.querySelectorAll('sg-site-nav summary')].map(s => Math.round(s.getBoundingClientRect().height)));
   check('Menu buttons are at least 24 px tall', sizes.every(h => h >= 24), sizes.join(','));
-  const w = await page.evaluate(() => document.documentElement.scrollWidth);
+  const { scrollWidth: w } = await sidewaysScroll(page, 390);
   check('at 390 px the page does not scroll sideways', w <= 390, `${w}`);
   await ctx.close();
 }

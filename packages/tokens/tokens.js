@@ -199,6 +199,55 @@ export const palettes = {
       shadow: { of: 'ink', light: 0.4, dark: 0.6, darkOf: 'black', note: 'the lift shadow colour at full strength: ink by day, near-black at night (ink is light at night and would glow)' },
     },
   },
+
+  haldi: {
+    label: 'Haldi',
+    about: 'A kitchen poster: turmeric and marigold fields, curry-leaf green and tomato red for ink and accents, on warm cream. Dark is the same kitchen at night, deep curry-leaf green with the yellows kept as pigment.',
+    source: 'the bright home-kitchen flyers of a Goa food maker (turmeric, marigold, curry leaf, tomato, cream, coral), adjusted for contrast',
+    pigments: {
+      turmeric: { ...c(84.81, 0.1679, 89.08), note: "the big field: poster yellow; fills and marks, never text on cream (#F9C61F)" },
+      marigold: { ...c(77.25, 0.1617, 70.34), note: "the warmer field, a flower-stall orange-yellow; fills and marks (#F5A01A)" },
+      'curry-leaf': { ...c(43.05, 0.1062, 138.31), note: "the green of the poster ink, as printed (#2F5D1E, 6.9:1 on cream)" },
+      tomato: { ...c(50.13, 0.1783, 28.7), note: "the red of the accents, as printed (#B3261E, 5.8:1 on cream)" },
+      cream: { ...c(95.97, 0.0333, 88.06), note: "the poster paper, as printed (#FBF1D9)" },
+      coral: { ...c(81.49, 0.0956, 48.16), note: "a soft pink-orange for a second field or a wash; never text on cream (#F6B08C)" },
+      'leaf-bright': { ...c(82.54, 0.1483, 128.39), note: "curry leaf lifted for a night ground: new shoots, success at night (#A9D86A)" },
+    },
+    themed: {
+      paper: { ...t(c(95.97, 0.0333, 88.06), c(29.03, 0.0652, 140.06)), note: "poster cream; at night, deep curry-leaf green (#FBF1D9 / #183312)" },
+      'paper-raised': { ...t(c(98, 0.0235, 88.23), c(35.5, 0.0827, 140.56)), note: "a card on the poster (#FFF8E7 / #21461A)" },
+      'paper-deep': { ...t(c(91.44, 0.0572, 90.72), c(23.59, 0.0519, 139.64)), note: "a sunk well: inputs, code, table stripes (#F1E2B8 / #10240B)" },
+      rule: { ...t(c(87.02, 0.0697, 90.01), c(42.28, 0.095, 139.91)), note: "a printed hairline (#E6D3A0 / #2F5A25)" },
+      'rule-strong': { ...t(c(57.46, 0.0777, 90.8), c(65.01, 0.0917, 127.92)), note: "3:1 or more on every ground: control borders" },
+      ink: { ...t(c(31.65, 0.0704, 137.58), c(95.97, 0.0333, 88.06)), note: "curry leaf taken darker for text, 9.8:1 or more (#1F3A14); cream at night" },
+      'ink-soft': { ...t(c(43.3, 0.0794, 133.97), c(87.32, 0.052, 101.34)), note: "secondary text, 6:1 or more" },
+      'ink-faint': { ...t(c(47.02, 0.0585, 120.7), c(78.31, 0.0607, 117.21)), note: "captions and labels, 5.2:1 or more on every ground" },
+    },
+    roles: {
+      surface: 'paper',
+      'surface-raised': 'paper-raised',
+      'surface-sunk': 'paper-deep',
+      text: 'ink',
+      'text-soft': 'ink-soft',
+      'text-faint': 'ink-faint',
+      rule: 'rule',
+      'rule-strong': 'rule-strong',
+      accent: { ...t(c(50.13, 0.1783, 28.7), c(84.81, 0.1679, 89.08)), note: "tomato by day, turmeric at night: the primary act, as a fill" },
+      'on-accent': { ...t(c(98, 0.0235, 88.23), c(23.59, 0.0519, 139.64)), note: "cream on tomato, 6.2:1; deep green on turmeric, 10:1" },
+      'accent-text': { ...t(c(50.13, 0.1783, 28.7), c(84.81, 0.1679, 89.08)), note: "tomato as text by day (5.1:1 or more); turmeric as text at night" },
+      success: { ...t(c(43.05, 0.1062, 138.31), c(82.54, 0.1483, 128.39)), note: "curry leaf; lifted to new-shoot green at night" },
+      warning: { ...t(c(45.44, 0.0996, 68.13), c(77.25, 0.1617, 70.34)), note: "marigold darkened to a burnt mustard by day to read; marigold itself at night" },
+      danger: { ...t(c(45.6, 0.1637, 28.74), c(81.49, 0.0956, 48.16)), note: "tomato taken deeper by day; coral at night" },
+      info: { ...t(c(44.68, 0.0582, 182.42), c(84.81, 0.1679, 89.08)), note: "a leaf-teal by day (the poster has no blue); turmeric at night" },
+      focus: { ...t(c(43.05, 0.1062, 138.31), c(84.81, 0.1679, 89.08)), note: "curry leaf by day, turmeric at night; 3:1 or more on every ground" },
+      selection: { ...t(c(90.25, 0.1234, 92.92), c(45.01, 0.0987, 123.98)), note: "a turmeric highlighter; a moss wash at night" },
+      pencil: { ...t(c(73.76, 0.0852, 89.85), c(53.22, 0.1048, 136.31)), note: "drawing only: pencil strokes and construction lines, fainter than any text; never text" },
+    },
+    alpha: {
+      scrim: { of: 'paper-raised', light: 0.9, dark: 0.9, note: 'a cream wash behind text on scenes' },
+      shadow: { of: 'ink', light: 0.4, dark: 0.6, darkOf: 'black', note: 'the lift shadow colour at full strength: ink by day, near-black at night (ink is light at night and would glow)' },
+    },
+  },
 };
 
 // Casa's own faint ink survives as a pigment, for 13px-and-up labels on
@@ -289,7 +338,7 @@ export const type = {
   leading: { tight: 1.12, snug: 1.3, body: 1.6, loose: 1.8 },
   /** Indic scripts carry matras above and below the line; give them room. */
   leadingIndic: { tight: 1.3, snug: 1.45, body: 1.75, loose: 1.9 },
-  indicLangs: ['hi', 'mr', 'kok', 'kn', 'sa', 'ne'],
+  indicLangs: ['hi', 'mr', 'kok', 'gom', 'kn', 'sa', 'ne'],
   measure: '62ch',
   measureNarrow: '42ch',
   /** Fluid scale: from `min` at a 360px viewport to `max` at 1280px. */

@@ -34,3 +34,14 @@ sg-empty:is([data-skin='warm'], [data-skin='playful']) > .sg-empty-body { flex: 
   sg-empty .sg-empty-scene { flex: 1.25 1 0; max-inline-size: none; margin-inline: 0; }
   sg-empty:is([data-skin='warm'], [data-skin='playful']) > .sg-empty-body { flex: 1 1 0; }
 }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-empty :is(a, button):focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); border-radius: var(--sg-radius-1, 2px); }
+sg-empty a, sg-empty button { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-empty :is(a, button):active { translate: 0 1px; color: color-mix(in oklab, var(--sg-accent-text, currentColor), var(--sg-text, CanvasText) 25%); transition: none !important; }
+sg-empty[data-skin="warm"] :is(a, button):active { translate: none; }
+sg-empty[data-skin="playful"] :is(a, button):active { translate: none; scale: 0.97; }
+@media (prefers-reduced-motion: reduce) {
+  sg-empty a, sg-empty button { transition: none; }
+  sg-empty :is(a, button):active { translate: none !important; scale: none !important; }
+}

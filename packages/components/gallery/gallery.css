@@ -157,3 +157,75 @@ sg-gallery .sg-gallery-close:focus-visible {
 @media (forced-colors: active) {
   sg-gallery .sg-gallery-open, sg-gallery .sg-gallery-dialog { border: 1px solid CanvasText; }
 }
+
+/* ── arrivals: the tala stagger ── An item that has not been seen plays its
+   arrival once, on the teental cycle: sixteen beats of --sg-tala-beat, nothing
+   landing on the three khali beats (8 to 10). This is talaDelay() in tokens.js
+   written in CSS (arrive.test.js keeps the two agreeing); where sibling-index()
+   is missing, core/arrive.js hands each item the same delay. Only the first five
+   items have a beat of their own (the ones whose beat is inside the 600 ms cap);
+   every later item takes the fifth's (520 ms), so a long list cascades top to
+   bottom, the tail lands with the fifth, and nothing waits longer than 520 ms. Only arrivals play: arrive.js marks an item
+   data-seen when it has, so a sort or a re-append never does. Quiet gets none
+   (data-arrive is absent), and neither does reduced motion. */
+@keyframes sg-arrive { from { opacity: 0; translate: 0 var(--sg-arrive-rise, 0.5rem); scale: var(--sg-arrive-scale, 1); } }
+@media (prefers-reduced-motion: no-preference) {
+  sg-gallery[data-arrive] .sg-gallery-slot:not([data-seen]) {
+    animation: sg-arrive var(--sg-dur-calm) var(--sg-ease-out) backwards;
+    animation-delay: var(--sg-arrive-delay, 0ms);
+  }
+  sg-gallery[data-arrive="full"] .sg-gallery-slot:not([data-seen]) {
+    --sg-arrive-rise: 0.9rem; --sg-arrive-scale: 0.96;
+    animation-duration: var(--sg-dur-slow); animation-timing-function: var(--sg-ease-spring);
+  }
+  @supports (width: calc(sibling-index() * 1px)) {
+    sg-gallery[data-arrive] .sg-gallery-slot:not([data-seen]) {
+      --sg-arrive-n: calc(sibling-index() - 1);
+      --sg-arrive-k: min(var(--sg-arrive-n), 4);
+      --sg-arrive-m: mod(var(--sg-arrive-k), 13);
+      animation-delay: var(--sg-arrive-delay, calc(var(--sg-tala-beat) * (16 * round(down, var(--sg-arrive-k) / 13, 1) + var(--sg-arrive-m) + 3 * round(down, var(--sg-arrive-m) / 8, 1))));
+    }
+  }
+}
+
+/* ── the touch contract: a press answers within a frame ── No transition on the
+   way in, so :active lands on the next frame; the way out eases back in under
+   150 ms. Quiet settles 1 px, warm shades the colour toward the ink, playful
+   gives a little and is let go on the spring. Reduced motion keeps the colour
+   and drops the movement; a key held down does not move anything. */
+sg-gallery :is(.sg-gallery-close):not([aria-disabled="true"], :disabled) {
+  transition: translate 120ms var(--sg-ease-out), scale 120ms var(--sg-ease-out), background-color 120ms var(--sg-ease-out);
+}
+sg-gallery[data-skin="playful"] :is(.sg-gallery-close):not([aria-disabled="true"], :disabled) { transition-timing-function: var(--sg-ease-spring); }
+sg-gallery :is(.sg-gallery-close) { --press-base: transparent; }
+sg-gallery :is(.sg-gallery-close):not([aria-disabled="true"], :disabled):active {
+  transition: none; translate: 0 1px;
+  background-color: color-mix(in oklab, var(--press-base, transparent), var(--sg-text) 10%);
+}
+sg-gallery[data-skin="warm"] :is(.sg-gallery-close):not([aria-disabled="true"], :disabled):active { translate: none; background-color: color-mix(in oklab, var(--press-base, transparent), var(--sg-text) 25%); }
+sg-gallery[data-skin="playful"] :is(.sg-gallery-close):not([aria-disabled="true"], :disabled):active {
+  translate: none; scale: 0.97;
+  background-color: color-mix(in oklab, var(--press-base, transparent), var(--sg-text) 14%);
+}
+@media (prefers-reduced-motion: reduce) {
+  sg-gallery :is(.sg-gallery-close):active { translate: none !important; scale: none !important; transition: none; }
+}
+:root[data-sg-input="key"] sg-gallery :is(.sg-gallery-close):active { translate: none !important; scale: none !important; }
+
+/* a thumbnail is a photograph: pressing it dims the picture, and moves it as the others do */
+sg-gallery .sg-gallery-open { transition: translate 120ms var(--sg-ease-out), scale 120ms var(--sg-ease-out); }
+sg-gallery .sg-gallery-open img { transition: opacity 120ms var(--sg-ease-out); }
+sg-gallery .sg-gallery-open:active { transition: none; translate: 0 1px; }
+sg-gallery .sg-gallery-open:active img { transition: none; opacity: 0.84; }
+sg-gallery[data-skin="warm"] .sg-gallery-open:active { translate: none; }
+sg-gallery[data-skin="warm"] .sg-gallery-open:active img { opacity: 0.74; }
+sg-gallery[data-skin="playful"] .sg-gallery-open { transition-timing-function: var(--sg-ease-spring); }
+sg-gallery[data-skin="playful"] .sg-gallery-open:active { translate: none; scale: 0.97; }
+/* playful's hover lifts the photograph 3 px; a press must beat it, so it carries the same selectors and comes later */
+@media (prefers-reduced-motion: no-preference) {
+  sg-gallery[data-skin="playful"][data-motion="full"] .sg-gallery-open:active { translate: none; scale: 0.97; }
+}
+@media (prefers-reduced-motion: reduce) {
+  sg-gallery .sg-gallery-open:active { translate: none !important; scale: none !important; }
+}
+:root[data-sg-input="key"] sg-gallery .sg-gallery-open:active { translate: none !important; scale: none !important; }

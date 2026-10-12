@@ -36,6 +36,10 @@ Draw a magenta bougainvillea spilling over the top of a Goan laterite compound w
 | Create every animation paused and set its time from the scene’s own clock each frame | svg | Only animations whose moment has come are touched each frame; once one has run its course it is cancelled and its end state stays. So after the growing, a frame updates only the breeze and the falling bracts, and a paused scene changes nothing at all. |
 | show that part already grown | calm | Growth that falls within 30 units of the page’s text boxes is finished at once, and the breeze and the bracts near them rest. |
 
+## On a page
+
+A bare `<sg-scene name="vel">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/vel/index.js">` with `<sg-scene name="vel" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing's name is its `alt`. The vine is decoration with no state to announce, so there is no status line. In playful the drawing takes focus: the arrow keys move a small ring over the vine and stir the branch it reaches, and Enter or Space shakes a bract loose there. Under reduced motion every register shows the grown vine as a still, and the pause button stops every animation, the SVG ones included.

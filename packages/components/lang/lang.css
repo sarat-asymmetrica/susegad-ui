@@ -1,0 +1,107 @@
+/* <sg-lang>. A row of links, each one a page in its own language. Works with
+   no JavaScript. Each link carries its own lang, so the leading and the
+   spacing below follow the script of the word, not of the page. */
+
+sg-lang {
+  display: block;
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-snug) var(--sg-font-body);
+}
+sg-lang[hidden] { display: none; }
+
+sg-lang ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sg-space-1) var(--sg-space-2);
+}
+sg-lang li { display: flex; align-items: center; }
+sg-lang a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;   /* the playful border sits inside the 44 px, so the skin arriving moves nothing */
+  min-height: 2.75rem;
+  padding-inline: var(--sg-space-3);
+  color: var(--sg-text);
+  line-height: var(--sg-leading-snug);   /* on the link: its own lang sets this */
+  text-decoration: none;
+}
+sg-lang a:hover { text-decoration: underline; text-decoration-thickness: var(--sg-hairline); text-underline-offset: 0.3em; }
+sg-lang a[aria-current] { font-weight: var(--sg-weight-medium); text-decoration: underline; text-decoration-thickness: var(--sg-stroke-bold); text-underline-offset: 0.35em; }
+sg-lang a:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); border-radius: var(--sg-radius-1); }
+
+/* A language the reader used last time, offered from another page: a faint dot, not a banner. */
+sg-lang a[data-remembered]::after { content: ""; width: 0.35em; height: 0.35em; margin-inline-start: 0.4em; border-radius: 50%; background: var(--sg-accent-text); }
+
+/* quiet: a hairline between the names */
+sg-lang li + li::before { content: ""; width: var(--sg-hairline); height: 1.1em; background: var(--sg-rule-strong); }
+
+/* ── warm: written in the hand, a pencil line under the current language ── */
+sg-lang[data-skin="warm"] li + li::before { display: none; }
+sg-lang[data-skin="warm"] a { font: var(--sg-step-1) / var(--sg-leading-snug) var(--sg-font-hand); }
+sg-lang[data-skin="warm"] a[aria-current] { text-decoration: none; font-weight: 400; }
+sg-lang .sg-lang-pencil {
+  position: absolute;
+  left: var(--sg-space-3);
+  right: var(--sg-space-3);
+  bottom: 0.35rem;
+  width: calc(100% - 2 * var(--sg-space-3));
+  height: 8px;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--sg-accent-text);
+  stroke-linecap: round;
+}
+sg-lang .sg-lang-pencil path:first-child { stroke-width: 1.8; }
+sg-lang .sg-lang-pencil path:last-child { stroke-width: 0.9; opacity: 0.55; }
+
+/* ── playful: stamped tabs ── */
+sg-lang[data-skin="playful"] li + li::before { display: none; }
+sg-lang[data-skin="playful"] ul { gap: var(--sg-space-2); }
+sg-lang[data-skin="playful"] a {
+  padding-inline: var(--sg-space-3);
+  border: var(--sg-stroke-bold) solid var(--sg-text);
+  border-radius: var(--sg-radius-2);
+  box-shadow: inset 0 0 0 2px var(--sg-surface), inset 0 0 0 3px var(--sg-text);
+  background: var(--sg-surface-raised);
+  font: var(--sg-weight-bold) var(--sg-step--1) / var(--sg-leading-snug) var(--sg-font-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: rotate(var(--sg-lang-tilt, 0deg));
+}
+sg-lang[data-skin="playful"] a[aria-current] {
+  background: var(--sg-accent);
+  color: var(--sg-on-accent);
+  border-color: var(--sg-accent);
+  box-shadow: inset 0 0 0 2px var(--sg-accent), inset 0 0 0 3px var(--sg-on-accent);
+  text-decoration: none;
+}
+
+/* Indic scripts: no tracking (it pulls conjuncts apart) and no capitals (they have none).
+   Romi Konkani is Latin and keeps both. */
+sg-lang a:is(:lang(gom), :lang(kok), :lang(hi), :lang(mr), :lang(kn), :lang(sa), :lang(ne)):not(:lang(gom-Latn), :lang(kok-Latn)) { letter-spacing: normal; text-transform: none; }
+
+sg-lang[data-skin="playful"] a:is(:lang(gom), :lang(kok), :lang(hi), :lang(mr), :lang(kn), :lang(sa), :lang(ne)):not(:lang(gom-Latn), :lang(kok-Latn)) { font-size: var(--sg-step-0); }
+
+@media (forced-colors: active) {
+  sg-lang .sg-lang-pencil { stroke: LinkText; }
+  sg-lang a[aria-current] { border: 2px solid LinkText; }
+  /* the playful accent fill is stripped, and every tab already has a 2px border: the current one gets a double border and an underline */
+  sg-lang[data-skin="playful"] a[aria-current] { border-style: double; border-width: 5px; text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 0.3em; }
+  sg-lang a[data-remembered]::after { background: LinkText; }
+}
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-lang a { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-lang a:active { translate: 0 1px; color: color-mix(in oklab, var(--sg-text, CanvasText), var(--sg-text, CanvasText) 25%); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.3em; transition: none !important; }
+sg-lang[data-skin="warm"] a:active { translate: none; }
+sg-lang[data-skin="playful"] a:active { translate: none; scale: 0.97; }
+@media (prefers-reduced-motion: reduce) {
+  sg-lang a { transition: none; }
+  sg-lang a:active { translate: none !important; scale: none !important; }
+}

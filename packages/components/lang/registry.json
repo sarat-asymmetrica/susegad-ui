@@ -1,0 +1,32 @@
+{
+  "name": "lang",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Language switcher",
+  "description": "A language switcher that is a row of links. Each link is a real page in its own language (decision 0025), named in its own script (English, कोंकणी, Konknni), with hreflang and lang on it and aria-current on the page you are on, so it works with no JavaScript, for search and for a screen reader. With JavaScript it fills in what the markup leaves out and can remember the last choice, never redirecting. The core also builds the hreflang links for a page's head and the address of a page in each language. Quiet is plain names with a hairline between; warm writes them in the hand with a pencil line under the current one; playful makes them stamped tabs. Devanagari and Romi are both finished: leading follows the script, tracking and capitals are switched off for Indic scripts.",
+  "version": "0.1.0",
+  "useFor": ["language-switcher", "language", "translate", "konkani", "multilingual", "hreflang", "i18n"],
+  "files": [
+    "lang.js",
+    "lang.core.js",
+    "lang.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "lang.prompt.md",
+    "lang.docs.md"
+  ],
+  "dependencies": ["core-component", "core", "core-strings", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "lang.prompt.md",
+  "docs": "lang.docs.md",
+  "budget": {
+    "jsBytes": 14336,
+    "reason": "A component: element 4 KB, pure core 6 KB (names, matching, hreflang, addresses, the pencil line and tilt), three small skins 2.4 KB. The strings mechanism is its own item (core-strings)."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

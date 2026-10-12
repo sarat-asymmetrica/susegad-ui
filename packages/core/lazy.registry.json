@@ -1,0 +1,18 @@
+{
+  "name": "core-lazy",
+  "type": "package",
+  "stability": "experimental",
+  "title": "Core: poster-first scenes",
+  "description": "sg-lazy wraps a poster (a picture in AVIF, WebP and JPG) and a hidden sg-scene. The poster is the first paint and reads with no JavaScript; the scene's engine and module are fetched only when the element is near the screen, and never by itself under reduced motion, Save-Data, the quiet register or a low-memory device, where the poster stays as the finished still. start() runs it for a viewer who asks. The decision is a pure function (lazy.core.js), and the styles are a constructable sheet, so a strict Content-Security-Policy has nothing to block.",
+  "version": "0.1.0",
+  "files": ["lazy.js", "lazy.core.js", "lazy.css", "lazy.prompt.md", "lazy.docs.md"],
+  "dependencies": ["core", "core-sheet"],
+  "prompt": "lazy.prompt.md",
+  "docs": "lazy.docs.md",
+  "budget": { "jsBytes": 8192, "reason": "The element (about 5 KB with its comments) and its pure core (about 3 KB), counted together. The point of the piece is that it is small: a page holding only a poster fetches this and nothing of the engine." },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

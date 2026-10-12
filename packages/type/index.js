@@ -8,10 +8,18 @@
 //   const laid = type.fitSize(sizes, build, type.arch(...), { top, bottom, scale });
 //   type.project(laid.lines, blocks, { W, H });
 //
-// layout.js is the pure half (Pretext in, line boxes out, tested in Node);
-// this file is the side-effect edge: fonts, and one span per line in the DOM.
+// layout.core.js is the pure geometry (an oracle's lines in, line boxes out,
+// tested in Node against oracle.fake.js); measure.js is the oracle, the one
+// door to Pretext (decision 0029). This file binds the two for the scenes and
+// is the side-effect edge: fonts, and one span per line in the DOM.
 
-export * from './layout.js';
+import { createLayout } from './layout.core.js';
+import { createPretextOracle } from './measure.js';
+
+export { rect, arch, slant, calmOf } from './layout.core.js';
+export const { prepare, layIntoShape, fitSize, setBlocks, labelBox, shrinkWrap, balance, measure, forget } = createLayout(createPretextOracle());
+// a face that finishes loading after something was measured in its fallback: forget what was measured, so the next lay-out is true
+try { globalThis.document?.fonts?.addEventListener?.('loadingdone', forget); } catch { /* no font events: scenes relay out after fontReady anyway */ }
 
 const PLAIN = /^(H[1-6]|P)$/;
 const ACTIVE = 'a,button,input,select,textarea,img,svg,video,audio,iframe,[tabindex]';
@@ -30,9 +38,9 @@ export function readBlocks(el) {
   return out.length ? out : null;
 }
 
-/** Wait for a face before measuring it: Pretext measures whatever the canvas has now. */
-export async function fontReady(font) {
-  try { if (globalThis.document?.fonts?.load) await document.fonts.load(font); } catch { /* measure with the fallback */ }
+/** Wait for a face before measuring it: Pretext measures whatever the canvas has now. `text` makes the load fetch the faces that cover those characters (a stack's Kannada face is split by unicode-range). */
+export async function fontReady(font, text) {
+  try { if (globalThis.document?.fonts?.load) { await document.fonts.load(font, text); forget(); } } catch { /* measure with the fallback */ }
 }
 
 /**

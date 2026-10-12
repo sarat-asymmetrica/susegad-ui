@@ -28,6 +28,10 @@ Draw dusk on a Goan beach as a blue ballpoint sketch on cream paper, using only 
 | inked spines | wobble | Trunks and frond spines are ribbons whose width follows pen pressure and whose path wanders slightly, so no line looks ruled. |
 | a koel calls, a rising three-note "ku-oo" … timed to the birds crossing the sky | sound | packages/sound/scapes/rampon-koel.js: a call is a short rising two-tone whoop, repeated with a shortening gap (the koel's real urgency), only in playful, only with the switch on, and only while a bird is actually visible on screen. |
 
+## On a page
+
+A bare `<sg-scene name="rampon">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/rampon/index.js">` with `<sg-scene name="rampon" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing is decorative; slotted text sits on the scrim as with any scene, and the calm zone applies the same way. The koel call is ambient sound only (decision 0015): it carries no meaning of its own and never gates anything a screen reader needs, and it never plays before a user gesture.

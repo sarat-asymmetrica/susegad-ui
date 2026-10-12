@@ -19,7 +19,8 @@
     "core-component",
     "core",
     "engine",
-    "tokens"
+    "tokens",
+    "sound"
   ],
   "registers": [
     "quiet",

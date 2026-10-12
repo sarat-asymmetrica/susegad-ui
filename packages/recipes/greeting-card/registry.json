@@ -1,0 +1,25 @@
+{
+  "name": "greeting-card",
+  "type": "recipe",
+  "stability": "experimental",
+  "title": "Greeting card",
+  "description": "A card with a flower of its own: a bloom grown from a person's name, the name, and a line of text, drawn on one canvas and exported as a picture. PNG to keep, JPG to share, and every export says what it really made: the type is read from the bytes and the file is named after them. The same name always draws the same card, byte for byte in one browser, and no two names draw the same one. Cards are drawn in the browser; with no JavaScript the page says so.",
+  "version": "0.1.0",
+  "files": [
+    "recipe.js",
+    "card.core.js",
+    "recipe.css",
+    "index.html",
+    "README.md",
+    "recipe.prompt.md"
+  ],
+  "dependencies": ["bloom", "export", "core-component", "core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "recipe.prompt.md",
+  "docs": "README.md",
+  "motif": {
+    "origin": "india",
+    "tier": "everyday",
+    "gloss": "A marigold, the zendu of every Indian flower seller's tray, as the picture on a card for a guest: a flower, never placed with deity imagery or framed as a puja element."
+  }
+}

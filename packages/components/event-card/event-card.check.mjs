@@ -7,6 +7,7 @@
 
 import { harness, settle } from '../../../tools/lib/component-check.mjs';
 import { contextOptions } from '../../../tools/lib/engine.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { server, browser, engine, check, open, openHtml, axe, axeNoJs, done } = await harness();
 const DEMO = '/packages/components/event-card/demo.html';
@@ -255,7 +256,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 {
   const { ctx, page } = await open(`${DEMO}?register=warm`, { width: 390 });
   await settle(page);
-  const w = await page.evaluate(() => document.documentElement.scrollWidth);
+  const { scrollWidth: w } = await sidewaysScroll(page, 390);
   check('at 390 px the demo does not scroll sideways', w <= 390, `${w}`);
   await ctx.close();
 }

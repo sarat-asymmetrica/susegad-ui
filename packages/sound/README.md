@@ -30,3 +30,21 @@ haptic('confirm');
 Budget: 14 KB of behaviour source for the whole package (switch, patches,
 player, haptics), same figure as a component's behaviour allowance (0009)
 since this is the layer every sound-making piece in the library sits on.
+
+## Bake and reflow
+
+A scene that moves with the sound does not need an FFT every frame. Read the
+spectrum once, keep it as a small table, and let every frame be arithmetic.
+`bake/` (the `sound-bake` item) does this: `bakeBuffer(buffer)` or
+`bakeFrames(bins)` bakes once, `drive(cache, ms)` gives a 0 to 1 intensity at any
+moment, and reduced motion gets one steady value (the median moment) instead of a pulse.
+
+```js
+import { bakeBuffer, drive } from './bake/bake.core.js';
+const chapter = bakeBuffer(audioBuffer);           // once; nothing plays
+const glow = drive(chapter, ms, { reducedMotion }); // each frame; 0..1
+```
+
+Consent is unchanged (decision 0015): baking never creates, resumes or starts
+audio and never reads the switch. It reads a buffer or an analyser the page
+already has. See `bake/bake.docs.md`.

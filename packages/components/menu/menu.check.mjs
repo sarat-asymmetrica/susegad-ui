@@ -22,6 +22,7 @@ import { createRequire } from 'node:module';
 import { pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 import { contrastReport } from '../../../tools/lib/contrast.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const AXE = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
 const BREAK = process.argv.find(a => a.startsWith('--break='))?.slice('--break='.length) ?? '';
@@ -67,6 +68,8 @@ async function open(ctx, reg, extra = '') {
   p.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
   await p.goto(PAGE(reg, extra));
   await p.waitForFunction(() => window.__ready === true);
+  // the dishes arrive on the tala (warm, playful); measure them once they have, at their resting size
+  await p.evaluate(() => Promise.race([Promise.all(document.getAnimations().filter(a => a.animationName === 'sg-arrive').map(a => a.finished.catch(() => {}))), new Promise(r => setTimeout(r, 2500))]));
   p.errors = errors;
   return p;
 }
@@ -90,10 +93,11 @@ const names = p => p.$$eval('sg-menu#menu .sg-menu-qty button', bs => bs.map(b =
       heads: [...m.querySelectorAll('.sg-menu-section-title')].map(h => h.textContent.trim()),
       soldOut: m.querySelector('[data-id=tagliolini] .sg-menu-status')?.textContent,
       tags: [...m.querySelectorAll('[data-id=pesto] .sg-menu-tag')].map(t => t.textContent),
-      overflow: document.documentElement.scrollWidth - innerWidth,
+      overflow: 0,
       leader: getComputedStyle(m.querySelector('.sg-menu-name'), '::after').content,
     };
   });
+  r.overflow = (await sidewaysScroll(p)).overflow;
   check('no JS: every dish shows, as a list item with its name', r.items === 9 && r.allVisible, `${r.items} items`);
   check('no JS: prices and units are there, grouped the Indian way', r.prices[0] === '₹450 10 pieces' && r.prices.includes('₹1,23,450 serves 100') && r.prices[3] === '₹640 serves 2', JSON.stringify(r.prices.slice(0, 4)));
   check('no JS: no steppers, no buttons, no total (nothing that would not work)', r.steppers === 0, `${r.steppers}`);
@@ -237,7 +241,8 @@ for (const reduced of [false, true]) {
   const p = await open(ctx, 'playful');
   await p.waitForFunction(() => document.getElementById('menu').dataset.skin === 'playful');
   await p.click('#menu [data-id=fettuccine] .sg-menu-plus');
-  const anims = await p.evaluate(() => document.getAnimations().map(a => ({ target: a.effect.target?.className, dur: a.effect.getTiming().duration, iter: a.effect.getTiming().iterations, state: a.playState })));
+  // the stagger on arrival and the press easing back are the list's and the button's own (arrive.check.mjs); this is the count's settle
+  const anims = await p.evaluate(() => document.getAnimations().filter(a => a.animationName !== 'sg-arrive' && !(a instanceof CSSTransition && a.effect.target?.matches?.('.sg-menu-qty button'))).map(a => ({ target: a.effect.target?.className, dur: a.effect.getTiming().duration, iter: a.effect.getTiming().iterations, state: a.playState })));
   if (!reduced) {
     check('playful: adding a dish settles its count, once (one animation, on the count, a finite short run)', anims.length === 1 && anims[0].target === 'sg-menu-count' && anims[0].iter === 1 && anims[0].dur > 100 && anims[0].dur <= 500, JSON.stringify(anims));
     await p.waitForTimeout(700);
@@ -296,8 +301,9 @@ for (const reg of ['quiet', 'warm', 'playful']) {
       const m = document.getElementById('menu');
       const bs = [...m.querySelectorAll('.sg-menu-qty button')].map(b => b.getBoundingClientRect());
       const q = m.querySelector('.sg-menu-qty').getBoundingClientRect();
-      return { minW: Math.round(Math.min(...bs.map(b => b.width))), minH: Math.round(Math.min(...bs.map(b => b.height))), right: Math.round(Math.max(...bs.map(b => b.right))), overflow: document.documentElement.scrollWidth - innerWidth, qtyW: Math.round(q.width) };
+      return { minW: Math.round(Math.min(...bs.map(b => b.width))), minH: Math.round(Math.min(...bs.map(b => b.height))), right: Math.round(Math.max(...bs.map(b => b.right))), overflow: 0, qtyW: Math.round(q.width) };
     });
+    r.overflow = (await sidewaysScroll(p)).overflow;
     check(`phone ${reg}: every stepper button is at least 44 by 44, inside the screen, nothing scrolls sideways`, r.minW >= 44 && r.minH >= 44 && r.right <= 390 && r.overflow <= 0, JSON.stringify(r));
     await p.tap('#menu [data-id=ravioli] .sg-menu-plus');
     await p.tap('#menu [data-id=ravioli] .sg-menu-plus');
@@ -306,6 +312,35 @@ for (const reg of ['quiet', 'warm', 'playful']) {
     if (shots) await p.screenshot({ path: `.shots/menu/${reg}-390.png` });
     await p.close();
   }
+  await ctx.close();
+}
+
+// ── WCAG 2.4.11: a focused control is never hidden behind the sticky total bar (phone, an order in progress) ──
+// Tab forward through every button of the menu, the way a keyboard user does, and measure how much of the
+// focused control the bar covers. The check can fail: it is red on a menu with no scroll margin on the steppers.
+for (const reg of ['quiet', 'warm', 'playful']) {
+  const ctx = await ctxFor({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
+  const p = await open(ctx, reg);
+  await p.waitForFunction(r => document.getElementById('menu').dataset.skin === r, reg);
+  await p.tap('#menu [data-id=fettuccine] .sg-menu-plus');
+  await p.waitForTimeout(400);
+  await p.evaluate(() => { document.activeElement?.blur(); window.scrollTo(0, 0); });
+  const seen = [];
+  for (let i = 0; i < 16; i++) {
+    await p.keyboard.press('Tab');
+    await p.waitForTimeout(120);
+    seen.push(await p.evaluate(() => {
+      const a = document.activeElement;
+      const bar = document.querySelector('#menu .sg-menu-bar');
+      if (!a || a === document.body || bar.contains(a) || !document.getElementById('menu').contains(a)) return null;
+      const r = a.getBoundingClientRect(), b = bar.getBoundingClientRect();
+      const cover = Math.max(0, Math.min(r.bottom, b.bottom) - Math.max(r.top, b.top)) * Math.max(0, Math.min(r.right, b.right) - Math.max(r.left, b.left));
+      return { name: (a.getAttribute('aria-label') || a.textContent).slice(0, 28), unobscured: +(1 - cover / (r.width * r.height)).toFixed(2), bottom: Math.round(r.bottom), barTop: Math.round(b.top) };
+    }));
+  }
+  const measured = seen.filter(Boolean);
+  const worst = measured.reduce((a, m) => (m.unobscured < a.unobscured ? m : a), { unobscured: 1 });
+  check(`phone ${reg}: Tab-focusing each of ${measured.length} controls, down to the last dish, leaves it at least 90 percent unobscured by the sticky total bar`, measured.length >= 8 && measured.some(m => /Arrabbiata/.test(m.name)) && worst.unobscured >= 0.9, `worst: ${JSON.stringify(worst)}`);
   await ctx.close();
 }
 

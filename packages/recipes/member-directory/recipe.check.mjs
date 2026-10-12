@@ -8,6 +8,7 @@
 //   node packages/recipes/member-directory/recipe.check.mjs
 
 import { harness, settle } from '../../../tools/lib/component-check.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { server, browser, engine, check, open, axe, done } = await harness();
 const PAGE = '/packages/recipes/member-directory/index.html';
@@ -129,7 +130,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 {
   const { ctx, page, errors } = await open(`${PAGE}?register=warm`, { width: 390, height: 844 });
   await settle(page);
-  const w = await page.evaluate(() => document.documentElement.scrollWidth);
+  const { scrollWidth: w } = await sidewaysScroll(page, 390);
   check('at 390 px the directory does not scroll sideways', w <= 390, `${w}`);
   check('at 390 px the directory raises no console errors', !errors.length, errors.join(' | '));
   await page.screenshot({ path: '.shots/member-directory/phone-390-warm.png' });

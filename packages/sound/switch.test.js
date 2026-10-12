@@ -6,7 +6,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { soundOn, setSoundOn, onSoundChange, play, haptic, sceneContext, _resetForTests } from './switch.js';
+import { soundOn, setSoundOn, onSoundChange, play, haptic, cue, sceneContext, _resetForTests } from './switch.js';
 
 test.beforeEach(() => _resetForTests());
 
@@ -43,4 +43,9 @@ test('play() and haptic() never throw, with no context, no navigator and no gest
   setSoundOn(true);
   assert.doesNotThrow(() => play('confirm'));
   assert.doesNotThrow(() => haptic('tick'));
+});
+
+test('cue() never throws, with no context, no navigator and no gesture', () => {
+  assert.doesNotThrow(() => cue('confirm'));
+  assert.doesNotThrow(() => cue('complete', { register: 'quiet' }));
 });

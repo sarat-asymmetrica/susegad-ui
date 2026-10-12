@@ -11,11 +11,11 @@
 // from real screenshot pixels, not a guess — a check that could fail, and
 // did fail against the pre-fix Drawer: see drawer.check.mjs).
 
-import { chromium } from 'playwright';
+import { pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const browser = await pickEngine().launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 
@@ -122,6 +122,11 @@ for (const register of ['quiet', 'warm', 'playful']) {
   const opened = await p.evaluate(() => document.querySelector('#ask dialog').open);
   check(`${register}: Enter on the opener shows the dialog modally`, opened);
 
+  // 4.1.2: the open <dialog> carries a name, read from the browser's own accessibility tree (the
+  // component points aria-labelledby at the first heading when the author gave no name).
+  const snap = await p.locator('#ask dialog').ariaSnapshot();
+  check(`${register}: the open dialog is named "Ask the house" in the accessibility tree`, /^- dialog "Ask the house"/m.test(snap), snap.split(String.fromCharCode(10))[0]);
+
   // focus trap: Tab many times, focus must never land on real page content.
   // Chromium has a documented quirk where the wrap step transiently reports
   // document.activeElement as <body> for one Tab (verified interactively:
@@ -169,6 +174,8 @@ for (const register of ['quiet', 'warm', 'playful']) {
 
   // reachability: the reading paragraph cannot take focus while the dialog is modal (every register)
   await p.click('a[data-sg-dialog="ask"]');
+  // the dialog arrives as a CSS transition (up to 260ms): wait for it to settle, then for Carepa's first draw
+  await p.waitForFunction(() => { const d = document.querySelector('#ask dialog'); return d.open && d.getAnimations({ subtree: true }).every(a => a.playState !== 'running'); });
   await p.waitForTimeout(150);
   check(`${register}: the body copy behind the dialog is blocked from focus while it is modal`, await isBlockedByModal(p, REGION));
 

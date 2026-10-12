@@ -17,6 +17,7 @@
 
 import { SgElement, defineComponent } from '../../core/component.js';
 import { STRINGS, clampStep } from './stepper.core.js';
+import { cue } from '../../sound/index.js';
 
 export { STRINGS } from './stepper.core.js';
 
@@ -117,7 +118,10 @@ export class SgStepper extends SgElement {
       legend.setAttribute('aria-describedby', this.#progress.id);
       if (focus) legend.focus();
     }
-    if (from !== this.index) this.emit('sg-step', { index: this.index, from });
+    if (from !== this.index) {
+      if (last && from < this.index) cue('confirm', { register: this.register }); // the last step reached: confirm, not every step
+      this.emit('sg-step', { index: this.index, from });
+    }
     this.update();
   }
 

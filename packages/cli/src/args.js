@@ -1,9 +1,10 @@
 import { CliError } from './registry.js';
 
-const VALUE_FLAGS = { '--dir': 'dir', '--registry': 'registry', '--ref': 'ref', '--base': 'base', '--harness': 'harness' };
+const VALUE_FLAGS = { '--dir': 'dir', '--registry': 'registry', '--ref': 'ref', '--base': 'base', '--harness': 'harness',
+  '--template': 'template', '--register': 'register', '--lang': 'lang', '--site': 'site' };
 const BOOL_FLAGS = {
   '--dry-run': 'dryRun', '--overwrite': 'overwrite', '--patch': 'patch', '--json': 'json',
-  '--help': 'help', '-h': 'help', '--version': 'version', '-v': 'version', '--global': 'global',
+  '--help': 'help', '-h': 'help', '--version': 'version', '-v': 'version', '--global': 'global', '--yes': 'yes', '-y': 'yes',
 };
 
 /**
@@ -18,7 +19,7 @@ export function parseArgs(argv) {
     if (a.startsWith('--') && a.includes('=')) [a, inline] = [a.slice(0, a.indexOf('=')), a.slice(a.indexOf('=') + 1)];
     if (a in VALUE_FLAGS) {
       const v = inline ?? argv[++i];
-      if (v === undefined || v === '' || (inline === undefined && v.startsWith('-'))) throw new CliError(`${a} needs a value, for example ${a} ${{ '--dir': 'src/lib', '--registry': '../susegad-ui', '--ref': 'main', '--base': 'site' }[a]}`);
+      if (v === undefined || v === '' || (inline === undefined && v.startsWith('-'))) throw new CliError(`${a} needs a value, for example ${a} ${{ '--dir': 'src/lib', '--registry': '../susegad-ui', '--ref': 'main', '--base': 'site', '--template': 'event', '--register': 'warm', '--lang': 'en-IN,gom-Deva', '--site': 'https://conclave.example.in' }[a]}`);
       args[VALUE_FLAGS[a]] = v;
     } else if (a in BOOL_FLAGS) {
       args[BOOL_FLAGS[a]] = true;
@@ -39,6 +40,8 @@ export const HELP = `susegad: copy Susegad UI pieces into your project, where th
   susegad info <item...>           files, dependencies, budget and prompt for an item
   susegad add <item...>            copy items and everything they need into your project
   susegad diff [item...]           which copied files differ from the registry
+  susegad create [folder]          start a site from a template in an empty folder, with the
+                                   pieces it uses (a page for an event, in English and Konkani)
   susegad skill                    install Susegad UI's skill for an agent harness
   susegad check [item...]          the lighter gate for a change: tier, lints and the
                                    evidence pack (library contributors, from the repo)
@@ -60,6 +63,13 @@ Options
   --patch               diff: show the changed lines too
   --json                list and info: print JSON, for scripts and agents
 
+susegad create
+  --template <name>     which template (default event)
+  --register <look>     the look the pages start in: quiet (default), warm or playful
+  --lang <tags>         which pages to make, English first (default en-IN,gom-Deva,gom-Latn)
+  --site <address>      the address the site will have, for the pages' hreflang links
+  --yes                 do not ask before starting
+
 susegad skill
   --harness <name>      claude (default), codex, hermes or opencode
   --global              install to your user-level skills folder instead of this project's
@@ -67,6 +77,8 @@ susegad skill
   --overwrite           replace a skill that is already installed
 
 Examples
+  susegad create my-event-site --register warm
+  susegad create --lang en-IN,gom-Deva --site https://conclave.goa.gov.in --yes
   susegad add scene-kolam
   susegad add scene-paus --dir app/vendor --dry-run
   susegad add scene-kolam --dir site/vendor --base site   # site/ is the page's web root

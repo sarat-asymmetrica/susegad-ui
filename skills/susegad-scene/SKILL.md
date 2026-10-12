@@ -19,10 +19,8 @@ Read these before you start, and keep them open as you work:
 
 - `docs/CHARTER.md` in the repo root, especially "The scene contract (v2)" and
   "The non-negotiables".
-- `references/building.md` in this skill folder, which explains how a scene is
-  built. If that file is not there yet (it may be written by another wave of
-  work), fall back to the scene contract section of the charter and say so to
-  the person in plain words.
+- `references/building.md` at the repo root (beside the root `SKILL.md`),
+  which explains how a scene is built.
 - The scene's own model and prompt, if the scene you are adapting already
   exists under `packages/scenes/`. A parameter's name is not its meaning; read
   what it actually does before you choose values.
@@ -116,6 +114,20 @@ for everything else:
   the breath taken out, not a blank frame.
 - **Words it can host.** If the scene will hold text, it keeps a calm, quiet
   zone near anything meant to be read, so reading stays comfortable.
+  Declare the places words may go as text zones: the model exports
+  `textZones(state)`, a list of plain-data zones, each
+  `{ id, shape, slot or text, registers, minPx, maxPx }`, where `shape` is a
+  descriptor such as `{ kind: 'ellipse', cx, cy, rx, ry, pad }` (also `rect`,
+  `arch`, `slant`, `polygon`). The renderer lays them with `layZones` from the
+  type tier's lazy door, in a `*.live.js` file reached by a dynamic import, so
+  nothing measures in quiet, under reduced motion or without JavaScript. A zone
+  whose words do not fit at `minPx` falls back to the flat reading, never to
+  smaller text. Because zones are data, the text gate (`tools/text-gate.mjs`)
+  checks them in Node in every language before a browser opens. The type
+  tier's `README.md` has the full format; `sg-bubble` is the worked example.
+  To have the gate check your scene's words, add them to
+  `packages/type/fixtures/gate-copy.js` and add a use to
+  `tools/lib/text-gate.manifest.js`.
 
 Choose the register thoughtfully. The three registers (quiet, warm, playful)
 are described in the charter. A quiet memory is probably warm. Ask the person
@@ -160,11 +172,10 @@ and offer what can be done instead.
 ## Movement four: filing it in the sketchbook
 
 When the person is happy, the scene is filed in the community sketchbook so
-others can find it, learn from it and build on it. The sketchbook (wave C2)
-lives in `sketchbook/`, with an entry template and its metadata schema. If it
-is not there yet, create the entry following the schema below and leave a
-note for whoever lands the sketchbook, or wait and file once it exists;
-prefer filing, and never block the person's scene on it.
+others can find it, learn from it and build on it. Copy
+`sketchbook/_template/` to `sketchbook/entries/<entry>/`, fill in
+`entry.jsonc` (`sketchbook/_template/README.md` explains each field), and
+run `node sketchbook/lint.mjs` before you tell the person it is filed.
 
 Create the entry with this metadata, filled from the interview and the work:
 
@@ -173,8 +184,9 @@ Create the entry with this metadata, filled from the interview and the work:
   or whatever they are comfortable with.
 - `place`: where and when the scene is set.
 - `motif`: `origin` (where the motif comes from), `tier` (one of
-  pan-Indian, shared practice, local, sacred), `gloss` (one or two warm
-  sentences on what it is and what it means).
+  `everyday`, `regional`, `sacred`), `gloss` (for `regional`, the place or
+  community it comes from and one warm line on what it means; null for
+  `everyday`).
 - `consent`: the record of the photo consent question and its answer.
   Photos of people without consent never enter the sketchbook.
 - `references`: photographs and sources used, each with its consent noted.

@@ -39,6 +39,10 @@ Paint a moonless night over a Goan khazan wetland in canvas JavaScript: a deep i
 | so the bank is exactly as in step as the work is done | state | With progress set, the phases come from the number alone and everyone blinks at one shared rate, so the pattern of synchrony never drifts while the work stands still. The status says the percentage in words. |
 | let the fireflies under any words on the page glow low and steady | calm | A firefly within 60 units of a text box, and any reflection that would land there, is drawn at a low steady glow instead of flashing, and no halo is laid within 90 units, so no light spills onto the words. |
 
+## On a page
+
+A bare `<sg-scene name="khazan">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/khazan/index.js">` with `<sg-scene name="khazan" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing's name is its `alt`. With `progress` set, the element says the percentage in a polite status region, at most once a second. The fireflies flash slowly (under once a second each) and never strobe the whole frame; the pause button stops them. In playful the drawing takes focus: the arrow keys move a hand drawn as a faint ring, and Enter or Space sweeps it through the fireflies there. Fireflies under any words on the page glow low and steady.

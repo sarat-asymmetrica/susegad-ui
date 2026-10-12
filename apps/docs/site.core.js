@@ -14,11 +14,13 @@
 //   /pencil-box          the techniques, each with the scenes that use it
 
 import { trim } from './gallery.core.js';
+import { posterPicture } from '../../packages/core/lazy.core.js';
 
 export const KINDS = {
   scene: { key: 'scenes', title: 'Scenes', one: 'scene', blurb: 'Drawings that do a job: they hold your words, show something real, or answer the person using them. Each runs in <sg-scene>, comes in three registers and ships with the prompt that made it.' },
   component: { key: 'components', title: 'Components', one: 'component', blurb: 'Headless behaviour that is boringly correct, with one skin per register on top. Each has a live demo, its docs and its prompt.' },
   recipe: { key: 'recipes', title: 'Recipes', one: 'recipe', blurb: 'Components put together for a real piece of work: a booking, an enquiry, a proposal a client can open offline. Take one whole and change it.' },
+  template: { key: 'templates', title: 'Templates', one: 'template', blurb: 'Whole starter sites, not pieces: one command makes the folder, with the pages written and the pieces they use copied beside them.' },
   package: { key: 'foundations', title: 'Foundations', one: 'foundation', blurb: 'What every piece stands on: the tokens, the engine, sound and narration, the type tier, the three.js tier and the kernels.' },
 };
 // A surface (decision 0016) is a drawn backdrop that components mount behind
@@ -41,9 +43,12 @@ export const THEMES = ['light', 'dark'];
 export const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 /** A scene's registry name is scene-<name>; its page and its <sg-scene name> use <name>. */
-export const slugOf = item => (item.type === 'scene' ? item.name.replace(/^scene-/, '') : item.name);
+export const slugOf = item => (item.type === 'scene' ? item.name.replace(/^scene-/, '') : item.type === 'template' ? item.name.replace(/^template-/, '') : item.name);
 
 /** Root-relative path of an item's page, without .html (Workers serves x.html at /x). */
+/** The command that takes a piece: add for a piece, create for a template (a whole site in an empty folder). */
+export const installCommand = item => item.type === 'template' ? `npx @susegad/cli create my-site --template ${item.name.replace(/^template-/, '')}` : `npx @susegad/cli add ${item.name}`;
+
 export const pathOf = item => `${KINDS[item.type].key}/${slugOf(item)}`;
 
 /** Where the site lives; link previews need absolute URLs. */
@@ -239,7 +244,7 @@ ${after}
 export function posterImg(name, poster, depth, { alt = '', eager = false } = {}) {
   if (!poster) return '';
   const base = `${up(depth)}posters/${name}`;
-  return `<img class="poster" src="${base}.warm.light.jpg" data-poster="${base}" width="${poster.w}" height="${poster.h}" alt="${esc(alt)}"${eager ? '' : ' loading="lazy"'} decoding="async">`;
+  return posterPicture({ stem: `${base}.warm.light`, alt, width: poster.w, height: poster.h, eager, cls: 'poster', data: `data-poster="${base}"` });
 }
 
 /** One card on an index page: poster, title (the link), a line. */
@@ -366,14 +371,16 @@ export function scenePage(item, meta, ctx) {
   const main = `    <article class="scene-page" aria-labelledby="scene-title">
       <div class="scene-art">
         <div class="scene-mount" style="aspect-ratio: ${ar}">
-          <sg-scene class="stage" name="${esc(name)}" seed="1" label="${esc(meta.alt || meta.title)}" style="aspect-ratio: ${ar}"></sg-scene>
-          ${posterImg(item.name, ctx.poster, depth, { alt: meta.alt || meta.title, eager: true }).replace('class="poster"', 'class="poster scene-still"')}
+          <sg-lazy src="${u}packages/scenes/${esc(name)}/index.js" style="aspect-ratio: ${ar}; --ar: ${ar}">
+            ${posterImg(item.name, ctx.poster, depth, { alt: meta.alt || meta.title, eager: true })}
+            <sg-scene class="stage" name="${esc(name)}" seed="1" label="${esc(meta.alt || meta.title)}" style="aspect-ratio: ${ar}" hidden></sg-scene>
+          </sg-lazy>
         </div>
-        <div class="controls" hidden>
-          <button class="btn" type="button" data-act="replay">Replay</button>
-          <button class="btn" type="button" data-act="reseed">New seed</button>
-          <button class="btn" type="button" data-act="pause">Pause</button>
-          <button class="btn" type="button" data-act="closer" aria-haspopup="dialog" aria-describedby="scene-title">Look closer</button>
+        <div class="controls">
+          <button class="btn is-off" type="button" data-act="pause">Play</button>
+          <button class="btn is-off" type="button" data-act="closer" aria-haspopup="dialog" aria-describedby="scene-title">Look closer</button>
+          <button class="btn is-off" type="button" data-act="replay">Replay</button>
+          <button class="btn is-off" type="button" data-act="reseed">New seed</button>
           <span class="live" aria-hidden="true"></span>
         </div>
       </div>
@@ -396,7 +403,7 @@ export function scenePage(item, meta, ctx) {
           <ul>${ctx.demo ? `<li><a href="${esc(ctx.demo)}">Its demo page: every register and param</a></li>` : ''}${ctx.extras.map(x => `<li><a href="${esc(x.href)}">${esc(x.title)}</a></li>`).join('')}</ul>
         </div>` : ''}
         ${sceneUseBox(item)}
-        <p class="install"><code>npx susegad add ${esc(item.name)}</code> <button class="copy" type="button" data-copy-text="npx susegad add ${esc(item.name)}">Copy</button></p>
+        <p class="install"><code>npx @susegad/cli add ${esc(item.name)}</code> <button class="copy" type="button" data-copy-text="npx @susegad/cli add ${esc(item.name)}">Copy</button></p>
       </div>
     </article>
 ${prevNext(ctx.list, ctx.index, depth, 'More scenes')}`;
@@ -447,8 +454,8 @@ export function itemPage(item, ctx) {
           <h1 id="item-title" class="item-title">${esc(item.title)}</h1>
           <p class="lede">${esc(sentences(item.description, 320))}</p>
           ${facts ? `<p class="facts">${facts}</p>` : ''}
-          <p class="item-actions">${ctx.demo ? `<a class="btn btn-solid" href="${esc(ctx.demo)}">Open the live demo</a>` : ''}
-            <span class="install"><code>npx susegad add ${esc(item.name)}</code> <button class="copy" type="button" data-copy-text="npx susegad add ${esc(item.name)}">Copy</button></span></p>
+          <p class="item-actions">${ctx.demo ? `<a class="btn btn-solid" href="${esc(ctx.demo)}">${item.type === 'template' ? 'See it working' : 'Open the live demo'}</a>` : ''}
+            <span class="install"><code>${esc(installCommand(item))}</code> <button class="copy" type="button" data-copy-text="${esc(installCommand(item))}">Copy</button></span></p>
           ${deps}
         </div>
         ${ctx.poster ? `<a class="item-poster" href="${esc(ctx.demo || '#')}" tabindex="-1" aria-hidden="true">${posterImg(item.name, ctx.poster, depth, { eager: true })}</a>` : ''}

@@ -5,6 +5,8 @@
 // build step can write the same semantic list into static HTML and a test can
 // check it without a browser.
 
+import { groupIndian, groupWestern, formatMoney } from '../../core/intl.core.js';
+
 /** Every string a person reads or hears. Kathakar edits these. */
 export const STRINGS = {
   empty: 'Nothing added yet.',
@@ -27,34 +29,9 @@ export const MAX_QTY = 99;
 
 // ── money ───────────────────────────────────────────────────────────────────
 
-const INDIAN = new Set(['₹', 'rs', 'rs.', 'inr']);
-
-/** "1234567" → "12,34,567": the last three digits, then pairs. */
-export const groupIndian = digits => {
-  const s = String(digits);
-  if (s.length <= 3) return s;
-  return `${s.slice(0, -3).replace(/\B(?=(\d{2})+(?!\d))/g, ',')},${s.slice(-3)}`;
-};
-/** "1234567" → "1,234,567": for a currency that is not the rupee. */
-export const groupWestern = digits => String(digits).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-/**
- * Money for people. The rupee (₹, Rs, INR) groups the Indian way, ₹1,23,450;
- * anything else groups in thousands. Whole amounts have no decimals; others
- * have two. A symbol sits against the number, a word gets a space.
- * @param {number} n
- * @param {string} [currency]
- */
-export function formatMoney(n, currency = '₹') {
-  if (typeof n !== 'number' || !Number.isFinite(n)) return '';
-  const minor = Math.round(Math.abs(n) * 100);
-  const whole = Math.floor(minor / 100), cents = minor % 100;
-  const group = INDIAN.has(String(currency).trim().toLowerCase()) ? groupIndian : groupWestern;
-  const num = `${group(whole)}${cents ? `.${String(cents).padStart(2, '0')}` : ''}`;
-  const sign = n < 0 && minor ? '-' : '';
-  const cur = String(currency);
-  return `${sign}${/^[A-Za-z]/.test(cur) ? `${cur} ` : cur}${num}`;
-}
+// The grouping and the formatting live in core/intl.core.js (core-intl); re-exported so
+// this module, wa-order and the tests keep one door.
+export { groupIndian, groupWestern, formatMoney };
 
 /**
  * A price as someone wrote it → a number, or null. "₹450", "450", "Rs. 1,23,450",

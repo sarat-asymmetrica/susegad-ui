@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  // ?register=quiet|warm|playful and ?theme=light|dark set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute(`data-${k}`, v);
+  // ?lang=gom-Deva pretends the page is in that language (the words follow the nearest lang)
+  const lang = new URLSearchParams(location.search).get('lang'); if (lang) document.documentElement.setAttribute('lang', lang);
+  window.__ready = false; // set once the agenda is wired, so the tools wait for it
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agenda, Makers’ Weekend in Panjim (sample)</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="./recipe.css">
+<style>
+  body { margin: 0; background: var(--sg-paper, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem)/var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 52rem; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font: 400 var(--sg-step-3, 1.6rem)/1.15 var(--sg-font-display, inherit); margin: 0 0 6px; }
+  .lede { color: var(--sg-text-soft, inherit); max-width: var(--sg-measure, 62ch); margin: 0 0 24px; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Makers’ Weekend, Panjim</h1>
+  <p class="lede">Two days of short talks and one workshop by people building small, useful things in and around Goa. This is sample content: the event, the speakers and their talks are invented.</p>
+
+  <section class="sg-agenda" id="agenda" aria-labelledby="agenda-h">
+    <h2 id="agenda-h">Agenda</h2>
+    <p class="sg-agenda-zone">Every time here is India Standard Time (IST), the clock in Panjim.</p>
+    <section class="sg-agenda-day" aria-labelledby="d1">
+      <h3 id="d1"><time datetime="2026-11-14">Saturday 14 November</time></h3>
+      <ol class="sg-agenda-sessions">
+        <li class="sg-session" id="welcome">
+          <p class="sg-session-time"><time datetime="2026-11-14T09:30:00+05:30">9:30 am</time> to <time datetime="2026-11-14T10:15:00+05:30">10:15 am</time> <abbr title="India Standard Time">IST</abbr></p>
+          <h4 class="sg-session-title">Welcome, and why we are here</h4>
+          <p class="sg-session-who">The organisers</p>
+          <p class="sg-session-where"><span class="sg-session-room">Main hall</span></p>
+        </li>
+        <li class="sg-session" id="storybook-reader">
+          <p class="sg-session-time"><time datetime="2026-11-14T10:30:00+05:30">10:30 am</time> to <time datetime="2026-11-14T11:15:00+05:30">11:15 am</time> <abbr title="India Standard Time">IST</abbr></p>
+          <h4 class="sg-session-title">A storybook that reads aloud, in Konkani</h4>
+          <p class="sg-session-who">Priyanka Naik</p>
+          <p class="sg-session-where"><span class="sg-session-room">Main hall</span> <span class="sg-session-track">AI for Kids</span></p>
+        </li>
+        <li class="sg-session" id="voice-calendar">
+          <p class="sg-session-time"><time datetime="2026-11-14T10:30:00+05:30">10:30 am</time> to <time datetime="2026-11-14T11:15:00+05:30">11:15 am</time> <abbr title="India Standard Time">IST</abbr></p>
+          <h4 class="sg-session-title">A voice calendar for people who would rather not look at a screen</h4>
+          <p class="sg-session-who">Sarita Kamat</p>
+          <p class="sg-session-where"><span class="sg-session-room">Studio room</span> <span class="sg-session-track">AI for Senior Citizens</span></p>
+        </li>
+        <li class="sg-session" id="tea" data-kind="break">
+          <p class="sg-session-time"><time datetime="2026-11-14T11:15:00+05:30">11:15 am</time> to <time datetime="2026-11-14T11:45:00+05:30">11:45 am</time> <abbr title="India Standard Time">IST</abbr></p>
+          <h4 class="sg-session-title">Tea and a sit down</h4>
+          <p class="sg-session-where"><span class="sg-session-room">Foyer</span></p>
+        </li>
+        <li class="sg-session" id="village-hall">
+          <p class="sg-session-time"><time datetime="2026-11-14T11:45:00+05:30">11:45 am</time> to <time datetime="2026-11-14T12:30:00+05:30">12:30 pm</time> <abbr title="India Standard Time">IST</abbr></p>
+          <h4 class="sg-session-title">A booking board for the village hall</h4>
+          <p class="sg-session-who">Melwyn Fernandes</p>
+          <p class="sg-session-where"><span class="sg-session-room">Main hall</span> <span class="sg-session-track">Tech for Good</span></p>
+        </li>
+        <li class="sg-session" id="lunch" data-kind="break">
+          <p class="sg-session-time"><time datetime="2026-11-14T12:30:00+05:30">12:30 pm</time> to <time datetime="2026-11-14T14:00:00+05:30">2 pm</time> <abbr title="India Standard Time">IST</abbr></p>
+          <h4 class="sg-session-title">Lunch</h4>
+          <p class="sg-session-where"><span class="sg-session-room">Garden</span></p>
+        </li>
+        <li class="sg-session" id="medicine-cards">
+          <p class="sg-session-time"><time datetime="2026-11-14T14:00:00+05:30">2 pm</time> to <time datetime="2026-11-14T15:00:00+05:30">3 pm</time> <abbr title="India Standard Time">IST</abbr></p>
+          <h4 class="sg-session-title">One-page medicine reminders, in Konkani</h4>
+          <p class="sg-session-who">Deepa Shirodkar</p>
+          <p class="sg-session-where"><span class="sg-session-room">Main hall</span> <span class="sg-session-track">Tech for Good</span></p>
+        </li>
+        <li class="sg-session" id="bakery-pricing">
+          <p class="sg-session-time"><time datetime="2026-11-14T14:00:00+05:30">2 pm</time> to <time datetime="2026-11-14T15:30:00+05:30">3:30 pm</time> <abbr title="India Standard Time">IST</abbr></p>
+          <h4 class="sg-session-title">Workshop: pricing for a one-oven bakery</h4>
+          <p class="sg-session-who">Fernanda D’Souza</p>
+          <p class="sg-session-where"><span class="sg-session-room">Studio room</span> <span class="sg-session-track">Workshops for Founders</span></p>
+        </li>
+        <li class="sg-session" id="evening-demos">
+          <p class="sg-session-time"><time datetime="2026-11-14T21:00:00+05:30">9 pm</time> to <time datetime="2026-11-15T00:30:00+05:30">12:30 am</time> <abbr title="India Standard Time">IST</abbr>, after midnight</p>
+          <h4 class="sg-session-title">Evening demos and music</h4>
+          <p class="sg-session-who">Everyone who built something</p>
+          <p class="sg-session-where"><span class="sg-session-room">Garden</span></p>
+        </li>
+      </ol>
+    </section>
+    <section class="sg-agenda-day" aria-labelledby="d2">
+      <h3 id="d2"><time datetime="2026-11-15">Sunday 15 November</time></h3>
+      <ol class="sg-agenda-sessions">
+        <li class="sg-session" id="moving-to-goa">
+          <p class="sg-session-time"><time datetime="2026-11-15T10:00:00+05:30">10 am</time> to <time datetime="2026-11-15T10:45:00+05:30">10:45 am</time> <abbr title="India Standard Time">IST</abbr></p>
+          <h4 class="sg-session-title">Moving to Goa as a builder: what actually works</h4>
+          <p class="sg-session-who">Aldrich Pinto</p>
+          <p class="sg-session-where"><span class="sg-session-room">Main hall</span> <span class="sg-session-track">Builders Moving to Goa</span></p>
+        </li>
+        <li class="sg-session" id="tide-log">
+          <p class="sg-session-time"><time datetime="2026-11-15T11:00:00+05:30">11 am</time> to <time datetime="2026-11-15T11:45:00+05:30">11:45 am</time> <abbr title="India Standard Time">IST</abbr></p>
+          <h4 class="sg-session-title">A tide and catch log the whole family can read</h4>
+          <p class="sg-session-who">Roque Barros</p>
+          <p class="sg-session-where"><span class="sg-session-room">Studio room</span> <span class="sg-session-track">AI for Senior Citizens</span></p>
+        </li>
+        <li class="sg-session" id="closing">
+          <p class="sg-session-time"><time datetime="2026-11-15T12:00:00+05:30">12 noon</time> to <time datetime="2026-11-15T13:00:00+05:30">1 pm</time> <abbr title="India Standard Time">IST</abbr></p>
+          <h4 class="sg-session-title">Closing circle</h4>
+          <p class="sg-session-who">The organisers</p>
+          <p class="sg-session-where"><span class="sg-session-room">Main hall</span></p>
+        </li>
+      </ol>
+    </section>
+  </section>
+</main>
+<script type="module">
+  import { mountAgenda } from './recipe.js';
+  // ?now=2026-11-14T10:40 pretends it is that moment in Panjim (for demos, screenshots and tests).
+  // Leave it out and the agenda follows the real clock, once a minute.
+  const pretend = new URLSearchParams(location.search).get('now');
+  const { parseWhen } = await import('../../core/intl.core.js');
+  const fixed = pretend ? parseWhen(pretend) : NaN;
+  mountAgenda(document.getElementById('agenda'), Number.isFinite(fixed) ? { now: () => fixed, tick: false } : {});
+  await document.fonts.ready;
+  window.__ready = true;
+</script>
+</body>
+</html>

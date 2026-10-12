@@ -1,0 +1,17 @@
+{
+  "name": "core-intl",
+  "type": "package",
+  "stability": "experimental",
+  "title": "Core: rupees and the Indian clock",
+  "description": "Money and time the way Goa writes them, as pure functions that give the same answer on any machine. rupees(125000) is ₹1,25,000 (lakh and crore grouping done by hand, so no engine or ICU build can change it), with paise when asked and a clean minus sign; formatMoney() does other currencies too. Times and dates read in Asia/Kolkata whatever zone the visitor's phone or the build server is in: istDay() is the IST calendar day of an instant, clock() says 11 pm, clock24() 23:00, formatWhen() 'Sun 4 Oct, 11 am to 1 pm', relativeDay() 'today' or 'tomorrow' counted in IST calendar days. Nothing reads the clock; the caller passes now, so tests can fake it. No Temporal yet.",
+  "version": "0.1.0",
+  "files": ["intl.core.js", "intl.docs.md"],
+  "dependencies": [],
+  "docs": "intl.docs.md",
+  "budget": { "jsBytes": 12288, "reason": "Decision 0010: a pure core, counted apart at its own 12 KB. It replaces four hand-rolled copies (data-table, menu, event-card, room-details) and is shared by wa-order. Today 10.6 KB with comments." },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

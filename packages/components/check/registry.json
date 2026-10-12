@@ -20,7 +20,8 @@
     "core",
     "engine",
     "tokens",
-    "stamp"
+    "stamp",
+    "sound"
   ],
   "registers": [
     "quiet",

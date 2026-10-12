@@ -76,7 +76,10 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
 // 3. playful: Enter presses a hand to the wall
 {
   const { ctx, page, errors } = await open('/packages/scenes/chiro/demo.html?register=playful&content=0');
-  await page.waitForFunction(() => window.__piece.shadowRoot.querySelector('.stage').dataset.steps === '1500', null, { timeout: 20000 }).catch(() => {}); // the pits are grown; the first rain is still to come
+  // the pits are grown; the first rain is still to come. Under load this can take a minute; if it never
+  // gets there, say so rather than compare two frames of a wall still growing (that reads as 100% changed)
+  const grown = await page.waitForFunction(() => window.__piece.shadowRoot.querySelector('.stage').dataset.steps === '1500', null, { timeout: 90000 }).then(() => true, () => false);
+  if (!grown) check('playful: the pits finished growing before the Enter test (instrument)', false, `steps ${await page.evaluate(() => window.__piece.shadowRoot.querySelector('.stage').dataset.steps)} of 1500 after 90 s`);
   const stage = page.locator('sg-scene').locator('.stage');
   await stage.focus();
   await page.keyboard.press('ArrowUp'); await page.waitForTimeout(200);

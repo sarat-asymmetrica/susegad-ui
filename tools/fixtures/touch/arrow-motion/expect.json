@@ -1,0 +1,5 @@
+{
+  "probeFails": [
+    "holding an arrow key still runs a CSS transition"
+  ]
+}

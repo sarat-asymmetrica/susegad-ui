@@ -7,6 +7,7 @@
 //   node packages/components/site-footer/site-footer.check.mjs
 
 import { harness, settle } from '../../../tools/lib/component-check.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { check, open, openHtml, axe, axeNoJs, done } = await harness();
 const DEMO = '/packages/components/site-footer/demo.html';
@@ -156,7 +157,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 for (const register of ['quiet', 'warm', 'playful']) {
   const { ctx, page } = await open(`${DEMO}?register=${register}`, { width: 390 });
   await settle(page);
-  const w = await page.evaluate(() => document.documentElement.scrollWidth);
+  const { scrollWidth: w } = await sidewaysScroll(page, 390);
   check(`at 390 px the ${register} demo does not scroll sideways`, w <= 390, `${w}`);
   await ctx.close();
 }

@@ -28,12 +28,14 @@ export function createSurface({ host, scene, W, H, invalidate, family, color }) 
   layer.setAttribute('part', 'surface');
   layer.append(style, probe);
   host.after(layer);
-  let type = null, loading = null, key = '', state = null;
+  let type = null, loading = null, key = '', fontsAsk = '', fontsOk = '', state = null;
   const again = () => { key = ''; invalidate(); };
   const ro = new ResizeObserver(again);
   ro.observe(probe); // 1rem wide: text zoom moves it
   const mo = new MutationObserver(again);
   if (scene) mo.observe(scene, { childList: true, subtree: true, characterData: true });
+  // a face that finishes loading after the words were laid (it failed once and came back, or was fetched for something else): lay out again in it
+  document.fonts?.addEventListener?.('loadingdone', again);
 
   return {
     /**
@@ -44,12 +46,22 @@ export function createSurface({ host, scene, W, H, invalidate, family, color }) 
      */
     update(on, shapeKey, lay) {
       if (on && !type) loading ??= import('./index.js').then(async t => { await t.fontReady(`400 20px ${family}`); type = t; again(); }, () => { loading = null; });
-      const blocks = on && type && scene ? type.readBlocks(scene) : null;
+      let blocks = on && type && scene ? type.readBlocks(scene) : null;
+      // measure only once the faces for these very words are loaded (a canvas never fetches a face itself)
+      if (blocks) {
+        const need = blocks.map(b => b.text).join(' ');
+        if (fontsOk !== need) { // pending: no layout until the faces have arrived, then one relayout (a layout in a fallback face would stick)
+          if (fontsAsk !== need) { fontsAsk = need; type.fontReady(`400 20px ${family}`, need).then(() => { if (fontsAsk === need) { fontsOk = need; again(); } }); }
+          blocks = null;
+        }
+      }
       const scale = host.clientWidth / W, rootPx = rootSize();
       const k = `${on}|${!!type}|${scale.toFixed(4)}|${rootPx}|${shapeKey}|${blocks ? blocks.map(b => b.tag + b.text).join('|') : ''}`;
       if (k === key) return state;
       key = k;
-      const laid = blocks && scale > 0 ? lay(type, blocks, scale, rootPx) : null;
+      // a page with no canvas to measure with (the oracle says so by name) keeps the flat reading
+      let laid = null;
+      try { laid = blocks && scale > 0 ? lay(type, blocks, scale, rootPx) : null; } catch (e) { if (e?.name !== 'NoMeasuringCanvas') throw e; }
       layer.querySelectorAll('h1,h2,h3,h4,h5,h6,p').forEach(e => e.remove());
       if (laid) {
         const els = laid.blocks.map(b => mk(b.tag));
@@ -60,6 +72,6 @@ export function createSurface({ host, scene, W, H, invalidate, family, color }) 
       host.dataset.words = laid ? 'surface' : 'panel';
       return (state = laid ? { lines: laid.lines, calm: type.calmOf(laid.lines) } : null);
     },
-    destroy() { ro.disconnect(); mo.disconnect(); scene?.holdReading?.(false); layer.remove(); },
+    destroy() { ro.disconnect(); mo.disconnect(); document.fonts?.removeEventListener?.('loadingdone', again); scene?.holdReading?.(false); layer.remove(); },
   };
 }

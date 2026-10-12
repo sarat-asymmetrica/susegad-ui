@@ -1,6 +1,8 @@
 // Room details: the pure half. The words, rupee formatting, availability as a
 // badge, and the load state machine. Runs in Node.
 
+import { formatMoney } from '../../core/intl.core.js';
+
 /** Every word a guest reads or hears. Kathakar owns these. */
 export const STRINGS = {
   label: 'the room details',
@@ -20,9 +22,8 @@ export const STRINGS = {
   askOther: 'Ask about other dates',
 };
 
-const inr = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
-/** Rupees with Indian digit grouping: 3200 → ₹3,200, 125000 → ₹1,25,000, 12500000 → ₹1,25,00,000. */
-export const rupees = n => inr.format(Math.round(n));
+/** Rupees with Indian digit grouping, whole rupees: 3200 → ₹3,200, 125000 → ₹1,25,000, 12500000 → ₹1,25,00,000 (core-intl). */
+export const rupees = n => formatMoney(n, '₹', { paise: false });
 
 /** Availability as a badge: the words carry the meaning, the tone backs them up. */
 export function availability(left, { whole = false } = {}) {

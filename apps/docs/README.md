@@ -15,7 +15,7 @@ Served at the root (Workers serves `x.html` at `/x`):
 | `/components/<name>` and so on | one piece: its docs rendered from Markdown, its prompt, its install line, what it stands on, prev/next |
 | `/pencil-box` | the techniques, each with the scenes that use it |
 
-Index pages run nothing live: each card shows a poster captured at build time in every register and theme. A drawing runs only on its own page. Old links (`/#paus`, `/#paus-prompt`, `/#pencil-box`, `/#t-wobble`, `/components.html`) still land. Decision and gates: `docs/requests/2026-09-29-site-map.md`.
+Index pages run nothing live: each card shows a poster captured at build time in every register and theme. A drawing runs only on its own page, and there it is poster-first: the poster (AVIF, WebP and JPG, in a `<picture>`) is the first paint, and `<sg-lazy>` fetches the scene only when it is near the screen and nothing asks for stillness (decisions 0023 and 0024). Old links (`/#paus`, `/#paus-prompt`, `/#pencil-box`, `/#t-wobble`, `/components.html`) still land. Decision and gates: `docs/requests/2026-09-29-site-map.md`.
 
 ## Run it
 
@@ -29,7 +29,7 @@ node apps/docs/check.mjs               # the home page across registers, themes 
 
 The generated pages exist only in `out/docs`; `node tools/serve.mjs` from the repo root still shows the home page at `/apps/docs/`, with its doors unfilled.
 
-The first build shoots every poster (a few minutes); later builds re-shoot only the pieces whose files changed. Bump `VERSION` in `posters.mjs` to re-shoot everything.
+The first build shoots every poster (a few minutes); later builds re-shoot only the pieces whose files changed. Bump `VERSION` in `posters.mjs` to re-shoot everything. `node tools/images.check.mjs --root out/docs` checks that every poster has its AVIF and WebP.
 
 ## Files
 
@@ -38,7 +38,7 @@ The first build shoots every poster (a few minutes); later builds re-shoot only 
 | `index.html` | The home page. Static copy lives here; the build replaces what sits between the `site:doors` markers. |
 | `site.core.js` | Pure: the site map (kinds, paths, scene groups, prev/next) and every generated page as an HTML string. Tested by `site.core.test.js`. |
 | `pages.mjs` | The edge that reads scene metas, docs and prompts from disk and writes the generated pages into `out/docs`. |
-| `posters.mjs` | Takes the posters with Playwright, cached in `.cache/posters/` by a content key. |
+| `posters.mjs` | Takes the posters with Playwright, encodes each as AVIF, WebP and JPG with `sharp`, cached in `.cache/posters/` by a content key. |
 | `shell.js` | Every page: the switches, posters that follow them, copy buttons, a `#hash` opening its fold. |
 | `scene-page.js` | A scene's page: the drawing into its stage, the controls, Look closer. |
 | `index-page.js` | An index page's search. |

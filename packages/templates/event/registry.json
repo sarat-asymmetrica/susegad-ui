@@ -1,0 +1,54 @@
+{
+  "name": "template-event",
+  "type": "template",
+  "stability": "experimental",
+  "title": "Event page",
+  "description": "A starter site for a one-day event in Panjim: a header with a language switcher, a hero scene behind its poster, the agenda that knows what is on stage now, the speakers, the venue and a footer, in English and in Konkani in both scripts. Static files with no build step; `susegad create` writes it and copies the pieces it uses.",
+  "version": "0.1.0",
+  "files": [
+    "package.json",
+    "strings.js",
+    "pages.mjs",
+    "look.js",
+    "page.js",
+    "site.css",
+    "index.html",
+    "gom-deva/index.html",
+    "gom-latn/index.html",
+    "posters/hero.avif",
+    "posters/hero.webp",
+    "posters/hero.jpg",
+    "README.md",
+    "KONKANI-FOR-READER.md"
+  ],
+  "dependencies": [
+    "agenda",
+    "core-lazy",
+    "core-strings",
+    "lang",
+    "person-card",
+    "scene-pahat",
+    "site-footer",
+    "speakers",
+    "tokens",
+    "venue"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "docs": "README.md",
+  "useFor": [
+    "event"
+  ],
+  "budget": {
+    "jsBytes": 65536,
+    "reason": "Mostly words, not code: strings.js holds the whole page in three languages (about 12 KB in English alone, and Devanagari takes three bytes a letter), plus the optional page writer (pages.mjs). The code is the page script (about 1.6 KB), the look reader and the writer, a few KB between them."
+  },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "A Goan desk at dawn behind a civic event; the picture is the pahat scene, which draws no deity or ritual."
+  }
+}

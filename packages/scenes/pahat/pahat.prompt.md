@@ -28,6 +28,10 @@ Draw a desk by a window at half past four in the morning, in ink and wash on pap
 | the pointer moves it | interaction | In playful, the hand's place across the window becomes the dawn fraction the moment it moves; Enter or Space starts the dawn again from the dark. |
 | three palms with inked fronds and hanging leaflets | seed | Where the palms stand, where the stars are and where the morning star rises come from the seed. |
 
+## On a page
+
+A bare `<sg-scene name="pahat">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/pahat/index.js">` with `<sg-scene name="pahat" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing says nothing a person needs; the page text carries the message. Warm plays the dawn once, in about half a minute, and rests. In playful, the drawing takes focus: the arrow keys move a hand left and right across the window to move the dawn, and Enter or Space starts it again from the dark. Quiet is a hairline still at first light; reduced motion shows the finished morning.

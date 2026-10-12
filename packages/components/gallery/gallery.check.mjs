@@ -199,4 +199,31 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await full.ctx.close();
 }
 
+// ── 3.1.2: the gallery's own words come from the shared strings table, in the page's language ──
+// The demo is served with its <html lang> changed to Konkani in Romi. "Close" is in that table in Konkani and
+// must show as such, and so must the two names that also hold the author's own words (", open larger" and
+// ", a photograph", each with a Konkani twin now). They carry no lang of their own: the page's lang stands.
+for (const [tag, want] of [['en', 'Close'], ['gom-Latn', 'Bond korchem'], ['gom-Deva', 'बंद करचें']]) {
+  const ctx = await browser.newContext(contextOptions(engine, { viewport: { width: 1280, height: 900 } }));
+  const page = await ctx.newPage();
+  await routePosters(page);
+  await page.route('**/gallery/demo.html*', async r => {
+    const res = await r.fetch();
+    r.fulfill({ response: res, body: (await res.text()).replace('<html lang="en">', `<html lang="${tag}">`) });
+  });
+  await page.goto(`${server.url}${DEMO}?register=quiet`);
+  await page.waitForFunction(() => window.__ready !== false);
+  await settle(page);
+  await page.locator('.sg-gallery-slot[data-consent="granted"] button.sg-gallery-open').first().click();
+  await page.waitForFunction(() => document.querySelector('dialog.sg-gallery-dialog')?.open);
+  const got = await page.evaluate(() => {
+    const close = document.querySelector('.sg-gallery-close'), op = document.querySelector('.sg-gallery-slot[data-consent="granted"] button.sg-gallery-open');
+    return { close: close.textContent, closeLang: close.getAttribute('lang'), open: op.getAttribute('aria-label'), openLang: op.getAttribute('lang'), dlg: document.querySelector('dialog.sg-gallery-dialog').getAttribute('aria-label'), dlgLang: document.querySelector('dialog.sg-gallery-dialog').getAttribute('lang') };
+  });
+  check(`lang ${tag}: the Close button reads "${want}"`, got.close === want, got.close);
+  const names = { en: [o => o.endsWith(', open larger'), d => d.endsWith(', a photograph')], 'gom-Latn': [o => o.endsWith(', vhodd korun ugodchem'), d => d.startsWith('Foto: ')], 'gom-Deva': [o => o.endsWith(', व्हड करून उगडचें'), d => d.startsWith('फोटो: ')] }[tag];
+  check(`lang ${tag}: the opener and viewer names are in the page language (the Konkani twins of ", open larger" and ", a photograph"), no blanks or keys`, names[0](got.open) && names[1](got.dlg), `${got.open.slice(-30)} | ${got.dlg.slice(0, 40)}`);
+  await ctx.close();
+}
+
 await done();

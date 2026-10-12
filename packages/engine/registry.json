@@ -17,6 +17,7 @@
     "src/light.js",
     "src/motion.js",
     "src/wave.js",
+    "src/phyllotaxis.js",
     "src/stage.js",
     "src/loop.js",
     "src/pointer.js",

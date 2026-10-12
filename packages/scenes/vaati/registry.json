@@ -1,0 +1,14 @@
+{
+  "name": "scene-vaati",
+  "type": "scene",
+  "stability": "experimental",
+  "useFor": ["hero", "story"],
+  "title": "Vaati",
+  "description": "The bowl fills: seen from above, fresh pasta (ravioli, tortellini, gnocchi or farfalle) flies in from the edges along spinning arcs and settles, nudging the pieces already there; sauce is poured and spreads in a swirl, grated cheese falls and catches, basil lands, and the bowl rests. Quiet is a hairline still; warm is ink and wash; playful is flat poster colour with a bold outline, and a click tosses the pasta so it lands again. The progress attribute fills the bowl exactly that much, and sg-scene-settled says once that the meal is made.",
+  "version": "0.1.0",
+  "files": ["index.js", "model.js", "render.js", "meta.js", "vaati.prompt.md"],
+  "dependencies": ["core", "core-lazy", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "vaati.prompt.md",
+  "budget": { "jsBytes": 49152, "reason": "four pasta shapes, and every drawing in three hands (hairline, ink and wash, flat poster), plus the pour, the toss and the settle signal" }
+}

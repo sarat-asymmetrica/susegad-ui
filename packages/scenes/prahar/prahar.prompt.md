@@ -38,6 +38,10 @@ Draw one day over a village on a Goan river in plain JavaScript on a canvas: blu
 | Move the sun and moon on arcs | easing | The sun’s height is a sine of the hour between sunrise and sunset, so it climbs quickly, lingers at noon and drops quickly again. |
 | the light holds at that hour and the watch is said in words | state | With hour set, time stands still and the scene rests until the attribute changes. The status says the watch, its raga and the time, such as "Evening, Yaman, 19:10". |
 
+## On a page
+
+A bare `<sg-scene name="prahar">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/prahar/index.js">` with `<sg-scene name="prahar" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing's name is its `alt`. With `hour` set, the scene says the watch, its raga and the time in a polite status region, at most once a second and only when the sentence changes. In playful the drawing takes focus and the left and right arrow keys move the day. The raga names drawn on the canvas are also in this prompt and in the meta, in English and Devanagari.

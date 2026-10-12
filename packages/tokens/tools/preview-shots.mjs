@@ -11,6 +11,7 @@ import { createServer } from 'node:http';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, extname, normalize } from 'node:path';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const outIdx = process.argv.indexOf('--out');
@@ -62,12 +63,12 @@ for (const run of runs) {
     // A face counts as loaded when one of its faces for this script has status "loaded".
     const loaded = name => [...document.fonts].some(f => f.family.replace(/['"]/g, '') === name && f.status === 'loaded');
     return {
-      scrollWidth: document.documentElement.scrollWidth,
-      innerWidth: window.innerWidth,
       fonts: Object.fromEntries(['Mukta', 'Castoro', 'Tiro Devanagari Marathi', 'Tiro Kannada', 'Noto Sans Kannada', 'Kalam'].map(f => [f, loaded(f)])),
       quietCalm: getComputedStyle(document.querySelector('[data-register="quiet"]')).getPropertyValue('--sg-dur-calm').trim(),
     };
   });
+  const o = await sidewaysScroll(page); // not window.innerWidth: mobile Chromium widens it to fit overflow
+  facts.scrollWidth = o.scrollWidth; facts.viewWidth = o.viewWidth; facts.overflow = o.overflow;
   const file = join(out, `${run.name}.png`);
   await page.screenshot({ path: file, fullPage: true });
   // A tight crop of the first panel, which is easier to judge closely.
@@ -81,7 +82,7 @@ server.close();
 await writeFile(join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
 for (const r of report) {
   const faces = Object.entries(r.fonts).filter(([, v]) => v).length;
-  console.log(`${r.run.padEnd(22)} errors ${r.errors.length}  below target ${r.belowTarget}  width ${r.scrollWidth}/${r.innerWidth}  quiet calm ${r.quietCalm}  web faces ${faces}/6  woff2 ${r.woff2.length}`);
+  console.log(`${r.run.padEnd(22)} errors ${r.errors.length}  below target ${r.belowTarget}  width ${r.scrollWidth}/${r.viewWidth}  quiet calm ${r.quietCalm}  web faces ${faces}/6  woff2 ${r.woff2.length}`);
   for (const e of r.errors) console.log('   ', e);
 }
-if (report.some(r => r.errors.length || r.belowTarget || r.scrollWidth > r.innerWidth)) process.exitCode = 1;
+if (report.some(r => r.errors.length || r.belowTarget || r.overflow > 0)) process.exitCode = 1;

@@ -146,6 +146,40 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 
+// ── 1.4.4 and 2.4.7: at a 200 percent root font size on 1280 by 800, the list fits the viewport and the
+//    active option is on screen at every step, in every register (it ran past the bottom in quiet and warm).
+for (const register of ['quiet', 'warm', 'playful']) {
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const page = await ctx.newPage();
+  await page.goto(`${url}?register=${register}`);
+  await page.waitForFunction(() => window.__ready === true && document.querySelector('sg-combobox')?.dataset.skin);
+  await page.addStyleTag({ content: 'html { font-size: 200% }' });
+  await page.focus('#from');
+  await page.keyboard.type('m');
+  await page.waitForSelector('#from[aria-expanded="true"]');
+  const n = await page.evaluate(() => document.querySelectorAll('.sg-combobox__list [role="option"]').length);
+  const probe = () => page.evaluate(() => {
+    const list = document.querySelector('#from').closest('sg-combobox').querySelector('.sg-combobox__list');
+    const id = document.querySelector('#from').getAttribute('aria-activedescendant');
+    const opt = id && document.getElementById(id);
+    const l = list.getBoundingClientRect(), o = opt?.getBoundingClientRect();
+    const clip = list.getBoundingClientRect();
+    return { listTop: Math.round(l.top), listBottom: Math.round(l.bottom), vh: innerHeight, optTop: o && Math.round(o.top), optBottom: o && Math.round(o.bottom), clipTop: Math.round(clip.top), clipBottom: Math.round(clip.bottom) };
+  });
+  const misses = [];
+  let last;
+  for (let i = 0; i < n; i++) {
+    await page.keyboard.press('ArrowDown');
+    await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+    last = await probe();
+    // the option must be inside the viewport and inside the list's own box
+    const ok = last.optTop >= 0 && last.optBottom <= last.vh && last.optTop >= last.listTop - 1 && last.optBottom <= last.listBottom + 1;
+    if (!ok) misses.push(`#${i + 1}: option ${last.optTop}-${last.optBottom}, list ${last.listTop}-${last.listBottom}, viewport ${last.vh}`);
+  }
+  check(`${register}, 200% root font size, 1280x800: the list fits the viewport and the active option is on screen at every step (${n} options)`, n > 4 && last.listTop >= 0 && last.listBottom <= last.vh && !misses.length, misses.slice(0, 2).join('; ') || `list ${last.listTop}-${last.listBottom} in ${last.vh}`);
+  await ctx.close();
+}
+
 await browser.close();
 await server.close();
 if (results.some(r => !r.ok)) process.exit(1);

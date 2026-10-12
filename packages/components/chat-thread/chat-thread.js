@@ -18,7 +18,7 @@
 // Attributes: label (the list's name, when the markup gives none), register.
 
 import { SgElement, defineComponent } from '../../core/component.js';
-import { STRINGS, leakIn, reactionLabel } from './chat-thread.core.js';
+import { STRINGS, leakIn, reactionLabel, statusWords } from './chat-thread.core.js';
 
 export class SgChatThread extends SgElement {
   static native = 'ol, ul';
@@ -55,6 +55,15 @@ export class SgChatThread extends SgElement {
       const key = `${li.dataset.from}|${who}`;
       if (key === prev) li.dataset.run = 'continue'; else delete li.dataset.run;
       prev = key;
+    }
+    // The tick is CSS art: say the status in words inside the time (a message with no time says it at its end).
+    for (const li of list.querySelectorAll('li[data-status]')) {
+      const words = statusWords(li.dataset.status);
+      const host = li.querySelector(':scope > .sg-chat-time') ?? li;
+      let sr = host.querySelector(':scope > .sg-chat-sr[data-status-words]');
+      if (!words) { sr?.remove(); continue; }
+      if (!sr) { sr = this.ownerDocument.createElement('span'); sr.className = 'sg-chat-sr'; sr.dataset.statusWords = ''; host.append(' ', sr); }
+      sr.textContent = words;
     }
     // A reaction is read once, as words: role="img" with a label hides the emoji itself.
     for (const r of list.querySelectorAll('.sg-chat-reaction')) {

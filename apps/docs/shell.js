@@ -33,14 +33,17 @@ if (prefs && form) {
 
 // ── posters follow the register and the theme ───────────────────────
 // Each poster was captured at build time in every register and theme
-// (posters.mjs); the <img> names its base in data-poster.
+// (posters.mjs) in three formats; the <img> names its base in data-poster, and the
+// <source>s of its <picture> follow it, so a swap changes the format the browser picks from too.
 const dark = matchMedia('(prefers-color-scheme: dark)');
 const theme = () => root.dataset.theme || (dark.matches ? 'dark' : 'light');
 export function syncPosters(scope = document) {
-  const suffix = `.${root.dataset.register || 'warm'}.${theme()}.jpg`;
+  const suffix = `.${root.dataset.register || 'warm'}.${theme()}`;
   for (const img of scope.querySelectorAll('img.poster[data-poster]')) {
-    const src = img.dataset.poster + suffix;
-    if (img.getAttribute('src') !== src) img.setAttribute('src', src);
+    const src = `${img.dataset.poster}${suffix}.jpg`;
+    if (img.getAttribute('src') === src) continue;
+    for (const source of img.parentElement.querySelectorAll('source[type^="image/"]')) source.srcset = `${img.dataset.poster}${suffix}.${source.type.slice(6)}`;
+    img.setAttribute('src', src);
   }
 }
 syncPosters();

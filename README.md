@@ -1,11 +1,13 @@
 # Susegad UI
 
 <a href="https://susegad.asymmetrica.ai"><picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/hero.dark.gif">
-  <img src="docs/readme/hero.light.gif" alt="The Susegad UI home page: the title on the left, and on the right a tiatr stage drawn in code, its red curtain rising on a Goan church square." width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/hero.dark.webp">
+  <img src="docs/readme/hero.light.webp" alt="The Susegad UI home page: the title on the left, and on the right a tiatr stage drawn in code, its red curtain rising on a Goan church square." width="100%" height="375">
 </picture></a>
 
 > *For Rafe, who lent two stranded strangers his Activa and went fishing.* ([DEDICATION.md](DEDICATION.md))
+
+New here? Start with [`docs/HANDOFF.md`](docs/HANDOFF.md).
 
 A front-end library for interfaces and documents that are beautiful and comfortable at the same time.
 

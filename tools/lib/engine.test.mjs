@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { chromium, firefox, webkit } from 'playwright';
-import { contextOptions, dropBenignErrors, ENGINE_NAMES, engineName, grantsPermission, pickEngine, unsupportedIn } from './engine.mjs';
+import { contextOptions, dropBenignErrors, ENGINE_NAMES, engineName, grantsPermission, launchArgs, pickEngine, unsupportedIn } from './engine.mjs';
 
 test('defaults to chromium with no name and no SG_ENGINE', () => {
   const before = process.env.SG_ENGINE;
@@ -113,4 +113,14 @@ test('unsupportedIn prints one line naming the engine and reason, and returns tr
     console.log = orig;
   }
   assert.match(lines[0], /skip.*MediaRecorder is not measurable in webkit.*no WebM encoder/);
+});
+
+// WebKit on Linux exits at once on --use-angle=d3d11 (seen in WSL, 12 Oct 2026), so a check that asks
+// session() for the GPU never ran a single assertion there.
+test('launchArgs keeps Chromium switches for chromium and passes none to firefox or webkit', () => {
+  const gpu = ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'];
+  assert.deepEqual(launchArgs('chromium', gpu), gpu);
+  assert.deepEqual(launchArgs('webkit', gpu), []);
+  assert.deepEqual(launchArgs('firefox', gpu), []);
+  assert.deepEqual(launchArgs('webkit'), []);
 });

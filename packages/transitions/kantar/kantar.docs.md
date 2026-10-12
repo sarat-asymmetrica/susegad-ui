@@ -54,7 +54,7 @@ Reduced motion takes the same plain path as quiet, in every register.
 | `curtainUp` | 300 | how long it takes to rise |
 | `msPerLine` | 2200 | how long each line of `lines` shows before the next, cycling if the wait runs long |
 
-`minWaitMs` is small by design (Sutradhar review, 25 Sep, KB1): its only job is to keep genuinely instant work from flashing past before anyone can read it. It is measured from when the "wait" phase itself began, so once real work has taken any noticeable time, `work` resolving and the swap happening are effectively the same moment, nothing about a real wait is stretched. An earlier draft used 900ms for both `minWaitMs` and `curtainUp`, which could add several hundred milliseconds after 1-to-2-second work had already finished; a check now asserts the time from `work` resolving to the next step's heading being focused stays at or under 300ms.
+`minWaitMs` is small by design: its only job is to keep genuinely instant work from flashing past before anyone can read it. It is measured from when the "wait" phase itself began, so once real work has taken any noticeable time, `work` resolving and the swap happening are effectively the same moment, nothing about a real wait is stretched. An earlier draft used 900ms for both `minWaitMs` and `curtainUp`, which could add several hundred milliseconds after 1-to-2-second work had already finished; a check now asserts the time from `work` resolving to the next step's heading being focused stays at or under 300ms.
 
 ## Accessibility
 
@@ -78,13 +78,12 @@ ripple when it lands (`hemWave`, ported as arithmetic from the plate's
 spotlight pool, and, in playful only, a singer's silhouette standing in it
 (`singerSilhouette`, the plate's own point-for-point figure, not a redrawn
 likeness). A first draft of this component left all of that out and drew a
-flat coloured box instead (Sutradhar review, 25 Sep, KS1); it is back now,
+flat coloured box instead; it is back now,
 canvas-drawn every frame from these pure functions, phase-driven like
 everything else here. A second draft's own simplification of the figure
 (16 points instead of the plate's 21) quietly lost the shoulder, arm and
 hand detail that was Volume III's own second-round fix for "the singer
-read as a peg doll", restored verbatim (Rasika's Wave 5 review, S3 round
-1), along with moving the spotlight line to a caption band below the stage
+read as a peg doll", restored verbatim after review, along with moving the spotlight line to a caption band below the stage
 floor, since the line and the figure's head shared the same centred anchor
 by construction and the line crossed the head every time. That fix still
 left the figure headless: the plate's `singer()` draws a head and a hair

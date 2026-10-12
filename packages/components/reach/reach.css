@@ -120,3 +120,16 @@ sg-reach[data-skin="playful"] .sg-reach-copy { background: var(--sg-accent); col
   sg-reach[data-skin] address { border: 1px solid CanvasText; -webkit-mask: none; mask: none; }
   sg-reach .sg-reach-frame { display: none; }
 }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-reach .sg-reach-line a, sg-reach .sg-reach-copy { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-reach .sg-reach-line a:active { translate: 0 1px; color: color-mix(in oklab, var(--sg-accent-text), var(--sg-text, CanvasText) 25%); text-decoration-thickness: 2px; transition: none !important; }
+sg-reach .sg-reach-copy:active { translate: 0 1px; background: color-mix(in oklab, var(--sg-surface), var(--sg-text, CanvasText) 8%); transition: none !important; }
+sg-reach[data-skin="warm"] .sg-reach-copy:active { translate: none; background: var(--sg-surface); border-color: color-mix(in oklab, var(--sg-rule-strong), var(--sg-text, CanvasText) 40%); color: color-mix(in oklab, var(--sg-text, CanvasText), var(--sg-text, CanvasText) 25%); }
+sg-reach[data-skin="warm"] .sg-reach-line a:active { translate: none; }
+sg-reach[data-skin="playful"] .sg-reach-copy:active { translate: none; scale: 0.97; background: color-mix(in oklab, var(--sg-surface), var(--sg-text, CanvasText) 10%); }
+sg-reach[data-skin="playful"] .sg-reach-line a:active { translate: none; scale: 0.97; }
+@media (prefers-reduced-motion: reduce) {
+  sg-reach .sg-reach-line a, sg-reach .sg-reach-copy { transition: none; }
+  sg-reach :is(a, button):active { translate: none !important; scale: none !important; }
+}

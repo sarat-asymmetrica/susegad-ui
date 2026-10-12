@@ -1,0 +1,5 @@
+{
+  "probeFails": [
+    "keyboard focus .* shows nothing"
+  ]
+}

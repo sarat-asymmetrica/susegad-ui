@@ -34,6 +34,10 @@ Draw a teak table seen from directly above, on a canvas with no image files. Pai
 | move the table's action into the largest clear space | calm | fitAround measures the slotted text's boxes and scales the pile, book and stack into the largest clear band beside them. The table itself stays put. |
 | a click throws the pile again | interaction | In playful, a click, Enter or Space reseeds the pile: every paper flies out from where it lay, pushed away from your hand, and the sorting starts again. Moving the pointer over loose papers shoves them along. |
 
+## On a page
+
+A bare `<sg-scene name="vahi">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/vahi/index.js">` with `<sg-scene name="vahi" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing is decorative unless it shows progress. With `progress` set, the element says the same number in a polite status region, named by `label` ("Records sorted: 40% done"), at most once a second and only when it changes. Nothing is said only by the drawing: the page text carries the message. In playful, the drawing takes focus; the arrow keys move a hand that nudges loose papers, and Enter or Space throws the pile again. Quiet and reduced motion show the finished still: the closed book beside the neat stack.

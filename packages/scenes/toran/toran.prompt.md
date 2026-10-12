@@ -36,6 +36,10 @@ Draw a Goan doorway on the morning of Ganesh Chaturthi, in canvas JavaScript wit
 | stepped in fixed slices of time | model | The garland advances in steps of 1/120 s from the start, memoised, so a playing scene only pays for the steps since its last frame. Each stroke is fed in at the step its moment falls in, and petals shed on a seeded clock, so a replay gives the same swing. |
 | let the breeze die down around them | calm | Within 60 units of the page’s text the wind is turned down by 85% and no petal lets go by itself, so the words sit under a garland that barely stirs. |
 
+## On a page
+
+A bare `<sg-scene name="toran">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/toran/index.js">` with `<sg-scene name="toran" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing is decorative: its name is its `alt`, and it carries nothing a page needs to say. In playful the drawing takes focus: the arrow keys move a hand through the garland (a small cross shows where it is) and Enter or Space sweeps the hand through the strands, one way and then the other. The keyboard hand brushes firmly but never hard enough to shed petals. Quiet and reduced motion show the garland at rest.

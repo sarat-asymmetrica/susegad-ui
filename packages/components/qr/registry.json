@@ -1,0 +1,48 @@
+{
+  "name": "qr",
+  "type": "component",
+  "stability": "experimental",
+  "title": "QR code",
+  "description": "A QR code as a picture with its words beside it: a UPI link, a ticket number, a Wi-Fi password. The encoder is in the component (numeric, alphanumeric and UTF-8 byte modes, versions 1 to 40, levels L to H, all eight masks) with no dependency, tested against the standard's example, a reference encoder and a decoder. The words are the builder's own text, selectable and wrapping; the code is one SVG path on a plate that stays light in dark mode and in forced colours. Quiet is a white plate; warm a paper plate with a hand-ruled frame; playful adds block-print studs and draws the frame on once. The modules never change.",
+  "version": "0.1.0",
+  "useFor": [
+    "qr",
+    "payment",
+    "upi",
+    "ticket",
+    "wifi"
+  ],
+  "files": [
+    "qr.js",
+    "qr.core.js",
+    "qr.helpers.js",
+    "qr.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "qr.prompt.md",
+    "qr.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "qr.prompt.md",
+  "docs": "qr.docs.md",
+  "budget": {
+    "jsBytes": 28672,
+    "reason": "Parts per decision 0010: element qr.js 4,740 bytes; pure encoder qr.core.js 13,656 bytes (over 0010's 12 KB, within the 14 KB that decision 0026 gives it: the capacity tables, Reed-Solomon, interleaving, the eight masks and four penalty rules); pure helpers qr.helpers.js 5,222 bytes (the checked UPI and Wi-Fi payloads, the seeded frame, the size floor); skins quiet 142, warm 2,642 (also the frame builder playful uses) and playful 387 bytes. Today 26,789 bytes in all. No frame loop: the frame draws on with two Web Animations, once, in playful only."
+  },
+  "motif": {
+    "origin": "india",
+    "tier": "everyday",
+    "gloss": "The diamond cuts of Indian block printing, as on the stamp's frame, set as studs on a plate."
+  }
+}

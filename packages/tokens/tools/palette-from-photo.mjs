@@ -7,6 +7,7 @@
 //   --name <n>        palette name, used as data-palette="<n>" (default: photo)
 //   --out <file>      write the CSS block here (default: print it)
 //   --json <file>     write the report here (default: next to --out, .json)
+//   --cache <file>    also write the baked colour cache (JSON) that recolor() in ../bake.js reads
 //   --compare casa    compare with the hand-made Casa palette in the report
 //   --size <px>       longest side the photos are scaled to before sampling (default 320)
 //
@@ -19,16 +20,18 @@ import { extname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { paletteFromPixels, paletteToCss, compareToReference, worstContrast } from '../palette.js';
 import { palettes } from '../tokens.js';
+import { bake, checkRamps } from '../bake.js';
 
 const MIME = { '.webp': 'image/webp', '.avif': 'image/avif', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.gif': 'image/gif' };
 
 function parseArgs(argv) {
-  const opts = { files: [], name: 'photo', out: null, json: null, compare: null, size: 320 };
+  const opts = { files: [], name: 'photo', out: null, json: null, cache: null, compare: null, size: 320 };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--name') opts.name = argv[++i];
     else if (a === '--out') opts.out = argv[++i];
     else if (a === '--json') opts.json = argv[++i];
+    else if (a === '--cache') opts.cache = argv[++i];
     else if (a === '--compare') opts.compare = argv[++i];
     else if (a === '--size') opts.size = +argv[++i];
     else if (a === '--help' || a === '-h') opts.help = true;
@@ -87,7 +90,7 @@ export const casaReference = {
 async function main() {
   const opts = parseArgs(process.argv.slice(2));
   if (opts.help || !opts.files.length) {
-    console.log('Usage: node packages/tokens/tools/palette-from-photo.mjs <images...> [--name n] [--out palette.css] [--json report.json] [--compare casa] [--size 320]');
+    console.log('Usage: node packages/tokens/tools/palette-from-photo.mjs <images...> [--name n] [--out palette.css] [--json report.json] [--cache cache.json] [--compare casa] [--size 320]');
     process.exit(opts.help ? 0 : 1);
   }
   const images = await decodeImages(opts.files.map(f => resolve(f)), opts.size);
@@ -115,6 +118,16 @@ async function main() {
   } else {
     process.stdout.write(css);
     if (opts.json) writeFileSync(opts.json, JSON.stringify(report, null, 2) + '\n');
+  }
+  if (opts.cache) {
+    const cache = bake(p);
+    writeFileSync(opts.cache, JSON.stringify(cache, null, 2) + '
+');
+    console.log(`wrote ${opts.cache}: the baked colour cache, for recolor() in bake.js`);
+    // The ramps this cache can generate must step evenly; a palette whose ramps do not is not written as good.
+    const ramps = checkRamps(cache);
+    console.log(`${ramps.checked} generated ramps checked; ${ramps.uneven.length} uneven (worst spread ${(ramps.worst.spread * 100).toFixed(1)}% of the mean step)`);
+    if (ramps.uneven.length) { console.error('Uneven ramps: ' + ramps.uneven.slice(0, 5).map(r => `${r.from} to ${r.to}${r.dark ? ' (dark)' : ''}`).join(', ')); process.exitCode = 1; }
   }
   const w = report.worst;
   console.log(`${p.samples} samples from ${images.length} image${images.length === 1 ? '' : 's'}; lowest text contrast ${w.ratio}:1 (${w.role} on ${w.ground}, ${w.theme})`);

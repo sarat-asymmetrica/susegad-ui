@@ -1,0 +1,103 @@
+/* The venue recipe. Words first: the name, the address, the landmark directions, two links out
+   to a maps app, the ways to get there and the access notes. A small drawn locator sits beside
+   the words when there is room; it is decoration (aria-hidden) and never carries a fact the words
+   do not. No map is embedded and nothing is loaded from elsewhere.
+
+   An access row with nothing in it is not shown, and when every row is empty the whole Access
+   section goes: write the template once and fill what is true. */
+
+.sg-venue { max-width: 62rem; container: sg-venue / inline-size; }
+.sg-venue h2 { font: 400 var(--sg-step-2, 1.4rem) / 1.15 var(--sg-font-display, inherit); margin: 0 0 var(--sg-space-3, 12px); }
+.sg-venue h3 {
+  margin: var(--sg-space-3, 16px) 0 var(--sg-space-1, 4px);
+  font: var(--sg-weight-bold, 600) var(--sg-step--1, 0.9rem) / 1.3 var(--sg-font-body, inherit);
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--sg-text-soft, inherit);
+}
+
+.sg-venue-top { display: grid; gap: var(--sg-space-4, 24px); }
+@container sg-venue (min-width: 44rem) { .sg-venue-top { grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem); align-items: start; } }
+.sg-venue-words > * { margin-block: 0; }
+.sg-venue-name { font: 400 var(--sg-step-1, 1.2rem) / 1.2 var(--sg-font-display, inherit); }
+.sg-venue-address { font-style: normal; color: var(--sg-text-soft, inherit); }
+.sg-venue-landmarks { font-size: var(--sg-step-0, 1rem); max-width: 46ch; }
+
+/* the two maps links: real links, underlined, in a finger-sized box */
+.sg-venue-maps { display: flex; flex-wrap: wrap; gap: var(--sg-space-2, 8px) var(--sg-space-3, 12px); margin-top: var(--sg-space-3, 16px) !important; }
+.sg-venue-link {
+  display: inline-flex; align-items: center; box-sizing: border-box;
+  min-height: 44px; padding: 0 var(--sg-space-3, 16px);
+  border: var(--sg-stroke, 1.5px) solid var(--sg-accent-text, currentColor);
+  border-radius: var(--sg-radius-2, 4px);
+  color: var(--sg-accent-text, currentColor);
+  font: var(--sg-weight-medium, 500) var(--sg-step-0, 1rem) / 1.2 var(--sg-font-body, inherit);
+  text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 1px;
+  transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out);
+}
+.sg-venue-link::after { content: "\2197"; content: "\2197" / ""; margin-inline-start: 0.4em; text-decoration: none; display: inline-block; } /* an arrow out; empty alt text where supported */
+.sg-venue-link[hidden] { display: none; }
+.sg-venue-link-web { border-color: var(--sg-rule-strong, currentColor); color: var(--sg-text, currentColor); }
+.sg-venue-link:hover { text-decoration-thickness: 2px; }
+.sg-venue-link:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+
+/* the press: it answers in the same frame, no transition on the way in; the colour change stays under reduced motion */
+.sg-venue-link:active { transition: none; text-decoration-thickness: 2px; background: color-mix(in oklab, var(--sg-accent-text, #888) 12%, transparent); translate: 0 1px; }
+[data-register="warm"] .sg-venue-link:active { translate: none; background: color-mix(in oklab, var(--sg-accent-text, #888) 12%, transparent); border-color: color-mix(in oklab, var(--sg-accent-text, currentColor), var(--sg-text, CanvasText) 25%); color: color-mix(in oklab, var(--sg-accent-text, currentColor), var(--sg-text, CanvasText) 25%); }
+[data-register="playful"] .sg-venue-link:active { translate: none; scale: 0.97; background: color-mix(in oklab, var(--sg-accent-text, #888) 18%, transparent); }
+@media (prefers-reduced-motion: reduce) {
+  .sg-venue-link { transition: none; }
+  .sg-venue-link:active { translate: none !important; scale: none !important; }
+}
+
+/* getting there, and access, side by side when there is room */
+.sg-venue-more { display: grid; gap: var(--sg-space-3, 16px) var(--sg-space-4, 24px); margin-top: var(--sg-space-3, 16px); }
+@container sg-venue (min-width: 44rem) { .sg-venue-more { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.sg-venue-ways ul { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--sg-space-2, 8px); }
+.sg-venue-ways li { padding-inline-start: 1em; position: relative; }
+/* the bullet is a border, not a background: backgrounds are taken away in forced colours, borders are kept */
+.sg-venue-ways li::before { content: ""; position: absolute; inset-inline-start: 0; top: 0.7em; width: 0; height: 0; border: 0.2em solid var(--sg-accent-text, currentColor); border-radius: 50%; }
+.sg-venue-access dl { margin: 0; display: grid; gap: var(--sg-space-2, 8px); }
+.sg-venue-access dt { font-weight: var(--sg-weight-bold, 600); }
+.sg-venue-access dd { margin: 0; color: var(--sg-text-soft, inherit); }
+.sg-venue-access dl > div:has(> dd:empty) { display: none; }
+.sg-venue-access:not(:has(dd:not(:empty))) { display: none; }
+
+/* the locator: strokes and fills follow the theme and the register */
+.sg-venue-locator { margin: 0; }
+.sg-venue-locator svg { display: block; width: 100%; height: auto; border: var(--sg-hairline, 1px) solid var(--sg-rule, currentColor); border-radius: var(--sg-radius-2, 4px); background: var(--sg-surface-raised, Canvas); }
+.sg-loc-river { fill: color-mix(in oklab, var(--sg-info, #5a8) 22%, transparent); stroke: var(--sg-info, currentColor); stroke-width: 1; }
+.sg-loc-road { fill: none; stroke: var(--sg-rule-strong, currentColor); stroke-width: 7; stroke-linecap: round; opacity: 0.45; }
+.sg-loc-block { fill: var(--sg-surface-sunk, transparent); stroke: var(--sg-rule-strong, currentColor); stroke-width: 1.5; }
+.sg-loc-hall { fill: color-mix(in oklab, var(--sg-accent, #c63) 14%, var(--sg-surface-sunk, transparent)); stroke: var(--sg-accent-text, currentColor); stroke-width: 2; }
+/* the walk from the bus stop: a dashed line, never a filled shape (an unstyled path paints black).
+   It runs along the road, where the accent alone is under 3:1 (WCAG 1.4.11) in some registers and themes, so each dash
+   sits on a halo in the surface colour: the same dashes, a little fatter, drawn underneath. */
+.sg-venue-locator { --loc-walk-w: 2.5px; --loc-walk-dash: 6 5; --loc-halo: 3px; }
+.sg-loc-walk, .sg-loc-walk-halo { fill: none; stroke-width: var(--loc-walk-w); stroke-dasharray: var(--loc-walk-dash); stroke-linecap: round; stroke-linejoin: round; }
+.sg-loc-walk { stroke: var(--sg-accent-text, currentColor); }
+.sg-loc-walk-halo { stroke: var(--sg-surface-raised, Canvas); stroke-width: calc(var(--loc-walk-w) + var(--loc-halo)); }
+.sg-loc-stop { fill: var(--sg-surface-raised, Canvas); stroke: var(--sg-accent-text, currentColor); stroke-width: 3; }
+.sg-loc-pin { fill: var(--sg-accent, currentColor); }
+.sg-loc-pin-dot { fill: var(--sg-on-accent, Canvas); }
+.sg-loc-label { fill: var(--sg-text-soft, currentColor); font: 500 11px var(--sg-font-body, sans-serif); }
+.sg-loc-hall-label { fill: var(--sg-text, currentColor); }
+
+/* quiet: hairlines and no fill; warm: as above; playful: bolder strokes and a hand */
+[data-register="quiet"] .sg-loc-river, [data-register="quiet"] .sg-loc-hall { fill: none; }
+[data-register="quiet"] .sg-venue-locator { --loc-walk-w: 1.75px; --loc-walk-dash: 4 4; --loc-halo: 2px; }
+[data-register="quiet"] .sg-loc-stop { stroke-width: 1.25; }
+[data-register="quiet"] .sg-loc-road { opacity: 0.3; stroke-width: 4; }
+[data-register="playful"] .sg-loc-block, [data-register="playful"] .sg-loc-hall { stroke-width: 2.5; rx: 8; }
+[data-register="playful"] .sg-venue-locator { --loc-walk-w: 4px; --loc-walk-dash: 0.5 9; }
+[data-register="playful"] .sg-loc-stop { stroke-width: 4; }
+[data-register="playful"] .sg-loc-label { font-family: var(--sg-font-hand, inherit); font-size: 13px; }
+[data-register="playful"] .sg-venue-link { border-radius: var(--sg-radius-pill, 999px); font-family: var(--sg-font-hand, inherit); border-width: var(--sg-stroke-bold, 2px); }
+[data-register="warm"] .sg-venue-link { border-radius: var(--sg-radius-3, 8px); background: color-mix(in oklab, var(--sg-accent-text, #888) 7%, transparent); }
+[data-register="warm"] .sg-venue-link-web, [data-register="playful"] .sg-venue-link-web { background: transparent; }
+
+@media (forced-colors: active) {
+  .sg-venue-link { border-color: LinkText; color: LinkText; }
+  /* SVG paint is not always remapped: say it, so the route and the stop stay visible on the system canvas */
+  .sg-loc-walk { stroke: LinkText; }
+  .sg-loc-walk-halo { stroke: Canvas; }
+  .sg-loc-stop { fill: Canvas; stroke: LinkText; }
+}

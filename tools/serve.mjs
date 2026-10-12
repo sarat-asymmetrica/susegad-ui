@@ -61,6 +61,18 @@ export function resolveInside(root, pathname) {
   return p;
 }
 
+/**
+ * A template's pages say susegad/core/lazy.css, which exists beside them only once `susegad create`
+ * has copied the library next to the pages. In the repo that library is packages/, so the dev
+ * server answers /packages/templates/event/susegad/core/lazy.css (and ../susegad/ from a language
+ * folder) with /packages/core/lazy.css, and the source page loads styled, as the made site does.
+ * Only when no such file really exists. Returns null for any other path.
+ */
+export function templateLibraryPath(pathname) {
+  const m = /^\/packages\/templates\/[^/]+\/(?:[^/]+\/)?susegad\/(.+)$/.exec(pathname);
+  return m ? '/packages/' + m[1] : null;
+}
+
 function fileFor(root, pathname) {
   const p = resolveInside(root, pathname);
   // /scenes/paus -> scenes/paus.html, the way Workers serves the built docs site
@@ -102,7 +114,8 @@ export async function startServer({ root = REPO_ROOT, port = 0, host = '127.0.0.
       res.writeHead(301, { location: url.pathname + '/' + url.search });
       return res.end();
     }
-    const file = fileFor(root, url.pathname);
+    const own = templateLibraryPath(url.pathname);
+    const file = fileFor(root, url.pathname) ?? (own && fileFor(root, own));
     if (!file) {
       if (!quiet) console.error(`404 ${req.method} ${url.pathname}`);
       if (notFoundFile && fs.existsSync(notFoundFile)) {

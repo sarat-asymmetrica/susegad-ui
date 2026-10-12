@@ -76,7 +76,7 @@ test('schema problems are reported per manifest', t => {
   assert.equal(index, null);
   assert.deepEqual(errors, [
     'packages/x/registry.json: name: "X" should be lowercase kebab-case, like scene-kolam',
-    'packages/x/registry.json: type: should be one of "package", "scene", "surface", "component", "recipe", "adapter", got "widget"',
+    'packages/x/registry.json: type: should be one of "package", "scene", "surface", "component", "recipe", "adapter", "template", got "widget"',
     'packages/x/registry.json: files: should have at least 1 item',
   ]);
 });
@@ -381,4 +381,13 @@ test('an npm pin is an exact version, not a range', t => {
   }) });
   assert.equal(errors.length, 1);
   assert.match(errors[0], /^packages\/a\/registry\.json: npmDependencies\.three: "\^0\.186\.1" should be a version like 0\.1\.0/);
+});
+
+test('a CRLF checkout counts the same bytes as an LF one, as the hash already does', t => {
+  const body = '// one\nexport const a = 1;\n// two\n';
+  const lf = buildRegistry({ root: tree(t, { 'packages/a/registry.json': item('a'), 'packages/a/index.js': body }) }).index.items[0];
+  const crlf = buildRegistry({ root: tree(t, { 'packages/a/registry.json': item('a'), 'packages/a/index.js': body.replace(/\n/g, '\r\n') }) }).index.items[0];
+  assert.equal(crlf.files[0].hash, lf.files[0].hash);
+  assert.equal(crlf.files[0].bytes, lf.files[0].bytes, 'bytes follow the LF content the index holds, or --check flips with the checkout');
+  assert.equal(crlf.jsBytes, lf.jsBytes);
 });

@@ -1,0 +1,43 @@
+{
+  "name": "speakers",
+  "type": "recipe",
+  "stability": "experimental",
+  "title": "Speakers",
+  "description": "A grid of person-cards for an event's speakers: name, role and organisation, one line on the talk, and the talk's title as a link to its slot in the agenda. No photo: each speaker gets a small marigold grown from their name, as decoration, in the card's round disc (an `avatar` option swaps it). An optional row of track checkboxes narrows the grid, with the choice kept in the address so a filtered view can be shared. Without JavaScript every speaker shows and the links work.",
+  "version": "0.1.0",
+  "files": [
+    "recipe.js",
+    "recipe.strings.js",
+    "recipe.css",
+    "index.html",
+    "README.md",
+    "recipe.prompt.md"
+  ],
+  "dependencies": [
+    "person-card",
+    "check",
+    "bloom",
+    "agenda",
+    "core-component",
+    "core",
+    "core-strings",
+    "engine",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "recipe.prompt.md",
+  "docs": "README.md",
+  "budget": {
+    "jsBytes": 8192,
+    "reason": "One small module: the track filter, the bloom avatar and the wiring, about 5 KB with its comments, and the Konkani words in two scripts (about 1.4 KB, Devanagari costs three bytes a letter; raised from 7168 on 7 October 2026). The cards are the person-card's own and the flower is the bloom's."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

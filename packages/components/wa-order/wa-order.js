@@ -21,6 +21,7 @@
 
 import '../field/field.js';
 import { SgElement, defineComponent } from '../../core/component.js';
+import { cue } from '../../sound/index.js';
 import { STRINGS, prepareOrder, earliestDate, normalizeNumber, estimate } from './wa-order.core.js';
 
 let uid = 0;
@@ -179,8 +180,11 @@ export class SgWaOrder extends SgElement {
     this.append(this.#panel);
     this.setAttribute('data-composer', '');
     this.#built = true;
-    this.#syncOptions();
+    // delivery is the default way, but only when the shop offers it: #syncOptions moves the tick to the
+    // way that is offered, so it runs after the default and never before it (a pickup-only shop was
+    // asked for an address and wrote "Delivery (address to follow)")
     f.delivery.checked = true;
+    this.#syncOptions();
 
     const on = (el, type, fn) => { el.addEventListener(type, fn); this.#off.push(() => el.removeEventListener(type, fn)); };
     on(this.#panel, 'input', () => this.#refresh());
@@ -273,6 +277,7 @@ export class SgWaOrder extends SgElement {
     this.#sentText = r.text;
     this.#written.textContent = STRINGS.written;
     this.#nonce++;
+    cue('complete', { register: this.register }); // the order is handed over: complete, once
     this.emit('sg-wa-open', { text: r.text, href: r.href, lines: this.#lines, total: this.#total });
     this.update();
   }

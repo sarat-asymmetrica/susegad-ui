@@ -4,7 +4,9 @@
 //   node packages/stage3d/depth-photo/depth-photo.check.mjs --break    (against broken pages: every check must FAIL)
 //
 // Runs on this machine's GPU (ANGLE on Direct3D 11) so the live tier is real;
-// the no-WebGL and reduced-motion runs prove the 2D tier.
+// the no-WebGL and reduced-motion runs prove the 2D tier. Where the renderer is software (SwiftShader, llvmpipe:
+// a CI runner, or SG_FORCE_SOFTWARE_GL=1) the page rightly draws in 2D, so the clauses that need the live tier
+// print `skip  <clause>  (no GPU: <renderer>)` instead of running (tools/lib/gpu.mjs); the 2D clauses still run.
 // No JS: the <img> is the picture, with its alt. Each register: the right tier
 // (quiet 2D, warm and playful live), the canvas hidden from assistive tech and
 // the picture still named; "Focus on the plate" racks the focus (the plate's
@@ -19,12 +21,15 @@
 // under reduced motion.
 
 import { session, openTarget, waitReady } from '../../../tools/lib/browser.mjs';
+import { gpuOf } from '../../../tools/lib/gpu.mjs';
 
 const BREAK = process.argv.includes('--break');
 const GPU = ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'];
 const URL_ = '/packages/stage3d/depth-photo/demo.html';
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+
+const gate = await (async () => { const s = await session({ args: GPU }); try { return await gpuOf(s.browser); } finally { await s.done(); } })();
 
 // variance of the Laplacian inside the plate's box, read from the drawn frame in the same task
 const sharpness = page => page.evaluate(async () => {
@@ -88,7 +93,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
     return { tier: dp.tier, hidden: dp.querySelector('canvas')?.getAttribute('aria-hidden'), drawn: dp.dataset.drawn !== undefined };
   }, BREAK && register === 'playful');
   const snap = await page.locator('#dp').ariaSnapshot();
-  check(`${tag} draws on the ${want} tier`, st.tier === want && st.drawn, JSON.stringify(st));
+  if (!(want === 'live' && gate.skip(`${tag} draws on the live tier`))) check(`${tag} draws on the ${want} tier`, st.tier === want && st.drawn, JSON.stringify(st));
   check(`${tag} the canvas is hidden from assistive tech; the picture keeps its name`, st.hidden === 'true' && /img "An ink and wash drawing/.test(snap), `aria-hidden=${st.hidden}, ${snap.split('\n')[0]}`);
   if (st.tier) {
     const far = await sharpness(page);
@@ -106,14 +111,16 @@ for (const register of ['quiet', 'warm', 'playful']) {
       await new Promise(res => setTimeout(res, 1600));
       return dp.place(0.466, 0.6, 0.874)[0] - before;
     }, BREAK && { warm: 'playful', playful: 'warm' }[register]);
-    if (register === 'playful') check(`${tag} the camera leans with the pointer`, Math.abs(lean) > 5, `plate moved ${lean.toFixed(1)} px`);
-    if (register === 'warm') check(`${tag} the pointer never moves the camera`, Math.abs(lean) < 0.01, `plate moved ${lean.toFixed(2)} px`);
+    // the camera only exists on the live tier: in 2D the plate cannot move, so "leans" would fail and "never moves" would pass for nothing
+    if (register === 'playful' && !gate.skip(`${tag} the camera leans with the pointer`)) check(`${tag} the camera leans with the pointer`, Math.abs(lean) > 5, `plate moved ${lean.toFixed(1)} px`);
+    if (register === 'warm' && !gate.skip(`${tag} the pointer never moves the camera`)) check(`${tag} the pointer never moves the camera`, Math.abs(lean) < 0.01, `plate moved ${lean.toFixed(2)} px`);
     if (BREAK && register === 'warm') await page.evaluate(() => { // a renderFrame that shows the live clock instead of t
       const dp = document.getElementById('dp'); dp.setAttribute('register', 'warm');
       dp.renderFrame = async () => { await new Promise(r => setTimeout(r, 300)); await new Promise(r => requestAnimationFrame(r)); return dp.canvas; };
     });
     const h1 = await hashFrame(page, 2), h2 = await hashFrame(page, 5), h3 = await hashFrame(page, 2);
-    check(`${tag} the same t draws the same pixels`, h1 === h3 && (register === 'quiet' || h1 !== h2), `t=2 ${h1}, t=5 ${h2}, t=2 again ${h3}`);
+    // a later t draws a different frame only on the live tier (the 2D drawing does not move with t), so non-quiet registers need it
+    if (register === 'quiet' || !gate.skip(`${tag} the same t draws the same pixels`)) check(`${tag} the same t draws the same pixels`, h1 === h3 && (register === 'quiet' || h1 !== h2), `t=2 ${h1}, t=5 ${h2}, t=2 again ${h3}`);
     const size = await page.evaluate(async br => { const dp = document.getElementById('dp'); const tg = await dp.canvasFor(br ? 1079 : 1080, 1920); const c = await tg.renderFrame(1); const r = [c.width, c.height]; tg.release(); return r; }, BREAK && register === 'playful');
     check(`${tag} an export target is exactly 1080 x 1920`, size[0] === 1080 && size[1] === 1920, size.join(' x '));
   }
@@ -144,5 +151,5 @@ for (const register of ['quiet', 'warm', 'playful']) {
 }
 
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${results.length - failed} of ${results.length} pass${BREAK ? ' (--break: the broken checks should FAIL)' : ''}`);
+console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the broken checks should FAIL)' : ''}`);
 process.exit(BREAK ? 0 : failed ? 1 : 0);

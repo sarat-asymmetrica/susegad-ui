@@ -10,13 +10,15 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { createRequire } from 'node:module';
 import { chromium } from 'playwright';
 import { startServer, REPO_ROOT } from '../../tools/serve.mjs';
+import { sidewaysScroll } from '../../tools/lib/overflow.mjs';
 
 const builtMode = process.argv.includes('--built');
 const outDir = path.join(REPO_ROOT, '.shots', builtMode ? 'docs-built' : 'docs');
 fs.mkdirSync(outDir, { recursive: true });
-const axeSource = fs.readFileSync(path.join(REPO_ROOT, 'node_modules/axe-core/axe.min.js'), 'utf8');
+const axeSource = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
 
 const server = await startServer({ root: builtMode ? path.join(REPO_ROOT, 'out') : REPO_ROOT, quiet: true });
 const pageUrl = `${server.url}${builtMode ? '/docs/' : '/apps/docs/'}`;
@@ -62,12 +64,10 @@ async function axe(page) {
 }
 
 async function overflow(page) {
-  return page.evaluate(() => {
-    const doc = document.documentElement;
-    const wide = [...document.querySelectorAll('body *')].filter(el => el.getBoundingClientRect().right > doc.clientWidth + 1)
-      .slice(0, 5).map(el => `${el.tagName.toLowerCase()}.${el.className}`);
-    return { over: doc.scrollWidth - doc.clientWidth, wide };
-  });
+  const o = await sidewaysScroll(page);
+  const wide = await page.evaluate(vw => [...document.querySelectorAll('body *')].filter(el => el.getBoundingClientRect().right > vw + 1)
+    .slice(0, 5).map(el => `${el.tagName.toLowerCase()}.${el.className}`), o.viewWidth);
+  return { over: o.overflow, wide };
 }
 
 // ── the matrix ───────────────────────────────────────────────────────

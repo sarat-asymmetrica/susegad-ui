@@ -43,6 +43,10 @@ Draw rain beading on a broad taro leaf, looked at from above, with a WebGL fragm
 | Paint the whole leaf on a 2D canvas | fallback | The leaf, its veins and the other leaves are inked once and cached; the beads are round lenses with a highlight. The same water drives both, so the picture keeps its place when the context is lost. |
 | frames stay too slow | governor | The element’s governor lowers the shader’s resolution when frames run long, down to 30%. If frames still take over 90 ms at the floor, or over 180 ms at any level, for four seconds, the leaf switches to the 2D painting. |
 
+## On a page
+
+A bare `<sg-scene name="themb">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/themb/index.js">` with `<sg-scene name="themb" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing is decorative: its name is its `alt`, and it shows no state. In playful the drawing takes focus: the arrow keys move a hand (a small ring) and the leaf tips toward it, and Enter or Space pours the cup, or sets a bead down when the leaf is dry. New drops and the rain keep off any words laid over the leaf, and beads are pushed out from under them. The stage says which painting is showing in `data-leaf` (`webgl`, `2d`, or `slow` once the governor gives up on the shader).

@@ -29,6 +29,10 @@ Draw a café table from the front on a canvas with no image files: a lime-washed
 | a white marble table top with grey veins | texture | The wall, the table, the tea in the glass and the phone's body are painted once into a cached layer. Each frame draws the ink outline, the steam and the screen over it. |
 | Fade the steam where words sit over the drawing | calm | A wisp whose middle falls in or near a slotted block of text is drawn at a sixth of its strength. |
 
+## On a page
+
+A bare `<sg-scene name="nod">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/nod/index.js">` with `<sg-scene name="nod" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing says nothing a person needs: the page text carries the message. In playful, the drawing takes focus and Enter or Space is the nod that sends a waiting draft; a nod at any other moment does nothing. Quiet and reduced motion show the phone with the draft waiting and the tick empty. The glass and phone keep still under slotted text, and the steam fades near it.

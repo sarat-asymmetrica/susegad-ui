@@ -62,6 +62,17 @@ export function contextOptions(engine, opts = {}) {
   return out;
 }
 
+/**
+ * Launch args, safe for `engine`. Every flag a check passes here is a Chromium switch (the GPU
+ * ones above all: --use-angle=d3d11 and friends), and WebKit refuses to start on one it does not
+ * know ("Cannot parse arguments: Unknown option --use-angle=d3d11"), so Firefox and WebKit get none.
+ * @param {string} engine engineName()'s return value
+ * @param {string[]} args the args you would pass Chromium
+ */
+export function launchArgs(engine, args = []) {
+  return engine === 'chromium' ? args : [];
+}
+
 /** Can `engine` grant this permission at all? For a check that must skip an assertion, not just proceed without it. */
 export function grantsPermission(engine, permission) {
   return engine === 'chromium' || !CHROMIUM_ONLY_PERMISSIONS.has(permission);

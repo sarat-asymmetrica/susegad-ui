@@ -23,6 +23,7 @@ import { parseArgs } from './lib/args.mjs';
 import { TARGET_SPEC, REGISTERS, THEMES, targetFrom, targetSlug } from './lib/target.mjs';
 import { session, openTarget, waitReady, errorCount, shoot, PHONE, DESKTOP } from './lib/browser.mjs';
 import { renderSheet } from './lib/sheet.mjs';
+import { sidewaysScroll } from './lib/overflow.mjs';
 
 const SPEC = { ...TARGET_SPEC, at: 'number', out: 'string', jobs: 'number' };
 let parsed;
@@ -72,10 +73,9 @@ async function runCell(c) {
     const shotPath = path.join(out, result.shot);
     await shoot(page, t.scene ? '#box' : null, shotPath);
 
-    result.overflow = await page.evaluate(() => {
-      const sw = document.documentElement.scrollWidth, iw = window.innerWidth;
-      return { scrollWidth: sw, innerWidth: iw, pass: sw <= iw };
-    });
+    // against the width the cell asked for, not innerWidth (see lib/overflow.mjs)
+    const sideways = await sidewaysScroll(page, c.view.width);
+    result.overflow = { scrollWidth: sideways.scrollWidth, viewWidth: sideways.viewWidth, metaViewport: sideways.metaViewport, pass: sideways.overflow === 0 };
 
     if (c.viewName !== 'phone') result.pointer = { status: 'n/a', reason: 'checked at phone width only' };
     else if (!ready.ok) result.pointer = { status: 'not run', reason: 'target not ready' };
@@ -162,7 +162,7 @@ await Promise.all(Array.from({ length: Math.max(1, opts.jobs) }, async () => {
     const bits = [
       r.ready?.ok ? 'ready' : `NOT READY (${r.ready?.reason ?? r.errors?.harness})`,
       `errors ${r.errors?.count ?? '?'}`,
-      `overflow ${r.overflow ? (r.overflow.pass ? 'none' : `${r.overflow.scrollWidth} > ${r.overflow.innerWidth}`) : '?'}`,
+      `overflow ${r.overflow ? (r.overflow.pass ? 'none' : `${r.overflow.scrollWidth} > ${r.overflow.viewWidth}`) : '?'}`,
       `pointer ${r.pointer?.status ?? '?'}`,
     ];
     console.log(`${r.pass ? 'pass' : 'FAIL'}  ${r.id.padEnd(30)} ${bits.join(' · ')}`);

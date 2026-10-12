@@ -22,3 +22,27 @@ sg-form:is([data-skin="warm"], [data-skin="playful"])[data-state="sending"] .sg-
 
 /* a submit button that is busy keeps its focus and says so by looking it */
 sg-form :is(button, input[type="submit"])[aria-disabled="true"] { cursor: progress; opacity: 0.7; }
+
+/* ── the touch contract: the submit button answers a press within a frame ──
+   The button is the page's own, so its colour is shaded rather than replaced:
+   quiet settles 1 px, warm shades darker, playful gives and is let go on the
+   spring. Reduced motion keeps the shade and drops the movement. */
+sg-form :is(button:not([type="button"], [type="reset"]), input[type="submit"]):not([aria-disabled="true"], :disabled) {
+  transition: translate 120ms var(--sg-ease-out), scale 120ms var(--sg-ease-out), filter 120ms var(--sg-ease-out);
+}
+sg-form[data-skin="playful"] :is(button:not([type="button"], [type="reset"]), input[type="submit"]):not([aria-disabled="true"], :disabled) { transition-timing-function: var(--sg-ease-spring); }
+sg-form :is(button:not([type="button"], [type="reset"]), input[type="submit"]):not([aria-disabled="true"], :disabled):active { transition: none; translate: 0 1px; filter: brightness(0.94); }
+sg-form[data-skin="warm"] :is(button:not([type="button"], [type="reset"]), input[type="submit"]):not([aria-disabled="true"], :disabled):active { translate: none; filter: brightness(0.8); }
+sg-form[data-skin="playful"] :is(button:not([type="button"], [type="reset"]), input[type="submit"]):not([aria-disabled="true"], :disabled):active { translate: none; scale: 0.97; filter: brightness(0.9); }
+@media (prefers-reduced-motion: reduce) {
+  sg-form :is(button:not([type="button"], [type="reset"]), input[type="submit"]):active { translate: none !important; scale: none !important; transition: none; }
+}
+:root[data-sg-input="key"] sg-form :is(button:not([type="button"], [type="reset"]), input[type="submit"]):active { translate: none !important; scale: none !important; }
+
+/* a textarea grows with what is typed, to a ceiling; where field-sizing is missing it keeps its rows */
+@supports (field-sizing: content) {
+  sg-form textarea:not(sg-field *) { field-sizing: content; min-block-size: 6em; max-block-size: 20em; overflow-y: auto; }
+}
+
+/* touch contract: focus (docs/contributing/touch-contract.md) */
+sg-form :is(button, input, select, textarea, a):focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }

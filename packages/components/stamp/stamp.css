@@ -107,9 +107,13 @@ sg-stamp .sg-stamp-frame::after {
 }
 
 /* playful: ink spreads into the paper as the block lifts */
+/* The halo may reach 14% past the frame, but never more than 1rem. A playful stamp keeps 1rem of room on each
+   side for it, so the halo (invisible at rest, but still scrollable overflow) never reaches past the stamp's own
+   container: a stamp nearly as wide as the screen no longer makes the page scroll sideways (1.4.10). */
+sg-stamp[data-skin="playful"] { margin-inline: 1rem; max-width: calc(100% - 2rem); }
 sg-stamp .sg-stamp-spread {
   position: absolute;
-  inset: -14%;
+  inset: clamp(-1rem, -14%, 0px);
   pointer-events: none;
   opacity: 0;
   border-radius: 40%;

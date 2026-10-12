@@ -88,3 +88,17 @@ sg-tabs section[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*) { animation: none !important; }
 }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-tabs a[role="tab"] { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-tabs a[role="tab"]:active { translate: 0 1px; background: color-mix(in oklab, transparent, var(--sg-text, CanvasText) 6%); transition: none !important; }
+sg-tabs[data-skin="warm"] a[role="tab"]:active { translate: none; background: none; color: color-mix(in oklab, var(--sg-text, CanvasText), var(--sg-text, CanvasText) 25%); box-shadow: inset 0 -2px 0 color-mix(in oklab, var(--sg-accent-text, CanvasText), var(--sg-text, CanvasText) 25%); }
+sg-tabs[data-skin="playful"] a[role="tab"]:active { translate: none; scale: 0.97; background: color-mix(in oklab, transparent, var(--sg-text, CanvasText) 8%); }
+@media (prefers-reduced-motion: reduce) {
+  sg-tabs a[role="tab"] { transition: none; }
+  sg-tabs a[role="tab"]:active { translate: none !important; scale: none !important; }
+  sg-tabs .sg-tabs-underline, sg-tabs .sg-tabs-bead { transition: none; }
+}
+:root[data-sg-input="key"] sg-tabs *,
+:root[data-sg-input="key"] sg-tabs *::before,
+:root[data-sg-input="key"] sg-tabs *::after { transition: none !important; }

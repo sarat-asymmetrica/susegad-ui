@@ -92,7 +92,7 @@ async function open({ js = true, reduced = false, register = 'warm' } = {}) {
   check("the rate card rules too, in guests' words: the Christmas minimum", await p.evaluate(() => document.querySelector('#stay input[name=departure]').validationMessage) === 'Stays over Christmas week are at least 4 nights.');
   check('the calendar follows typed dates', await p.evaluate(() => !!document.querySelector('#stay [data-iso="2026-12-22"].is-arr')));
   const label = await p.getAttribute('#stay [data-iso="2026-12-24"]', 'aria-label');
-  check('a free day is named in full, with its price in Indian grouping', label === 'Thu 24 Dec 2026, free night, ₹40,000, Christmas week', label);
+  check('a free day is named in full, with its price in Indian grouping and the short form it shows', label === 'Thu 24 Dec 2026, free night, ₹40,000 (40k), Christmas week', label);
   const turn = await p.getAttribute('#stay [data-iso="2026-12-26"]', 'aria-label');
   check('a taken day that others arrive on says you can leave that morning', turn === 'Sat 26 Dec 2026, taken, you can leave on this day', turn);
   check('the season table is text, and says the card is per night', await p.evaluate(() => document.querySelector('#stay .sg-dr-seasons tbody tr[data-kind=peak]').textContent.includes('₹40,000 to ₹48,000')));
@@ -161,6 +161,25 @@ async function open({ js = true, reduced = false, register = 'warm' } = {}) {
     return n;
   });
   check('reduced motion: the loops and underline are drawn in full straight away', inked > 500, `${inked} inked pixels`);
+  await ctx.close();
+}
+
+// ── 2.5.3 label in name: what a day shows ("10", "20k") is in its accessible name, so "click 20k" works ──
+for (const register of ['quiet', 'warm', 'playful']) {
+  const { ctx, p } = await open({ register });
+  const r = await p.evaluate(() => {
+    const days = [...document.querySelectorAll('sg-date-range .sg-dr-day')];
+    const bad = [];
+    let priced = 0;
+    for (const b of days) {
+      const name = (b.getAttribute('aria-label') || '').toLowerCase();
+      const shown = [...b.children].map(s => s.textContent.trim().toLowerCase()).filter(Boolean);
+      if (shown.length > 1) priced++;
+      for (const t of shown) if (!name.includes(t)) bad.push(`"${t}" not in "${b.getAttribute('aria-label')}"`);
+    }
+    return { n: days.length, priced, bad };
+  });
+  check(`${register}: every day's visible text is in its accessible name (${r.priced} priced days of ${r.n})`, r.n > 50 && r.priced > 10 && !r.bad.length, `${r.bad.length} missing; ${r.bad[0] ?? 'none'}`);
   await ctx.close();
 }
 

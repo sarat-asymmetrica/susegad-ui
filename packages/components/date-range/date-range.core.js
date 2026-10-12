@@ -17,7 +17,8 @@ export const STRINGS = {
   picked: n => `${n} ${n === 1 ? 'night' : 'nights'}. Pick a new arrival to start again.`,
   arrival: 'your arrival',
   departure: 'your departure',
-  free: (price, peak) => `free night${price ? `, ${price}` : ''}${peak ? ', Christmas week' : ''}`,
+  // the short form is what the day shows ("20k"); it is in the name so a speech-input user can say it (2.5.3)
+  free: (price, peak, short) => `free night${price ? `, ${price}${short ? ` (${short})` : ''}` : ''}${peak ? ', Christmas week' : ''}`,
   taken: 'taken',
   hold: 'on hold for another guest',
   owner: 'closed by the house',
@@ -102,19 +103,19 @@ export function pick({ arr, dep }, iso, ctx) {
 /** Can this day be pressed at all right now? */
 export const selectable = ({ arr, dep }, iso, ctx) => iso === arr || classifyDay(iso, ctx).arrivalOk || (!!arr && !dep && canDepart(arr, iso, ctx));
 
-/** A cell's price, short: 28k, 70k, 1.2L. The full figure, in lakh grouping, is in its label. */
+/** A cell's price, short: 28k, 70k, 1.2L. The label holds both, the full figure first and this in brackets. */
 export function shortPrice(n) {
   if (!n) return '';
   if (n >= 100000) return `${+(n / 100000).toFixed(n % 100000 ? 1 : 0)}L`;
   return `${Math.round(n / 1000)}k`;
 }
 
-/** The accessible name of a day: its date, your choice, and what it is. */
+/** The accessible name of a day: its date, your choice, and what it is. It contains everything the day shows (2.5.3). */
 export function labelFor(iso, info, { arr, dep }, win) {
   const p = [longDate(iso)];
   if (iso === arr) p.push(STRINGS.arrival);
   if (iso === dep) p.push(STRINGS.departure);
-  if (info.night === 'free') p.push(STRINGS.free(info.rate ? rupees(info.rate) : '', info.peak));
+  if (info.night === 'free') p.push(STRINGS.free(info.rate ? rupees(info.rate) : '', info.peak, shortPrice(info.rate)));
   else if (info.night === 'closed') p.push(iso < win.openFrom ? STRINGS.before(longDate(win.openFrom)) : STRINGS.after);
   else if (info.night === 'past') p.push(STRINGS.past(win.minLeadDays));
   else p.push(STRINGS[info.night]);

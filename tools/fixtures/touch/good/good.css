@@ -1,0 +1,11 @@
+/* Fixture for tools/touch.check.mjs: keeps the touch contract. */
+sg-fx-good { display: block; padding: 12px; }
+sg-fx-good button { border: 1px solid CanvasText; background: Canvas; color: CanvasText; padding: 8px 14px; font: inherit; transition: translate 120ms ease-out, background-color 120ms ease-out; }
+sg-fx-good label { display: inline-flex; gap: 6px; margin-inline-end: 10px; }
+sg-fx-good label span { padding: 2px 8px; border: 1px solid CanvasText; transition: background-color 200ms; }
+sg-fx-good input:checked + span { background: color-mix(in oklab, Canvas, CanvasText 15%); }
+sg-fx-good label:active span { translate: 0 1px; filter: brightness(0.9); transition: none; }
+sg-fx-good button:active { translate: 0 1px; background-color: color-mix(in oklab, Canvas, CanvasText 12%); transition: none; }
+sg-fx-good :is(button, input):focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { sg-fx-good :is(button, label span):active { translate: none; } }
+:root[data-sg-input="key"] sg-fx-good * { transition: none !important; }

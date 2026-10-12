@@ -15,6 +15,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { contextOptions, engineName, pickEngine } from '../../../tools/lib/engine.mjs';
 import { buildProposal } from './build.mjs';
 import { verify } from '../../folio/build/seal.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const AXE = await readFile(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
@@ -78,7 +79,7 @@ try {
   }
   {
     const { ctx, page, errors } = await open({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
-    const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    const { overflow: over } = await sidewaysScroll(page);
     check('390 px: no sideways scroll', over <= 0, `${over}`);
     const stay = page.locator('sg-price-table[arrival]');
     const before = await stay.locator('tr.is-total td').textContent();

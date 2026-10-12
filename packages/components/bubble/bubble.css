@@ -1,0 +1,152 @@
+/* <sg-bubble>. Without JavaScript, and in the quiet register, this is the whole
+   look: the words in a hairline callout with a small tail, as plain CSS text.
+   Warm and playful draw the bubble (an SVG inside the paragraph) and lay the
+   words into its shape; the rules under "drawn" turn the callout off. */
+
+sg-bubble {
+  --sg-bubble-tail: 1.75rem; /* how far the tail or trail leaves the body; the skins read it */
+  --sg-bubble-max: 20rem;
+  --sg-bubble-fill: var(--sg-surface-raised);
+  display: block;
+  color: var(--sg-text);
+  font: var(--sg-step-0) / var(--sg-leading-snug) var(--sg-font-body);
+}
+sg-bubble[hidden] { display: none; }
+sg-bubble[size="sm"] { --sg-bubble-max: 14rem; }
+sg-bubble[size="lg"] { --sg-bubble-max: 28rem; }
+sg-bubble figure {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  max-inline-size: var(--sg-bubble-max);
+}
+
+/* the words: the page's own paragraph */
+sg-bubble p {
+  position: relative;
+  isolation: isolate; /* the drawing sits behind the words, inside the paragraph */
+  box-sizing: border-box;
+  margin: 0;
+  padding: var(--sg-space-3) var(--sg-space-4);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-4);
+  background: var(--sg-bubble-fill);
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+
+/* where an arrival is coming (warm or playful with motion), the words wait unseen from the moment the element is upgraded until the skin has drawn: no frame of the plain callout before the drawn bubble, none of the finished bubble before it fades in. The skin, a skin that fails to load, quiet and reduced motion all take `data-wait` off (JavaScript sets it, so with none the words are never hidden); the animation is only a last resort, and the words are never held by it alone */
+sg-bubble[data-wait] p { opacity: 0; animation: sg-bubble-failsafe 0s linear 2s forwards; }
+@keyframes sg-bubble-failsafe { to { opacity: 1; } }
+
+/* room for the tail or trail beside the body, whatever the register, so a bubble does not shift when the register changes */
+sg-bubble:not([tail]) p, sg-bubble[tail^="bottom"] p { margin-block-end: var(--sg-bubble-tail); }
+sg-bubble[tail^="top"] p { margin-block-start: var(--sg-bubble-tail); }
+sg-bubble[tail="left"] p { margin-inline-start: var(--sg-bubble-tail); }
+sg-bubble[tail="right"] p { margin-inline-end: var(--sg-bubble-tail); }
+
+/* who is speaking, when the page wrote it: a small caption under the bubble (above, if the tail is up) */
+sg-bubble figcaption:not([data-made]) {
+  margin-block-start: var(--sg-space-1);
+  font-size: var(--sg-step--1);
+  color: var(--sg-text-soft);
+}
+sg-bubble[tail^="top"] figcaption:not([data-made]) { order: -1; margin-block: 0 var(--sg-space-1); }
+/* a caption only a screen reader gets: "Crow thinks" */
+sg-bubble figcaption[data-made] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ── quiet: a hairline callout with a small tail (a thought is dotted, a shout is firm) ── */
+sg-bubble[kind="thought"] p { border-style: dotted; border-width: 2px; border-radius: calc(var(--sg-radius-4) * 1.6); }
+sg-bubble[kind="shout"] p { border-width: var(--sg-stroke-bold); font-weight: var(--sg-weight-bold); }
+sg-bubble p::after {
+  content: "";
+  position: absolute;
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  background: var(--sg-bubble-fill);
+  border: 0 solid var(--sg-rule-strong);
+  rotate: 45deg;
+  inset-block-end: -0.42rem;
+  inset-inline-start: 1.6rem;
+  border-width: 0 var(--sg-hairline) var(--sg-hairline) 0;
+}
+sg-bubble[tail="bottom"] p::after { inset-inline-start: calc(50% - 0.375rem); }
+sg-bubble[tail="bottom-right"] p::after { inset-inline-start: auto; inset-inline-end: 1.6rem; }
+sg-bubble[tail^="top"] p::after { inset-block-end: auto; inset-block-start: -0.42rem; border-width: var(--sg-hairline) 0 0 var(--sg-hairline); }
+sg-bubble[tail="top"] p::after { inset-inline-start: calc(50% - 0.375rem); }
+sg-bubble[tail="top-right"] p::after { inset-inline-start: auto; inset-inline-end: 1.6rem; }
+sg-bubble[tail="left"] p::after, sg-bubble[tail="right"] p::after { inset-block-end: auto; inset-block-start: 1.1rem; }
+sg-bubble[tail="left"] p::after { inset-inline-start: -0.42rem; border-width: 0 0 var(--sg-hairline) var(--sg-hairline); }
+sg-bubble[tail="right"] p::after { inset-inline-start: auto; inset-inline-end: -0.42rem; border-width: var(--sg-hairline) var(--sg-hairline) 0 0; }
+sg-bubble[tail="none"] p::after { display: none; }
+
+/* ── drawn (warm and playful): the callout is off, an SVG outline is on ── */
+sg-bubble[data-skin="warm"] p, sg-bubble[data-skin="playful"] p {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-family: var(--sg-font-hand);
+  line-height: 1.25;
+  text-align: center;
+}
+sg-bubble[data-skin="warm"] p::after, sg-bubble[data-skin="playful"] p::after { display: none; }
+sg-bubble[data-skin="warm"] figcaption:not([data-made]), sg-bubble[data-skin="playful"] figcaption:not([data-made]) { font-family: var(--sg-font-hand); }
+sg-bubble[data-skin="warm"] p { font-size: var(--sg-step-0); font-weight: var(--sg-weight-regular); }
+sg-bubble[data-skin="playful"] p { font-size: var(--sg-step-1); font-weight: var(--sg-weight-regular); }
+sg-bubble[data-skin="playful"][kind="shout"] p { font-weight: var(--sg-weight-bold); }
+sg-bubble[data-skin="warm"] p, sg-bubble[data-skin="playful"] p { font-style: normal; }
+
+sg-bubble .sg-bubble-art {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+  z-index: -1;
+  pointer-events: none;
+}
+sg-bubble .sg-bubble-fill, sg-bubble .sg-bubble-trail circle {
+  fill: var(--sg-bubble-fill);
+  stroke: var(--sg-text);
+  stroke-width: var(--sg-stroke);
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+sg-bubble .sg-bubble-shadow { fill: color-mix(in oklab, var(--sg-text) 18%, transparent); stroke: none; transform: translate(4px, 5px); }
+
+/* playful: a bolder pen and a warm fill (a shout the warmest) */
+sg-bubble[data-skin="playful"] { --sg-bubble-fill: color-mix(in oklab, var(--sg-accent) 14%, var(--sg-surface-raised)); }
+sg-bubble[data-skin="playful"][kind="shout"] { --sg-bubble-fill: color-mix(in oklab, var(--sg-accent) 26%, var(--sg-surface-raised)); }
+sg-bubble[data-skin="playful"][kind="thought"] { --sg-bubble-fill: color-mix(in oklab, var(--sg-accent) 7%, var(--sg-surface-raised)); }
+sg-bubble[data-skin="playful"] .sg-bubble-fill, sg-bubble[data-skin="playful"] .sg-bubble-trail circle { stroke-width: var(--sg-stroke-bold); }
+
+/* the words laid into the shape: one span per line, placed by the layout; selectable text, in reading order */
+sg-bubble p > [data-line] { position: absolute; margin: 0; white-space: pre; }
+
+/* the still: two floats whose shape-outside is the zone, so plain CSS text hugs it (no script lays the lines) */
+sg-bubble .sg-bubble-wing { display: block; float: left; shape-margin: 0; }
+sg-bubble .sg-bubble-wing + .sg-bubble-wing { float: right; }
+
+/* a hidden run of letters and spaces inside the paragraph: letter, word or line spacing the page adds moves it, which tells the layout to look again */
+sg-bubble .sg-bubble-meter { position: absolute; inset-block-start: 0; inset-inline-start: 0; visibility: hidden; white-space: pre; pointer-events: none; }
+sg-bubble .sg-bubble-meter::before { content: "MMMM mmmm"; }
+
+/* measures a tail's length and the text size for the layout; never seen */
+sg-bubble .sg-bubble-probe { position: absolute; inline-size: var(--sg-bubble-tail); block-size: 0; visibility: hidden; pointer-events: none; }
+
+@media (forced-colors: active) {
+  sg-bubble .sg-bubble-fill, sg-bubble .sg-bubble-trail circle { fill: Canvas; stroke: CanvasText; }
+  sg-bubble .sg-bubble-shadow { display: none; }
+}

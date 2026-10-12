@@ -14,7 +14,7 @@
 // the note beside it says so, and this element hides that note once it runs.
 
 import { SgElement, defineComponent } from '../../core/component.js';
-import { soundOn, setSoundOn, onSoundChange, play } from '../../sound/index.js';
+import { soundOn, setSoundOn, onSoundChange, cue } from '../../sound/index.js';
 
 export class SgSoundSwitch extends SgElement {
   static native = 'input[type="checkbox"]';
@@ -31,11 +31,12 @@ export class SgSoundSwitch extends SgElement {
     const input = this.native;
     if (!input) { console.warn('sg-sound-switch: put an <input type="checkbox" role="switch"> inside it.'); return; }
     if (input.getAttribute('role') !== 'switch') input.setAttribute('role', 'switch');
+    input.toggleAttribute('switch', true); // the native switch: a system haptic on iPhone, ignored elsewhere
     input.checked = soundOn();
     this.dataset.ready = ''; // css: the "needs JavaScript" note hides once this element is live
     const onChange = () => {
       setSoundOn(input.checked); // itself the user gesture: switch.js resumes the audio context here
-      if (input.checked) play('confirm', { register: this.register }); // the switch's own first sound
+      if (input.checked) cue('confirm', { register: this.register }); // the switch's own first sound
       this.update();
     };
     input.addEventListener('change', onChange);

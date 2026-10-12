@@ -44,3 +44,13 @@ sg-stepper > fieldset > legend:focus-visible { outline: var(--sg-focus-width, 2p
 [data-skin='playful'] .sg-stepper-map .here circle { stroke: var(--sg-accent); }
 [data-skin='playful'] .sg-stepper-map .done circle { fill: var(--sg-accent); stroke: var(--sg-accent); }
 [data-skin='playful'] .sg-stepper-map .done text { fill: var(--sg-on-accent, #fff); }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+.sg-stepper-nav button { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+.sg-stepper-nav button:active { translate: 0 1px; filter: brightness(0.92); transition: none !important; }
+[data-skin="warm"] .sg-stepper-nav button:active { translate: none; }
+[data-skin="playful"] .sg-stepper-nav button:active { translate: none; scale: 0.97; }
+@media (prefers-reduced-motion: reduce) {
+  .sg-stepper-nav button { transition: none; }
+  .sg-stepper-nav button:active { translate: none !important; scale: none !important; }
+}

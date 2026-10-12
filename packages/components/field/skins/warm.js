@@ -2,7 +2,7 @@
 // little past both ends, with a laterite margin down a textarea like an
 // exercise book. When the field has focus the rule inks from left to right.
 // Away from focus, the ink stays under the words as far as they run: for a
-// line of text, measured with the control's own font; for a textarea, line
+// line of text or the chosen option of a select, measured with the control's own font; for a textarea, line
 // by line, with a hidden mirror of it. Nothing moves on its own.
 
 import { inkPath, lineRuns, pencilRule, inkIn, GRAIN } from '../field.core.js';
@@ -19,10 +19,12 @@ export function measure(el, mirror) {
   const room = c.clientWidth - px(cs.paddingLeft) - px(cs.paddingRight);
   if (!c.value) return [];
   if (!el.multiline) {
+    // a select shows the chosen option's words, not its value
+    const text = c.localName === 'select' ? c.selectedOptions[0]?.text ?? '' : c.value;
     if (c.type === 'password') return [{ x: left, y: c.offsetHeight - px(cs.borderBottomWidth) - 2.5, w: room }];
     ctx2d ??= document.createElement('canvas').getContext('2d');
     ctx2d.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
-    const w = ctx2d.measureText(c.value).width + px(cs.letterSpacing) * c.value.length;
+    const w = ctx2d.measureText(text).width + px(cs.letterSpacing) * text.length;
     return [{ x: left - c.scrollLeft, y: c.offsetHeight - px(cs.borderBottomWidth) - 2.5, w: Math.min(w, room + c.scrollLeft) }];
   }
   // a textarea: lay the same words out in a hidden twin and read its lines
@@ -47,6 +49,7 @@ export function measure(el, mirror) {
  */
 export function inkLayer(el, ctx) {
   const c = el.control;
+  if (!c) return { draw() {}, destroy() {} }; // nothing supported inside: stay plain light DOM
   const make = (name, cls) => { const n = document.createElementNS(SVG, name); if (cls) n.setAttribute('class', cls); return n; };
   const svg = make('svg', 'sg-field-ink');
   svg.setAttribute('aria-hidden', 'true');

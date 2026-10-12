@@ -14,12 +14,13 @@ sg-tooltip[hidden] { display: none; } /* our display rule would otherwise beat t
 sg-tooltip {
   display: inline-block;
   position: relative;
+  --sg-tooltip-gap: 8px; /* trigger to panel; the hover bands below are exactly this tall (tooltip.js's fallback placement uses 8 too) */
 }
 
 sg-tooltip [role="tooltip"] {
   position: absolute;
   left: 50%;
-  bottom: calc(100% + 8px);
+  bottom: calc(100% + var(--sg-tooltip-gap));
   transform: translateX(-50%);
   z-index: 10;
   box-sizing: border-box;
@@ -36,7 +37,17 @@ sg-tooltip [role="tooltip"] {
   transition: opacity var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out);
 }
 /* no JS: revealed by real hover/focus, never JS state */
-sg-tooltip:is(:hover, :focus-within) [role="tooltip"]:not([popover]) { opacity: 1; }
+sg-tooltip:is(:hover, :focus-within) [role="tooltip"]:not([popover]) { opacity: 1; pointer-events: auto; }
+
+/* 1.4.13 hoverable: shown, the panel takes the pointer. The gap between trigger and panel belongs to the tooltip too:
+   while it is open, an invisible bridge on the element itself (not on the panel, whose overflow would clip it) is two
+   bands as tall as the gap, one above and one below the trigger and 1.5rem wider than it each side, whichever side the
+   panel took, so the pointer can cross onto the text without the panel closing under it. Each band stops where the
+   gap stops: it never covers the trigger, and never a neighbour that starts a gap's width away or further, so a
+   click on either lands on it. */
+sg-tooltip[data-open]::before, sg-tooltip[data-open]::after { content: ""; position: absolute; inset-inline: -1.5rem; height: var(--sg-tooltip-gap); }
+sg-tooltip[data-open]::before { bottom: 100%; }
+sg-tooltip[data-open]::after { top: 100%; }
 
 /* ── with JavaScript: the panel is a popover, in the top layer ──────────── */
 sg-tooltip [role="tooltip"][popover] {
@@ -44,8 +55,29 @@ sg-tooltip [role="tooltip"][popover] {
   inset: auto;
   margin: 0;
   transform: none;
+  --_dur: 120ms; --_ease: var(--sg-ease-out, ease-out); --_rise: 0px;
+  translate: 0 var(--_rise);
+  transition: opacity var(--_dur) var(--_ease), translate var(--_dur) var(--_ease), overlay var(--_dur) allow-discrete, display var(--_dur) allow-discrete;
 }
-sg-tooltip[data-open] [role="tooltip"][popover] { opacity: 1; }
+/* placement: above the trigger, centred on it, flipped below when it will not fit.
+   tooltip.js names the anchor; without anchor positioning it places by hand. */
+@supports (anchor-name: --a) {
+  sg-tooltip [role="tooltip"][popover] {
+    bottom: anchor(top);
+    left: 0; right: 0;
+    margin-block: var(--sg-tooltip-gap);
+    justify-self: anchor-center;
+    justify-self: safe anchor-center;
+    position-try-fallbacks: flip-block;
+  }
+}
+/* entering and leaving: opacity only in quiet; warm adds a rise, playful the spring */
+sg-tooltip [role="tooltip"][popover]:popover-open { opacity: 1; translate: 0 0; pointer-events: auto; }
+@starting-style {
+  sg-tooltip [role="tooltip"][popover]:popover-open { opacity: 0; translate: 0 var(--_rise); }
+}
+sg-tooltip[data-skin="warm"] [role="tooltip"][popover] { --_dur: 160ms; --_rise: 4px; }
+sg-tooltip[data-skin="playful"] [role="tooltip"][popover] { --_dur: 240ms; --_ease: var(--sg-ease-spring, ease-out); --_rise: 6px; }
 
 /* ── warm: hand-lettered ─────────────────────────────────────────────────── */
 sg-tooltip[data-skin="warm"] [role="tooltip"] {
@@ -75,9 +107,25 @@ sg-tooltip[data-skin="playful"]:not([data-above]) [role="tooltip"][popover]::aft
 }
 
 @media (prefers-reduced-motion: reduce) {
-  sg-tooltip [role="tooltip"] { transition: none; }
+  sg-tooltip [role="tooltip"], sg-tooltip [role="tooltip"][popover] { transition: none; }
 }
+
+/* ── the trigger, pressed (the touch contract): see popover.css for the rule of it ── */
+sg-tooltip > :where(button, a[href]) {
+  transition: translate 120ms ease-out, scale 120ms var(--sg-ease-out, ease-out), box-shadow 100ms ease-out;
+}
+sg-tooltip > :where(button, a[href]):active { transition: none; translate: 0 1px; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text, CanvasText) 8%, transparent); }
+sg-tooltip[data-skin="warm"] > :where(button, a[href]):active { translate: none; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text, CanvasText) 16%, transparent); }
+sg-tooltip[data-skin="playful"] > :where(button, a[href]) { transition-timing-function: ease-out, var(--sg-ease-spring, ease-out), ease-out; }
+sg-tooltip[data-skin="playful"] > :where(button, a[href]):active { translate: none; scale: 0.97; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-accent, Highlight) 20%, transparent); }
+@media (prefers-reduced-motion: reduce) {
+  sg-tooltip > :where(button, a[href]):active { translate: none !important; scale: none !important; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text, CanvasText) 16%, transparent); }
+}
+:root[data-sg-input="key"] sg-tooltip > :where(button, a[href]):active { translate: none !important; scale: none !important; }
 @media (forced-colors: active) {
   sg-tooltip [role="tooltip"] { border: 1px solid CanvasText; background: Canvas; color: CanvasText; }
   sg-tooltip[data-skin="playful"] [role="tooltip"]::after { display: none; }
 }
+
+/* touch contract: focus (docs/contributing/touch-contract.md) */
+sg-tooltip :is(button, a, [tabindex]):focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }

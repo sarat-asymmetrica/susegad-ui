@@ -1,0 +1,34 @@
+{
+  "name": "venue",
+  "type": "recipe",
+  "stability": "experimental",
+  "title": "Venue",
+  "description": "Where the event is, in words first: the name and address, landmark directions in plain speech, links out to a maps app (a geo: link on Android, Apple Maps on iPhones, and a plain web link everywhere, the only one on a desktop), how to get there by bus, ferry and car, and a short list of access notes that shows only the rows the author filled (white space counts as empty). A small drawn locator sits beside the words. No embedded map, no iframe, no third-party script. Reads in full without JavaScript.",
+  "version": "0.1.0",
+  "files": [
+    "recipe.js",
+    "recipe.css",
+    "index.html",
+    "README.md",
+    "recipe.prompt.md"
+  ],
+  "dependencies": [
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "recipe.prompt.md",
+  "docs": "README.md",
+  "budget": {
+    "jsBytes": 5120,
+    "reason": "One small module that builds two links from a point: about 3.5 KB with its comments. The drawn locator is inline SVG in the page, not code."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

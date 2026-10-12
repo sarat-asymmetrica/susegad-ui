@@ -1,0 +1,17 @@
+{
+  "name": "core-announce",
+  "type": "package",
+  "stability": "experimental",
+  "title": "Core: announce",
+  "description": "announce('3 people, ₹4,500') says one sentence to a screen reader. It uses document.ariaNotify() (or the sender's own element.ariaNotify()) where the engine has it, and otherwise one shared, visually hidden live region that is made once and reused: polite by default, an alert region only when asked. A burst of calls is read once as the last sentence, so a stepper pressed three times in a second does not queue a backlog. Inside an open modal dialog the fallback region lives inside the dialog, where the rest of the page is inert.",
+  "version": "0.1.0",
+  "files": ["announce.js", "announce.core.js", "announce.docs.md"],
+  "dependencies": [],
+  "docs": "announce.docs.md",
+  "budget": { "jsBytes": 8192, "reason": "The element side (announce.js, the DOM) and its pure core (announce.core.js, the path choice and the coalescer, tested in Node and counted apart per decision 0010). Today 6.0 KB with comments: announce.js 3.1 KB, announce.core.js 2.9 KB." },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

@@ -247,7 +247,8 @@ export function createRenderer(host, { register, scene, invalidate }) {
   // ── building the layers, a slice at a time ─────────────────────────────
   function startBuild(mode) {
     const lit = document.createElement('canvas'); lit.width = st.canvas.width; lit.height = st.canvas.height;
-    const g = lit.getContext('2d'); g.setTransform(st.px, 0, 0, st.px, 0, 0);
+    // the build canvas is read back once a slice (below), so it lives on the CPU; it is copied to an ordinary canvas when it is done
+    const g = lit.getContext('2d', { willReadFrequently: true }); g.setTransform(st.px, 0, 0, st.px, 0, 0);
     job = { mode, lit, it: paint(g, mode), done: false };
   }
   function step(budget = 8) {
@@ -258,11 +259,13 @@ export function createRenderer(host, { register, scene, invalidate }) {
       if (r.done) job.done = true;
     }
     if (!job.done) return false;
-    const night = document.createElement('canvas'); night.width = job.lit.width; night.height = job.lit.height;
+    const lit = document.createElement('canvas'); lit.width = job.lit.width; lit.height = job.lit.height;
+    lit.getContext('2d').drawImage(job.lit, 0, 0); // the layer that is blitted every frame is a normal (GPU) canvas
+    const night = document.createElement('canvas'); night.width = lit.width; night.height = lit.height;
     const ng = night.getContext('2d');
-    ng.drawImage(job.lit, 0, 0);
+    ng.drawImage(lit, 0, 0);
     ng.globalCompositeOperation = 'source-atop'; ng.fillStyle = 'rgba(10,12,34,0.84)'; ng.fillRect(0, 0, night.width, night.height);
-    layers = { mode: job.mode, lit: job.lit, night, dark: isDark() };
+    layers = { mode: job.mode, lit, night, dark: isDark() };
     job = null;
     readyResolve?.(); readyResolve = null;
     return true;

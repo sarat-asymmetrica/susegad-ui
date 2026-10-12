@@ -25,7 +25,7 @@ Rules are in [`docs/ROADMAP.md`](ROADMAP.md#semver-for-a-visual-library):
 ## Steps
 
 1. **Everything is green.** `npm test`, `node registry/build.mjs --check`,
-   `node apps/docs/gallery.build.mjs --check`, `node tools/cem.mjs --check`,
+   `npm run docs:build` (0 failures; it builds the gallery too), `node tools/cem.mjs --check`,
    `node tools/check-skill-coverage.mjs`, `node tools/skill-inventory.mjs --check`, `npm run check` (every engine the
    CI runs — see rung 4). If a check is red, the release waits.
 2. **Move Unreleased into a version.** In `CHANGELOG.md`, rename

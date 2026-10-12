@@ -1,0 +1,24 @@
+{
+  "name": "sound-bake",
+  "type": "package",
+  "stability": "experimental",
+  "title": "Sound bake",
+  "description": "Bake and reflow for sound. bakeFrames() and bakeBuffer() turn FFT frames you already have (an analyser's bins) or an AudioBuffer you already hold into a small band-by-time table, once; drive(cache, atMs) is then a pure 0 to 1 scene intensity at any moment, still() is the steady value reduced motion gets, follow() is a smoothing envelope and segment() takes a chapter from a whole track. capture() reads a running analyser into the same table. Consent is untouched (decision 0015): nothing here creates, resumes or starts audio or reads the sound switch, and capture() returns null rather than wake a suspended context.",
+  "version": "0.1.0",
+  "files": [
+    "bake.core.js",
+    "capture.js",
+    "bake.docs.md"
+  ],
+  "dependencies": [],
+  "docs": "bake.docs.md",
+  "budget": {
+    "jsBytes": 12288,
+    "reason": "Two files counted raw with their comments: bake.core.js (the band reducer, a radix-2 FFT, drive, still, follow, segment) and capture.js (the analyser reader)."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

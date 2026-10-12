@@ -1,0 +1,45 @@
+/* <sg-doodle>. A single-line food drawing in currentColor. The element is a square (--sg-doodle-size, default
+   4rem); a band runs the full width and takes the height of its cells, whose count the element sets as
+   --sg-doodle-count. The line is drawn in drawing units (a 100 by 100 box a motif), so it scales with the
+   doodle: --sg-doodle-weight is the pen in those units. Nothing here is set by an inline style in markup. */
+
+sg-doodle {
+  --sg-doodle-size: 4rem;
+  --sg-doodle-weight: 2.3;
+  display: inline-block;
+  inline-size: var(--sg-doodle-size);
+  aspect-ratio: 1;
+  vertical-align: middle;
+  line-height: 0;
+}
+sg-doodle[band] {
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  aspect-ratio: var(--sg-doodle-count, 16) / 1;
+}
+@media (max-width: 30rem) { sg-doodle[band] { --sg-doodle-size: 3.25rem; } }
+sg-doodle[hidden] { display: none; }
+
+sg-doodle > .sg-doodle-svg { display: block; inline-size: 100%; block-size: 100%; overflow: visible; pointer-events: none; }
+/* playful doodles answer a pointer or a finger, as long as motion is allowed */
+sg-doodle[data-skin="playful"][data-motion="full"] > .sg-doodle-svg { pointer-events: auto; touch-action: manipulation; }
+
+/* the pen: quiet is a hairline, warm a marker, playful a fat one */
+sg-doodle .sg-doodle-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--sg-doodle-weight);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+sg-doodle[data-skin="quiet"] { --sg-doodle-weight: 1.1; }
+sg-doodle[data-skin="warm"] { --sg-doodle-weight: 2.3; }
+sg-doodle[data-skin="playful"] { --sg-doodle-weight: 3.1; }
+
+/* the wiggle turns a doodle about its own middle */
+sg-doodle .sg-doodle-cell { transform-box: fill-box; transform-origin: 50% 50%; }
+
+/* on paper a doodle is whole, whether or not it ever scrolled into view */
+@media print { sg-doodle .sg-doodle-line { stroke-dasharray: none; stroke-dashoffset: 0; } }
+@media (forced-colors: active) { sg-doodle .sg-doodle-line { stroke: CanvasText; } }

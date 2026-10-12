@@ -18,6 +18,7 @@
 
 import { SgElement, defineComponent } from '../../core/component.js';
 import { STRINGS } from './reach.core.js';
+import { cue } from '../../sound/index.js';
 
 async function copyText(value, doc) {
   try { await navigator.clipboard.writeText(value); return true; } catch { /* fall through */ }
@@ -59,7 +60,7 @@ export class SgReach extends SgElement {
         const value = b.dataset.copy;
         const ok = await copyText(value, this.ownerDocument);
         this.#say(ok ? STRINGS.copiedLine(value) : STRINGS.failedLine(value));
-        if (ok) { b.textContent = STRINGS.copied; this.#later(() => { b.textContent = label; }, 2500); }
+        if (ok) { cue('confirm', { register: this.register }); b.textContent = STRINGS.copied; this.#later(() => { b.textContent = label; }, 2500); }
         this.emit('sg-reach-copy', { value, ok });
         this.update();
       };

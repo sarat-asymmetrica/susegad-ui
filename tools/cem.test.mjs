@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { buildManifest, serialise } from './cem.mjs';
@@ -77,4 +77,49 @@ test('--check fails on a stale file, in the real repo', () => {
   const real = buildManifest({ root: join(here, '..') });
   const onDisk = readFileSync(join(here, '..', 'custom-elements.json'), 'utf8').replace(/\r\n/g, '\n');
   assert.equal(serialise(real), onDisk, 'custom-elements.json is stale: run node tools/cem.mjs');
+});
+
+// A define outside core/index.js was invisible to the manifest (sg-lazy, in core/lazy.js, was missing while --check said
+// "up to date"). Red first: this fixture is the sg-lazy shape, a package item whose own file defines its element.
+test('an element a package defines in its own file (not core/index.js) is in the manifest', t => {
+  const root = fixture(t);
+  const write = (p, c) => { mkdirSync(dirname(join(root, p)), { recursive: true }); writeFileSync(join(root, p), c); };
+  const reg = JSON.parse(readFileSync(join(root, 'registry/registry.json'), 'utf8'));
+  reg.items.push({
+    name: 'core-lazy', type: 'package', title: 'Lazy', description: 'd', version: '0.1.0', manifest: 'packages/core/lazy.registry.json',
+    files: [{ path: 'packages/core/lazy.js', bytes: 1, hash: 'sha256-' + '0'.repeat(64) }], dependencies: [], registers: [], bytes: 1, jsBytes: 1, codeBytes: 1, hash: 'sha256-' + '0'.repeat(64),
+  });
+  write('registry/registry.json', JSON.stringify(reg));
+  write('packages/core/lazy.js', `export class SgLazy extends HTMLElement {
+    static observedAttributes = ['src'];
+    go() { this.dispatchEvent(new CustomEvent('sg-lazy', { detail: {} })); }
+  }
+  if (globalThis.customElements && !customElements.get('sg-lazy')) customElements.define('sg-lazy', SgLazy);`);
+  const { modules } = buildManifest({ root });
+  const lazy = modules.find(m => m.declarations[0].tagName === 'sg-lazy');
+  assert.ok(lazy, 'sg-lazy is listed');
+  assert.deepEqual(lazy.declarations[0].attributes, [{ name: 'src' }]);
+  assert.deepEqual(lazy.declarations[0].events, [{ name: 'sg-lazy', type: { text: 'CustomEvent' } }]);
+  assert.equal(lazy.path, 'packages/core/lazy.js');
+});
+
+// And in the real repo: every tag the packages define is in the manifest, wherever it is defined.
+test('every custom element defined under packages/ is in custom-elements.json', () => {
+  const here = join(new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'), '..');
+  const listed = new Set(buildManifest({ root: here }).modules.flatMap(m => m.declarations.map(d => d.tagName)));
+  const found = new Map();
+  const walk = dir => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      if (e.name === 'node_modules' || e.name === 'fixtures' || e.name.startsWith('.')) continue;
+      const p = join(dir, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (/\.m?js$/.test(e.name) && !/\.(test|check)\.m?js$/.test(e.name)) {
+        const src = readFileSync(p, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+        for (const m of src.matchAll(/(?:customElements\.define|defineComponent)\(\s*['"](sg-[a-z0-9-]+)['"]/g)) found.set(m[1], p);
+      }
+    }
+  };
+  walk(join(here, 'packages'));
+  const missing = [...found].filter(([tag]) => !listed.has(tag)).map(([tag, p]) => `${tag} (${p.replace(here, '')})`);
+  assert.deepEqual(missing, [], 'defined but not in custom-elements.json');
 });

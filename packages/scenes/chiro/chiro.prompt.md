@@ -36,6 +36,10 @@ Draw a Goan laterite compound wall up close in canvas JavaScript, with no image 
 | leave a damp handprint that fades | interaction | A press stamps a palm and five fingers into a dampness grid that the colouring pass reads as wet, then lets evaporate over a few seconds. Enter or Space presses where the keyboard hand is. |
 | Keep the rain and the dust off any words laid over the wall | calm | The page reports where its text sits. A raindrop, a splash or a speck of dust inside those boxes, or within 30 units of them, is not drawn. |
 
+## On a page
+
+A bare `<sg-scene name="chiro">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/chiro/index.js">` with `<sg-scene name="chiro" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing is decorative: its name is its `alt`, and it shows no state. The pits take about eight seconds to grow; after that the seasons turn slowly, and the pause button stops them. In playful the drawing takes focus: the arrow keys move a hand (drawn as a small ring) and Enter or Space presses it to the wall. Rain and dust are kept off any words laid over the wall.

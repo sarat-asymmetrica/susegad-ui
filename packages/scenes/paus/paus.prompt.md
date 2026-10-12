@@ -57,6 +57,10 @@ Light and dark: in a dark theme the same window is painted at dusk, with a lamp 
 - **The quality governor** steps down after about 2.5 seconds of frames slower than 30fps: first fewer lens drops, a slower fog refresh and fewer streaks, then a lower pixel density (1.25x). A fast machine never leaves the top level, which is exactly the sketchbook rendering. Paus is the frame-time baseline for every other scene.
 - **Seed 1** (the default) reproduces the sketchbook plate exactly. Other seeds reshuffle the fields, palms, rain and the fog.
 
+## On a page
+
+A bare `<sg-scene name="paus">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/paus/index.js">` with `<sg-scene name="paus" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 - The drawing is an image with the label "A Goan window in the monsoon: raindrops on fogged glass, with flooded paddy and palms beyond", or the `label` attribute.

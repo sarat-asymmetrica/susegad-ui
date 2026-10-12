@@ -24,7 +24,9 @@ sg-scroll-section {
   sg-scroll-section .sg-scroll-reveal {
     animation: sg-scroll-reveal-in linear both;
     animation-timeline: view();
-    animation-range: entry 0% cover 40%;
+    /* ends when the element has fully entered the screen (a little early), so the last paragraph on a page,
+       which can never scroll to the middle, still ends fully shown (1.4.3) */
+    animation-range: entry 0% entry 90%;
   }
   @keyframes sg-scroll-reveal-in {
     from { opacity: 0; transform: translateY(var(--sg-space-4, 1rem)); }

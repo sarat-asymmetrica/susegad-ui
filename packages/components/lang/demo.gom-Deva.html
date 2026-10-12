@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="gom-Deva">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>भास</title>
+<link rel="alternate" hreflang="en-IN" href="/packages/components/lang/demo.html">
+<link rel="alternate" hreflang="gom-Deva" href="/packages/components/lang/demo.gom-Deva.html">
+<link rel="alternate" hreflang="gom-Latn" href="/packages/components/lang/demo.gom-Latn.html">
+<link rel="alternate" hreflang="x-default" href="/packages/components/lang/demo.html">
+<link rel="stylesheet" href="./lang.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 64rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-3); }
+  .panel { background: var(--sg-surface); color: var(--sg-text); border: var(--sg-hairline) solid var(--sg-rule); border-radius: var(--sg-radius-3); padding: var(--sg-space-2) 16px; }
+  .words { display: flex; flex-wrap: wrap; gap: var(--sg-space-3); align-items: center; margin-top: var(--sg-space-3); }
+  .words button { min-height: 2.75rem; padding: 0 var(--sg-space-4); font: inherit; color: var(--sg-text); background: var(--sg-surface); border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-2); }
+  #probe { font: var(--sg-step-2) / var(--sg-leading-snug) var(--sg-font-display); margin: var(--sg-space-4) 0 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>आमचो कार्यक्रम</h1>
+  <p class="lede">स्वागत. हें पान तीन तरेन आसा. तुमकां जाय ती वेंचात.</p>
+  <section data-register="quiet" aria-labelledby="h-quiet">
+    <h2 id="h-quiet" lang="en-IN">Quiet: plain names, a hairline between</h2>
+    <div class="panel">
+      <sg-lang>
+        <nav aria-label="भास, quiet">
+          <ul>
+            <li><a href="demo.html" hreflang="en-IN" lang="en-IN">English</a></li>
+            <li><a href="demo.gom-Deva.html" hreflang="gom-Deva" lang="gom-Deva" aria-current="page">कोंकणी</a></li>
+            <li><a href="demo.gom-Latn.html" hreflang="gom-Latn" lang="gom-Latn">Konknni</a></li>
+          </ul>
+        </nav>
+      </sg-lang>
+    </div>
+  </section>
+  <section data-register="warm" aria-labelledby="h-warm">
+    <h2 id="h-warm" lang="en-IN">Warm: in the hand, a pencil line</h2>
+    <div class="panel">
+      <sg-lang>
+        <nav aria-label="भास, warm">
+          <ul>
+            <li><a href="demo.html" hreflang="en-IN" lang="en-IN">English</a></li>
+            <li><a href="demo.gom-Deva.html" hreflang="gom-Deva" lang="gom-Deva" aria-current="page">कोंकणी</a></li>
+            <li><a href="demo.gom-Latn.html" hreflang="gom-Latn" lang="gom-Latn">Konknni</a></li>
+          </ul>
+        </nav>
+      </sg-lang>
+    </div>
+  </section>
+  <section data-register="playful" aria-labelledby="h-playful">
+    <h2 id="h-playful" lang="en-IN">Playful: stamped tabs</h2>
+    <div class="panel">
+      <sg-lang>
+        <nav aria-label="भास, playful">
+          <ul>
+            <li><a href="demo.html" hreflang="en-IN" lang="en-IN">English</a></li>
+            <li><a href="demo.gom-Deva.html" hreflang="gom-Deva" lang="gom-Deva" aria-current="page">कोंकणी</a></li>
+            <li><a href="demo.gom-Latn.html" hreflang="gom-Latn" lang="gom-Latn">Konknni</a></li>
+          </ul>
+        </nav>
+      </sg-lang>
+    </div>
+  </section>
+  <h2 lang="en-IN">The shared words, from the strings table</h2>
+  <div class="words">
+    <button type="button" data-t="close">बंद करचें</button>
+    <button type="button" data-t="menu">मेनू</button>
+    <span data-t="language">भास</span>
+  </div>
+  <p id="probe">स्वागत. तुमी आयल्यात, उपकार.</p>
+  <p class="note" lang="en-IN">The Konkani on this page is sample text for checking the type. A native reader has not checked it.</p>
+</main>
+<script type="module">
+  import './lang.js';
+</script>
+</body>
+</html>

@@ -117,3 +117,18 @@ sg-radio-group .sg-radio-kolam circle { fill: var(--sg-surface-raised, Canvas); 
   sg-radio-group input[type="radio"]::before,
   sg-radio-group .sg-radio-art { display: none !important; }
 }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-radio-group .sg-radio-art, sg-radio-group input[type="radio"] { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-radio-group label:active input[type="radio"] { translate: 0 1px; border-color: color-mix(in oklab, var(--sg-rule-strong, CanvasText), var(--sg-text, CanvasText) 40%); transition: none !important; }
+sg-radio-group:is([data-skin="warm"], [data-skin="playful"]) label:active input[type="radio"] { translate: none; border-color: transparent; }
+sg-radio-group[data-skin="warm"] label:active .sg-radio-pencil { stroke: var(--sg-text, CanvasText); transition: none !important; }
+sg-radio-group[data-skin="playful"] label:active .sg-radio-art { scale: 0.93; filter: brightness(0.82); transition: none !important; }
+sg-radio-group[data-skin="playful"] label:active .sg-radio-ring { stroke: color-mix(in oklab, var(--sg-accent-text, CanvasText), var(--sg-text, CanvasText) 30%); }
+@media (prefers-reduced-motion: reduce) {
+  sg-radio-group label:active :is(input, .sg-radio-art) { translate: none !important; scale: none !important; }
+  sg-radio-group .sg-radio-art, sg-radio-group input[type="radio"] { transition: none; }
+}
+:root[data-sg-input="key"] sg-radio-group *,
+:root[data-sg-input="key"] sg-radio-group *::before,
+:root[data-sg-input="key"] sg-radio-group *::after { transition: none !important; }

@@ -127,5 +127,17 @@ export function haptic(name) {
   } catch { /* haptic() never throws */ }
 }
 
+/**
+ * The pair: the sound word and its haptic, together, under the same rules as
+ * play(). Components call this on confirm and complete only (the touch
+ * contract, docs/contributing/touch-contract.md), never on every tick.
+ * @param {'confirm'|'complete'|'error'} name
+ * @param {{ register?: 'quiet'|'warm'|'playful', el?: Element }} [opts]
+ */
+export function cue(name, opts = {}) {
+  play(name, opts);
+  haptic(name);
+}
+
 /** Test-only: forget the cached switch value and the audio context, so tests don't leak state into each other. */
 export function _resetForTests() { cachedOn = null; ctx = null; gestureSeen = false; }

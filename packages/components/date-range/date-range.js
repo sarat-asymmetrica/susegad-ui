@@ -15,7 +15,7 @@
 // form's own validation stops a stay that cannot be booked.
 
 import { SgElement, defineComponent } from '../../core/component.js';
-import { play } from '../../sound/index.js';
+import { cue } from '../../sound/index.js';
 import { RATES } from '../../kernels/booking/rates.js';
 import { occupiedNights } from '../../kernels/booking/availability.js';
 import { addDays, addMonths, isValidISO, monthGrid, monthName, todayISO, ym } from '../../kernels/booking/dates.js';
@@ -198,7 +198,7 @@ export class SgDateRange extends SgElement {
     // a new arrival empties the departure: that is the next step, not a mistake (a field note starts over)
     if (restart) d.dispatchEvent(new Event('sg-reset', { bubbles: true }));
     this.#refresh(false);
-    play('tick', { register: this.register });
+    if (next.arr && next.dep) cue('confirm', { register: this.register }); // the stay is chosen: confirm; the first day alone is not
     this.emit('sg-pick', { ...next });
   }
   #write(input, value) {

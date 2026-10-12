@@ -36,6 +36,10 @@ Draw a Goan veranda seen from a seat on it, looking along its length toward the 
 | make it dusk with the lamp lit | colour | The dark theme sets mood to dusk: the sky is indigo to apricot, the sun is off, and washAt() adds a point light at the lamp. |
 | Quiet is a hairline drawing of the same edges | fallback | In quiet and under reduced motion the painter runs in hair mode: paper and the visible edges only, and the model returns no swing and no dust. |
 
+## On a page
+
+A bare `<sg-scene name="veranda">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/veranda/index.js">` with `<sg-scene name="veranda" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing says nothing a person needs; the page text carries the message. Warm sways the lamp and drifts a little dust, and nothing more. In playful the drawing takes focus: the arrow keys move a hand left and right to move the sun, and Enter or Space puts it back. Quiet is a hairline still with nothing moving, and reduced motion shows the finished still with the lamp at rest.

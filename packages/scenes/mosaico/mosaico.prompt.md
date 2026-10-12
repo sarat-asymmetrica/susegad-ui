@@ -36,6 +36,10 @@ Draw the cement-tile floor of an old Goan house, seen from above, in canvas Java
 | a pure function of the seed, the time and the turns asked for | model | The floor steps forward in sixtieths of a second from zero and remembers where it got to, so a playing scene only pays for new steps. Turns asked for by a hand are a list with their moments, so the same seed and the same turns always give the same floor and the same ant. |
 | no tile turns under them, and the ant turns round at their edge | calm | The page reports where its text sits. Any tile under those boxes is left out of every turn, and to the ant its edge is a wall, as the skirting board is. |
 
+## On a page
+
+A bare `<sg-scene name="mosaico">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/mosaico/index.js">` with `<sg-scene name="mosaico" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing is decorative: its name is its `alt`, and it shows no state. In warm a tile turns every few seconds and a small ant walks; the pause button stops both, and under reduced motion the floor is a finished still. In playful the drawing takes focus: the arrow keys move a hand from tile to tile (drawn as an outline round the tile), and Enter or Space turns that tile by a quarter, as hovering a tile does with a mouse; a click re-lays the tiles around it in a ripple. No tile under slotted words ever turns, and the ant turns round at their edge.

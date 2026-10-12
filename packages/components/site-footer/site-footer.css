@@ -107,3 +107,13 @@ sg-site-footer[data-skin="playful"] .sg-site-footer-links a:hover { text-decorat
   sg-site-footer[data-skin="playful"] .sg-site-footer-links a { border: 1px solid ButtonText; box-shadow: none; }
   sg-site-footer .sg-site-footer-rule { stroke: LinkText; }
 }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-site-footer .sg-site-footer-links a { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-site-footer .sg-site-footer-links a:active { translate: 0 1px; color: color-mix(in oklab, var(--sg-text, CanvasText), var(--sg-text, CanvasText) 25%); text-decoration: underline; text-decoration-thickness: 2px; transition: none !important; }
+sg-site-footer[data-skin="warm"] .sg-site-footer-links a:active { translate: none; }
+sg-site-footer[data-skin="playful"] .sg-site-footer-links a:active { translate: none; scale: 0.97; }
+@media (prefers-reduced-motion: reduce) {
+  sg-site-footer .sg-site-footer-links a { transition: none; }
+  sg-site-footer .sg-site-footer-links a:active { translate: none !important; scale: none !important; }
+}

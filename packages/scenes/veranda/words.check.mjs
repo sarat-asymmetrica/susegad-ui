@@ -22,13 +22,18 @@
 
 import { chromium } from 'playwright';
 import { startServer } from '../../../tools/serve.mjs';
+import { gpuOf } from '../../../tools/lib/gpu.mjs';
 import { TURN } from '../../core/orient.core.js';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const BREAK = process.argv.includes('--break');
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const server = await startServer({ quiet: true });
 const browser = await chromium.launch({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] });
+// On a software renderer (a CI runner, or SG_FORCE_SOFTWARE_GL=1) the stage rightly draws in 2D: the live-tier readings skip
+// (`skip  <clause>  (no GPU: <renderer>)`, tools/lib/gpu.mjs) and the 2D and quiet readings still run, as their own clauses.
+const gate = await gpuOf(browser);
 const THREE = /node_modules\/three\/|three\.named\.js|three(\.module|\.core)?\.js/;
 
 /** Patches by file, applied to the served text when --break asks for one. */
@@ -62,6 +67,17 @@ async function open({ query = 'register=warm', theme = 'light', reduced = false,
   return { context, page, requests, errors, three: () => requests.filter(u => THREE.test(u)) };
 }
 const ready = async (p, ms = 60000) => { await p.page.waitForFunction(() => window.__ready === true, null, { timeout: ms }); await p.page.waitForTimeout(700); };
+/** The pane's own arrangement eases into place for a second or so after ready (it steps clear of the pot's words), and a box read before then is a box the pane is about to leave: wait until the pane's box and depth have held still for three reads. */
+const settled = async (p, ms = 10000) => {
+  let prev = '', still = 0;
+  for (let t = 0; t < ms; t += 250) {
+    const now = await p.page.evaluate(() => { const r = window.__stage.pane.getBoundingClientRect(); return [r.left, r.top, r.width, r.height].map(v => v.toFixed(1)).join() + ' ' + window.__stage.paneDepth; });
+    still = now === prev ? still + 1 : 0; prev = now;
+    if (still >= 3) return;
+    await p.page.waitForTimeout(250);
+  }
+  throw new Error('the pane never came to rest: ' + prev);
+};
 
 /** In the page: world.js's own G-buffer as the depth truth, and the lines' covered share against it. */
 const PROBE = `
@@ -80,7 +96,10 @@ window.__probe = async () => {
 {
   const NEED = /heading "Come and sit"[\s\S]*The lamp is on at six/;
   const seen = [];
+  const LIVE_TEXT = 'real text: the words are in the accessibility tree at four depths, live, in 2D and in quiet';
+  const softTiers = gate.gpu.software; if (softTiers) gate.skip(LIVE_TEXT);
   for (const [tier, opts] of [['live', {}], ['2D', { noGL: true }], ['quiet', { query: 'register=quiet' }]]) {
+    if (softTiers && tier === 'live') continue;
     const p = await open({ ...opts, patches: ['canvasText'] });
     await ready(p);
     for (const d of [0.15, 0.3, 0.6, 0.8]) {
@@ -91,15 +110,30 @@ window.__probe = async () => {
     }
     await p.context.close();
   }
-  check('real text: the words are in the accessibility tree at four depths, live, in 2D and in quiet', seen.every(s => s.ok), seen.filter(s => !s.ok).map(s => `${s.tier} at ${s.d}`).join('; ') || `${seen.length} readings`);
+  check(softTiers ? 'real text: the words are in the accessibility tree at four depths, in 2D and in quiet' : LIVE_TEXT, seen.every(s => s.ok), seen.filter(s => !s.ok).map(s => `${s.tier} at ${s.d}`).join('; ') || `${seen.length} readings`);
 }
 
 // 2, 3. occlusion, and readable on release
+// The drag is aimed at what the page reports, not at a fixed distance: once the pane has come to rest, the widest run of columns the depth map
+// holds nearer than the pane (across the band the pane will drop into) that is walled in by farther columns on both sides is the pillar, and the pane is carried until its widest line's middle sits on the pillar's middle.
 async function dragBehindPillar(p, hold) {
-  const g = await p.page.evaluate(() => { const r = window.__stage.querySelector('.grip').getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
-  await p.page.mouse.move(g[0], g[1]); await p.page.mouse.down();
-  await p.page.mouse.move(g[0] + 300, g[1] + 20, { steps: 12 });
+  await settled(p);
+  const m = await p.page.evaluate(async () => {
+    const P = await window.__probe(), s = window.__stage, st = s.querySelector('.stage').getBoundingClientRect(), r = s.pane.getBoundingClientRect(), gr = s.querySelector('.grip').getBoundingClientRect();
+    const d = s.paneDepth, cut = Math.round(d * 255) + 6, drop = 20, lines = P.lines(), wide = lines.reduce((a, b) => (b.w > a.w ? b : a));
+    let best = [0, 0], from = null;
+    for (let x = 0; x < st.width; x += 4) {
+      let n = 0, t = 0;
+      for (let y = r.top - st.top + drop + 6; y < r.bottom - st.top + drop - 6; y += 6) { t++; if (P.at(d, x, y) > cut) n++; }
+      if (n / t > 0.8) from ??= x;
+      else { if (from > 0 && x - from > best[1] - best[0]) best = [from, x]; from = null; } // an island with farther columns either side; the wall at the picture's edge is not a pillar
+    }
+    return { g: [gr.left + gr.width / 2, gr.top + gr.height / 2], dx: st.left + (best[0] + best[1]) / 2 - (st.left + wide.x + wide.w / 2), drop, pillar: best.map(v => Math.round(v + st.left)), pane: [r.left, r.top, r.width, r.height].map(Math.round) };
+  });
+  await p.page.mouse.move(m.g[0], m.g[1]); await p.page.mouse.down();
+  await p.page.mouse.move(m.g[0] + m.dx, m.g[1] + m.drop, { steps: 12 });
   if (!hold) { await p.page.mouse.up(); await p.page.waitForTimeout(1000); }
+  return m;
 }
 {
   const p = await open({ patches: ['flatMask'] });
@@ -114,7 +148,7 @@ async function dragBehindPillar(p, hold) {
   const B = await png();
   const r = await p.page.evaluate(async ([A, B, box]) => {
     const P = await window.__probe(), d = window.__stage.paneDepth;
-    const load = async b64 => { const i = new Image(); i.src = 'data:image/png;base64,' + b64; await i.decode(); const c = new OffscreenCanvas(i.width, i.height), g = c.getContext('2d'); g.drawImage(i, 0, 0); return g.getImageData(0, 0, i.width, i.height); };
+    const load = async b64 => { const i = new Image(); i.src = 'data:image/png;base64,' + b64; await i.decode(); const c = ((w, h) => { try { const c = new OffscreenCanvas(w, h); if (c.getContext('2d')) return c; } catch { /* no OffscreenCanvas, or none with a 2D context (WebKit on Windows, Safari before 17) */ } const c = document.createElement('canvas'); c.width = w; c.height = h; return c; })(i.width, i.height), g = c.getContext('2d'); g.drawImage(i, 0, 0); return g.getImageData(0, 0, i.width, i.height); };
     const a = await load(A), b = await load(B);
     let hidden = 0, hiddenSame = 0, shown = 0, shownDiff = 0;
     for (let y = box.y + 6; y < box.y + box.h - 6; y += 3) for (let x = box.x + 6; x < box.x + box.w - 30; x += 3) {
@@ -143,9 +177,9 @@ async function dragBehindPillar(p, hold) {
 async function contrast(theme, d, register = 'warm', patches = [], always = false, extra = '') {
   const p = await open({ query: `register=${register}&pane-depth=${d}&words-at=0.45+0.4${extra}`, theme, patches, always });
   await ready(p);
-  await p.page.waitForTimeout(600);
+  await settled(p);
   const lines = await p.page.evaluate(() => {
-    const rgba = css => { const x = new OffscreenCanvas(1, 1).getContext('2d'); x.fillStyle = css; x.fillRect(0, 0, 1, 1); const dd = x.getImageData(0, 0, 1, 1).data; return [dd[0], dd[1], dd[2], dd[3] / 255]; };
+    const rgba = css => { const x = ((w, h) => { try { const c = new OffscreenCanvas(w, h); if (c.getContext('2d')) return c; } catch { /* no OffscreenCanvas, or none with a 2D context (WebKit on Windows, Safari before 17) */ } const c = document.createElement('canvas'); c.width = w; c.height = h; return c; })(1, 1).getContext('2d'); x.fillStyle = css; x.fillRect(0, 0, 1, 1); const dd = x.getImageData(0, 0, 1, 1).data; return [dd[0], dd[1], dd[2], dd[3] / 255]; };
     const s = window.__stage, out = [];
     for (const el of s.pane.children) { if (el.matches('.grip,.lens-view,.lens-btn')) continue; const cs = getComputedStyle(el), r = document.createRange(); r.selectNodeContents(el); for (const q of r.getClientRects()) if (q.width > 1) out.push({ x: q.left, y: q.top, w: q.width, h: q.height, ink: rgba(cs.color) }); }
     const st = document.createElement('style'); st.textContent = 'sg-veranda-stage h2, sg-veranda-stage p { color: transparent !important; } sg-veranda-stage .grip { visibility: hidden }'; document.head.append(st);
@@ -160,7 +194,7 @@ async function contrast(theme, d, register = 'warm', patches = [], always = fals
         // pixels the depth map says something nearer hides (or is within 6 px of hiding: the mask's edge is a grid of 3 px cells) are not pane pixels: no text is drawn there, so none is read
         const P = await window.__probe(), st = window.__stage.querySelector('.stage').getBoundingClientRect(), dd0 = window.__stage.paneDepth, cut = Math.round(dd0 * 255) + 2;
         const i = new Image(); i.src = 'data:image/png;base64,' + b64; await i.decode();
-        const cv = new OffscreenCanvas(i.width, i.height), g = cv.getContext('2d'); g.drawImage(i, 0, 0);
+        const cv = ((w, h) => { try { const c = new OffscreenCanvas(w, h); if (c.getContext('2d')) return c; } catch { /* no OffscreenCanvas, or none with a 2D context (WebKit on Windows, Safari before 17) */ } const c = document.createElement('canvas'); c.width = w; c.height = h; return c; })(i.width, i.height), g = cv.getContext('2d'); g.drawImage(i, 0, 0);
         const dd = g.getImageData(0, 0, i.width, i.height).data, lin = v => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }, L = (r, gg, b) => 0.2126 * lin(r) + 0.7152 * lin(gg) + 0.0722 * lin(b);
         const [tr, tg, tb, ta] = ink; let lo = 99, cnt = 0, bd = 0;
         for (let q = 0; q < dd.length; q += 4) { const px = (q / 4) % i.width, py = Math.floor(q / 4 / i.width); if ([-6, 0, 6].some(a => [-6, 0, 6].some(b => P.at(dd0, l.x + px - st.left + a, l.y + py - st.top + b) > cut))) continue; const lb = L(dd[q], dd[q + 1], dd[q + 2]), lt = L(tr * ta + dd[q] * (1 - ta), tg * ta + dd[q + 1] * (1 - ta), tb * ta + dd[q + 2] * (1 - ta)), ratio = (Math.max(lt, lb) + 0.05) / (Math.min(lt, lb) + 0.05); cnt++; lo = Math.min(lo, ratio); if (ratio < 4.5) bd++; }
@@ -208,7 +242,7 @@ async function contrast(theme, d, register = 'warm', patches = [], always = fals
   // it really shows another veranda inside the pane's rect, in both tiers; and it is off in quiet, in warm and under reduced motion
   const read = async (opts, query) => {
     const p = await open({ ...opts, query });
-    await ready(p); await p.page.waitForTimeout(900);
+    await ready(p); await settled(p); await p.page.waitForTimeout(900);
     const r = await p.page.evaluate(() => {
       const s = window.__stage, cv = s.querySelector('.lens-view'), mean = (src, sx, sy, sw, sh) => { const c = document.createElement('canvas'); c.width = 48; c.height = 32; const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(src, sx, sy, sw, sh, 0, 0, 48, 32); const d = g.getImageData(0, 0, 48, 32).data, m = [0, 0, 0]; for (let i = 0; i < d.length; i += 4) { m[0] += d[i]; m[1] += d[i + 1]; m[2] += d[i + 2]; } return m.map(v => Math.round(v / 1536)); };
       // the lens against the day's still, cropped to the same rect on the picture: the same veranda in other weather, not a copy of it
@@ -220,9 +254,10 @@ async function contrast(theme, d, register = 'warm', patches = [], always = fals
     return r;
   };
   const greener = r => r.mean && r.mean[1] - r.mean[0] > r.day[1] - r.day[0] + 6 && Math.abs(r.mean[0] - r.day[0]) + Math.abs(r.mean[1] - r.day[1]) + Math.abs(r.mean[2] - r.day[2]) > 20;
-  const live = await read({}, 'register=playful&lens=monsoon'), flat = await read({ noGL: true }, 'register=playful&lens=monsoon');
+  const live = gate.gpu.software ? null : await read({}, 'register=playful&lens=monsoon'), flat = await read({ noGL: true }, 'register=playful&lens=monsoon');
   const quiet = await read({}, 'register=quiet&lens=monsoon'), calm = await read({ reduced: true }, 'register=playful&lens=monsoon'), warm = await read({}, 'register=warm&lens=monsoon');
-  check('the lens shows the other veranda inside the pane, on the live tier and on the 2D tier', live.on && flat.on && live.tier === 'live' && flat.tier === '2d' && live.visible === 'block' && greener(live) && greener(flat), `live ${JSON.stringify(live.mean)}, 2D ${JSON.stringify(flat.mean)} against the day's ${JSON.stringify(live.day)} (the monsoon is darker and less red)`);
+  if (gate.skip('the lens shows the other veranda inside the pane, on the live tier and on the 2D tier')) check('the lens shows the other veranda inside the pane, on the 2D tier', flat.on && flat.tier === '2d' && greener(flat), `2D ${JSON.stringify(flat.mean)} against the day's ${JSON.stringify(flat.day)}`);
+  else check('the lens shows the other veranda inside the pane, on the live tier and on the 2D tier', live.on && flat.on && live.tier === 'live' && flat.tier === '2d' && live.visible === 'block' && greener(live) && greener(flat), `live ${JSON.stringify(live.mean)}, 2D ${JSON.stringify(flat.mean)} against the day's ${JSON.stringify(live.day)} (the monsoon is darker and less red)`);
   check('no lens in quiet, in warm, or under reduced motion; the button is not offered there either', !quiet.on && !warm.on && !calm.on && quiet.btn === 'none' && warm.btn === 'none' && calm.btn === 'none', `quiet ${quiet.on}/${quiet.btn}, warm ${warm.on}/${warm.btn}, reduced ${calm.on}/${calm.btn}`);
 }
 
@@ -284,7 +319,8 @@ async function seen(p) {
 {
   const p = await open({ width: 390, height: 844 });
   await ready(p);
-  const r = await p.page.evaluate(() => { const s = window.__stage, st = s.querySelector('.stage').getBoundingClientRect(), pr = s.pane.getBoundingClientRect(); return { sw: document.scrollingElement.scrollWidth, iw: innerWidth, stacked: s.querySelector('.frame').classList.contains('stacked'), grip: !!s.querySelector('.grip:not([hidden])'), below: pr.top >= st.bottom - 1, mask: getComputedStyle(s.pane).maskImage }; });
+  const o = await sidewaysScroll(p.page);
+  const r = await p.page.evaluate(([sw, iw]) => { const s = window.__stage, st = s.querySelector('.stage').getBoundingClientRect(), pr = s.pane.getBoundingClientRect(); return { sw, iw, stacked: s.querySelector('.frame').classList.contains('stacked'), grip: !!s.querySelector('.grip:not([hidden])'), below: pr.top >= st.bottom - 1, mask: getComputedStyle(s.pane).maskImage }; }, [o.scrollWidth, o.viewWidth]);
   check('at 390 px the words are flat below the picture: no grip, no mask, no horizontal scroll', r.sw <= r.iw && r.stacked && !r.grip && r.below && (r.mask === 'none' || r.mask === ''), JSON.stringify(r));
   await p.context.close();
 }
@@ -362,5 +398,5 @@ async function seen(p) {
 
 await browser.close(); await server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${results.length - failed} of ${results.length} pass${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
+console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
 process.exit(BREAK ? 0 : failed ? 1 : 0);

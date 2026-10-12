@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  // ?register=quiet|warm|playful and ?theme=light|dark set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute(`data-${k}`, v);
+  window.__ready = false; // set once the links are filled, so the tools wait for it
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The venue, Makers’ Weekend in Panjim (sample)</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="./recipe.css">
+<style>
+  body { margin: 0; background: var(--sg-paper, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem)/var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 62rem; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font: 400 var(--sg-step-3, 1.6rem)/1.15 var(--sg-font-display, inherit); margin: 0 0 6px; }
+  .lede { color: var(--sg-text-soft, inherit); max-width: var(--sg-measure, 62ch); margin: 0 0 24px; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Makers’ Weekend, Panjim</h1>
+  <p class="lede">Where it is, and how to get there. This is sample content: the event is invented, and so is the hall. The coordinates point at central Panjim, so replace them with your own venue’s.</p>
+
+  <!-- data-lat, data-lng and data-name are written once; mountVenue() makes the two map links from them -->
+  <section class="sg-venue" id="venue" aria-labelledby="venue-h" data-lat="15.4989" data-lng="73.8278" data-name="Mandovi Riverside Hall">
+    <h2 id="venue-h">The venue</h2>
+
+    <div class="sg-venue-top">
+      <div class="sg-venue-words">
+        <p class="sg-venue-name">Mandovi Riverside Hall</p>
+        <address class="sg-venue-address">Riverfront Road, Panjim (Panaji), Goa 403001</address>
+
+        <h3>Finding it</h3>
+        <p class="sg-venue-landmarks">Behind the Old Secretariat, facing the river. Walk through the yellow gate with the blue tiles; the hall’s door is the second one on your left. Look for the banner.</p>
+
+        <p class="sg-venue-maps">
+          <!-- the links are written here so they work with JavaScript off; mountVenue() rewrites them from the data above -->
+          <a class="sg-venue-link" data-map="app" href="geo:15.4989,73.8278?q=15.4989,73.8278(Mandovi%20Riverside%20Hall)">Open in your maps app</a>
+          <a class="sg-venue-link sg-venue-link-web" data-map="web" href="https://www.google.com/maps/search/?api=1&amp;query=15.4989,73.8278">Open in a web map</a>
+        </p>
+      </div>
+
+      <!-- a drawn locator: decoration only, the words beside it say all of it -->
+      <figure class="sg-venue-locator" aria-hidden="true">
+        <svg viewBox="0 0 320 200" focusable="false">
+          <path class="sg-loc-river" d="M0 0H320V34C270 22 232 46 176 34S74 22 0 36Z"/>
+          <text class="sg-loc-label" x="14" y="22">River</text>
+          <path class="sg-loc-road" d="M0 150H320"/>
+          <path class="sg-loc-road" d="M196 56V200"/>
+          <rect class="sg-loc-block" x="30" y="62" width="130" height="52" rx="3"/>
+          <text class="sg-loc-label" x="40" y="92">Old Secretariat</text>
+          <rect class="sg-loc-hall" x="214" y="62" width="82" height="52" rx="3"/>
+          <text class="sg-loc-label sg-loc-hall-label" x="226" y="92">Hall</text>
+          <circle class="sg-loc-stop" cx="56" cy="172" r="7"/>
+          <text class="sg-loc-label" x="70" y="176">Bus stand</text>
+          <path class="sg-loc-walk-halo" d="M56 165V150H196V120"/>
+          <path class="sg-loc-walk" d="M56 165V150H196V120"/>
+          <path class="sg-loc-pin" d="M255 56c-7 0-12 5-12 11 0 8 12 19 12 19s12-11 12-19c0-6-5-11-12-11Z"/>
+          <circle class="sg-loc-pin-dot" cx="255" cy="67" r="4"/>
+        </svg>
+      </figure>
+    </div>
+
+    <div class="sg-venue-more">
+      <section class="sg-venue-ways" aria-labelledby="ways-h">
+        <h3 id="ways-h">Getting there</h3>
+        <ul>
+          <li><strong>By bus.</strong> Any bus to the Panjim Kadamba stand, then a ten-minute walk along the river.</li>
+          <li><strong>By ferry.</strong> The Ribandar ferry lands about five minutes’ walk away.</li>
+          <li><strong>By car.</strong> There is a paid car park behind the hall. On a busy day, park at the Kadamba stand and walk.</li>
+        </ul>
+      </section>
+
+      <!-- every field is the author's to fill; a row with nothing in it is not shown, and neither is the section when all are empty -->
+      <section class="sg-venue-access" aria-labelledby="access-h">
+        <h3 id="access-h">Access</h3>
+        <dl>
+          <div><dt>Step-free entrance</dt><dd>Yes, through the side gate on Riverfront Road. No steps.</dd></div>
+          <div><dt>Lift</dt><dd>One lift to the first floor, big enough for a wheelchair.</dd></div>
+          <div><dt>Accessible toilet</dt><dd>Ground floor, next to the foyer.</dd></div>
+          <div><dt>Quiet space</dt><dd></dd></div>
+        </dl>
+      </section>
+    </div>
+  </section>
+</main>
+<script type="module">
+  import { mountVenue } from './recipe.js';
+  mountVenue(document.getElementById('venue'));
+  await document.fonts.ready;
+  window.__ready = true;
+</script>
+</body>
+</html>

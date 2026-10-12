@@ -12,6 +12,7 @@
 
 import { dropBenignErrors, pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const server = await startServer({ quiet: true });
 const browser = await pickEngine().launch();
@@ -145,8 +146,8 @@ for (const [label, opts, q] of [['reduced motion', { reducedMotion: 'reduce' }, 
   })));
   check('on a phone, rightward diagrams turn to run down', dirs.booking === 'down' && dirs.people === 'down', JSON.stringify(dirs));
   check('a direction the author chose is kept', dirs.rain === 'down');
-  const over = await p.evaluate(() => document.documentElement.scrollWidth > innerWidth);
-  check('no sideways scroll at phone width', !over);
+  const over = (await sidewaysScroll(p)).overflow;
+  check('no sideways scroll at phone width', over === 0, `${over}px`);
   const real = dropBenignErrors(p.errors);
   check('no console or page errors (phone)', real.length === 0, real.join(' | '));
   await ctx.close();

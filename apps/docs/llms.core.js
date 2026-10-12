@@ -9,8 +9,8 @@
 // llms.build.mjs); llms-full.txt inlines the same text instead of linking,
 // so an agent with no follow-up fetch still gets everything in one file.
 
-const TYPE_ORDER = ['component', 'recipe', 'scene', 'package'];
-const TYPE_TITLE = { component: 'Components', recipe: 'Recipes', scene: 'Scenes', package: 'Packages' };
+const TYPE_ORDER = ['component', 'recipe', 'scene', 'template', 'package'];
+const TYPE_TITLE = { component: 'Components', recipe: 'Recipes', scene: 'Scenes', template: 'Templates', package: 'Packages' };
 
 /**
  * @param {{ name: string, items: object[] }} index registry.json, parsed

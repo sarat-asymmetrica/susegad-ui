@@ -1,0 +1,8 @@
+{
+  "fails": [
+    "no :active rule"
+  ],
+  "probeFails": [
+    "pressing it changes nothing"
+  ]
+}

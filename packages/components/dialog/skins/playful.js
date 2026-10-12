@@ -1,12 +1,11 @@
 // Dialog, playful skin: the same Carepa scrim as warm, brighter and catching
-// more of the shells (surfaces/carepa's own register step), plus a small
-// press on the card when it lands, cancelled at once under reduced motion.
+// more of the shells (surfaces/carepa's own register step). The card's small
+// give as it lands is CSS (dialog.css, @starting-style on the spring).
 
 import { mount as mountCarepa } from '../../../surfaces/carepa/index.js';
 
 export function mount(el, ctx) {
   let carepa = null;
-  let pressed = false;
 
   function sync(state) {
     if (state.open && !carepa && state.scrim) {
@@ -18,14 +17,6 @@ export function mount(el, ctx) {
     } else if (!state.open && carepa) {
       carepa.destroy();
       carepa = null;
-      pressed = false;
-    }
-    if (state.open && !pressed && state.card && ctx.motion !== 'still') {
-      pressed = true;
-      state.card.animate(
-        [{ transform: 'scale(0.97)', opacity: 0.7 }, { transform: 'scale(1.01)', opacity: 1 }, { transform: 'scale(1)' }],
-        { duration: 260, easing: 'cubic-bezier(0.2, 0.9, 0.3, 1.2)' },
-      );
     }
   }
 

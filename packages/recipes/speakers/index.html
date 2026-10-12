@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  // ?register=quiet|warm|playful and ?theme=light|dark set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute(`data-${k}`, v);
+  // ?lang=gom-Deva pretends the page is in that language (the words follow the nearest lang)
+  { const lang = new URLSearchParams(location.search).get('lang'); if (lang) document.documentElement.setAttribute('lang', lang); }
+  window.__ready = false; // set once the grid is wired, so the tools wait for it
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Speakers, Makers’ Weekend in Panjim (sample)</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="../../components/check/check.css">
+<link rel="stylesheet" href="../../components/person-card/person-card.css">
+<link rel="stylesheet" href="../../components/bloom/bloom.css">
+<link rel="stylesheet" href="./recipe.css">
+<style>
+  body { margin: 0; background: var(--sg-paper, Canvas); color: var(--sg-text, CanvasText); font: var(--sg-step-0, 1rem)/var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 62rem; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font: 400 var(--sg-step-3, 1.6rem)/1.15 var(--sg-font-display, inherit); margin: 0 0 6px; }
+  .lede { color: var(--sg-text-soft, inherit); max-width: var(--sg-measure, 62ch); margin: 0 0 24px; }
+  :focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Makers’ Weekend, Panjim</h1>
+  <p class="lede">The people speaking over the two days. This is sample content: the event, the speakers and their talks are invented.</p>
+
+  <section class="sg-speakers" id="speakers" aria-labelledby="speakers-h">
+    <h2 id="speakers-h">Speakers</h2>
+    <form class="sg-speakers-tracks-form">
+      <fieldset class="sg-speakers-tracks">
+        <legend>Track</legend>
+        <div class="sg-speakers-tracks-row">
+          <sg-check><label><input type="checkbox" name="track" value="AI for Senior Citizens"> AI for Senior Citizens</label></sg-check>
+          <sg-check><label><input type="checkbox" name="track" value="AI for Kids"> AI for Kids</label></sg-check>
+          <sg-check><label><input type="checkbox" name="track" value="Tech for Good"> Tech for Good</label></sg-check>
+          <sg-check><label><input type="checkbox" name="track" value="Builders Moving to Goa"> Builders Moving to Goa</label></sg-check>
+          <sg-check><label><input type="checkbox" name="track" value="Workshops for Founders"> Workshops for Founders</label></sg-check>
+        </div>
+      </fieldset>
+      <noscript><p class="sg-speakers-count">Without JavaScript the track filter does nothing; every speaker shows.</p></noscript>
+    </form>
+    <p class="sg-speakers-count" role="status">Showing 7 speakers</p>
+
+    <ul class="sg-speakers-list">
+      <li><sg-person-card data-track="AI for Kids">
+        <article aria-labelledby="sp1">
+          <h3 id="sp1">Priyanka Naik</h3>
+          <p class="sg-person-role">Teacher, Aldona Learning Circle</p>
+          <p class="sg-person-building">Reads Konkani picture books aloud and waits for the child to answer.</p>
+          <!-- the talk title is the one link, to its slot in the agenda -->
+          <p class="sg-person-link"><a href="../agenda/index.html#storybook-reader">A storybook that reads aloud, in Konkani</a></p>
+        </article>
+      </sg-person-card></li>
+      <li><sg-person-card data-track="AI for Senior Citizens">
+        <article aria-labelledby="sp2">
+          <h3 id="sp2">Sarita Kamat</h3>
+          <p class="sg-person-role">Librarian, Saligao Reading Room</p>
+          <p class="sg-person-building">A calendar that speaks up gently, for people who dislike screens.</p>
+          <!-- the talk title is the one link, to its slot in the agenda -->
+          <p class="sg-person-link"><a href="../agenda/index.html#voice-calendar">A voice calendar for people who would rather not look at a screen</a></p>
+        </article>
+      </sg-person-card></li>
+      <li><sg-person-card data-track="Tech for Good">
+        <article aria-labelledby="sp3">
+          <h3 id="sp3">Melwyn Fernandes</h3>
+          <p class="sg-person-role">Retired engineer, Aldona Village Hall Committee</p>
+          <p class="sg-person-building">How a paper booking board and a screen share one set of dates.</p>
+          <!-- the talk title is the one link, to its slot in the agenda -->
+          <p class="sg-person-link"><a href="../agenda/index.html#village-hall">A booking board for the village hall</a></p>
+        </article>
+      </sg-person-card></li>
+      <li><sg-person-card data-track="Tech for Good">
+        <article aria-labelledby="sp4">
+          <h3 id="sp4">Deepa Shirodkar</h3>
+          <p class="sg-person-role">Nurse, Aldona Health Circle</p>
+          <p class="sg-person-building">A one-page card that tells an old person which tablet, and when.</p>
+          <!-- the talk title is the one link, to its slot in the agenda -->
+          <p class="sg-person-link"><a href="../agenda/index.html#medicine-cards">One-page medicine reminders, in Konkani</a></p>
+        </article>
+      </sg-person-card></li>
+      <li><sg-person-card data-track="Workshops for Founders">
+        <article aria-labelledby="sp5">
+          <h3 id="sp5">Fernanda D’Souza</h3>
+          <p class="sg-person-role">Baker and founder, Siolim Oven Co.</p>
+          <p class="sg-person-building">A hands-on session on pricing when you have only one oven.</p>
+          <!-- the talk title is the one link, to its slot in the agenda -->
+          <p class="sg-person-link"><a href="../agenda/index.html#bakery-pricing">Workshop: pricing for a one-oven bakery</a></p>
+        </article>
+      </sg-person-card></li>
+      <li><sg-person-card data-track="Builders Moving to Goa">
+        <article aria-labelledby="sp6">
+          <h3 id="sp6">Aldrich Pinto</h3>
+          <p class="sg-person-role">Developer, Socorro Studio</p>
+          <p class="sg-person-building">Offices, prices and what actually works, from someone who moved.</p>
+          <!-- the talk title is the one link, to its slot in the agenda -->
+          <p class="sg-person-link"><a href="../agenda/index.html#moving-to-goa">Moving to Goa as a builder: what actually works</a></p>
+        </article>
+      </sg-person-card></li>
+      <li><sg-person-card data-track="AI for Senior Citizens">
+        <article aria-labelledby="sp7">
+          <h3 id="sp7">Roque Barros</h3>
+          <p class="sg-person-role">Fisherman, Moira Fishers’ Cooperative</p>
+          <p class="sg-person-building">A tide and catch log his father can read without glasses.</p>
+          <!-- the talk title is the one link, to its slot in the agenda -->
+          <p class="sg-person-link"><a href="../agenda/index.html#tide-log">A tide and catch log the whole family can read</a></p>
+        </article>
+      </sg-person-card></li>
+    </ul>
+
+    <div class="sg-speakers-empty" hidden>
+      <p></p> <!-- left blank: the recipe writes its own words, in the page's language -->
+    </div>
+  </section>
+</main>
+<script type="module">
+  import { mountSpeakers } from './recipe.js';
+  await Promise.all(['sg-check', 'sg-person-card', 'sg-bloom'].map(t => customElements.whenDefined(t)));
+  mountSpeakers(document.getElementById('speakers'));
+  await document.fonts.ready;
+  window.__ready = true;
+</script>
+</body>
+</html>

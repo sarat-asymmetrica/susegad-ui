@@ -85,6 +85,7 @@ export function classify(paths, registry, { newPaths = [], gateFullPaths = [] } 
   const byName = new Map(items.map(i => [i.name, i]));
   const added = new Set((Array.isArray(newPaths) ? newPaths : [...newPaths]).map(posix));
   const gateFull = new Set((Array.isArray(gateFullPaths) ? gateFullPaths : [...gateFullPaths]).map(posix));
+  const isNewItem = item => [...added].some(a => a.endsWith('/registry.json') && ownerOf(a, items)?.name === item.name);
 
   const reasons = [];
   let tier = 'light';
@@ -116,8 +117,10 @@ export function classify(paths, registry, { newPaths = [], gateFullPaths = [] } 
       raise('full', `${p} is a focus-managing overlay or form (${itemName})`);
       continue;
     }
-    if (item?.motif && (item.motif.tier === 'sacred' || item.motif.tier === 'regional') && rendering) {
-      raise('full', `${p} renders ${itemName}, whose motif is ${item.motif.tier}`);
+    // Sacred always; regional only for a new piece (its manifest is added), so a fix to an
+    // established regional scene is a Standard change.
+    if (item?.motif && rendering && (item.motif.tier === 'sacred' || (item.motif.tier === 'regional' && isNewItem(item)))) {
+      raise('full', `${p} renders ${itemName}, whose motif is ${item.motif.tier === 'sacred' ? 'sacred' : 'regional, in a new piece'}`);
       continue;
     }
     if (FRONT_DOOR.has(p)) { raise('full', `${p} is the home page / front door`); continue; }

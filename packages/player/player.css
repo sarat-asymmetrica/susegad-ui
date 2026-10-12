@@ -177,3 +177,13 @@ sg-player[data-skin='playful'] .sg-player__seek::-moz-range-thumb { background: 
   .sg-player__time { display: none; }
   .sg-player__captions { bottom: 5.5rem; }
 }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+.sg-player__bar button { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+.sg-player__bar button:active { translate: 0 1px; background: color-mix(in oklab, var(--sg-surface-raised, Canvas), var(--sg-text, CanvasText) 12%); transition: none !important; }
+sg-player[data-skin='warm'] .sg-player__bar button:active { translate: none; background: color-mix(in oklab, var(--sg-surface-raised, Canvas), var(--sg-text, CanvasText) 25%); }
+sg-player[data-skin='playful'] .sg-player__bar button:active { translate: none; scale: 0.97; }
+@media (prefers-reduced-motion: reduce) {
+  .sg-player__bar button { transition: none; }
+  .sg-player__bar button:active { translate: none !important; scale: none !important; }
+}

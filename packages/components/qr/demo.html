@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR code</title>
+<link rel="stylesheet" href="./qr.css">
+<script type="module" src="./qr.js"></script>
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 60rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  .lede { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .card { background: var(--sg-surface-raised); border: var(--sg-hairline) solid var(--sg-rule); border-radius: var(--sg-radius-3); box-shadow: var(--sg-lift); padding: var(--sg-space-4); }
+  .card p { margin: 0 0 var(--sg-space-2); }
+  .price { font: 400 var(--sg-step-2) / 1.2 var(--sg-font-display); }
+  code { font: var(--sg-step--1) / 1.4 var(--sg-font-mono); word-break: break-all; }
+  .small { font-size: var(--sg-step--1); color: var(--sg-text-soft); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--sg-space-5); align-items: flex-start; }
+</style>
+</head>
+<body>
+<main>
+  <h1>QR code</h1>
+  <p class="lede">A code as a picture, with its words beside it. The words are real text: you can read them, select them and copy them, and a screen reader reads them instead of the picture.</p>
+
+  <h2>A UPI payment link</h2>
+  <div class="card">
+    <sg-qr id="upi" ecc="M" size="12rem"
+      value="upi://pay?pa=casaexemplo@okaxis&amp;pn=Casa%20Exemplo&amp;am=25500.00&amp;cu=INR&amp;tn=Booking%2012%20to%2015%20Oct"
+      label="QR code for the UPI payment link">
+      <p>Pay Casa Exemplo</p>
+      <p class="price">₹25,500</p>
+      <p class="small">Open any UPI app, choose Scan, and point it at the code. Or pay to <code>casaexemplo@okaxis</code>.</p>
+    </sg-qr>
+  </div>
+
+  <h2>A Wi-Fi network and a ticket</h2>
+  <div class="row">
+    <div class="card" style="flex: 1 1 22rem">
+      <sg-qr id="wifi" ecc="Q" size="9rem"
+        value="WIFI:T:WPA;S:Casa Exemplo guests;P:susegad-2026;;"
+        label="QR code to join the Wi-Fi network">
+        <p>Network <strong>Casa Exemplo guests</strong></p>
+        <p>Password <code>susegad-2026</code></p>
+      </sg-qr>
+    </div>
+    <div class="card" style="flex: 1 1 22rem">
+      <sg-qr id="ticket" ecc="H" size="9rem" label="QR code for the ticket number">TICKET-GOA-2026-0001234</sg-qr>
+    </div>
+  </div>
+
+  <h2>Words that are not Latin</h2>
+  <div class="card">
+    <sg-qr id="indic" ecc="Q" size="10rem" value="₹2,500 · राखून ठेवले · ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ" label="QR code with the booking note">
+      <p lang="mr">राखून ठेवले</p>
+      <p lang="kn">ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ</p>
+      <p class="small">The code carries the rupee sign and both scripts as UTF-8.</p>
+    </sg-qr>
+  </div>
+</main>
+</body>
+</html>

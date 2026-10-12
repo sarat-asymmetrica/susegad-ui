@@ -42,7 +42,7 @@ node packages/recipes/storybook-spread/build.mjs                    # from the c
 node packages/recipes/storybook-spread/build.mjs --provider sarvam  # sarvam on a miss, if SARVAM_API_KEY is set
 ```
 
-The fixture cache (`packages/narration/fixtures/`) means a repeat build costs nothing; only a genuinely new phrase, voice, model or pace triggers a network call. The Wave 4 build synthesised both languages once, real Sarvam audio, `bulbul:v3`, speaker `shubh` (per `spread.json`'s `speakers`), 37.9s English and 48.3s Marathi — see `docs/briefs/progress/karigar-narration.md` for the full call log and the small model-name test that preceded it.
+The fixture cache (`packages/narration/fixtures/`) means a repeat build costs nothing; only a genuinely new phrase, voice, model or pace triggers a network call. The Wave 4 build synthesised both languages once, real Sarvam audio, `bulbul:v3`, speaker `shubh` (per `spread.json`'s `speakers`), 37.9s English and 48.3s Marathi.
 
 ## Without JavaScript
 

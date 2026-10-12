@@ -15,6 +15,10 @@ import { CliError } from './registry.js';
 //   }
 // }
 //
+//   A template made by `susegad create` may also carry "written" and "skipped": the files create wrote
+//   differently from the registry because of --register, --lang or --site, and the ones it left out,
+//   so `diff` can tell create's choices from the builder's edits.
+//
 // No timestamps, keys sorted: adding the same thing twice leaves the file byte-identical.
 
 export const LOCKFILE = 'susegad.json';
@@ -33,10 +37,13 @@ export function readLock(target) {
 export function writeLock(target, lock) {
   const items = {};
   for (const name of Object.keys(lock.items).sort()) {
-    const { version, type, hash, requested, files } = lock.items[name];
+    const { version, type, hash, requested, files, written, skipped } = lock.items[name];
     items[name] = {
       version, type, hash, requested: !!requested,
       files: Object.fromEntries(Object.entries(files).sort(([a], [b]) => a.localeCompare(b))),
+      // create's own choices: files it wrote differently from the registry (path -> hash written), and files it chose not to write
+      ...(written && Object.keys(written).length ? { written: Object.fromEntries(Object.entries(written).sort(([a], [b]) => a.localeCompare(b))) } : {}),
+      ...(skipped?.length ? { skipped: [...skipped].sort() } : {}),
     };
   }
   writeFileSync(join(target, LOCKFILE), JSON.stringify({ registry: lock.registry, items }, null, 2) + '\n');

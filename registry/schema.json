@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://susegad-ui.local/registry/schema.json",
   "title": "Susegad UI registry item manifest",
-  "description": "One registry.json per package, scene, component, recipe or adapter folder; a folder that holds a second item names it <name>.registry.json. It tells the CLI which files to copy into a builder's project. Paths in files, docs and prompt are relative to the folder the manifest sits in. Repo-rooted paths that start with packages/ are still accepted while older manifests move over, and the build prints a note when it sees one. The index the build writes (registry/registry.json) is described by $defs.index.",
+  "description": "One registry.json per package, scene, component, recipe, adapter or template folder; a folder that holds a second item names it <name>.registry.json. It tells the CLI which files to copy into a builder's project. Paths in files, docs and prompt are relative to the folder the manifest sits in. Repo-rooted paths that start with packages/ are still accepted while older manifests move over, and the build prints a note when it sees one. The index the build writes (registry/registry.json) is described by $defs.index.",
   "$ref": "#/$defs/manifest",
   "$defs": {
     "name": {
@@ -13,7 +13,8 @@
     },
     "type": {
       "type": "string",
-      "enum": ["package", "scene", "surface", "component", "recipe", "adapter"]
+      "description": "A template is a whole starter site: its files land at the root of the project folder, not under susegad/, and it lives at packages/templates/<name>/. Its pages refer to the library as susegad/..., the way they will after the copy.",
+      "enum": ["package", "scene", "surface", "component", "recipe", "adapter", "template"]
     },
     "register": {
       "type": "string",

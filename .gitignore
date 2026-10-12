@@ -30,3 +30,6 @@ stories/*/source/
 
 # Build caches (posters for the docs site: apps/docs/posters.mjs), always rebuildable
 .cache/
+
+# The shadcn view of the registry is generated (node registry/build.mjs --shadcn-out, or the docs build into /r/)
+registry/shadcn/

@@ -77,9 +77,19 @@ test('full: focus-managing overlays and forms, only when a rendering file change
   assert.equal(r.tier, 'light');
 });
 
-test('full: a cultural motif at regional or sacred tier', () => {
-  assert.equal(t(['packages/scenes/kolam/render.js']).tier, 'full');
-  assert.equal(t(['packages/scenes/kolam/model.js']).tier, 'standard'); // not a rendering file
+test('full: a regional motif only in a new piece', () => {
+  const added = { newPaths: ['packages/scenes/kolam/registry.json'] };
+  assert.equal(classify(['packages/scenes/kolam/render.js', 'packages/scenes/kolam/registry.json'], R, added).tier, 'full');
+  assert.equal(classify(['packages/scenes/kolam/model.js'], R, added).tier, 'standard'); // not a rendering file
+  // an established regional piece: a render change is Standard
+  const r = t(['packages/scenes/kolam/render.js']);
+  assert.equal(r.tier, 'standard');
+  assert.ok(!r.reasons.some(x => x.includes('motif')), r.reasons.join('; '));
+});
+
+test('full: a sacred motif, new or not', () => {
+  const S = { items: R.items.map(i => i.name === 'scene-kolam' ? { ...i, motif: { ...i.motif, tier: 'sacred' } } : i) };
+  assert.equal(classify(['packages/scenes/kolam/render.js'], S).tier, 'full');
 });
 
 test('full: the home page / front door', () => {

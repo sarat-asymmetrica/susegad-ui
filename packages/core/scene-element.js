@@ -6,6 +6,7 @@
 import { loop, createGovernor } from '../engine/index.js';
 import { getScene, whenSceneDefined, paramsFromAttributes, mergeParams, coerceSeed, toCamel } from './define-scene.js';
 import { observeRegister, registerState } from './register.js';
+import { adopt } from './sheet.js';
 
 const CSS = `
 :host{display:block;position:relative;container-type:inline-size}
@@ -38,15 +39,16 @@ export class SgScene extends Base {
   #rs = null; #calm = []; #all = []; #extra = new Map(); #placed = ''; #pointer = { x: 0, y: 0, inside: false, down: false, keyboard: false, travel: 0 };
   #want = false; #still = true; #sleeping = false; #settled = false; #onscreen = true; #ready = false;
   #mounted = false; #destroyed = false; #token = 0; #raf = 0; #statusAt = 0; #statusTimer = 0;
-  #off = []; #els; #ro = null; #mv = null; #mvLoad = false; #interactive = false; #early = {}; #touched = false; #told = ''; #held = false;
+  #dirty = false; #off = []; #els; #ro = null; #mv = null; #mvLoad = false; #interactive = false; #early = {}; #touched = false; #told = ''; #held = false;
 
   constructor() {
     super();
     const root = this.attachShadow({ mode: 'open' });
-    root.innerHTML = `<style>${CSS}</style><div class="frame"><div class="stage" part="stage" role="img"></div>` +
+    root.innerHTML = `<div class="frame"><div class="stage" part="stage" role="img"></div>` +
       `<div class="reading" part="reading"><div class="panel" part="panel" hidden><slot></slot></div></div></div>` +
       `<button type="button" part="toggle" aria-label="Pause animation" aria-pressed="false" hidden><svg viewBox="0 0 16 16" aria-hidden="true"></svg></button>` +
       `<div class="vh" role="status"></div><div class="vh" id="help"></div>`;
+    adopt(root, CSS);
     const $ = s => root.querySelector(s);
     this.#els = { stage: $('.stage'), panel: $('.panel'), slot: $('slot'), toggle: $('button'), status: $('[role=status]'), help: $('#help') };
     this.#els.toggle.addEventListener('click', () => (this.#want ? this.pause() : this.play()));
@@ -213,6 +215,7 @@ export class SgScene extends Base {
     if (!this.#lp) return;
     const run = this.#want && !this.#sleeping && this.#onscreen && document.visibilityState !== 'hidden';
     run ? this.#lp.play() : this.#lp.pause();
+    if (!run && this.#dirty) this.#invalidate(); // a frame asked for during a tick that then put the loop to sleep
     const { toggle } = this.#els;
     toggle.hidden = this.#rs.register === 'quiet' || this.#settled;
     toggle.setAttribute('aria-pressed', String(!this.#want));
@@ -225,7 +228,11 @@ export class SgScene extends Base {
   }
   #wake() { if (this.#sleeping) { this.#sleeping = false; this.#settled = false; } this.#sync(); }
   #invalidate() {
-    if (!this.#renderer || this.#lp?.playing || this.#raf) return;
+    if (!this.#renderer || this.#raf) return;
+    // While the loop plays, its next tick draws. Remember the ask: if the loop stops before that tick (the
+    // draw that asked also settled the scene; a pause, scrolling away or a hidden tab), #sync hands it back here.
+    if (this.#lp?.playing) { this.#dirty = true; return; }
+    this.#dirty = false;
     this.#raf = requestAnimationFrame(() => { this.#raf = 0; if (!this.#lp?.playing) this.#draw(0); });
   }
 
@@ -233,6 +240,7 @@ export class SgScene extends Base {
     const def = this.#def, r = this.#renderer;
     if (!def || !r) return;
     const { W, H } = def.meta, rs = this.#rs, still = this.#still;
+    this.#dirty = false; // an invalidate() during render() sets it again
     const time = still ? def.meta.stillTime ?? 1e6 : this.#time;
     const data = def.model({ time, seed: this.#seed, register: rs.register, params: this.#params, W, H });
     const quality = still || !dt ? this.#gov.level : this.#gov.sample(dt * 1000);

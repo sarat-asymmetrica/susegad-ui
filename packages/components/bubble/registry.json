@@ -1,0 +1,45 @@
+{
+  "name": "bubble",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Bubble",
+  "description": "A speech, thought or shout bubble around the page's own paragraph. Quiet is a hairline callout with a small tail in plain CSS text. Warm draws a hand-inked bubble and lays the words into its real shape, line by line, through the type tier; playful adds a bolder pen, a shadow, a tilt, a torn edge on a shout and a pop out of the tail. The words stay real text (one span per line inside the paragraph, or CSS shape-outside for the still), the speaker is named for screen readers, and a bubble that cannot hold the words at a legible size grows, then falls back to plain flow, and never clips.",
+  "version": "0.1.0",
+  "files": [
+    "bubble.js",
+    "bubble.core.js",
+    "bubble.zones.core.js",
+    "bubble.words.js",
+    "bubble.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "skins/body.js",
+    "skins/bubble.live.js",
+    "bubble.prompt.md",
+    "bubble.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "engine",
+    "tokens",
+    "type"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "bubble.prompt.md",
+  "docs": "bubble.docs.md",
+  "budget": {
+    "jsBytes": 53248,
+    "reason": "A component (decisions 0005 and 0010 say 36 KB with the pieces counted); raised to 40 KB, then to 52 KB for the distance-field zone kernel (bubble.zones.core.js), which the owner's ruling that budgets stay flexible while the foundations go in allows. The kernel adds a pure signed-distance core with a documented ellipse error and a proof-by-test clearance. Today 50208 raw JS bytes of 11 files with comments: element 2860, pure core 16490, the zone kernel 11938, the drawn-bubble skin body.js 15628 (three layouts, text-spacing meter, arrival), the live surface bubble.live.js 700, three one-line skins 899. The type tier and Pretext are counted apart and are requested only at warm or playful with motion on."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure. The comic speech balloon is a worldwide convention, and the demo's made-up speakers (a crow, a bread man, a fish seller, a cat) are everyday Goan life, not a tradition drawn from."
+  }
+}

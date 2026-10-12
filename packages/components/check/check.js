@@ -15,6 +15,7 @@
 
 import { SgElement, defineComponent } from '../../core/component.js';
 import { triState } from './check.core.js';
+import { cue } from '../../sound/index.js';
 
 export class SgCheck extends SgElement {
   static native = 'input[type="checkbox"]';
@@ -27,6 +28,7 @@ export class SgCheck extends SgElement {
 
   #off = [];
   #kidsOff = [];
+  #bulk = false; // the select-all box is setting its children: its own change owns the cue
 
   connected() {
     const input = this.native;
@@ -35,7 +37,7 @@ export class SgCheck extends SgElement {
     const onChange = () => {
       // A click always clears "some"; keep the attribute in step with it.
       if (!input.indeterminate) this.removeAttribute('indeterminate');
-      if (this.#children().length) this.#setChildren(input.checked);
+      if (this.#children().length) { this.#setChildren(input.checked); if (input.checked) cue('complete', { register: this.register }); } // the whole set, in one press, once
       this.update();
     };
     input.addEventListener('change', onChange);
@@ -62,8 +64,12 @@ export class SgCheck extends SgElement {
     const kids = this.#children();
     if (!kids.length) return;
     this.native.setAttribute('aria-controls', kids.map(k => k.id).join(' '));
+    let was = triState(kids.map(k => k.checked));
     const sync = () => {
       const s = triState(kids.map(k => k.checked));
+      // the last box of the set ticked by hand completes it (confirm and complete only, never a tick; never on load)
+      if (s === 'checked' && was !== 'checked' && !this.#bulk) cue('complete', { register: this.register });
+      was = s;
       this.native.checked = s === 'checked';
       this.toggleAttribute('indeterminate', s === 'mixed');
       this.update();
@@ -76,6 +82,10 @@ export class SgCheck extends SgElement {
   }
 
   #setChildren(on) {
+    this.#bulk = true;
+    try { this.#setKids(on); } finally { this.#bulk = false; }
+  }
+  #setKids(on) {
     for (const k of this.#children()) {
       if (k.checked === on || k.disabled) continue;
       k.checked = on;

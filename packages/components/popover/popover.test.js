@@ -41,8 +41,14 @@ test('the CSS never overrides the native popover open/close; forced colours simp
   assert.match(forced, /::before,[\s\S]*::after[\s\S]*display:\s*none\s*!important/);
 });
 
-test('the entry animation is off under reduced motion', () => {
-  assert.match(css, /@media \(prefers-reduced-motion: reduce\)\s*\{\s*sg-popover \[popover\]:popover-open\s*\{\s*animation:\s*none/);
+test('the entry is a transition from @starting-style, and is off under reduced motion', () => {
+  assert.match(css, /@starting-style\s*\{\s*sg-popover \[popover\]:popover-open\s*\{\s*opacity:\s*0/);
+  assert.match(css, /transition:[^;]*overlay[^;]*allow-discrete[^;]*display[^;]*allow-discrete/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)\s*\{\s*sg-popover \[popover\]\s*\{\s*transition:\s*none/);
+});
+
+test('placement is CSS anchor positioning, behind a feature test', () => {
+  assert.match(css, /@supports \(anchor-name: --a\)\s*\{[^}]*position-anchor:\s*auto[^}]*top:\s*anchor\(bottom\)[^}]*position-try-fallbacks:\s*flip-block/);
 });
 
 for (const name of Object.keys(palettes)) for (const theme of ['light', 'dark']) {

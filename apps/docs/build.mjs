@@ -129,6 +129,16 @@ const registryPath = path.join(ROOT, 'registry', 'registry.json');
 const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
 const { makePosters } = await import(pathToFileURL(path.join(HERE, 'posters.mjs')).href);
 const { posters } = await makePosters({ root: ROOT, out: OUT, registry });
+// decision 0023: a poster ships with its AVIF and WebP, or the build says so now and not in a reader's broken picture
+const { checkTree } = await import(pathToFileURL(path.join(ROOT, 'tools', 'images.check.mjs')).href);
+{
+  const { errors } = checkTree(OUT);
+  if (errors.length) {
+    const lines = errors.slice(0, 8).map(e => `  ${e.rule}  ${e.path}: ${e.message}`);
+    console.error(['images: ' + errors.length + ' error(s) in the poster step', ...lines].join('\n'));
+    process.exit(1);
+  }
+}
 const { writePages } = await import(pathToFileURL(path.join(HERE, 'pages.mjs')).href);
 const generated = await writePages({
   root: ROOT, out: OUT, registry, posters,
@@ -164,10 +174,14 @@ for (const f of siteFiles) for (const r of refsOf(f)) enqueue(r, f);
 // a generated page's references resolve inside out/docs; the file to copy is the same path in the repo
 for (const f of generated.pages) for (const r of refsOf(f, OUT)) if (r.startsWith(OUT + path.sep)) enqueue(path.join(ROOT, path.relative(OUT, r)), f);
 if (hasCore) enqueue(path.join(PACKAGES, 'core', 'index.js'), HERE);
+// the scene pages' <sg-lazy> loader, which scene-page.js imports by a computed name
+if (hasCore) enqueue(path.join(PACKAGES, 'core', 'lazy.js'), HERE);
 for (const n of scenes) enqueue(path.join(PACKAGES, 'scenes', n, 'index.js'), HERE);
 
 const demoEntries = [];
 for (const item of registry.items) {
+  // a template's pages refer to the library as susegad/..., which exists only in a site `susegad create` has made
+  if (item.type === 'template') continue;
   const dir = path.dirname(path.join(ROOT, item.manifest));
   for (const name of ['demo.html', 'index.html']) {
     const f = path.join(dir, name);
@@ -206,6 +220,8 @@ const write = (from, to, text) => {
 // correctly once out/docs is served at a host's root.
 for (const p of seen) write(p, path.join(OUT, path.relative(ROOT, p)));
 write(registryPath, path.join(OUT, path.relative(ROOT, registryPath)));
+// The shadcn view of the registry, served at /r/ (`npx shadcn add <site>/r/<item>.json`); built here, not committed.
+for (const [name, text] of (await import('../../registry/shadcn.mjs')).shadcnView(registry, { root: ROOT })) write(null, path.join(OUT, 'r', name), text);
 
 // The Custom Elements Manifest (tools/cem.mjs generates it at the repo root):
 // an agent that cannot read the site asks the page for it, so mirror it at the
@@ -231,6 +247,46 @@ for (const item of registry.items) {
     write(from, to);
     registryOnly.add(to);
   }
+}
+
+// A template made real, for "See it working": the site `susegad create` makes, built here with the same code path a
+// builder runs, served under /templates/<name>/site/. The template's own source pages (copied above for the registry over
+// HTTP, which `create --registry` needs byte for byte) point at susegad/... paths that exist only in a made site, so
+// they cannot be shown to a visitor; this copy can. Step 4 below checks its references like any other page's.
+{
+  const { run: susegad } = await import(pathToFileURL(path.join(ROOT, 'packages', 'cli', 'bin', 'susegad.mjs')).href);
+  const { tmpdir } = await import('node:os');
+  // what a maker edits and a visitor never loads (the page generator, the manifest, the readmes) stays out of the shown copy
+  const MAKER_FILES = /^(pages\.mjs|package\.json|susegad\.json|[^/]+\.md)$/;
+  for (const item of registry.items.filter(i => i.type === 'template')) {
+    const name = item.name.replace(/^template-/, '');
+    const scratch = fs.mkdtempSync(path.join(tmpdir(), 'susegad-docs-site-'));
+    try {
+      const problems = [];
+      const code = await susegad(['create', 'site', '--template', name, '--yes'], { cwd: scratch, out: () => {}, err: e => problems.push(e) });
+      if (code !== 0) throw new Error(`susegad create --template ${name} failed: ${problems.join(' ')}`);
+      const made = path.join(scratch, 'site');
+      (function copy(dir) {
+        for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+          const from = path.join(dir, e.name);
+          if (e.isDirectory()) copy(from);
+          else if (!MAKER_FILES.test(path.relative(made, from).replaceAll('\\', '/'))) write(from, path.join(OUT, 'templates', name, 'site', path.relative(made, from)));
+        }
+      })(made);
+      console.log(`template ${name}: the made site is at /templates/${name}/site/`);
+    } finally { fs.rmSync(scratch, { recursive: true, force: true }); }
+  }
+}
+
+// robots.txt: the template's own source pages stay served (`susegad create --registry <site>` fetches every file byte for
+// byte), but they point at susegad/... paths that exist only in a made site, so a visitor who lands on one sees it unstyled.
+// Crawlers are told to send nobody there; "See it working" (above) is the page to show. Anything already in a robots.txt stays.
+{
+  const f = path.join(OUT, 'robots.txt');
+  const line = 'Disallow: /packages/templates/';
+  let text = fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : 'User-agent: *\nAllow: /\n';
+  if (!text.includes(line)) text = text.replace(/\s*$/, '\n') + line + '\n';
+  write(null, f, text);
 }
 
 // llms.txt and llms-full.txt (llmstxt.org): generated here, from the same

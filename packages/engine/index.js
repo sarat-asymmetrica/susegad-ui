@@ -1,7 +1,7 @@
 // Susegad UI engine: the pencil box every scene draws with.
 //
 // Pure modules (Node-safe): math, rng, noise, color, geom, fields, governor,
-// light, motion, wave.
+// light, motion, wave, phyllotaxis.
 // Canvas edge: stage, loop (run), pointer, paper, ink, hatch, gl.
 // loop() itself is DOM-free when matchMedia and raf are injected.
 
@@ -15,6 +15,7 @@ export * from './src/governor.js';
 export * from './src/light.js';
 export * from './src/motion.js';
 export * from './src/wave.js';
+export * from './src/phyllotaxis.js';
 export * from './src/stage.js';
 export * from './src/loop.js';
 export * from './src/pointer.js';

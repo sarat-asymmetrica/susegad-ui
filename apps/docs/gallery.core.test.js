@@ -114,7 +114,7 @@ test('no card ever carries a Windows path or a backslash; every URL is root-abso
 test('buildGallery groups by type, in the fixed reading order, sorted by title', () => {
   const { groups, count } = buildGallery({ items: [tokens, booking, badge, tollem] }, fileExists);
   assert.equal(count, 4);
-  assert.deepEqual(groups.map(g => g.type), TYPE_ORDER);
+  assert.deepEqual(groups.map(g => g.type), TYPE_ORDER.filter(t => t !== 'template'), 'a type with nothing in it is left out');
   const components = groups.find(g => g.type === 'component');
   assert.deepEqual(components.items.map(c => c.name), ['badge']);
 });
@@ -150,4 +150,14 @@ test('a scape card carries both figures; other cards carry none', () => {
   const shet = { ...tollem, name: 'scene-shet', title: 'Shet', tier: 'scape', firstSightBytes: 61440, jsBytes: 92160 };
   assert.equal(toCard(shet, fileExists).tierNote, 'scape: 60 KB at first sight, 90 KB in all');
   assert.equal(toCard(tollem, fileExists).tierNote, null);
+});
+
+test('a template is its own group, between the scenes and the packages, with no demo link (its pages need the site create makes)', () => {
+  const template = { name: 'template-event', type: 'template', title: 'Event page', description: 'A starter site.', manifest: 'packages/templates/event/registry.json', docs: 'packages/templates/event/README.md', files: [] };
+  const withIndex = path => path === 'packages/templates/event/index.html';
+  const { groups } = buildGallery({ items: [tokens, badge, template] }, withIndex);
+  assert.deepEqual(groups.map(g => g.type), ['component', 'template', 'package']);
+  const card = groups.find(g => g.type === 'template').items[0];
+  assert.equal(card.demoUrl, null, 'index.html is there, and still is not offered as a demo');
+  assert.equal(card.docsUrl, '/packages/templates/event/README.md');
 });

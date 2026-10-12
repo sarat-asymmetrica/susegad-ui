@@ -85,6 +85,8 @@ for (const register of ['quiet', 'warm', 'playful']) {
   void popup; void beforeTabs;
   check(`${tag} a ctrl-click is left alone (does not change the selection)`, await selected(p) === 0);
 
+  // let the press give and the underline's travel finish: a tab pressed a moment ago is still easing back from its scale
+  await p.evaluate(() => Promise.all(document.querySelector('#room [role="tablist"]').getAnimations({ subtree: true }).filter(a => a.effect.getTiming().iterations !== Infinity).map(a => a.finished.catch(() => {}))));
   const marks = await p.evaluate(() => {
     const list = document.querySelector('#room [role="tablist"]');
     const line = list.querySelector('.sg-tabs-underline');

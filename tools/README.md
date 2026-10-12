@@ -74,6 +74,16 @@ Runs the target and the Paus baseline in turn, twice each (`--rounds`), for 6 s 
 
 Headless Chromium caps frames at 60 Hz, so anything that fits in a frame reads 16.7 ms. `--uncapped` lifts the cap and shows the cost of a frame instead. WebGL runs on the CPU in headless Chromium, so read the ratio, not the absolute numbers.
 
+### perf at a moment
+
+```
+node tools/perf.mjs --scene abri --register playful --content --at 33 --seconds 3 --rounds 1
+node tools/perf.mjs --scene abri --register playful --content --at 33 --quality low --seconds 3 --rounds 1
+node tools/perf.mjs --scene abri --register playful --content --at 18 --settle 13 --throttle 4 --rounds 1
+```
+
+Without `--at`, the window opens at the first frame after ready, so a cost that lands later (abri's drift, about 33 s in, with words slotted) is never seen. `--at S` brings the scene (and the Paus control, so the load matches) to S seconds of its own clock first. The scene element has no seek, so the page's `requestAnimationFrame` is wrapped (`tools/warp.core.js`): every frame still plays, back to back with a stepped timestamp and no vsync wait, then the real clock carries on from there. The output prints the moment at the window's start and end (the scene's stage and `u`, if it exposes them, as abri does) and the frame mean by second. `--content` slots words (the calm zone only costs anything with words). `--quality low` warps in 34 ms frames so the governor steps down to its floor first (it cannot be pinned from outside, and a fast machine climbs back after about 4 s). `--settle S` plays S more real seconds before the window, and `--throttle N` slows Chromium's CPU N times, for both the scene and the control. The scene's clock keeps running during a settle, so count it into `--at`.
+
 ## diff
 
 ```
@@ -122,6 +132,33 @@ Both are sampled at the strip's spacing, and `--facts` says how long that is: a 
 
 `tools/fixtures/motion-scene/` (`--scene motion`) is a dot orbiting a ring with two optional faults, `--param stall=3-5` (the dot stops while still playing) and `--param cut=7` (the picture changes at once), so the facts have something known to find. `node tools/strip.check.mjs` runs the gates by hand (it is not under `packages/`, so `npm run check` does not pick it up; `GATE=2` runs one): determinism against a real-clock control that must differ, the stall and the cut found and their absence reported on the plain fixture, stepped frames against `?freeze`, the onion's ghosts, and `--json`.
 
+## touch.check
+
+`node tools/touch.check.mjs` is the microinteraction check (the rules are in `docs/contributing/touch-contract.md`; it also runs inside `npm run check`). For every interactive component in the registry, decided from its demo markup and scripts, it requires a press state in each register, a `:focus-visible` style and reduced-motion handling, and names the component and what is missing. A static CSS scan alone can be fooled by an `:active` rule that changes nothing, so a browser probe presses each control on its own demo and requires a computed-style change within a frame, no transition on press-in, no movement under reduced motion, a focus ring on Tab, and no transition on a held arrow key. It runs the fixtures in `tools/fixtures/touch/` first: each broken one must go red for the reason in its `expect.json`, and the good one must stay green. `--static` skips the browser, `--only tabs,toggle` picks components, `--fixtures` runs only the fixtures, `--json` prints the data. The pure half is `tools/touch.core.js`, tested in `touch.core.test.mjs`.
+
+## checks, --changed and browser slots
+
+`node tools/checks.mjs` (also `npm run check`) runs every `*.check.mjs` under `packages/` and `recipes/`, plus `tools/touch.check.mjs`, one at a time, each in its own process with a timeout (`SG_CHECK_TIMEOUT_S`, default 900 s). `--engine=webkit|firefox` or `SG_ENGINE` picks the engine.
+
+**Only what the slice needs.** `node tools/checks.mjs --changed` takes the files that differ from the merge-base with `main` (committed, staged, unstaged and untracked; `--changed=<ref>` or `SG_BASE=<ref>` names another base) and prints the checks it picked with a reason for each, then runs them. It picks:
+
+- every check in a folder the diff touches (a check in a shared folder such as `packages/components/overlays.check.mjs` is chosen only by the pieces it covers, listed in `COVERS`, or by its own edit);
+- the checks of every registry item that depends on a changed item, at any depth (the `dependencies` of `registry/registry.json` are item names, mapped to the folder of the item's manifest);
+- `tools/touch.check.mjs` when a component changed;
+- everything, when the diff touches a shared primitive: `packages/core/`, `packages/engine/`, `packages/tokens/`, `tools/lib/`, `package.json`, and also `package-lock.json`, `tools/serve.mjs` and `tools/harness/`, which every check goes through. A changed signature in a shared function once broke a stage that only the whole suite saw, so there is no cleverness here.
+
+`--dry` prints the selection and stops (on its own it lists every check). A full run stays the gate before a merge. The choosing is `tools/lib/changed.core.js` (pure, tested in `changed.core.test.mjs`); the git and registry reading is `tools/lib/changed.mjs`.
+
+**Browser slots.** This machine has few cores, and a dozen browser suites at once made every timing check lie. A slot is a lock file made with the `wx` flag in `<tmp>/susegad-browser-slots/` (the lock holds the pid, the start time and a label); a process that wants a browser waits for a free one and prints `waiting for a browser slot (held by: ...)` once. A slot whose pid is gone is reclaimed. `runCheck` takes one slot per check process and holds it for the child's life (a child pid is recorded, so the slot outlives a killed parent while the check still runs), and puts `SG_SLOT_HELD=1` in the child's env so the helpers it calls (`session()` in `lib/browser.mjs`, `harness()` in `lib/component-check.mjs`) do not take a second one. Those helpers take a slot themselves when you run a tool or a check by hand. Settings:
+
+| variable | meaning |
+| --- | --- |
+| `SG_BROWSER_SLOTS=<n>` | how many browsers at once; default `max(1, floor(cpus / 2))` (2 on a 4-core box); `0` means no limit |
+| `SG_SLOTS_DIR=<dir>` | the shared directory (default `<os tmp>/susegad-browser-slots`); processes that should share slots must resolve to the same one |
+| `SG_SLOT_HELD=1` | set by `runCheck` for its child; do not set it by hand |
+
+Known limits: a check or tool that calls `chromium.launch` itself, outside `runCheck` and the two helpers (`lib/scene-probe.mjs` and a few older checks), is not limited when run by hand; a pid reused by an unrelated process keeps a dead slot looking alive; the slot is released on exit and on SIGINT, and a hard kill is cleaned up by the next taker through the stale check.
+
 ## No JavaScript
 
 `matrix.mjs` and `axe.mjs` take `--no-js` for pages (`--url`). Chromium then builds the page with JavaScript off, so `<noscript>` content renders and no page script runs. The page counts as ready at load plus fonts. The tools still set `data-register`, `data-theme` and `data-palette` on `:root`, standing in for what a server would render, because `demo.js` cannot run. axe needs timers, which do not run with JavaScript off. So `axe.mjs --no-js` takes the DOM the no-JS page produced (with `<noscript>` content, declarative shadow roots, and scripts and inline handlers removed) and checks it in a scripted copy served at the same URL. The matrix writes to `.shots/matrix/<target>-nojs/`. `perf.mjs` refuses `--no-js`, because nothing animates. A scene cannot run without JavaScript, so `--scene` with `--no-js` is an error.
@@ -168,4 +205,4 @@ The file-upload recipe has no `<form>` (the drop zone uploads as files are chose
 
 ## Tests
 
-`npm test` runs `tools/**/*.test.mjs` along with the package tests. They cover the argument parser, target URLs, form sample values and verdicts, frame and byte statistics, the pixel maths, the contact sheet, the strip and onion layout and facts, and the server.
+`npm test` runs `tools/**/*.test.mjs` along with the package tests. They cover the argument parser, target URLs, form sample values and verdicts, frame and byte statistics, the pixel maths, the contact sheet, the strip and onion layout and facts, the server, the browser slots (including separate processes racing for one slot) and the `--changed` selection.

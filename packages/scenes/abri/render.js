@@ -6,13 +6,14 @@
 // registers (quiet is the lifted print as a still, warm an easier sitting,
 // playful a hand in the size), the build and the still in time slices behind
 // a ready promise, the calm zone (the size under the page's words is held,
-// drops do not land there, and the ripples and stylus keep off it), lamplight
+// drops do not land there, the ripples and stylus keep off it, the light on
+// the size holds still there, and its veins stay at every quality), lamplight
 // for the dark theme, and the governor's level for drawing on twos.
 
 import { stage, ink, hatch, makeNoise, rng, lerp, smoothstep, phase, ease, TAU, paper, roughen, toPath } from '../../engine/index.js';
 import { readColors } from '../../core/colors.js';
 import {
-  W, H, BATH, SHEET, FW, FH, SIZE, plan, cloudRows, makeBath, stepBath, stylusAt, times, sheetSeed, stillAt, held,
+  W, H, BATH, SHEET, FW, FH, SIZE, plan, cloudRows, makeBath, stepBath, stylusAt, times, sheetSeed, stillAt, held, freedom,
 } from './model.js';
 
 function tray(g) {
@@ -95,27 +96,66 @@ export function createRenderer(host, { invalidate = () => {} } = {}) {
     return B.t + dt > stop;
   }
 
-  function fillPolys(g, alphaVeins = 0.3) {
+  /**
+   * The colours, with their veins at alphaVeins. Below half quality the veins are dropped to save time,
+   * but not inside `keep` (rects, already padded, around the page's words): there the colours are laid
+   * again over the bare size with their veins at keepAlpha, in the same order, so the paper under the
+   * words is the same pixels whichever level the governor has chosen.
+   */
+  function fillPolys(g, alphaVeins = 0.3, keep = null, keepAlpha = 0) {
+    const kept = [];
     for (const q of B.polys) {
-      const P = q.pts;
-      g.beginPath(); g.moveTo(P[0], P[1]);
-      for (let i = 2; i < P.length; i += 2) g.lineTo(P[i], P[i + 1]);
-      g.closePath();
-      g.fillStyle = q.col; g.fill();
-      if (alphaVeins) { g.globalAlpha = alphaVeins; g.strokeStyle = '#3a3026'; g.stroke(); g.globalAlpha = 1; }
+      const P = q.pts, path = new Path2D();
+      let x0 = P[0], x1 = P[0], y0 = P[1], y1 = P[1];
+      path.moveTo(P[0], P[1]);
+      for (let i = 2; i < P.length; i += 2) {
+        const x = P[i], y = P[i + 1];
+        path.lineTo(x, y);
+        if (x < x0) x0 = x; else if (x > x1) x1 = x;
+        if (y < y0) y0 = y; else if (y > y1) y1 = y;
+      }
+      path.closePath();
+      g.fillStyle = q.col; g.fill(path);
+      if (alphaVeins) { g.globalAlpha = alphaVeins; g.strokeStyle = '#3a3026'; g.stroke(path); g.globalAlpha = 1; }
+      // (the bounds grow by the vein's half width)
+      else if (keep && keep.some(r => x1 + 1 > r.x && x0 - 1 < r.x + r.w && y1 + 1 > r.y && y0 - 1 < r.y + r.h)) kept.push([path, q.col]);
     }
+    if (alphaVeins || !keep?.length) return;
+    g.save();
+    g.beginPath(); for (const r of keep) g.rect(r.x, r.y, r.w, r.h); g.clip();
+    g.fillStyle = SIZE; g.fillRect(BATH.x0, BATH.y0, BATH.x1 - BATH.x0, BATH.y1 - BATH.y0);
+    g.strokeStyle = '#3a3026';
+    for (const [path, col] of kept) { g.fillStyle = col; g.fill(path); g.globalAlpha = keepAlpha; g.stroke(path); g.globalAlpha = 1; }
+    g.restore();
+  }
+
+  // how free the light is to move over each texel of the sheen: 0 under the page's words, where the
+  // light holds the still's pattern (its clock at 0), easing to 1 away from them
+  let sheenFree = null, sheenFor = null;
+  function sheenFreedom(calm, key) {
+    if (sheenFor === key) return sheenFree;
+    sheenFor = key; sheenFree = new Float32Array(SW * SH);
+    const kx = (BATH.x1 - BATH.x0) / SW, ky = (BATH.y1 - BATH.y0) / SH;
+    // the texels are about 11 units across and the stretch blends neighbours, so the hold reaches one texel further
+    for (let j = 0; j < SH; j++) for (let i = 0; i < SW; i++) sheenFree[j * SW + i] = freedom(calm, BATH.x0 + (i + 0.5) * kx, BATH.y0 + (j + 0.5) * ky, 30 + kx, 60);
+    return sheenFree;
   }
 
   // the light on the size: domain-warped noise, a few rows refreshed each frame
-  function updateSheen(t, rows) {
-    const d = simg.data, s = 0.05, z = t * 0.05;
+  function light(i, j, z) {
+    const s = 0.05, wx = snz.fbm(i * s, j * s * 1.4, z, 2), wy = snz(i * s + 3.1, j * s * 1.4, z + 5);
+    return smoothstep(0.12, 0.45, snz.fbm(i * s * 0.8 + 1.6 * wx, j * s + 1.6 * wy, z * 0.6 + 9, 3)) * 70;
+  }
+  /** `free` (from sheenFreedom) blends the moving light with the still's (z = 0) near the words. */
+  function updateSheen(t, rows, free = null) {
+    const d = simg.data, z = t * 0.05;
     for (let n = 0; n < rows; n++) {
       const j = sheenRow; sheenRow = (sheenRow + 1) % SH;
       for (let i = 0; i < SW; i++) {
-        const wx = snz.fbm(i * s, j * s * 1.4, z, 2), wy = snz(i * s + 3.1, j * s * 1.4, z + 5);
-        const v = snz.fbm(i * s * 0.8 + 1.6 * wx, j * s + 1.6 * wy, z * 0.6 + 9, 3);
+        const f = free ? free[j * SW + i] : 1;
+        const a = f === 1 ? light(i, j, z) : f === 0 ? light(i, j, 0) : lerp(light(i, j, 0), light(i, j, z), f);
         const k = (j * SW + i) * 4;
-        d[k] = 255; d[k + 1] = 252; d[k + 2] = 240; d[k + 3] = smoothstep(0.12, 0.45, v) * 70;
+        d[k] = 255; d[k + 1] = 252; d[k + 2] = 240; d[k + 3] = a;
       }
     }
     sg.putImageData(simg, 0, 0);
@@ -233,12 +273,13 @@ export function createRenderer(host, { invalidate = () => {} } = {}) {
     g.beginPath(); g.rect(BATH.x0, BATH.y0, BATH.x1 - BATH.x0, BATH.y1 - BATH.y0); g.clip();
     g.fillStyle = SIZE; g.fillRect(BATH.x0, BATH.y0, BATH.x1 - BATH.x0, BATH.y1 - BATH.y0);
     const taken = u >= tm.lift; // the paper has lifted the colour off
-    if (!taken) fillPolys(g, q < 0.5 ? 0 : 0.28);
+    // below half quality the veins go, except where the words sit (the held zone, 30 units round them)
+    if (!taken) fillPolys(g, q < 0.5 ? 0 : 0.28, calm.map(r => ({ x: r.x - 30, y: r.y - 30, w: r.w + 60, h: r.h + 60 })), 0.28);
     else {
       // what the paper leaves behind: a faint ghost that fades
       g.globalAlpha = 0.16 * (1 - phase(u, tm.lift, tm.lift + 3)); if (g.globalAlpha > 0.01) fillPolys(g, 0); g.globalAlpha = 1;
     }
-    if (!still) updateSheen(t, 6); else if (sheenRow === 0) updateSheen(0, SH);
+    if (!still) updateSheen(t, 6, calm.length ? sheenFreedom(calm, calmKey) : null); else if (sheenRow === 0) updateSheen(0, SH);
     g.imageSmoothingEnabled = true;
     g.drawImage(sheen, BATH.x0, BATH.y0, BATH.x1 - BATH.x0, BATH.y1 - BATH.y0);
     // ripples where drops have just landed (none under the words)

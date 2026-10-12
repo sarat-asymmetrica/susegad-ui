@@ -20,3 +20,13 @@ test('haptics: complete is the longest pattern (the biggest news) and tick the s
   assert.ok(sum(patternFor('complete')) > sum(patternFor('confirm')));
   assert.ok(sum(patternFor('tick')) < sum(patternFor('confirm')));
 });
+
+test('haptics: the patterns are keyed by the Web Haptics effect names, and the sound words are aliases', async () => {
+  const { EFFECTS, effectFor } = await import('./haptics.js');
+  for (const effect of ['tick', 'success', 'error']) assert.ok(Array.isArray(EFFECTS[effect]), `${effect} is an effect`);
+  assert.equal(effectFor('confirm'), 'success');
+  assert.equal(effectFor('success'), 'success');
+  assert.equal(effectFor('bogus'), null);
+  assert.deepEqual(patternFor('confirm'), patternFor('success'), 'the old word and the new name give one pattern');
+  assert.deepEqual(patternFor('tick'), EFFECTS.tick);
+});

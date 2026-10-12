@@ -53,3 +53,45 @@ test('quantise: 16 steps a turn, so a line moves at most sixteen times a turn', 
   assert.equal(quantise(0), 0); assert.ok(Math.abs(quantise(2 * Math.PI)) < 1e-9);
   assert.ok(Math.abs(quantise(-0.01)) < 1e-9);
 });
+
+// ── one layout, two painters (rung 5) ────────────────────────────────────────
+import { createLayout } from '../../type/layout.core.js';
+import { createFakeOracle } from '../../type/oracle.fake.js';
+import { lineBoxes, spanStyle, quadPlan } from '../../stage3d/text.core.js';
+import { columnAt, hugFloat } from './matka.core.js';
+
+const WORDS = 'The clay pot on the seat is where the water is kept cool. It has stood there since before the roof was retiled, and it turns, slowly, when nobody is looking, so that every side of it gets the same share of the evening light.';
+
+test('one layout, two painters: the spans and the quads are fed the same lines and agree on every text and box, at every turn of the pot', () => {
+  const hq = 78, col = columnAt(hq), px = 14.4, font = `400 ${px}px Kalam`, lh = px * 1.4, lay = createLayout(createFakeOracle());
+  let shortened = 0;
+  for (let step = 0; step < 16; step++) {
+    const th = step / 16 * 2 * Math.PI, pot = toScreen(surfacePoints(th), 0, 0, hq);
+    const shape = flowShape(col, (t, b) => extentIn(pot, t, b), Math.max(8, hq * 0.2));
+    const { lines } = lay.layIntoShape([{ prepared: lay.prepare(WORDS, font), lineHeight: lh, gap: 0 }], shape, { top: col.y, bottom: col.y + col.h, scale: 1, minWidth: px * 4 });
+    assert.ok(lines.length >= 5, 'a paragraph');
+    const boxes = lineBoxes(lines, col), plan = quadPlan(boxes, { font, ink: '#222', dpr: 2 });
+    // painter 1, the span writer: the text a span holds and where it puts it
+    const spans = boxes.map(b => ({ text: b.text + b.tail, ...spanStyle(b, { font, lineHeight: lh }) }));
+    assert.equal(spans.length, plan.length);
+    spans.forEach((s, i) => {
+      assert.equal(s.text.trimEnd(), plan[i].text.trimEnd(), `line ${i} reads the same`);
+      assert.equal(parseFloat(s.left), +plan[i].x.toFixed(2)); assert.equal(parseFloat(s.top), +plan[i].y.toFixed(2));
+      // and both are the layout's own box, moved to the column's corner
+      assert.ok(Math.abs(plan[i].x - (lines[i].x - col.x)) < 1e-9 && Math.abs(plan[i].y - (lines[i].y - col.y)) < 1e-9);
+      assert.ok(plan[i].w === lines[i].w && plan[i].h === lines[i].h);
+    });
+    assert.equal(spans.map(s => s.text).join('').replace(/\s+/g, ' ').trim(), WORDS.replace(/\s+/g, ' '), 'the words are whole and in order');
+    shortened += lines.filter(l => l.w < col.w - 8 && l.room < col.w - 8).length;
+    for (const l of lines) { const e = extentIn(pot, l.y, l.y + l.h); if (e) assert.ok(l.x + l.w <= e[0] - 8 + 1e-6, 'a line clears the pot'); }
+  }
+  assert.ok(shortened >= 16 * 3, 'the pot shortens lines at every turn: ' + shortened);
+});
+
+test('the still\'s hug is a float beside the column\'s right edge, and the paragraph needs no oracle to lay itself', () => {
+  for (const hq of [55, 78, 120]) {
+    const col = columnAt(hq), h = hugFloat(toScreen(surfacePoints(0.6), 0, 0, hq), col, { pad: Math.max(8, hq * 0.2) });
+    assert.ok(h && h.w > hq * 0.3 && h.w < hq * 1.2 && h.h > hq * 0.9, `the hug at ${hq}: ${h.w.toFixed(0)} x ${h.h.toFixed(0)}`);
+    assert.ok(h.polygon.startsWith('polygon('));
+  }
+});

@@ -109,22 +109,26 @@ sg-otp:has(> input:disabled) .sg-otp-boxes { opacity: 0.6; }
 
 sg-otp:is([data-skin="warm"], [data-skin="playful"]) {
   --sg-otp-ink-color: var(--sg-accent-text);
-  --sg-otp-frame: color-mix(in oklch, var(--sg-accent-text) 45%, transparent);
+  /* the box's boundary is the neutral strong rule (3:1 on every surface in every palette, 1.4.11); the inked frame
+     comes with the digit, and the inner stamp ring is accent ink at 45 percent, decoration only */
+  --sg-otp-frame: var(--sg-rule-strong);
+  --sg-otp-ring: color-mix(in oklch, var(--sg-accent-text) 45%, transparent);
 }
 sg-otp:is([data-skin="warm"], [data-skin="playful"]) .sg-otp-box {
   border: 2px solid var(--sg-otp-frame);
   border-radius: 3px;
-  box-shadow: inset 0 0 0 3px var(--sg-surface-raised), inset 0 0 0 4.2px var(--sg-otp-frame);
+  box-shadow: inset 0 0 0 3px var(--sg-surface-raised), inset 0 0 0 4.2px var(--sg-otp-ring);
   font: 400 var(--sg-step-3, 1.75rem) / 1 var(--sg-font-display, serif);
   transition: border-color var(--sg-dur-quick, 160ms) ease-out, box-shadow var(--sg-dur-quick, 160ms) ease-out;
 }
 /* a stamped box: the frame inks with the digit */
 sg-otp:is([data-skin="warm"], [data-skin="playful"]) .sg-otp-box[data-filled] {
   --sg-otp-frame: var(--sg-otp-ink-color);
+  --sg-otp-ring: var(--sg-otp-ink-color);
 }
 
 /* a code that was not accepted: the frames and digits turn to the danger ink, in every register */
-sg-otp:has(> input[aria-invalid="true"]) { --sg-otp-frame: var(--sg-danger); --sg-otp-ink-color: var(--sg-danger); }
+sg-otp:has(> input[aria-invalid="true"]) { --sg-otp-frame: var(--sg-danger); --sg-otp-ring: var(--sg-danger); --sg-otp-ink-color: var(--sg-danger); }
 /* the ink texture sits on the digit only, so the focus ring stays whole */
 sg-otp:is([data-skin="warm"], [data-skin="playful"]) .sg-otp-digit { filter: var(--sg-otp-ink, none); }
 
@@ -137,3 +141,8 @@ sg-otp .sg-otp-spread {
   background: radial-gradient(closest-side, color-mix(in oklch, var(--sg-accent-text) 30%, transparent), transparent);
   opacity: 0;
 }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+/* (see below) */
+/* a code field has no press: focus is its press, and the focus ring above answers it */
+@media (prefers-reduced-motion: reduce) { sg-otp * { transition: none; } }

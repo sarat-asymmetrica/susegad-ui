@@ -8,14 +8,31 @@
 // outward exactly, the area-preserving marbling map, and the stylus or a hand
 // writes velocity into a field every boundary point is carried through).
 // Two small additions for the library: stepBath() leaves alone the points
-// under the page's words (B.hold) and the drops the renderer has marked as
-// landing there (d.skip); and times(), sheetSeed() and model() below.
+// under the page's words (B.hold), easing the drift in over a band around
+// them (freedom()), and the drops the renderer has marked as landing there
+// (d.skip); and times(), sheetSeed() and model() below.
 // No DOM in any of it.
 
 import { makeNoise, rng, clamp, smoothstep, ease, TAU, measure } from '../../engine/index.js';
 
 /** Is (x, y) inside (or within 30 units of) any rect? */
 export const held = (rects, x, y, pad = 30) => rects.some(r => x > r.x - pad && x < r.x + r.w + pad && y > r.y - pad && y < r.y + r.h + pad);
+
+/**
+ * How free the size is to move at (x, y): 0 wherever held() is true, rising
+ * smoothly to 1 by `ramp` units beyond that. The ramp spreads the shear
+ * between held and moving size over a band, so the edge of the calm zone
+ * reads as thicker size rather than a straight cut through the marbling.
+ */
+export function freedom(rects, x, y, pad = 30, ramp = 60) {
+  let f = 1;
+  for (const r of rects) {
+    const d = Math.max(r.x - x, x - r.x - r.w, r.y - y, y - r.y - r.h);
+    if (d <= pad) return 0;
+    if (d < pad + ramp) f = Math.min(f, smoothstep(pad, pad + ramp, d));
+  }
+  return f;
+}
 
 // ── Layout ────────────────────────────────────────────────────────────────
 
@@ -199,7 +216,8 @@ export function stepBath(B, dt) {
   for (const p of B.polys) {
     const P = p.pts;
     for (let i = 0; i < P.length; i += 2) {
-      if (hold.length && held(hold, P[i], P[i + 1])) continue;
+      const free = hold.length ? freedom(hold, P[i], P[i + 1]) : 1;
+      if (!free) continue;
       let gx = (P[i] - FX0) / FC, gy = (P[i + 1] - FY0) / FC;
       if (gx < 0 || gy < 0 || gx >= FW - 1 || gy >= FH - 1) continue;
       const ix = gx | 0, iy = gy | 0, fx = gx - ix, fy = gy - iy, c = iy * FW + ix;
@@ -211,7 +229,7 @@ export function stepBath(B, dt) {
         uy += cloud * (cyA[c] * w00 + cyA[c + 1] * w10 + cyA[c + FW] * w01 + cyA[c + FW + 1] * w11);
       }
       if (ux * ux + uy * uy < 1e-4) continue;
-      P[i] += ux * dt; P[i + 1] += uy * dt;
+      P[i] += ux * free * dt; P[i + 1] += uy * free * dt;
     }
   }
   B.t = t;

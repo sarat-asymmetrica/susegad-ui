@@ -1,0 +1,28 @@
+{
+  "name": "tumble",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Tumble",
+  "description": "A headline that arrives. It wraps a real heading and leaves it alone: the text stays one string in the page, read once, selectable and translatable, while an aria-hidden copy of its letters, laid exactly over it, moves for about a second. Quiet is still. Warm slides the lines in from alternate sides and settles them. Playful drops each letter from above with a little spin, bounces it once and settles it, one after another. It plays once, the first time it is seen, or when the page calls play() (manual), and it waits for the web fonts before it measures. The heading is never left hidden: not without JavaScript, not before it runs, not if anything throws. Works under a strict Content-Security-Policy.",
+  "version": "0.1.0",
+  "useFor": ["headline", "heading", "hero", "section-heading"],
+  "files": [
+    "tumble.js",
+    "tumble.core.js",
+    "tumble.css",
+    "skins/layer.js",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "tumble.prompt.md",
+    "tumble.docs.md"
+  ],
+  "dependencies": ["core-component", "core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "tumble.prompt.md",
+  "docs": "tumble.docs.md",
+  "budget": {
+    "jsBytes": 24576,
+    "reason": "A component: element 3.7 KB, pure core 6 KB (letters, lines, the two plans and their keyframes), the overlay builder 9 KB, three one-line skins. No frame loop: every movement is a Web Animation on a transform, started once and cancelled when it settles."
+  }
+}

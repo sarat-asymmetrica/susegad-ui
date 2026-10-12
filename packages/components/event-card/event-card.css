@@ -183,3 +183,13 @@ sg-event-card[data-skin="playful"] > article > :is(h1, h2, h3, h4) { font-size: 
   sg-event-card > article { border: 1px solid CanvasText; }
   sg-event-card .sg-event-cta a { border: 1px solid ButtonText; }
 }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-event-card a { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-event-card a:active { translate: 0 1px; color: color-mix(in oklab, var(--sg-accent-text, currentColor), var(--sg-text, CanvasText) 25%); text-decoration: underline; text-decoration-thickness: 2px; transition: none !important; }
+sg-event-card[data-skin="warm"] .sg-event-cta a:active { translate: none; }
+sg-event-card[data-skin="playful"] .sg-event-cta a:active { translate: none; scale: 0.97; }
+@media (prefers-reduced-motion: reduce) {
+  sg-event-card a { transition: none; }
+  sg-event-card a:active { translate: none !important; scale: none !important; }
+}

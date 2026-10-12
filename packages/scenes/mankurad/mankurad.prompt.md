@@ -38,6 +38,10 @@ Make a quiet, 45-second animated short in canvas JavaScript, drawn to look like 
 | stepping the pendulum at fixed sixtieths | state | The swing is computed once for the whole story and remembered, and the fall starts from where it hung at 28.6 s. With progress set, the story sits at that beat (1.3 s to 40.5 s), time stands still, and the status says the percentage. |
 | Keep the rain and the words off any text laid over the drawing | calm | A raindrop, a ring or a splash that would cross the page’s text boxes is not drawn, and the drawn words hide when they would sit under them. |
 
+## On a page
+
+A bare `<sg-scene name="mankurad">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/mankurad/index.js">` with `<sg-scene name="mankurad" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing's name is its `alt`. With `progress` set, the element says the percentage in a polite status region, at most once a second. The story loops through a fade to paper, and the pause button stops it. In playful the drawing takes focus and Enter or Space tells the story again from the start. The koel's call is drawn as words, never played: this scene makes no sound. Rain, ripples, splashes and the drawn words keep off any text laid over the drawing.

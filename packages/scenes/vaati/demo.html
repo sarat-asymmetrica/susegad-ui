@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vaati scene</title>
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  body { margin: 0; background: var(--sg-surface, Canvas); color: var(--sg-text, CanvasText); font: 16px/1.5 var(--sg-font-body, system-ui, sans-serif); }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .lede { margin: 0 0 20px; color: var(--sg-text-soft, inherit); }
+  form { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 20px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  legend { font-weight: 600; float: left; margin-right: 8px; }
+  button, select { font: inherit; padding: 6px 14px; border-radius: 6px; border: 1px solid currentColor; background: none; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--sg-focus, Highlight); outline-offset: 2px; }
+  #made { font-size: 0.95rem; color: var(--sg-text-soft, inherit); min-height: 1.5em; }
+
+  /* the opening: the scene full-bleed behind a title and a way in. On a phone held upright the scene is
+     cropped to its middle (it is 120svh wide, so the bowl is about three quarters of a 390 px width and the
+     pieces arrive through the room either side). The scene is centred with margins, not a transform, and the
+     page pins the scene's pause button to the viewport's corner by the same arithmetic, so no register or
+     size can crop it out of reach; overflow: clip means focus can never scroll the opening. */
+  .opening { --w: max(100vw, 120svh); position: fixed; inset: 0; overflow: clip; background: var(--sg-paper, Canvas); display: none; }
+  .opening sg-scene { position: absolute; left: 50%; top: 50%; width: var(--w); margin: calc(var(--w) / -3) 0 0 calc(var(--w) / -2); }
+  /* a phone held upright (taller than wide, where the scene falls well short of the screen): so its edges melt into the page's paper instead of ending in a line
+     (no-clip lets the pause button, which sits outside the scene's box, stay unmasked) */
+  @media (max-aspect-ratio: 1/1) { .opening sg-scene { -webkit-mask: linear-gradient(transparent, #000 14%, #000 86%, transparent) no-clip; mask: linear-gradient(transparent, #000 14%, #000 86%, transparent) no-clip; } }
+  .opening sg-scene::part(toggle) { top: calc(12px + (var(--w) * 2 / 3 - 100svh) / 2); right: calc(12px + (var(--w) - 100vw) / 2); }
+  .opening .words { position: absolute; inset: 0; display: grid; grid-template-rows: 1fr auto 1fr; justify-items: center; padding: 6svh 20px; text-align: center; pointer-events: none; }
+  .opening h2 { margin: 0; font-size: clamp(1.8rem, 7vw, 3.2rem); line-height: 1.05; align-self: start; color: var(--sg-ink, CanvasText); }
+  .opening .enter { grid-row: 3; align-self: end; pointer-events: auto; opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity .5s, transform .5s, visibility 0s .5s; font-size: 1.1rem; padding: 10px 26px; border-radius: 999px; background: var(--sg-ink, CanvasText); color: var(--sg-paper, Canvas); border: 0; }
+  .opening.settled .enter { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+  .opening .skip { position: absolute; z-index: 3; top: 12px; left: 12px; min-width: 44px; min-height: 44px; padding: 6px 16px; border: 0; border-radius: 999px; background: var(--sg-scrim, color-mix(in oklab, Canvas 80%, transparent)); color: var(--sg-scrim-ink, var(--sg-text, CanvasText)); font-size: 0.95rem; }
+  .opening.settled .skip { display: none; }
+  .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .opening[hidden] { display: none !important; }
+  :root.is-opening main { display: none; }
+  :root.is-opening .opening { display: block; }
+</style>
+</head>
+<body>
+<div class="opening" id="opening">
+  <button class="skip" type="button" id="skip" aria-label="Skip the animation">Skip</button>
+  <div class="vh" role="status" id="ready"></div>
+  <sg-scene id="open-scene" name="vaati" label="Your order, being made"></sg-scene>
+  <div class="words">
+    <h2>Little Tarka Kitchen</h2>
+    <button class="enter" type="button" id="enter">Come in</button>
+  </div>
+</div>
+<main>
+  <h1>Vaati</h1>
+  <p class="lede">The bowl fills. A dev page for the scene: registers, the theme, what goes in the bowl, and progress driven from a slider standing in for real work. Add <code>?opening=1</code> for the full-screen opening a site would use. Making the meal takes about 16 seconds in warm and about 6 in playful (quiet is a finished bowl at once), so the opening offers a Skip from its first frame: the scene's settle brings in the words and the way in, and Skip simply settles it early.</p>
+  <sg-scene id="vaati" name="vaati" label="Your order"></sg-scene>
+  <p id="made">Time is filling the bowl.</p>
+  <form id="controls">
+    <fieldset>
+      <legend>Register</legend>
+      <label><input type="radio" name="register" value="quiet"> Quiet</label>
+      <label><input type="radio" name="register" value="warm"> Warm</label>
+      <label><input type="radio" name="register" value="playful"> Playful</label>
+    </fieldset>
+    <label><input type="checkbox" id="dark"> Dark</label>
+    <label>Pasta <select id="pieces"><option>ravioli</option><option>tortellini</option><option>gnocchi</option><option>farfalle</option></select></label>
+    <label>Sauce <select id="sauce"><option>tomato</option><option>pesto</option><option>cream</option><option>none</option></select></label>
+    <label>Topping <select id="topping"><option>cheese</option><option>none</option></select></label>
+    <label>Garnish <select id="garnish"><option>basil</option><option>none</option></select></label>
+    <label><input type="checkbox" id="useProgress"> Show progress</label>
+    <label for="progress">Order made</label>
+    <input type="range" id="progress" min="0" max="100" step="5" value="40" disabled>
+    <button type="button" id="replay">Make it again</button>
+  </form>
+</main>
+<script type="module">
+  const q = new URLSearchParams(location.search), root = document.documentElement;
+  const el = document.getElementById('vaati');
+  const register = q.get('register') || 'warm';
+  root.dataset.register = register;
+  if (q.get('theme')) root.dataset.theme = q.get('theme');
+  if (q.get('palette')) root.dataset.palette = q.get('palette');
+  const opening = q.get('opening') === '1', target = opening ? document.getElementById('open-scene') : el;
+  if (opening) root.classList.add('is-opening');
+  for (const k of ['seed', 'progress', 'pieces', 'sauce', 'topping', 'garnish']) if (q.has(k)) target.setAttribute(k, q.get(k));
+  target.addEventListener('sg-ready', () => { window.__ready = true; }, { once: true });
+  window.__piece = target;
+  // the page brings in its words when the meal is made, never on a timer
+  const made = document.getElementById('made');
+  let skipped = false;
+  target.addEventListener('sg-scene-settled', () => {
+    made.textContent = 'The bowl is ready.';
+    const onSkip = document.activeElement === document.getElementById('skip'); // Skip goes away at the settle, so keep the keyboard going where it was headed
+    document.getElementById('opening').classList.add('settled');
+    document.getElementById('ready').textContent = 'The bowl is ready.';
+    if (skipped || onSkip) document.getElementById('enter').focus();
+    window.__settled = (window.__settled || 0) + 1;
+  });
+  await import('./index.js');
+
+  const form = document.getElementById('controls'), dark = document.getElementById('dark');
+  const use = document.getElementById('useProgress'), range = document.getElementById('progress');
+  form.register.value = register;
+  dark.checked = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  for (const k of ['pieces', 'sauce', 'topping', 'garnish']) {
+    const s = document.getElementById(k);
+    if (el.hasAttribute(k)) s.value = el.getAttribute(k);
+    s.onchange = () => el.setAttribute(k, s.value);
+  }
+  // a stand-in for real work: an order that is 0 to 100% made, as the slider moves
+  const show = () => {
+    if (!use.checked) { el.removeAttribute('progress'); made.textContent = 'Time is filling the bowl.'; return; }
+    el.setAttribute('progress', (range.value / 100).toFixed(2));
+    made.textContent = `Your order is ${range.value}% made.`;
+  };
+  use.checked = el.hasAttribute('progress');
+  range.disabled = !use.checked;
+  if (use.checked) range.value = Math.round(+el.getAttribute('progress') * 100);
+  form.addEventListener('change', e => {
+    if (e.target.name === 'register') root.dataset.register = form.register.value;
+    if (e.target === dark) root.dataset.theme = dark.checked ? 'dark' : 'light';
+    if (e.target === use) { range.disabled = !use.checked; show(); }
+  });
+  range.addEventListener('input', show);
+  document.getElementById('replay').onclick = () => { made.textContent = 'Time is filling the bowl.'; el.replay(); };
+  document.getElementById('skip').onclick = () => { skipped = true; target.still(); };
+  document.getElementById('enter').onclick = () => { document.getElementById('opening').hidden = true; };
+</script>
+</body>
+</html>

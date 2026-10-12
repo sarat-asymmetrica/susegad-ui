@@ -34,6 +34,10 @@ Build three small UI pieces on one paper-textured canvas in plain JavaScript, dr
 | Give the lamp a lit attribute | state | lit="false" puts the lamp out, with its curl of smoke; lit="true" lights it again with a small overshoot. A tap in playful turns it only until the attribute changes. |
 | stop each wisp of steam where the page’s own words begin | calm | Each wisp is cut at the first point within 24 units of a text box, so steam never drifts through the words. |
 
+## On a page
+
+A bare `<sg-scene name="chai">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/chai/index.js">` with `<sg-scene name="chai" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing's name is its `alt`; give it a `label` when the lamp means something on your page. The lamp is not a control: a real toggle belongs in the page (a `<button aria-pressed>` or a switch) and can set `lit`. In playful the drawing takes focus: the arrow keys move a hand and Enter or Space by the lamp puts it out or lights it; anywhere else the creeper grows again. Steam never drifts through words laid over the sheet.

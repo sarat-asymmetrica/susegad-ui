@@ -14,6 +14,7 @@ import { stage, rng, N, ink, hatch, wash, blob, catmull, paper, boil, clamp, ler
 import { readColors } from '../../core/colors.js';
 import { W, H, GROUND, KATTA_TOP, PIPE, TRUNK_W, birthTimeOf, scheduleOf, clumpGrow, SKY, layMoment, skyShape, skySizes } from './model.js';
 import { createSurface } from '../../type/surface.js';
+import { stackOf } from '../../type/stacks.js';
 
 const INK = '#2e2319', LEAF = '#26301e', WASH = '#9eab7c', BARK = '#ebe1cd';
 
@@ -239,7 +240,8 @@ const dusk = g => {
 export function createRenderer(host, { invalidate = () => {}, scene = null } = {}) {
   const st = stage(host, { W, H });
   // words in the world: the page's words in the sky beside the canopy (lazy; nothing loads until they are placed)
-  const surface = createSurface({ host, scene, W, H, invalidate, family: 'Kalam', color: `var(--sg-text, ${INK})` }); // ink on paper, light on dusk
+  const HAND = stackOf(host, 'hand'); // the token stack, not 'Kalam' alone: Kalam has no Kannada and a canvas inherits nothing
+  const surface = createSurface({ host, scene, W, H, invalidate, family: HAND, color: `var(--sg-text, ${INK})` }); // ink on paper, light on dusk
   let colors = null, persist = null, persistKey = '', variants = [], variantsKey = '', lastKey = '';
   st.onresize = () => { lastKey = ''; invalidate(); };
   const palette = () => (colors ??= readColors(host, { dark: 'light-dark(#000000, #ffffff)' }));
@@ -270,7 +272,7 @@ export function createRenderer(host, { invalidate = () => {}, scene = null } = {
     const lm = layMoment(local, data.endTime), on = data.words === 'world' && frame.register !== 'quiet';
     const words = surface.update(on, `${data.seed}|${lm.toFixed(2)}`, (type, blocks, scale, rootPx) => type.setBlocks(
       blocks.map(b => ({ ...b, ratio: b.tag === 'p' ? 1 : 1.4 })), skyShape(data.tree, lm, 560),
-      { sizes: skySizes(scale, rootPx), family: 'Kalam', top: SKY.top, bottom: 420, scale, minWidth: 60, valign: 'top', align: 'left' }));
+      { sizes: skySizes(scale, rootPx), family: HAND, top: SKY.top, bottom: 420, scale, minWidth: 60, valign: 'top', align: 'left' }));
     // the ink boils a few times a second once the tree is grown; while it grows, the plate's twelve a second
     const beat = still || data.held ? 0 : done ? boil(t, look.boil) % 3 : Math.floor(t * 12);
     const calmKey = calm.map(r => `${r.x | 0},${r.y | 0},${r.w | 0},${r.h | 0}`).join(';');

@@ -133,6 +133,33 @@ for (const register of ['quiet', 'playful']) {
   await ctx.close();
 }
 
+// ── sound and haptic: the set completes once, whoever focused what ─────────
+// The select-all box ticked from script (focus stays on the body) and each child ticked by
+// hand: one complete cue each time the set becomes whole, never two, never on load.
+{
+  const ctx = await browser.newContext();
+  await ctx.addInitScript(() => {
+    localStorage.setItem('sg-sound', '1');
+    window.__buzz = 0;
+    navigator.vibrate = () => { window.__buzz++; return true; };
+  });
+  const p = await ctx.newPage();
+  await p.goto(`${demo}?register=warm`);
+  await p.waitForFunction(() => window.__ready && [...document.querySelectorAll('sg-check')].every(e => e.dataset.skin));
+  await p.mouse.click(5, 5); // a gesture, so the sound switch may speak
+  const buzz = () => p.evaluate(() => window.__buzz);
+  check('no cue on load or on a stray click', await buzz() === 0);
+  await p.evaluate(() => document.activeElement?.blur());
+  await p.evaluate(() => document.querySelector('sg-check[controls] > input, sg-check[controls] input').click());
+  check('select-all ticked with focus on the body: one complete cue, not two', await buzz() === 1, String(await buzz()));
+  await p.evaluate(() => document.querySelector('sg-check[controls] input').click());
+  const before = await buzz();
+  await p.evaluate(() => { for (const id of ['x-breakfast', 'x-pickup']) document.getElementById(id).click(); });
+  await p.evaluate(() => document.getElementById('x-late').click());
+  check('the last child ticked by hand completes the set: one more cue', await buzz() === before + 1, `${before} -> ${await buzz()}`);
+  await ctx.close();
+}
+
 await browser.close();
 await server.close();
 const failed = results.filter(r => !r.ok).length;

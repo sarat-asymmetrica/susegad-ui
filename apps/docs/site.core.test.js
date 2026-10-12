@@ -78,6 +78,9 @@ test('posters: none without a poster; the swap hook and lazy by default', () => 
   assert.match(img, /data-poster="\.\.\/posters\/badge"/);
   assert.match(img, /loading="lazy"/);
   assert.doesNotMatch(posterImg('badge', { w: 1, h: 1 }, 0, { eager: true }), /loading=/);
+  // decision 0023: AVIF, then WebP, then the JPG img that carries the size
+  assert.match(img, /^<picture><source type="image\/avif" srcset="\.\.\/posters\/badge\.warm\.light\.avif"><source type="image\/webp" srcset="\.\.\/posters\/badge\.warm\.light\.webp"><img /);
+  assert.match(img, /width="640" height="400"/);
 });
 
 test('a card links its page by its title and never shows a stray count', () => {
@@ -123,7 +126,10 @@ test('a scene page: one drawing, its words as HTML, prompt and map folded, prev/
   assert.match(html, /rel="prev"[\s\S]*Kolam|href="\.\.\/scenes\/kolam" rel="prev"/);
   assert.match(html, /href="\.\.\/scenes\/tinto" rel="next"/);
   assert.match(html, /Words in the world/);
-  assert.match(html, /class="poster scene-still"/);
+  // the poster is the first paint, inside <sg-lazy>, before the (hidden) scene; the scene's module is the lazy src
+  assert.match(html, /<sg-lazy src="\.\.\/packages\/scenes\/paus\/index\.js"[^>]*>\s*<picture>[\s\S]*<img class="poster"[^>]*fetchpriority="high"[^>]*>\s*<\/picture>\s*<sg-scene [^>]*name="paus"[^>]* hidden><\/sg-scene>/);
+  assert.match(html, /<source type="image\/avif" srcset="\.\.\/posters\/scene-paus\.warm\.light\.avif">/);
+  assert.doesNotMatch(html, /scene-still/);
   assert.match(html, /Plate II/);
 });
 
@@ -134,7 +140,7 @@ test('an item page: docs and prompt as given markup, deps linked, demo button, i
   assert.match(html, /<p>Make a badge\.<\/p>/);
   assert.match(html, /href="\.\.\/foundations\/core">Core</);
   assert.match(html, /href="\/packages\/components\/badge\/demo\.html">Open the live demo/);
-  assert.match(html, /npx susegad add badge/);
+  assert.match(html, /npx @susegad\/cli add badge/);
   assert.match(html, /href="\.\.\/components\/check" rel="next"/);
   assert.doesNotMatch(html, /\.md"/);
 });
@@ -218,4 +224,19 @@ test('link previews: absolute URLs, the default card, a piece previews with its 
   assert.match(own, /og:image" content="https:\/\/susegad\.asymmetrica\.ai\/posters\/scene-vad\.warm\.light\.jpg"/);
   assert.match(own, /og:image:width" content="688"/);
   assert.equal(posterImage({ name: 'x', title: 'x' }, undefined), OG_DEFAULT);
+});
+
+test('a template page says how to start it, with create and not add, and has a pathOf', () => {
+  const t = { name: 'template-event', type: 'template', title: 'Event page', description: 'A starter site.', registers: ['quiet', 'warm', 'playful'] };
+  assert.equal(pathOf(t), 'templates/event');
+  const html = itemPage(t, { list: [t], index: 0, poster: undefined, demo: null, docsHtml: '', promptHtml: '', deps: [] });
+  assert.match(html, /npx @susegad\/cli create my-site --template event/);
+  assert.doesNotMatch(html, /susegad add template-event/);
+});
+
+test('a template page offers the site the build made from it, in plain words', () => {
+  const t = { name: 'template-event', type: 'template', title: 'Event page', description: 'A starter site.', registers: ['quiet', 'warm', 'playful'] };
+  const html = itemPage(t, { list: [t], index: 0, poster: undefined, demo: '/templates/event/site/', docsHtml: '', promptHtml: '', deps: [] });
+  assert.match(html, /href="\/templates\/event\/site\/">See it working<\/a>/);
+  assert.doesNotMatch(html, /Open the live demo/);
 });

@@ -110,6 +110,26 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 
+// ── 1.4.3: text that fades in as it scrolls into view must end fully shown, even as the last thing on the page ──
+{
+  const html = tail => `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>t</title>
+    <link rel="stylesheet" href="/packages/tokens/tokens.css"><link rel="stylesheet" href="/packages/components/scroll-section/scroll-section.css"></head>
+    <body style="margin:0"><sg-scroll-section><div style="height:1400px"></div><p class="sg-scroll-reveal" id="r" style="margin:0 0 0 1rem">The last paragraph on the page.</p>${tail}</sg-scroll-section></body></html>`;
+  for (const [name, tail, want] of [['the last thing on the page', '', 0.99], ['control: with 1400 px of page after it', '<div style="height:1400px"></div>', 0.99]]) {
+    const ctx = await browser.newContext({ viewport: { width: 1000, height: 800 } });
+    const p = await ctx.newPage();
+    await ctx.route('**/__check/reveal.html', r => r.fulfill({ contentType: 'text/html; charset=utf-8', body: html(tail) }));
+    await p.goto(`${server.url}/__check/reveal.html`);
+    const supported = await p.evaluate(() => CSS.supports('animation-timeline: view()'));
+    // scroll as far as the page goes (for the control, until the paragraph is mid-screen)
+    await p.evaluate(t => { const r = document.getElementById('r'); if (t) window.scrollTo(0, r.offsetTop - 300); else window.scrollTo(0, document.documentElement.scrollHeight); }, tail);
+    await p.waitForTimeout(300);
+    const op = await p.evaluate(() => +getComputedStyle(document.getElementById('r')).opacity);
+    check(`a .sg-scroll-reveal paragraph, ${name}, ends fully shown (opacity ${want} or more)`, !supported || op >= want, `opacity ${op.toFixed(2)}${supported ? '' : ' (no scroll timelines in this browser: always shown)'}`);
+    await ctx.close();
+  }
+}
+
 await browser.close();
 await server.close();
 const failed = results.filter(r => !r.ok).length;

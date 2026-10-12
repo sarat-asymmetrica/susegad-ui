@@ -25,15 +25,16 @@
 <body>
   <main>
     <h1>Dialog</h1>
-    <p class="lede">A modal on the native &lt;dialog&gt;: showModal() traps focus and blocks the page, Escape closes, and the browser gives focus back to whichever opener you used. Without JavaScript, every opener below is a real link to a real page.</p>
+    <p class="lede">A modal on the native &lt;dialog&gt;: showModal() traps focus and blocks the page, Escape closes, and the browser gives focus back to whichever opener you used. Without JavaScript, the links below go to a real page, and the button opens the dialog by itself: <code>commandfor</code> and <code>command="show-modal"</code> are the browser's own.</p>
 
     <p class="body-copy">This paragraph of body copy sits behind every dialog on this page. It exists so a screenshot can show, in every register and theme, that the scrim keeps it present but never legible as text through it: read this sentence, then open a dialog and try to read it again through the backdrop. The house at Balcão has eleven rooms, a courtyard well and a mango tree older than the family's own memory of when it was planted, and none of that should be readable once the dialog is open.</p>
 
     <a class="opener" href="./no-js.html" data-sg-dialog="ask">Ask the house</a>
     <a class="opener" href="./no-js.html" data-sg-dialog="confirm">Confirm a hold</a>
+    <button class="opener" type="button" commandfor="ask-dialog" command="show-modal">Ask the house, no script needed</button>
 
     <sg-dialog id="ask">
-      <dialog>
+      <dialog id="ask-dialog">
         <h2>Ask the house</h2>
         <p>Tell us your dates and how many are coming, and we will write back within a day.</p>
         <form method="dialog">
@@ -48,7 +49,7 @@
     </sg-dialog>
 
     <sg-dialog id="confirm">
-      <dialog>
+      <dialog id="confirm-dialog">
         <h2>Confirm a hold</h2>
         <p>We will hold 12 to 15 October for 20 minutes while you decide.</p>
         <form method="dialog">

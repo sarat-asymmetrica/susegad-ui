@@ -9,7 +9,7 @@ Susegad UI is a front-end library for interfaces and documents that are beautifu
 
 The durable description is `docs/CHARTER.md`. Decisions that change it live in `docs/decisions/`. When this file and the code disagree, the code wins; say so, and fix whichever is wrong.
 
-This file stays short on purpose. It has what every task needs first: the register, install, and where to go next. The `references/` files below hold the rest, verbatim from the fuller version this replaced; nothing was cut, only moved.
+This file stays short on purpose. It has what every task needs first: the register, install, and where to go next. The `references/` files below hold the rest.
 
 ## 1. Choose a register
 
@@ -47,6 +47,8 @@ node <path-to-susegad-ui>/packages/cli/bin/susegad.mjs add scene-kolam --dir app
 ```
 
 `susegad list` (or `list --json`) is the live, current shelf: don't guess item names from this file, ask the CLI. `add` copies an item and everything it depends on; `info <item>` shows its files, dependencies, registers, byte budget, stability label and prompt path. Files land at `<dir>/susegad/<path>` (default `src/lib`), with the tree kept, so relative imports between pieces still resolve. Running `add` again updates files you have not touched and leaves your edits alone unless you pass `--overwrite`; `susegad diff <item> --patch` shows what changed. `--ref <commit>` installs from a commit, branch or tag, never the working tree. No bundler, no bare specifiers: library code imports by relative path only.
+
+Already on shadcn? `npx shadcn@latest add <site>/r/<item>.json` installs the same files from the registry's shadcn view, with caveats (no fonts or audio, no lockfile): see [`references/install-shadcn.md`](references/install-shadcn.md).
 
 Then load tokens, fonts and core, and use tokens rather than raw colours: see [`references/tokens.md`](references/tokens.md).
 

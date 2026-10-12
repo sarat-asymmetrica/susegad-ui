@@ -23,11 +23,22 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { REGISTERS, THEMES, slugOf } from './site.core.js';
 
-const VERSION = '4'; // bump to re-shoot everything (a change to how posters are taken)
+const VERSION = '5'; // bump to re-shoot everything (a change to how posters are taken)
 const DESK = { width: 760, height: 475 }; // a demo is shot at this viewport (narrow enough that its words read on a card)...
 const DEMO_SCALE = 640 / 760; // ...and this device scale: a 640 x 400 picture
 const SCENE_VIEW = { width: 720, height: 900 };
 const CONCURRENCY = 4;
+/** The formats of a poster, in the order a <picture> offers them; the last is the fallback. */
+export const POSTER_FORMATS = ['avif', 'webp', 'jpg'];
+const ENCODE = { avif: { quality: 55, effort: 4 }, webp: { quality: 78, effort: 4 }, jpg: { quality: 72, mozjpeg: true } };
+
+const loadSharp = async () => { try { return (await import('sharp')).default; } catch { return null; } };
+
+/** One shot as every format, beside `stem`. Pure of the page: bytes in, files out. Returns the formats written. */
+export async function encodePoster(sharp, png, stem) {
+  await Promise.all(POSTER_FORMATS.map(f => sharp(png)[f === 'jpg' ? 'jpeg' : f](ENCODE[f]).toFile(`${stem}.${f}`)));
+  return POSTER_FORMATS;
+}
 
 /** What a poster is taken from, or null. Pure. */
 export function posterSource(item, fileExists) {
@@ -72,6 +83,8 @@ export async function makePosters({ root, out, registry, log = console.log }) {
 
   const todo = jobs.filter(j => !fs.existsSync(`${j.stem}.json`));
   let shot = 0, failed = [];
+  const sharp = todo.length ? await loadSharp() : null;
+  if (todo.length && !sharp) log('posters: sharp is not installed, so only the JPG posters are written (no AVIF or WebP)');
   if (todo.length) {
     const { chromium } = await import('playwright');
     const { startServer } = await import('../../tools/serve.mjs');
@@ -81,7 +94,7 @@ export async function makePosters({ root, out, registry, log = console.log }) {
       const queue = [...todo];
       await Promise.all(Array.from({ length: CONCURRENCY }, async () => {
         for (let j = queue.shift(); j; j = queue.shift()) {
-          try { await capture(browser, server.url, j); shot++; }
+          try { await capture(browser, server.url, j, sharp); shot++; }
           catch (err) { failed.push(`${j.item.name}: ${String(err.message || err).split('\n')[0]}`); }
         }
       }));
@@ -98,7 +111,10 @@ export async function makePosters({ root, out, registry, log = console.log }) {
   for (const j of jobs) {
     if (!fs.existsSync(`${j.stem}.json`)) continue;
     posters[j.item.name] = JSON.parse(fs.readFileSync(`${j.stem}.json`, 'utf8'));
-    for (const r of REGISTERS) for (const t of THEMES) fs.copyFileSync(`${j.stem}.${r}.${t}.jpg`, path.join(dest, `${j.item.name}.${r}.${t}.jpg`));
+    for (const r of REGISTERS) for (const t of THEMES) for (const f of POSTER_FORMATS) {
+      const from = `${j.stem}.${r}.${t}.${f}`;
+      if (fs.existsSync(from)) fs.copyFileSync(from, path.join(dest, `${j.item.name}.${r}.${t}.${f}`));
+    }
   }
   // an old capture whose key no longer matches is dead weight: clear it
   const live = new Set(jobs.map(j => path.basename(j.stem)));
@@ -108,7 +124,7 @@ export async function makePosters({ root, out, registry, log = console.log }) {
   return { posters, failed };
 }
 
-async function capture(browser, base, { item, src, stem }) {
+async function capture(browser, base, { item, src, stem }, sharp) {
   let size = null;
   for (const theme of THEMES) for (const register of REGISTERS) {
     const scene = src.kind === 'scene';
@@ -134,15 +150,20 @@ async function capture(browser, base, { item, src, stem }) {
       // a scene's own play/pause corner button is a control, not part of the picture
       await page.addStyleTag({ content: 'sg-scene::part(toggle) { display: none !important; }' });
       await page.waitForTimeout(scene ? 300 : 500);
-      const file = `${stem}.${register}.${theme}.jpg`;
+      const at = `${stem}.${register}.${theme}`;
+      // a PNG when there is an encoder to make the three formats from it; a JPG straight from the browser when there is not
+      const shoot = async (target, extra = {}) => {
+        if (!sharp) return void await target.screenshot({ path: `${at}.jpg`, type: 'jpeg', quality: 72, animations: 'disabled', ...extra });
+        await encodePoster(sharp, await target.screenshot({ type: 'png', animations: 'disabled', ...extra }), at);
+      };
       if (scene) {
         const el = page.locator('sg-scene').first();
-        await el.screenshot({ path: file, type: 'jpeg', quality: 72, animations: 'disabled' });
+        await shoot(el);
         const box = await el.boundingBox();
         size ??= { w: Math.round(box.width), h: Math.round(box.height) };
       } else {
         if (src.pastHeading) await page.evaluate(scrollPastHeading);
-        await page.screenshot({ path: file, type: 'jpeg', quality: 72, animations: 'disabled' });
+        await shoot(page);
         size ??= { w: Math.round(DESK.width * DEMO_SCALE), h: Math.round(DESK.height * DEMO_SCALE) };
       }
     } finally {

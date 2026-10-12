@@ -122,6 +122,33 @@ for (const register of ['warm', 'playful']) {
   await ctx.close();
 }
 
+// ── the native switch attribute (touch contract): iPhones give a system haptic on a real tap ──
+// The skins must still style it and the switch semantics hold. This engine may not implement the
+// attribute at all (Playwright's Windows WebKit does not: the native control is the same 12 px box
+// with or without it); then the check proves the attribute does no harm, and the haptic itself
+// needs a real iPhone (docs/contributing/touch-contract.md).
+for (const register of ['quiet', 'warm', 'playful']) {
+  const ctx = await browser.newContext();
+  const p = await ctx.newPage();
+  await p.goto(`${demo}?register=${register}`);
+  await p.waitForFunction(reg => window.__ready && [...document.querySelectorAll('sg-toggle')].every(e => e.dataset.skin || reg === 'quiet'), register);
+  const look = el => p.evaluate(([s, on]) => {
+    const i = document.querySelector(s);
+    i.toggleAttribute('switch', on);
+    const cs = getComputedStyle(i);
+    return { appearance: cs.appearance, w: cs.width, h: cs.height, radius: cs.borderTopLeftRadius, role: i.getAttribute('role'), art: !!i.closest('sg-toggle').querySelector('.sg-toggle-art') };
+  }, [hk, el]);
+  const without = await look(false), withSwitch = await look(true);
+  check(`${register}: the switch attribute is set by the element, and the skin looks the same with and without it`, await p.evaluate(s => document.querySelector(s).hasAttribute('switch'), hk) && JSON.stringify(without) === JSON.stringify(withSwitch), JSON.stringify(withSwitch));
+  check(`${register}: with the switch attribute it is still a switch for assistive tech, and Space still turns it`, await (async () => {
+    const snap = await p.locator(hk).ariaSnapshot();
+    const before = await p.isChecked(hk);
+    await p.focus(hk); await p.keyboard.press('Space');
+    return /^- switch "Daily housekeeping/.test(snap.trim()) && (await p.isChecked(hk)) !== before;
+  })());
+  await ctx.close();
+}
+
 // ── forced colours ──────────────────────────────────────────────────────────
 for (const register of ['quiet', 'playful']) {
   const ctx = await browser.newContext({ forcedColors: 'active' });

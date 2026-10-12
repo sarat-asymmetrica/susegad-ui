@@ -129,6 +129,27 @@ export function buildManifest({ root = ROOT } = {}) {
     });
   }
 
+  // Any other element an item defines in its own file, of any type (core's sg-lazy in lazy.js, the proposal
+  // recipe's sg-timeline, the narration reader): found by its own define call in the item's non-test source,
+  // wherever it sits, so a define outside core/index.js and the component files cannot go unlisted.
+  const listed = new Set(modules.flatMap(m => m.declarations.map(d => d.tagName)));
+  for (const item of index.items) {
+    for (const f of item.files.map(x => x.path).filter(p => /\.js$/.test(p) && !/\.(test|core|check)\.js$/.test(p))) {
+      const src = read(join(root, f));
+      for (const m of [...src.matchAll(CUSTOM_ELEMENTS_DEFINE), ...src.matchAll(DEFINE_COMPONENT)]) {
+        const [, tagName, className] = m;
+        if (listed.has(tagName)) continue;
+        listed.add(tagName);
+        modules.push({
+          kind: 'javascript-module',
+          path: f,
+          declarations: [declarationFor({ tagName, className, files: [f], root, ownCss: '' })],
+          exports: [{ kind: 'custom-element-definition', name: tagName, declaration: { name: className, module: f } }],
+        });
+      }
+    }
+  }
+
   modules.sort((a, b) => a.path.localeCompare(b.path));
   return { schemaVersion: '1.0.0', readme: '', modules };
 }

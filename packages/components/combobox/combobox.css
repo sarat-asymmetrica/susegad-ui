@@ -59,7 +59,8 @@ sg-combobox[data-open] .sg-combobox__caret { rotate: 180deg; }
   margin: 0.25rem 0;
   padding: 0.25rem;
   list-style: none;
-  max-block-size: min(18rem, 50vh);
+  /* --sg-combobox-room is set by combobox.js: the space on the roomier side of the input */
+  max-block-size: min(18rem, 50vh, var(--sg-combobox-room, 100vh));
   overflow: auto;
   border: 1px solid var(--sg-rule-strong, currentColor);
   border-radius: var(--sg-radius-1, 4px);
@@ -184,4 +185,15 @@ sg-combobox[data-skin='playful'] .sg-combobox__list { transition-timing-function
   sg-combobox .sg-rule { display: none; }
   sg-combobox input { border: 1px solid CanvasText !important; box-shadow: none !important; }
   sg-combobox .sg-combobox__list [aria-selected='true'] { outline: 2px solid Highlight; }
+}
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+.sg-combobox__caret, .sg-combobox__list [role='option'] { transition: rotate var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out), translate 120ms var(--sg-ease-out, ease-out); }
+.sg-combobox__caret:active { translate: 0 1px; color: var(--sg-text, CanvasText); transition: none !important; }
+.sg-combobox__list [role='option']:active { translate: 0 1px; background: color-mix(in oklab, transparent, var(--sg-text, CanvasText) 12%); transition: none !important; }
+sg-combobox[data-skin="warm"] .sg-combobox__list [role='option']:active { translate: none; background: color-mix(in oklab, transparent, var(--sg-text, CanvasText) 14%); }
+sg-combobox[data-skin="playful"] .sg-combobox__list [role='option']:active { translate: none; scale: 0.98; background: color-mix(in oklab, transparent, var(--sg-text, CanvasText) 12%); }
+@media (prefers-reduced-motion: reduce) {
+  .sg-combobox__caret, .sg-combobox__list [role='option'] { transition: none; }
+  .sg-combobox__caret:active, .sg-combobox__list [role='option']:active { translate: none !important; scale: none !important; }
 }

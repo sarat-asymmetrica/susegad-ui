@@ -121,6 +121,120 @@
     },
     {
       "kind": "javascript-module",
+      "path": "packages/components/bloom/bloom.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgBloom",
+          "tagName": "sg-bloom",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "kind"
+            },
+            {
+              "name": "count"
+            },
+            {
+              "name": "seed"
+            },
+            {
+              "name": "seed-from"
+            },
+            {
+              "name": "size"
+            },
+            {
+              "name": "label"
+            }
+          ],
+          "events": [],
+          "cssProperties": [
+            {
+              "name": "--sg-bloom-n"
+            },
+            {
+              "name": "--sg-bloom-size"
+            },
+            {
+              "name": "--sg-bloom-step"
+            },
+            {
+              "name": "--sg-bloom-total"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-bloom",
+          "declaration": {
+            "name": "SgBloom",
+            "module": "packages/components/bloom/bloom.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/bubble/bubble.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgBubble",
+          "tagName": "sg-bubble",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "kind"
+            },
+            {
+              "name": "tail"
+            },
+            {
+              "name": "seed"
+            },
+            {
+              "name": "speaker"
+            },
+            {
+              "name": "label"
+            }
+          ],
+          "events": [],
+          "cssProperties": [
+            {
+              "name": "--sg-bubble-fill"
+            },
+            {
+              "name": "--sg-bubble-max"
+            },
+            {
+              "name": "--sg-bubble-tail"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-bubble",
+          "declaration": {
+            "name": "SgBubble",
+            "module": "packages/components/bubble/bubble.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "packages/components/button/button.js",
       "declarations": [
         {
@@ -244,6 +358,11 @@
               "type": {
                 "text": "CustomEvent"
               }
+            }
+          ],
+          "cssProperties": [
+            {
+              "name": "--sg-combobox-room"
             }
           ]
         }
@@ -430,6 +549,60 @@
     },
     {
       "kind": "javascript-module",
+      "path": "packages/components/doodle/doodle.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgDoodle",
+          "tagName": "sg-doodle",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "motif"
+            },
+            {
+              "name": "band"
+            },
+            {
+              "name": "seed"
+            },
+            {
+              "name": "motifs"
+            },
+            {
+              "name": "label"
+            }
+          ],
+          "events": [],
+          "cssProperties": [
+            {
+              "name": "--sg-doodle-count"
+            },
+            {
+              "name": "--sg-doodle-size"
+            },
+            {
+              "name": "--sg-doodle-weight"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-doodle",
+          "declaration": {
+            "name": "SgDoodle",
+            "module": "packages/components/doodle/doodle.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "packages/components/drawer/drawer.js",
       "declarations": [
         {
@@ -468,9 +641,6 @@
           "cssProperties": [
             {
               "name": "--sg-drawer-delay"
-            },
-            {
-              "name": "--sg-drawer-off"
             }
           ]
         }
@@ -798,6 +968,42 @@
     },
     {
       "kind": "javascript-module",
+      "path": "packages/components/lang/lang.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgLang",
+          "tagName": "sg-lang",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "remember"
+            }
+          ],
+          "events": [],
+          "cssProperties": [
+            {
+              "name": "--sg-lang-tilt"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-lang",
+          "declaration": {
+            "name": "SgLang",
+            "module": "packages/components/lang/lang.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "packages/components/link/link.js",
       "declarations": [
         {
@@ -891,6 +1097,11 @@
                 "text": "CustomEvent"
               }
             }
+          ],
+          "cssProperties": [
+            {
+              "name": "--sg-menu-bar-clear"
+            }
           ]
         }
       ],
@@ -982,6 +1193,9 @@
             },
             {
               "name": "--sg-otp-length"
+            },
+            {
+              "name": "--sg-otp-ring"
             }
           ]
         }
@@ -1142,6 +1356,79 @@
           "declaration": {
             "name": "SgProgress",
             "module": "packages/components/progress/progress.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/qr/qr.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgQr",
+          "tagName": "sg-qr",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "value"
+            },
+            {
+              "name": "ecc"
+            },
+            {
+              "name": "label"
+            },
+            {
+              "name": "size"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-qr-error",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-qr",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "cssProperties": [
+            {
+              "name": "--sg-qr-dark"
+            },
+            {
+              "name": "--sg-qr-fill"
+            },
+            {
+              "name": "--sg-qr-frame"
+            },
+            {
+              "name": "--sg-qr-light"
+            },
+            {
+              "name": "--sg-qr-size"
+            },
+            {
+              "name": "--sg-qr-units"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-qr",
+          "declaration": {
+            "name": "SgQr",
+            "module": "packages/components/qr/qr.js"
           }
         }
       ]
@@ -1749,6 +2036,44 @@
     },
     {
       "kind": "javascript-module",
+      "path": "packages/components/toast/toast.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgToastRegion",
+          "tagName": "sg-toast-region",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "tone"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-toast-dismiss",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-toast-region",
+          "declaration": {
+            "name": "SgToastRegion",
+            "module": "packages/components/toast/toast.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "packages/components/toggle/toggle.js",
       "declarations": [
         {
@@ -1815,7 +2140,12 @@
               "name": "register"
             }
           ],
-          "events": []
+          "events": [],
+          "cssProperties": [
+            {
+              "name": "--sg-tooltip-gap"
+            }
+          ]
         }
       ],
       "exports": [
@@ -1825,6 +2155,43 @@
           "declaration": {
             "name": "SgTooltip",
             "module": "packages/components/tooltip/tooltip.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/tumble/tumble.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgTumble",
+          "tagName": "sg-tumble",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "manual"
+            },
+            {
+              "name": "hold"
+            },
+            {
+              "name": "seed"
+            }
+          ],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-tumble",
+          "declaration": {
+            "name": "SgTumble",
+            "module": "packages/components/tumble/tumble.js"
           }
         }
       ]
@@ -1943,6 +2310,41 @@
     },
     {
       "kind": "javascript-module",
+      "path": "packages/core/lazy.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgLazy",
+          "tagName": "sg-lazy",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "src"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-lazy",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-lazy",
+          "declaration": {
+            "name": "SgLazy",
+            "module": "packages/core/lazy.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "packages/core/scene-element.js",
       "declarations": [
         {
@@ -2004,6 +2406,81 @@
     },
     {
       "kind": "javascript-module",
+      "path": "packages/folio/diagram/diagram.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgDiagram",
+          "tagName": "sg-diagram",
+          "customElement": true,
+          "attributes": [],
+          "events": [
+            {
+              "name": "sg-diagram-step",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-diagram",
+          "declaration": {
+            "name": "SgDiagram",
+            "module": "packages/folio/diagram/diagram.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/narration/reader.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgNarration",
+          "tagName": "sg-narration",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "lang"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-phrase",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-word",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-narration",
+          "declaration": {
+            "name": "SgNarration",
+            "module": "packages/narration/reader.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "packages/player/player.js",
       "declarations": [
         {
@@ -2040,6 +2517,119 @@
           "declaration": {
             "name": "SgPlayer",
             "module": "packages/player/player.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/recipes/proposal/price-table.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgPriceTable",
+          "tagName": "sg-price-table",
+          "customElement": true,
+          "attributes": [],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-price-table",
+          "declaration": {
+            "name": "SgPriceTable",
+            "module": "packages/recipes/proposal/price-table.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/recipes/proposal/timeline.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgTimeline",
+          "tagName": "sg-timeline",
+          "customElement": true,
+          "attributes": [],
+          "events": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-timeline",
+          "declaration": {
+            "name": "SgTimeline",
+            "module": "packages/recipes/proposal/timeline.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/scenes/veranda/stage-element.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgVerandaStage",
+          "tagName": "sg-veranda-stage",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "pane-depth"
+            },
+            {
+              "name": "words-at"
+            },
+            {
+              "name": "lens"
+            },
+            {
+              "name": "walk"
+            },
+            {
+              "name": "pane-turn"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-calm",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-ready",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-notes-changed",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-pane-depth",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-veranda-stage",
+          "declaration": {
+            "name": "SgVerandaStage",
+            "module": "packages/scenes/veranda/stage-element.js"
           }
         }
       ]

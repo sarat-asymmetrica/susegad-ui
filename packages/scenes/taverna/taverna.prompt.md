@@ -38,6 +38,10 @@ Draw a village taverna window on a rainy monsoon night, in ink and wash on paper
 - Heavy monsoon rain outside an old Goan taverna with a glowing streetlamp
 - Interactive tavern glass: click bottles to chime and wipe the steamy window
 
+## On a page
+
+A bare `<sg-scene name="taverna">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/taverna/index.js">` with `<sg-scene name="taverna" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing says nothing a person needs; the page text carries the message. Warm plays and settles gracefully, so motion does not continue indefinitely. In playful, the drawing takes focus: Enter or Space chimes the nearest bottle, and arrow keys move across the sill or wipe condensation. Quiet and reduced motion show the crisp ink elevation at rest.

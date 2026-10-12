@@ -1,0 +1,9 @@
+{
+  "name": "event-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "npx serve",
+    "pages": "node pages.mjs"
+  }
+}

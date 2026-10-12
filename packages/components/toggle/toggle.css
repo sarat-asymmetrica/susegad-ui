@@ -133,3 +133,16 @@ sg-toggle .sg-toggle-art:not([data-on]) .sg-toggle-light { opacity: 0; }
   sg-toggle input[type="checkbox"]::before,
   sg-toggle .sg-toggle-art { display: none !important; }
 }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-toggle .sg-toggle-art, sg-toggle input[type="checkbox"] { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-toggle:active input[type="checkbox"] { translate: 0 1px; border-color: color-mix(in oklab, var(--sg-rule-strong, CanvasText), var(--sg-text, CanvasText) 40%); transition: none !important; }
+sg-toggle:is([data-skin="warm"], [data-skin="playful"]):active input[type="checkbox"] { translate: none; border-color: transparent; }
+sg-toggle[data-skin="warm"]:active .sg-toggle-plate { fill: color-mix(in oklab, var(--sg-toggle-brass, CanvasText), var(--sg-text, CanvasText) 25%); transition: none !important; }
+sg-toggle[data-skin="warm"]:active .sg-toggle-keeper { fill: color-mix(in oklab, var(--sg-toggle-brass-deep, CanvasText), var(--sg-text, CanvasText) 25%); }
+sg-toggle[data-skin="playful"]:active .sg-toggle-art { scale: 0.93; transition: none !important; }
+sg-toggle[data-skin="playful"]:active .sg-toggle-bowl { fill: color-mix(in oklab, var(--sg-toggle-clay, CanvasText), var(--sg-text, CanvasText) 20%); }
+@media (prefers-reduced-motion: reduce) {
+  sg-toggle:active :is(input, .sg-toggle-art) { translate: none !important; scale: none !important; }
+  sg-toggle .sg-toggle-art, sg-toggle input[type="checkbox"] { transition: none; }
+}

@@ -79,3 +79,13 @@ sg-signature:is([data-skin="warm"], [data-skin="playful"]) .sg-signature-pad {
   box-shadow: var(--sg-lift);
 }
 sg-signature[data-skin="playful"] { --sg-signature-ink: var(--sg-accent-text); }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-signature .sg-signature-tools button { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-signature .sg-signature-tools button:active:not(:disabled) { translate: 0 1px; background: color-mix(in oklab, transparent, var(--sg-text, CanvasText) 8%); transition: none !important; }
+sg-signature[data-skin="warm"] .sg-signature-tools button:active:not(:disabled) { translate: none; color: color-mix(in oklab, var(--sg-text, CanvasText), var(--sg-text, CanvasText) 25%); }
+sg-signature[data-skin="playful"] .sg-signature-tools button:active:not(:disabled) { translate: none; scale: 0.97; }
+@media (prefers-reduced-motion: reduce) {
+  sg-signature .sg-signature-tools button { transition: none; }
+  sg-signature .sg-signature-tools button:active { translate: none !important; scale: none !important; }
+}

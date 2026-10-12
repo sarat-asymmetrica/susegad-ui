@@ -4,14 +4,15 @@
 //   npm run docs:build && node tools/readme-art.mjs
 //
 // Writes docs/readme/:
-//   hero.light.gif / hero.dark.gif   the home page as the tiatr curtain rises
+//   hero.light.webp / hero.dark.webp  the home page as the tiatr curtain rises (animated WebP, decision 0023)
 //   scenes.light.jpg / .dark.jpg     twelve scenes, named
 //   registers.light.jpg / .dark.jpg  one piece in quiet, warm and playful
 // and apps/docs/og.jpg, the 1200 x 630 link-preview card (commit it, then rebuild)
 //
 // The grids are laid out as an HTML page in the site's own fonts and
-// screenshotted; the GIF is a Playwright video turned into a palette GIF by
-// ffmpeg (which must be on PATH).
+// screenshotted; the hero is a Playwright video turned into a palette GIF by
+// ffmpeg (which must be on PATH), then into an animated WebP by sharp. The GIF is a
+// temporary file: nothing in the repo is a GIF (tools/images.check.mjs).
 import { chromium } from 'playwright';
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync, rmSync, readdirSync, statSync, existsSync } from 'node:fs';
@@ -140,11 +141,15 @@ try {
     await page.waitForTimeout(9000);
     await ctx.close();
     const video = join(vdir, readdirSync(vdir).find(f => f.endsWith('.webm')));
+    const gif = join(tmpdir(), `sg-hero-${theme}.gif`);
     // skip the blank first moment of loading, crop the header bar away so the
-    // masthead fills the frame, then a palette GIF at 15 fps
+    // masthead fills the frame, then a palette GIF at 15 fps (for sharp to turn into WebP)
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-ss', '0.6', '-i', video, '-vf',
       'crop=1280:500:0:118,fps=15,scale=960:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=160:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=4:diff_mode=rectangle',
-      '-loop', '0', join(OUT, `hero.${theme}.gif`)]);
+      '-loop', '0', gif]);
+    const { default: sharp } = await import('sharp');
+    await sharp(gif, { animated: true }).webp({ quality: 55, effort: 6, loop: 0, smartSubsample: true, mixed: true }).toFile(join(OUT, `hero.${theme}.webp`));
+    rmSync(gif, { force: true });
   }
 } finally {
   for (const f of tmpPages) rmSync(f, { force: true });

@@ -109,7 +109,7 @@
 
       <h2>Way 2: with the CLI</h2>
       <p>The command line copies the pieces into your project, where they become your code. Change anything you like afterwards.</p>
-      <pre class="use-code" tabindex="0" role="region" aria-label="The install command, way two" id="way-cli"><code>npx susegad add scene-paus sg-badge --dir src/lib</code></pre>
+      <pre class="use-code" tabindex="0" role="region" aria-label="The install command, way two" id="way-cli"><code>npx @susegad/cli add scene-paus sg-badge --dir src/lib</code></pre>
       <p><button class="copy" type="button" data-copy="way-cli">Copy</button></p>
       <p>Your folder now holds <code>src/lib/susegad/</code> with the scene, the badge and everything they stand on. The same page then reads:</p>
       <pre class="use-code" tabindex="0" role="region" aria-label="The imports for your page, way two" id="way-cli-page"><code>&lt;script type="module"&gt;
@@ -125,7 +125,7 @@
       <blockquote class="letter-body">
         <p>Build me a single page for a homestay in Aldona. Use Susegad UI: the paus scene over the top, a badge for room availability, and a quiet footer. The register is warm.</p>
       </blockquote>
-      <p>The <code>susegad skill</code> command installs that skill into your agent's folder for you: <code>npx susegad skill --harness claude --global</code>. An MCP server that speaks the registry directly is on its way.</p>
+      <p>The <code>susegad skill</code> command installs that skill into your agent's folder for you: <code>npx @susegad/cli skill --harness claude --global</code>. An MCP server that speaks the registry directly is on its way.</p>
 
       <h2>What you should see</h2>
       <p>A page where rain runs down a window and your words sit calm inside it. A badge that says what is still happening. A footer with your name on it. From there: every piece has its own page on this site, with its prompt, its demo and its install line. Start with <a href="scenes">Scenes</a>, or look the techniques up in the <a href="pencil-box">pencil box</a>.</p>

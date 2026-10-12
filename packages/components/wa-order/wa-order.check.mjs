@@ -23,6 +23,7 @@ import { createRequire } from 'node:module';
 import { pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 import { contrastReport } from '../../../tools/lib/contrast.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const AXE = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
 const BREAK = process.argv.find(a => a.startsWith('--break='))?.slice('--break='.length) ?? '';
@@ -138,8 +139,9 @@ async function fillAll(p, over = {}) {
     const box = a?.getBoundingClientRect();
     let text = null;
     try { text = new URL(a.href).searchParams.get('text'); } catch { /* no link */ }
-    return { has: !!a, href: a?.getAttribute('href'), text, visible: !!box && box.width > 0 && box.height >= 44, inputs: o.querySelectorAll('input, select, textarea, button').length, overflow: document.documentElement.scrollWidth - innerWidth, label: a?.textContent.trim() };
+    return { has: !!a, href: a?.getAttribute('href'), text, visible: !!box && box.width > 0 && box.height >= 44, inputs: o.querySelectorAll('input, select, textarea, button').length, overflow: 0, label: a?.textContent.trim() };
   });
+  r.overflow = (await sidewaysScroll(p)).overflow;
   check('no JS: a plain wa.me link stays in the markup, visible and 44 px tall, with a short message', r.has && r.href.startsWith('https://wa.me/919000012345?text=') && r.text === 'Hello Sample Pasta Studio! I would like to order. What is available?' && r.visible && r.label === 'Order on WhatsApp', JSON.stringify(r));
   check('no JS: nothing that would not work (no fields, no steppers) and nothing scrolls sideways', r.inputs === 0 && r.overflow <= 0, `${r.inputs} controls, ${r.overflow}px`);
   if (shots) await p.screenshot({ path: '.shots/wa-order/no-js-390.png', fullPage: true });
@@ -309,7 +311,8 @@ for (const reduced of [false, true]) {
   const ctx = await ctxFor({ viewport: { width: 1280, height: 1100 }, reducedMotion: reduced ? 'reduce' : 'no-preference' });
   const p = await open(ctx, 'playful');
   await sendOnce(p);
-  const anims = await p.evaluate(() => document.getAnimations().filter(a => a.effect?.target?.closest?.('sg-wa-order')).map(a => ({ target: a.effect.target.className, dur: a.effect.getTiming().duration, iter: a.effect.getTiming().iterations })));
+  // the send key's own 90 ms press and release (CSS transitions on the key, touch contract) are not the stamp
+  const anims = await p.evaluate(() => document.getAnimations().filter(a => a.effect?.target?.closest?.('sg-wa-order') && !(a instanceof CSSTransition && a.effect.target.classList.contains('sg-wa-send'))).map(a => ({ target: a.effect.target.className, dur: a.effect.getTiming().duration, iter: a.effect.getTiming().iterations })));
   if (!reduced) {
     check('playful: the "written" line stamps in once (one short animation, a finite run)', anims.length === 1 && anims[0].target === 'sg-wa-written' && anims[0].iter === 1 && anims[0].dur <= 400, JSON.stringify(anims));
     await p.waitForTimeout(600);
@@ -344,6 +347,8 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   const ctx = await ctxFor({ viewport: { width: 1280, height: 1100 } });
   const p = await open(ctx, reg);
   await p.addScriptTag({ content: AXE });
+  // the dishes arrive on the tala in warm and playful (menu.css, core-arrive); axe reads the page at rest, not mid-fade
+  await p.evaluate(() => Promise.race([Promise.all(document.getAnimations().filter(a => a.animationName === 'sg-arrive').map(a => a.finished.catch(() => {}))), new Promise(r => setTimeout(r, 2500))]));
   const run = () => p.evaluate(async () => (await axe.run(document, { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] })).violations.map(x => `${x.id}: ${x.nodes.map(n => n.target.join(' ')).slice(0, 2).join(' | ')}`));
   const states = { empty: await run() };
   await p.click('#menu [data-id=fettuccine] .sg-menu-plus');
@@ -376,15 +381,43 @@ for (const reg of ['quiet', 'warm', 'playful']) {
       const box = e => e.getBoundingClientRect();
       const a = o.querySelector('a.sg-wa-send');
       const fields = [...o.querySelectorAll('input:not([type=radio]), select, textarea')].filter(e => e.getClientRects().length);
-      return { overflow: document.documentElement.scrollWidth - innerWidth, linkH: Math.round(box(a).height), linkW: Math.round(box(a).width), href: !!a.getAttribute('href'), widest: Math.round(Math.max(...fields.map(f => box(f).right))), minH: Math.round(Math.min(...fields.map(f => box(f).height))), radios: [...o.querySelectorAll('.sg-wa-choice')].map(c => Math.round(box(c).height)) };
+      return { overflow: 0, linkH: Math.round(box(a).height), linkW: Math.round(box(a).width), href: !!a.getAttribute('href'), widest: Math.round(Math.max(...fields.map(f => box(f).right))), minH: Math.round(Math.min(...fields.map(f => box(f).height))), radios: [...o.querySelectorAll('.sg-wa-choice')].map(c => Math.round(box(c).height)) };
     });
+    r.overflow = (await sidewaysScroll(p)).overflow;
     check(`phone ${reg}: nothing scrolls sideways, every field fits and is 44 px tall, the send link is wide and 48 px tall`, r.overflow <= 0 && r.widest <= 390 && r.minH >= 44 && r.linkH >= 48 && r.linkW >= 300 && r.href && r.radios.every(h => h >= 44), JSON.stringify(r));
+    // the stamp-in is a transform: it must not push the page wider for the frames it runs (a scale past the
+    // edge makes a phone widen its layout and shrink the page, and nothing at rest shows it)
+    await p.evaluate(() => { window.__wide = 0; const tick = () => { window.__wide = Math.max(window.__wide, document.documentElement.scrollWidth); requestAnimationFrame(tick); }; tick(); });
     await p.tap('#order a.sg-wa-send', { noWaitAfter: true });
     await p.waitForTimeout(150);
+    const widest = await p.evaluate(() => window.__wide);
+    check(`phone ${reg}: pressing Send never widens the page past the screen, even mid-stamp`, widest <= 390, `widest scrollWidth ${widest}`);
     for (const pg of ctx.pages()) if (pg !== p && pg.url().startsWith('https://wa.me/')) await pg.close();
     if (shots) { await p.evaluate(() => document.querySelector('#order').scrollIntoView()); await p.screenshot({ path: `.shots/wa-order/${reg}-390.png` }); }
     await p.close();
   }
+  await ctx.close();
+}
+
+// ── A shop that only does pickup: the composer is built with fulfilment="pickup" from the start ──
+// (found on a pickup-only site, 4 Oct 2026: the build ticked delivery after reading the attribute, so the
+// area was asked for and required, and the message said "Delivery (address to follow)")
+{
+  const ctx = await ctxFor({ viewport: { width: 390, height: 844 } });
+  // set the attribute the moment the parser inserts the element, before its module runs
+  await ctx.addInitScript(() => {
+    new MutationObserver((_, mo) => { const o = document.getElementById('order'); if (o) { o.setAttribute('fulfilment', 'pickup'); mo.disconnect(); } })
+      .observe(document, { childList: true, subtree: true });
+  });
+  const p = await open(ctx, 'warm');
+  await p.click('#menu [data-id=fettuccine] .sg-menu-plus');
+  await fillAll(p, { area: null });
+  await p.waitForTimeout(60);
+  const v = await view(p);
+  const state = await p.evaluate(() => { const a = document.querySelector('#order [name=area]'); return { areaShown: !a.closest('[hidden]'), required: a.required, ways: [...document.querySelectorAll('#order input[type=radio]')].filter(r => !r.closest('[hidden]')).length }; });
+  check('pickup-only: no area to fill, nothing required that is hidden, no delivery choice', !state.areaShown && !state.required && state.ways === 0, JSON.stringify(state));
+  check('pickup-only: the message says pickup and never mentions delivery (any case), and the link is good', /^Pickup: I will collect it$/m.test(v.preview) && !/delivery/i.test(v.preview) && v.href && v.decoded === v.preview, JSON.stringify(v.preview.split(/\n/).filter(l => /deliver|pickup|total/i.test(l))));
+  check('pickup-only: no page errors', p.errors.length === 0, p.errors.join(' | '));
   await ctx.close();
 }
 

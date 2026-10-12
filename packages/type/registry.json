@@ -4,9 +4,9 @@
   "title": "Type tier",
   "description": "Words set in the world, still real text: lay a heading and a paragraph into a drawn surface's real shape (a board, an arch, a slanted sign), one width per line; shrink-wrap and balance a card; fit the largest legible size or hand the words back to the flat reading; and place one DOM span per line, with the line boxes in the scene's logical units for calm and contrast. Loaded lazily; built on Pretext (decision 0019).",
   "version": "0.1.0",
-  "files": ["index.js", "layout.js", "junctions.js", "surface.js", "README.md"],
+  "files": ["index.js", "layout.core.js", "layout.operators.js", "layout.zones.js", "operators.js", "measure.js", "junctions.js", "surface.js", "stacks.js", "README.md"],
   "dependencies": ["pretext"],
-  "budget": { "jsBytes": 24576, "reason": "A pure layout core (layout.js) and its DOM edge (lines, junctions and surfaces), budgeted apart from Pretext's own bytes (decisions 0010 and 0019)." },
+  "budget": { "jsBytes": 61440, "reason": "The oracle door for pages without a usable OffscreenCanvas (Safari before 17: a detached DOM canvas stand-in, NoMeasuringCanvas) raises it from 57344 to 61440 (57798 raw JS bytes on 9 October), under the owner's flexible-budgets ruling; to be optimized later. Rung 3 (shapes as data and text zones: ellipse, polygon, shapeOf, boundsOf, layZones, about 10 KB with their comments) raises it from 49152 to 57344; to be optimized later. On the tree merged with the text gate (stacks.js) the item counts 53932 raw JS bytes of 10 files (29172 of code), 94 percent of the budget. Before that: A pure layout core (layout.core.js), the oracle boundary (measure.js) and the DOM edge (lines, junctions and surfaces), budgeted apart from Pretext's own bytes (decisions 0010 and 0019); the raise to 49152 is the pure named operators (layout.operators.js, 12 KB) with generous headroom while the foundations go in, a shared core budgeted apart like the first (decisions 0010 and 0029); to be optimized later." },
   "docs": "README.md",
   "motif": {
     "origin": "none",

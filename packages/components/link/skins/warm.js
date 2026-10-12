@@ -1,7 +1,6 @@
-// Warm: an ink underline drawn on hover and focus. The path is fixed per
-// seed (link.core.js's inkUnderline); a stroke-dasharray trick, set here and
-// transitioned in link.css, makes it look drawn in as the pointer arrives
-// and drawn back out as it leaves, so nothing moves until then.
+// Warm: an ink underline, drawn at rest so a link in a sentence is told from its words by more than
+// colour (1.4.1), and inked heavier on hover and focus. The path is fixed per seed (link.core.js's
+// inkUnderline); link.css thickens the stroke.
 
 import { inkUnderline } from '../link.core.js';
 
@@ -23,16 +22,6 @@ export function mount(host) {
     const w = Math.max(1, host.getBoundingClientRect().width);
     svg.setAttribute('viewBox', `0 0 ${w} 6`);
     path.setAttribute('d', inkUnderline(w, seed));
-    const len = path.getTotalLength();
-    // Setting stroke-dashoffset for the first time would otherwise transition
-    // from its unset default (0, fully drawn) to `len` (undrawn): a false
-    // "draw out" nobody asked for. Set both with the transition off, force
-    // layout, then hand the transition back for the real hover/focus draw.
-    path.style.transition = 'none';
-    path.style.strokeDasharray = String(len);
-    path.style.strokeDashoffset = String(len);
-    path.getBoundingClientRect();
-    path.style.transition = '';
     drawnFor = seed;
   };
 

@@ -124,4 +124,39 @@ check('axe without JavaScript: 0 violations', !(await axeNoJs(DEMO)).length);
   await ctx.close();
 }
 
+// ── 1.4.11: the unplayed bars are the seek control's visible track: 3:1 against what they sit on, in every palette, theme and register ──
+// The demo shows a note in each register, so one page per palette and theme gives three cells. Painted colours
+// come from the page (a 1x1 canvas resolves oklch() and color-mix()); the ground is the nearest ancestor with an
+// opaque background.
+{
+  const lum = ([r, g, b]) => [r, g, b].map(v => { const s = v / 255; return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4; }).reduce((a, v, i) => a + v * [0.2126, 0.7152, 0.0722][i], 0);
+  const ratio = (a, b) => { const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
+  const low = [], seen = [];
+  for (const palette of ['susegad', 'casa', 'azulejo', 'haldi']) for (const theme of ['light', 'dark']) {
+    const { ctx, page } = await open(`${DEMO}?theme=${theme}&palette=${palette}`);
+    await settle(page);
+    const cells = await page.evaluate(() => {
+      const paint = css => { const c = document.createElement('canvas'); c.width = c.height = 1; const g = c.getContext('2d', { willReadFrequently: true }); g.clearRect(0, 0, 1, 1); g.fillStyle = css; g.fillRect(0, 0, 1, 1); const d = g.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
+      const bySkin = new Map();
+      for (const note of document.querySelectorAll('sg-voice-note')) {
+        const bars = note.querySelector('.sg-voice-bars');
+        if (!bars || bySkin.has(note.dataset.skin)) continue;
+        const stroke = paint(getComputedStyle(bars).stroke);
+        let el = bars, ground = null;
+        while (el && !ground) { const c = paint(getComputedStyle(el).backgroundColor); if (c[3] === 1) ground = c; el = el.parentElement; }
+        bySkin.set(note.dataset.skin, { skin: note.dataset.skin, stroke, ground: ground ?? paint('white') });
+      }
+      return [...bySkin.values()];
+    });
+    for (const c of cells) {
+      const a = c.stroke[3], eff = c.stroke.slice(0, 3).map((v, i) => Math.round(v * a + c.ground[i] * (1 - a)));
+      const r = ratio(eff, c.ground.slice(0, 3));
+      seen.push(r);
+      if (r < 3) low.push(`${palette} ${theme} ${c.skin}: ${r.toFixed(2)}`);
+    }
+    await ctx.close();
+  }
+  check(`1.4.11: the unplayed bars are 3:1 against their ground in 4 palettes x light and dark x 3 registers (${seen.length} cells, lowest ${Math.min(...seen).toFixed(2)})`, seen.length === 24 && !low.length, low.slice(0, 5).join('; '));
+}
+
 await done();

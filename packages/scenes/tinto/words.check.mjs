@@ -23,12 +23,18 @@
 // 6. calm follows the lines: in playful, under the line boxes under 1% changes
 //    while the chalk rain moves beside them (controls: rain that ignores the
 //    lines; a whole-rectangle calm);
+// 7. a slow face: the board is never laid in a fallback face while the Kannada
+//    face is still loading, and ends at the size the fast load gives (control:
+//    a build that neither waits nor lays out again);
 // plus Escape, lazy loading (no Pretext until words are placed), no request
 // leaving the page, and axe in every register, light and dark, at 390 px and
 // with a card open.
 
 import { readFileSync } from 'node:fs';
 import { harness } from '../../../tools/lib/component-check.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
+import { requiredSamples, samplePhases, assertDeclaration } from '../../../tools/lib/frame-schedule.mjs';
+import { COPY } from '../../type/fixtures/gate-copy.js';
 
 const h = await harness();
 const { check, browser, server } = h;
@@ -41,7 +47,7 @@ const DECLARED = ['Come for the rain', 'Our lowest rate', 'Mercado, Open 7 to 1'
  * [from, to] pairs; the page gets the patched source instead of the real one
  * (each `from` must be found, or the control would silently be the real build).
  */
-async function openAt(path, { width = 1280, height = 1000, reduced = false, patch = {}, root = null, requests = null } = {}) {
+async function openAt(path, { width = 1280, height = 1000, reduced = false, patch = {}, root = null, requests = null, before = null } = {}) {
   const errors = [];
   const ctx = await browser.newContext({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference' });
   for (const [file, pairs] of Object.entries(patch)) {
@@ -54,6 +60,7 @@ async function openAt(path, { width = 1280, height = 1000, reduced = false, patc
     await ctx.route(`**${at}*`, r => r.fulfill({ contentType: 'text/javascript; charset=utf-8', body }));
   }
   if (requests) ctx.on('request', r => requests.push(r.url()));
+  if (before) await before(ctx);
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(String(e)));
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
@@ -104,7 +111,7 @@ const probeContrast = page => page.evaluate(() => {
   ];
   // the text as it is really painted: its colour's alpha times every opacity up the tree, blended over each pixel
   // any CSS colour (oklch from the tokens, too) as sRGB and alpha, read back through a canvas pixel
-  const rgba = css => { const x = new OffscreenCanvas(1, 1).getContext('2d'); x.fillStyle = css; x.fillRect(0, 0, 1, 1); const d = x.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
+  const rgba = css => { const x = ((w, h) => { try { const c = new OffscreenCanvas(w, h); if (c.getContext('2d')) return c; } catch { /* no OffscreenCanvas, or none with a 2D context (WebKit on Windows, Safari before 17) */ } const c = document.createElement('canvas'); c.width = w; c.height = h; return c; })(1, 1).getContext('2d'); x.fillStyle = css; x.fillRect(0, 0, 1, 1); const d = x.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
   const alphaOf = (e, a) => { for (let n = e; n; n = n.parentElement ?? n.getRootNode().host) a *= +getComputedStyle(n).opacity; return a; };
   return boxes.map(({ name, r, color, el }) => {
     const [tr, tg, tb, ta] = rgba(color), al = alphaOf(el, ta);
@@ -151,7 +158,7 @@ const probeContrast = page => page.evaluate(() => {
   await page.keyboard.press('Tab');
   const after = await page.screenshot({ clip });
   const changed = await page.evaluate(async ([a, b]) => {
-    const img = async s => { const i = new Image(); i.src = `data:image/png;base64,${s}`; await i.decode(); const c = new OffscreenCanvas(i.width, i.height), g = c.getContext('2d'); g.drawImage(i, 0, 0); return g.getImageData(0, 0, i.width, i.height).data; };
+    const img = async s => { const i = new Image(); i.src = `data:image/png;base64,${s}`; await i.decode(); const c = ((w, h) => { try { const c = new OffscreenCanvas(w, h); if (c.getContext('2d')) return c; } catch { /* no OffscreenCanvas, or none with a 2D context (WebKit on Windows, Safari before 17) */ } const c = document.createElement('canvas'); c.width = w; c.height = h; return c; })(i.width, i.height), g = c.getContext('2d'); g.drawImage(i, 0, 0); return g.getImageData(0, 0, i.width, i.height).data; };
     const x = await img(a), y = await img(b);
     let n = 0; for (let i = 0; i < x.length; i += 4) if (Math.abs(x[i] - y[i]) + Math.abs(x[i + 1] - y[i + 1]) + Math.abs(x[i + 2] - y[i + 2]) > 60) n++;
     return n / (x.length / 4);
@@ -198,17 +205,18 @@ const probeContrast = page => page.evaluate(() => {
 {
   const MIN = { H2: 20, P: 14 };
   const flatCheck = async (page, root = 16) => {
-    const r = await page.evaluate(() => {
+    const vwNow = await sidewaysScroll(page);
+    const r = await page.evaluate(([vw, scroll]) => {
       const el = document.querySelector('sg-scene[words=world]'), sr = el.shadowRoot, st = sr.querySelector('.stage');
       const box = e => { const b = e.getBoundingClientRect(); return { l: b.left, r: b.right, t: b.top, b: b.bottom, w: b.width, h: b.height }; };
       const panel = sr.querySelector('.panel'), list = sr.querySelector('.jn-flat');
       return {
         words: st.dataset.words, shops: st.dataset.shops, panel: panel.hidden ? null : box(panel), list: list.hidden ? null : box(list),
         lines: [...sr.querySelectorAll('[data-line]')].map(s => ({ tag: s.parentElement.tagName, px: parseFloat(getComputedStyle(s).fontSize) })),
-        scroll: document.documentElement.scrollWidth, vw: innerWidth,
-        clipped: [...el.children, ...sr.querySelectorAll('.jn-flat li')].filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.left < -1 || b.right > innerWidth + 1); }).length,
+        scroll, vw,
+        clipped: [...el.children, ...sr.querySelectorAll('.jn-flat li')].filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.left < -1 || b.right > vw + 1); }).length,
       };
-    });
+    }, [vwNow.viewWidth, vwNow.scrollWidth]);
     const small = r.lines.filter(l => l.px < MIN[l.tag === 'P' ? 'P' : 'H2'] * (root / 16) - 0.01);
     const overlap = r.panel && r.list && r.panel.b > r.list.t + 1 && r.panel.t < r.list.b;
     return { r, small, overlap };
@@ -314,9 +322,33 @@ const probeContrast = page => page.evaluate(() => {
 }
 
 // ── 6. calm follows the lines ───────────────────────────────────────────────
+// The two-moment sampling this gate began with (freeze 4 s and 7 s) is replaced
+// by a declared schedule: a defect that shows in only some frames can hide
+// between two of them. The schedule is pure and tested in
+// tools/lib/frame-schedule.mjs; an under-declared sample count throws, so this
+// gate cannot quietly sample too few phases for its own claim.
 {
   const scene = q => `/tools/harness/scene.html?name=tinto&words=world&content=1&register=playful&${q}`;
-  /** The canvas at a frozen moment, and the line boxes and slate in canvas pixels. */
+  // The animation sampled here is the chalk rain. Each drop falls the slate's
+  // height (BOARD.h less the frame twice, less 8: 142 units) at a speed from the
+  // renderer's seeded range [18, 30] a second, so one drop's cycle is between
+  // 142/30 ≈ 4.74 s and 142/18 ≈ 7.81 s. The speeds all differ, so the rain is
+  // quasi-periodic; the schedule runs over one full cycle of the slowest drop,
+  // which contains at least one full cycle of every drop.
+  const PERIOD = 7.81, SEED = 'tinto-calm';
+  // The defect this gate samples for: chalk rain drawn over a line box, so the
+  // pixels under the words move. A drop's suppression box (4 wide, up to 12
+  // tall) overlaps a line box (18 px body, 26 px heading) over a vertical window
+  // of up to 26 + 12 + 2 = 40 units, which at the slowest speed lasts about
+  // 40/18 ≈ 2.2 s, p ≈ 2.2/7.81 ≈ 0.28 of the cycle; the briefest crossing, a
+  // 6-unit drop over a body line at the fastest speed, is 26/30 ≈ 0.87 s, p ≈
+  // 0.11. We declare a defect visible for at least a fifth of a cycle (p = 0.2)
+  // and accept missing it once in twenty runs (δ = 0.05): n = 14 phases.
+  const P = 0.2, DELTA = 0.05;
+  const n = requiredSamples(P, DELTA);
+  const { message } = assertDeclaration({ p: P, delta: DELTA, n, label: 'tinto calm' });
+  const PHASES = samplePhases(n, PERIOD, { seed: SEED });
+  /** The canvas at a frozen phase, and the line boxes and slate in canvas pixels. */
   const frozenAt = async (t, patch) => {
     const { ctx, page } = await openAt(scene(`freeze=${t}`), { patch });
     await page.waitForFunction(() => window.__frozen === true, null, { timeout: 30000 });
@@ -326,10 +358,12 @@ const probeContrast = page => page.evaluate(() => {
       const sr = window.__piece.shadowRoot, cv = sr.querySelector('.stage canvas'), c = cv.getBoundingClientRect(), k = cv.width / c.width;
       const lines = [...sr.querySelectorAll('[data-line]')].map(s => { const r = s.getBoundingClientRect(); return { x: (r.left - c.left) * k, y: (r.top - c.top) * k, w: r.width * k, h: r.height * k }; });
       const d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
-      return { w: cv.width, h: cv.height, k: cv.width / 1200, lines, px: Array.from(d) };
+      let bin = ''; const chunk = 0x8000;
+      for (let i = 0; i < d.length; i += chunk) bin += String.fromCharCode.apply(null, d.subarray(i, i + chunk));
+      return { w: cv.width, h: cv.height, k: cv.width / 1200, lines, px: btoa(bin) };
     });
     await ctx.close();
-    return shot;
+    return { w: shot.w, h: shot.h, k: shot.k, lines: shot.lines, buf: Buffer.from(shot.px, 'base64') };
   };
   const inBox = (x, y, b) => x >= b.x && x < b.x + b.w && y >= b.y && y < b.y + b.h;
   /** Share of pixels that changed, in the region `keep(x, y)` picks. */
@@ -338,27 +372,74 @@ const probeContrast = page => page.evaluate(() => {
     for (let y = 0; y < a.h; y += 1) for (let x = 0; x < a.w; x += 1) {
       if (!keep(x, y)) continue;
       const i = (y * a.w + x) * 4; n++;
-      if (Math.abs(a.px[i] - b.px[i]) + Math.abs(a.px[i + 1] - b.px[i + 1]) + Math.abs(a.px[i + 2] - b.px[i + 2]) > 40) c++;
+      if (Math.abs(a.buf[i] - b.buf[i]) + Math.abs(a.buf[i + 1] - b.buf[i + 1]) + Math.abs(a.buf[i + 2] - b.buf[i + 2]) > 40) c++;
     }
     return n ? c / n : 0;
   };
+  /** Freeze at every phase of the declared schedule and take the largest change in each region between neighbouring phases. */
   const measure = async patch => {
-    const a = await frozenAt(4, patch), b = await frozenAt(7, patch);
-    const L = a.lines, bb = { x: Math.min(...L.map(l => l.x)), y: Math.min(...L.map(l => l.y)), w: 0, h: 0 };
+    const frames = [];
+    for (const t of PHASES) frames.push(await frozenAt(t, patch));
+    const L = frames[0].lines, bb = { x: Math.min(...L.map(l => l.x)), y: Math.min(...L.map(l => l.y)), w: 0, h: 0 };
     bb.w = Math.max(...L.map(l => l.x + l.w)) - bb.x; bb.h = Math.max(...L.map(l => l.y + l.h)) - bb.y;
-    const under = changed(a, b, (x, y) => L.some(l => inBox(x, y, l)));
-    // beside the words: inside the lines' own rectangle, but in no line box (the gaps a whole-rectangle calm would freeze)
-    const beside = changed(a, b, (x, y) => inBox(x, y, bb) && !L.some(l => inBox(x, y, l)));
-    const elsewhere = changed(a, b, (x, y) => y > 600 * a.k);
-    return { under, beside, elsewhere, fmt: `under the words ${(under * 100).toFixed(2)}%, beside them ${(beside * 100).toFixed(2)}%, the square ${(elsewhere * 100).toFixed(1)}%` };
+    let under = 0, beside = 0, elsewhere = 0;
+    for (let i = 1; i < frames.length; i++) {
+      const a = frames[i - 1], b = frames[i];
+      under = Math.max(under, changed(a, b, (x, y) => L.some(l => inBox(x, y, l))));
+      // beside the words: inside the lines' own rectangle, but in no line box (the gaps a whole-rectangle calm would freeze)
+      beside = Math.max(beside, changed(a, b, (x, y) => inBox(x, y, bb) && !L.some(l => inBox(x, y, l))));
+      elsewhere = Math.max(elsewhere, changed(a, b, (x, y) => y > 600 * a.k));
+    }
+    return { under, beside, elsewhere, fmt: `under the words ${(under * 100).toFixed(2)}%, beside them ${(beside * 100).toFixed(2)}%, the square ${(elsewhere * 100).toFixed(1)}% over ${n} phases of ${PERIOD} s (${message})` };
   };
   const good = await measure();
-  check('calm: under the line boxes under 1% changes between 4 s and 7 s, while the square moves', good.under < 0.01 && good.elsewhere > 0.01, good.fmt);
+  check('calm: under the line boxes under 1% across the declared schedule, while the square moves', good.under < 0.01 && good.elsewhere > 0.01, good.fmt);
   check('calm follows the lines: the chalk rain still moves beside the words, inside their rectangle', good.beside > 0.002, good.fmt);
   const noCalm = await measure({ 'render.js': [['chalkRain(g, data.time, bd.calm)', 'chalkRain(g, data.time, [])']] });
   check('control: rain that ignores the line boxes is caught', !(noCalm.under < 0.01), noCalm.fmt);
   const rect = await measure({ 'render.js': [['chalkRain(g, data.time, bd.calm)', 'chalkRain(g, data.time, [bd.calm.reduce((u, c) => ({ x: Math.min(u.x, c.x), y: Math.min(u.y, c.y), w: Math.max(u.x + u.w, c.x + c.w) - Math.min(u.x, c.x), h: Math.max(u.y + u.h, c.y + c.h) - Math.min(u.y, c.y) }))])']] });
   check('control: a whole-rectangle calm is caught (nothing moves beside the words)', !(rect.beside > 0.002), rect.fmt);
+}
+
+// ── 7. a slow face ──────────────────────────────────────────────────────────
+// The board is Kannada (the gate's copy swapped into world.html) and Noto Sans Kannada, which a canvas never fetches itself, is held back. The board must
+// not be laid while the face is missing (a layout measured in a fallback face sticks: nothing re-lays it when the face arrives), and must end at the size the
+// fast load gives. The timeline is sampled every frame inside the page.
+{
+  const kn = COPY['tinto.board'].blocks.kn, EN = ['Come for the rain', 'Our lowest rate, June to September. The veranda stays dry and the paddy turns green.'];
+  const timeline = async (delay, patch = {}) => {
+    const before = async ctx => {
+      await ctx.route('**/world.html*', async r => {
+        const res = await r.fetch();
+        const text = (await res.text()).split(EN[0]).join(kn[0].text).split(EN[1]).join(kn[1].text);
+        r.fulfill({ response: res, body: text, headers: { ...res.headers(), 'content-type': 'text/html; charset=utf-8' } });
+      });
+      await ctx.addInitScript(() => { // from the first script: the timeline must see the frames before the face arrives
+        window.__tl = [];
+        const deep = r => [...r.querySelectorAll('[data-line]')].concat([...r.querySelectorAll('*')].flatMap(e => (e.shadowRoot ? deep(e.shadowRoot) : [])));
+        const tick = () => { const L = deep(document); window.__tl.push({ lines: L.length, px: L.length ? parseFloat(getComputedStyle(L[0]).fontSize) : 0, face: [...document.fonts].some(f => f.family.replace(/['"]/g, '') === 'Noto Sans Kannada' && f.status === 'loaded') }); requestAnimationFrame(tick); };
+        tick();
+      });
+      // fetched first, then held: WebKit fails a request that is continued late, and that would test the browser, not the scene
+      if (delay) await ctx.route('**/notosanskannada/**', async r => { const res = await r.fetch(); await new Promise(s => setTimeout(s, delay)); r.fulfill({ response: res }); });
+    };
+    const { ctx, page } = await openAt(`${WORLD}&register=warm`, { before, patch });
+    await page.waitForFunction(() => window.__tl.some(t => t.lines && t.face), null, { timeout: 15000 }).catch(() => {});
+    await page.waitForTimeout(600);
+    const tl = await page.evaluate(() => window.__tl);
+    await ctx.close();
+    const laid = tl.filter(t => t.lines);
+    return { early: tl.filter(t => t.lines && !t.face).length, px: laid.length ? laid.at(-1).px : 0, frames: tl.length, laid: laid.length };
+  };
+  const slow = await timeline(2000), fast = await timeline(0);
+  check('a slow face: no frame has the board laid while the Kannada face is missing', slow.early === 0 && slow.laid > 0, `${slow.early} of ${slow.frames} frames laid early; board laid in ${slow.laid} frames`);
+  check('a slow face: the board ends at the size the fast load gives', fast.px > 0 && Math.abs(slow.px - fast.px) < 0.01, `slow ${slow.px} px, fast ${fast.px} px`);
+  const broken = await timeline(2000, { 'words.js': [['if (fontsOk !== need) {', 'if (false) {'], ["document.fonts?.addEventListener?.('loadingdone', onFonts);", '']] });
+  // WebKit does not make the control deterministic: it sometimes measures in the real face as soon as canvas text asks for it (0 early frames, the same
+  // final size) and sometimes in the fallback (7 early frames, 23.49 px). So the control must fail in Chromium, and in WebKit it only reports what it saw.
+  const chromium = browser.browserType().name() === 'chromium';
+  const caught = broken.early > 0 || Math.abs(broken.px - fast.px) > 0.01;
+  check(`control: a build that neither waits for the face nor lays out again when it arrives keeps the fallback face, and is caught${chromium ? '' : ' (WebKit: reported, not required)'}`, chromium ? caught : true, `${broken.early} frames laid early; ends at ${broken.px} px against ${fast.px} px`);
 }
 
 // ── Escape, lazy loading, requests, axe ─────────────────────────────────────

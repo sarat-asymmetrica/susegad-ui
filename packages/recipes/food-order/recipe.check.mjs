@@ -18,6 +18,7 @@ import { createRequire } from 'node:module';
 import { pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 import { contrastReport } from '../../../tools/lib/contrast.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const AXE = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
 const BREAK = process.argv.find(a => a.startsWith('--break='))?.slice('--break='.length) ?? '';
@@ -90,10 +91,11 @@ const headings = p => p.$$eval('h1, h2', hs => hs.map(h => h.textContent.trim())
       dishesVisible: [...document.querySelectorAll('#menu li.sg-menu-item')].every(vis),
       links: a.map(x => x.getAttribute('href')),
       controls: document.querySelectorAll('#menu button, #order button, #order input, #order select, #order textarea').length,
-      overflow: document.documentElement.scrollWidth - innerWidth,
+      overflow: 0,
       height: Math.round(a[0]?.getBoundingClientRect().height ?? 0),
     };
   });
+  r.overflow = (await sidewaysScroll(p)).overflow;
   check('no JS: the three steps read in order', r.steps.join('|') === 'Choose.|Say when and where.|Send it in WhatsApp.' && r.stepsVisible, JSON.stringify(r.steps));
   check('no JS: the menu is a readable list of every dish', r.dishes === 9 && r.dishesVisible, `${r.dishes} dishes`);
   check('no JS: one plain wa.me link, 44 px or more, and nothing that would not work (no buttons, no fields)', r.links.length === 1 && /^https:\/\/wa\.me\/919000012345\?text=/.test(r.links[0]) && r.height >= 44 && r.controls === 0, JSON.stringify({ links: r.links.length, h: r.height, c: r.controls }));
@@ -154,7 +156,9 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   const everything = (await p.evaluate(() => document.body.innerText)).replace(/\s+/g, ' ');
   check(`phone ${reg}: honest: nowhere does the page say the order is placed, booked, confirmed or received`, !/\b(is|been|was) (placed|booked|confirmed|received)\b|\border (placed|booked|confirmed|received)\b|thank you for your order/i.test(everything) && /Nothing is final until we reply and confirm/.test(everything), '');
   if (shots) { await p.evaluate(() => scrollTo(0, 0)); await p.screenshot({ path: `.shots/food-order/${reg}-390-top.png` }); await p.evaluate(() => document.getElementById('order').scrollIntoView()); await p.screenshot({ path: `.shots/food-order/${reg}-390-order.png` }); }
-  check(`phone ${reg}: no console errors, nothing scrolls sideways`, p.errors.length === 0 && (await p.evaluate(() => document.documentElement.scrollWidth - innerWidth)) <= 0, p.errors.join(' | '));
+  const side = await sidewaysScroll(p);
+  const stuck = side.overflow ? await p.evaluate(vw => [...document.querySelectorAll('body *')].filter(e => e.getBoundingClientRect().right + scrollX > vw + 0.5 || e.getBoundingClientRect().left + scrollX + e.scrollWidth > vw + 0.5).slice(0, 6).map(e => `${e.localName}.${String(e.className).split(" ")[0]} right ${Math.round(e.getBoundingClientRect().right + scrollX)} scrollW ${e.scrollWidth} scrollX ${scrollX}`), side.viewWidth) : [];
+  check(`phone ${reg}: no console errors, nothing scrolls sideways`, p.errors.length === 0 && side.overflow === 0, [...p.errors, side.overflow ? `scrolls ${JSON.stringify(side)}px sideways: ${stuck.join(', ')}` : ''].filter(Boolean).join(' | '));
   await ctx.close();
 }
 
@@ -227,6 +231,8 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   const p = await open(ctx, reg);
   await p.addScriptTag({ content: AXE });
   const run = () => p.evaluate(async () => (await axe.run(document, { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] })).violations.map(x => `${x.id}: ${x.nodes.map(n => n.target.join(' ')).slice(0, 2).join(' | ')}`));
+  // the dishes arrive on the tala in warm and playful (menu.css); a page that has arrived is the page that loads, so axe reads it at rest, not mid-fade
+  await p.evaluate(() => Promise.race([Promise.all(document.getAnimations().filter(a => a.animationName === 'sg-arrive').map(a => a.finished.catch(() => {}))), new Promise(r => setTimeout(r, 2500))]));
   const start = await run();
   await p.click('#menu [data-id=fettuccine] .sg-menu-plus');
   await p.fill('#order [name=date]', '2026-10-04');

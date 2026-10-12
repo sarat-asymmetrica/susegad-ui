@@ -57,13 +57,17 @@ createRenderer(host, { W, H, register, motion, seed, governor, scene, invalidate
 ```
 
 - `host` is the drawing layer inside the shadow root, already sized to `W / H` by `aspect-ratio`. Make the canvas with the engine's `stage(host, { W, H })`. The element puts the role on `host` itself: `img` normally, `application` (focusable) in an interactive register. Don't add focusable children or your own key listeners; the element turns keys into `frame.pointer` and calls `activate`.
-- `invalidate()` asks for one redraw when the loop is not running (after a resize, for example).
+- `invalidate()` asks for one redraw when the loop is not running (after a resize, for example). An ask made during a draw buys exactly one more frame, even if that draw put the scene to sleep, so a renderer asks only when it has something left to paint, never on every render: an unconditional ask keeps a settled scene drawing every frame.
 - `advance(seconds)` moves the scene clock on. Kolam uses it so a pouring hand hurries the drawing while the model stays a pure function of time.
 - `frame.calm` holds the slotted elements' boxes in logical units. Quieten motion inside and near them.
 - `frame.pointer` is `{ x, y, inside, down, keyboard, travel }` in logical units. The arrow keys move it too (`keyboard: true`), so a renderer that answers the pointer answers the keys for free.
 - `frame.epoch` goes up on `replay()` and `reseed()`: reset any interaction state when it changes.
 - `frame.still` is true for the reduced-motion still.
 - `readColors(el, { name: cssColor })` resolves tokens, `var()` fallbacks, `light-dark()` and OKLCH to hex for canvas code.
+
+## `<sg-lazy>` (`lazy.js`, item `core-lazy`)
+
+A poster first, and the scene only when it is wanted. A wrapper around a `<picture>` (AVIF, WebP, JPG) and a hidden `<sg-scene>`: the poster is the first paint and reads with no JavaScript; the engine and the scene module are fetched when the wrapper is near the screen, and never by itself under reduced motion, Save-Data, the quiet register or a device with 2 GB of memory or less, where the poster stays as the still. `start()` runs the scene for a viewer who asks. It is its own item and its own file because a page holding only a poster must not fetch `index.js` (about 120 KB of source, nearly all the engine). `<sg-scene>` itself is unchanged: without a wrapper it mounts at once. See `lazy.docs.md` and decision 0024.
 
 ## `<sg-scene>` (`scene-element.js`)
 

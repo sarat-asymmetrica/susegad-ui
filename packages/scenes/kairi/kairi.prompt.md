@@ -38,6 +38,10 @@ Draw a hand-painted paisley border on cream paper in canvas JavaScript, with no 
 | Hovering near the machine should slow it | interaction | In playful the machine keeps the scene’s clock; near the pointer, or the keyboard hand, the clock runs at about a third of the speed and the pencil circles darken, so you can follow a single arm. Enter goes on to the next paisley. |
 | the border is drawn exactly that far | state | Progress maps onto the machine’s clock, from the bare border at 0 to the fifth paisley finished at 1, so only the number moves it. The status says it in words, such as "40% done". |
 
+## On a page
+
+A bare `<sg-scene name="kairi">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/kairi/index.js">` with `<sg-scene name="kairi" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing's name is its `alt`, or the page's `label`. With `progress` set, the status says the label and the number in words ("Order progress: 40% done"), at most once a second, so the drawing is never the only place the progress is. Under reduced motion every register shows the finished border as a still. In playful the drawing takes focus: the arrow keys move a hand, and near the machine the hand slows it down as the pointer does; Enter or Space goes on to the next paisley, and once the border is finished, starts a new one. The machine and its note hush under the page's words.

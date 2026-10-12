@@ -1,0 +1,22 @@
+/* <sg-tumble>. A headline that arrives. The heading inside is real and stays in the page; while the arrival plays
+   (data-state="playing") its letters are hidden and an aria-hidden copy moves over them. With hold, a heading is
+   also hidden before it plays (data-state="held"), and only with JavaScript running: without it, this file does
+   nothing and the heading shows. Nothing here is set by an inline style in markup. */
+
+sg-tumble { display: block; position: relative; }
+sg-tumble[hidden] { display: none; }
+
+sg-tumble:is([data-state="held"], [data-state="playing"]) > :not(.sg-tumble-layer),
+sg-tumble:is([data-state="held"], [data-state="playing"]) > :not(.sg-tumble-layer) * {
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow: none !important;
+}
+
+.sg-tumble-layer { pointer-events: none; user-select: none; -webkit-user-select: none; }
+.sg-tumble-layer[data-look="warm"] { overflow: clip; overflow-clip-margin: 0.4em; }
+.sg-tumble-letter { will-change: transform; }
+
+/* Selecting the heading while it plays still selects the real text: the copy is not in the way. */
+@media (prefers-reduced-motion: reduce) { .sg-tumble-layer { display: none; } }
+@media (forced-colors: active) { .sg-tumble-layer { display: none; } sg-tumble > * { forced-color-adjust: auto; } }

@@ -145,11 +145,21 @@ export class SgCombobox extends SgElement {
     this.update();
   }
 
-  /** Browsers without anchor positioning: place the popover under the input by hand. */
+  /**
+   * Keep the list inside the viewport (1.4.4, 2.4.7): its height is capped at the room on whichever side of the
+   * input has more, so a long list scrolls inside itself and the active option stays on screen at any text size.
+   * Where CSS anchor positioning is missing, also place the list under the input (or above it, if that is roomier).
+   */
   #place() {
-    if (anchors || !this.#open) return;
-    const r = this.native.getBoundingClientRect(), s = this.#list.style;
-    s.position = 'fixed'; s.left = `${r.left}px`; s.top = `${r.bottom + 4}px`; s.width = `${r.width}px`;
+    if (!this.#open) return;
+    const r = this.native.getBoundingClientRect(), list = this.#list, s = list.style;
+    const below = innerHeight - r.bottom - 16, above = r.top - 16;
+    s.setProperty('--sg-combobox-room', `${Math.max(below, above, 96)}px`);
+    if (anchors) return;
+    s.position = 'fixed'; s.left = `${r.left}px`; s.width = `${r.width}px`;
+    const wanted = Math.min(list.scrollHeight, 288);
+    if (wanted > below && above > below) { s.top = 'auto'; s.bottom = `${innerHeight - r.top + 4}px`; }
+    else { s.bottom = 'auto'; s.top = `${r.bottom + 4}px`; }
   }
 
   #move(i) {

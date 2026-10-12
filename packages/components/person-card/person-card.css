@@ -43,6 +43,11 @@ sg-person-card .sg-person-link { grid-column: 1 / -1; }
   sg-person-card .sg-person-building { grid-column: 2; }
   sg-person-card .sg-person-link { grid-column: 2; }
 }
+/* no disc and no photo (JavaScript off, or an author who left both out): one column, so the
+   words never auto-place into an empty 0 px disc column and run out of the card */
+sg-person-card > article:not(:has(> :is(.sg-person-initials, img.sg-person-photo))) { grid-template-columns: minmax(0, 1fr); }
+sg-person-card > article:not(:has(> :is(.sg-person-initials, img.sg-person-photo))) > * { grid-column: 1; }
+sg-person-card > article { overflow-wrap: anywhere; }
 sg-person-card .sg-person-link { font-size: var(--sg-step--1); }
 sg-person-card .sg-person-link a {
   color: var(--sg-accent-text);
@@ -129,4 +134,14 @@ sg-person-card[data-skin="playful"] .sg-person-link { font-size: var(--sg-step-0
 @media (forced-colors: active) {
   sg-person-card > article { border: 1px solid CanvasText; }
   sg-person-card .sg-person-initials { border: 1px solid CanvasText; color: CanvasText; background: Canvas; }
+}
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-person-card a { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-person-card a:active { translate: 0 1px; color: color-mix(in oklab, var(--sg-accent-text, currentColor), var(--sg-text, CanvasText) 25%); text-decoration-thickness: 2px; transition: none !important; }
+sg-person-card[data-skin="warm"] .sg-person-link a:active { translate: none; }
+sg-person-card[data-skin="playful"] .sg-person-link a:active { translate: none; scale: 0.97; }
+@media (prefers-reduced-motion: reduce) {
+  sg-person-card a { transition: none; }
+  sg-person-card a:active { translate: none !important; scale: none !important; }
 }

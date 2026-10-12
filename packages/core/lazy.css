@@ -1,0 +1,8 @@
+/* The poster's layout, for a page that links it: the picture fills its column and keeps its shape (from the
+   img's width and height), so nothing is wider than the screen and nothing moves when sg-lazy's script arrives
+   or when it never does. lazy.js adopts the same rules itself for a page that does not link this file (and
+   adds the fade); the two are kept the same by lazy.core.test.js. Every rule is :where(), so yours win. */
+:where(sg-lazy){display:grid;position:relative}
+:where(sg-lazy)>*{grid-area:1/1;min-width:0}
+:where(sg-lazy)>picture{position:relative;z-index:1;display:block}
+:where(sg-lazy)>picture img{display:block;width:100%;height:auto}

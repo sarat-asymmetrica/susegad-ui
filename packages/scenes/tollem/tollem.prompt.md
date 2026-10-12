@@ -53,6 +53,10 @@ Look straight down into a Goan pool at noon, painted by a WebGL fragment shader 
 | paint the whole pool on a canvas | fallback | The floor, grout and shade are inked once and cached. The net is computed on the CPU at 120 by 80 pixels a dozen times a second and stretched over the water; rings are drawn as circles of light. When the context comes back, or the page asks for webgl, the shader returns on a fresh canvas. |
 | frames stay too slow | governor | The element’s governor lowers the water’s resolution when frames run long, down to 30%. If frames still take over 90 ms at the floor, or over 180 ms at any level, for four seconds, the water switches to the 2D painting. |
 
+## On a page
+
+A bare `<sg-scene name="tollem">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/tollem/index.js">` with `<sg-scene name="tollem" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 - The drawing is an image with the label "Looking down into a pool at noon: pale tiles under a moving net of light, a laterite edge, and a frangipani flower afloat.", or the `label` attribute.

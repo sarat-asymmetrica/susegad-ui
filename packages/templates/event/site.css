@@ -1,0 +1,48 @@
+/* The event page's own layout: one column of sections, a header bar, and a hero. The pieces
+   (the switcher, the agenda, the speakers, the venue, the footer) bring their own styles
+   from susegad/. Change the look by changing the register in the page, or the tokens. */
+
+body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+
+.skip { position: absolute; left: 16px; top: -4rem; padding: var(--sg-space-2) var(--sg-space-3); background: var(--sg-surface); color: var(--sg-text); border: var(--sg-stroke) solid var(--sg-accent-text); z-index: 10; }
+.skip:focus { top: 8px; }
+
+.bar, main, sg-site-footer { box-sizing: border-box; max-width: 64rem; margin-inline: auto; padding-inline: 16px; }
+/* the sections share one left edge; each keeps its own reading width (the recipes set it) */
+main > section { margin-inline: 0; padding-block: var(--sg-space-6) 0; }
+main > section.hero { padding-block: var(--sg-space-5); }
+
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--sg-space-4); padding-block: var(--sg-space-2); border-block-end: var(--sg-hairline) solid var(--sg-rule); }
+.brand { margin: 0; margin-inline-end: auto; font: 400 var(--sg-step-1) / var(--sg-leading-tight) var(--sg-font-display); }
+.brand a, .bar-links a { display: inline-flex; align-items: center; box-sizing: border-box; min-height: 2.75rem; color: var(--sg-text); text-underline-offset: 0.2em; }
+.brand a { text-decoration: none; }
+/* quiet's switcher links are bare words with inner padding, so they step back to line up with the brand;
+   warm and playful draw their own shapes at the edge, which must not leave the screen */
+:root[data-register="quiet"] .bar sg-lang { margin-inline-start: calc(var(--sg-space-3) * -1); }
+.bar-links { display: flex; flex-wrap: wrap; gap: 0 var(--sg-space-3); }
+
+h1, h2 { font-family: var(--sg-font-display); font-weight: 400; line-height: var(--sg-leading-tight); }
+h1 { font-size: var(--sg-step-4); margin: 0 0 var(--sg-space-3); }
+.eyebrow { margin: 0 0 var(--sg-space-2); color: var(--sg-text-soft); font-size: var(--sg-step--1); }
+.lede { margin: 0 0 var(--sg-space-4); max-width: var(--sg-measure); color: var(--sg-text-soft); }
+
+.hero { display: grid; gap: var(--sg-space-5); }
+@media (min-width: 56rem) { .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); align-items: center; } }
+.hero-links { display: flex; flex-wrap: wrap; gap: var(--sg-space-2) var(--sg-space-3); margin: 0; }
+.button { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-height: 2.75rem; padding-inline: var(--sg-space-4); font: inherit; font-weight: var(--sg-weight-medium); text-decoration: none; color: var(--sg-on-accent); background: var(--sg-accent); border: var(--sg-stroke) solid var(--sg-accent); border-radius: var(--sg-radius-2); cursor: pointer; }
+.button[hidden] { display: none; }   /* .button's display would otherwise beat the hidden attribute */
+.button-plain { color: var(--sg-accent-text); background: transparent; border-color: var(--sg-accent-text); }
+.hero-picture { margin: 0; min-width: 0; }
+.hero-picture sg-lazy { border-radius: var(--sg-radius-3); overflow: hidden; }
+.hero-play { margin-top: var(--sg-space-3); }
+
+/* The recipes label things in small capitals with wide tracking, which pulls Devanagari
+   conjuncts apart and means nothing in a script with no case (decision 0025). */
+:lang(gom-Deva) :is(.sg-venue h3, .sg-agenda h3, .sg-agenda h4, .sg-speakers h3, .sg-session-track, .sg-session-state, .sg-session-room) { letter-spacing: 0; text-transform: none; }
+
+/* speaker cards in one row end on one line, however long a talk's title is */
+.sg-speakers-list > li { display: flex; }
+.sg-speakers-list > li > sg-person-card { display: flex; flex: 1; min-width: 0; }
+.sg-speakers-list > li > sg-person-card > article { flex: 1; }
+
+sg-site-footer { margin-block-start: var(--sg-space-6); }

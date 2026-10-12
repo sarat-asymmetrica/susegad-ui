@@ -6,6 +6,7 @@
 //   node packages/recipes/studio-home/recipe.check.mjs
 
 import { harness, settle } from '../../../tools/lib/component-check.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { check, open, axe, axeNoJs, done } = await harness();
 const PAGE = '/packages/recipes/studio-home/index.html';
@@ -27,7 +28,7 @@ check('axe without JavaScript: 0 violations', !(await axeNoJs(PAGE)).length);
 for (const register of ['quiet', 'warm', 'playful']) {
   const { ctx, page } = await open(`${PAGE}?register=${register}`, { width: 390, touch: true });
   await settle(page);
-  const w = await page.evaluate(() => document.documentElement.scrollWidth);
+  const { scrollWidth: w } = await sidewaysScroll(page, 390);
   check(`${register} at 390 px: no sideways scroll`, w <= 390, `${w}`);
   await ctx.close();
 }

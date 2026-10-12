@@ -14,6 +14,7 @@ export const STRINGS = {
   reacted: name => `Reacted with ${name}`,
   reactions: { '❤️': 'a heart', '❤': 'a heart', '👍': 'a thumbs up', '😂': 'laughter', '🙏': 'folded hands', '😮': 'surprise', '😢': 'a tear', '🎉': 'a party popper', '🔥': 'fire' },
   anEmoji: 'an emoji',
+  status: { sent: 'Sent', delivered: 'Delivered', read: 'Read' },
   redacted: { phone: 'number removed', name: 'name removed', email: 'email removed', other: 'removed' },
   months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
 };
@@ -51,6 +52,9 @@ export function redact(text, { phones = true, emails = true, names = [], labels 
   if (i < text.length) out.push({ text: text.slice(i) });
   return out;
 }
+
+/** The words for a delivery status ("Sent", "Delivered", "Read"), or '' for one we have none for. */
+export const statusWords = status => STRINGS.status[status] ?? '';
 
 export const escapeHtml = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -107,7 +111,8 @@ export function renderThread(items, { label = STRINGS.label, redact: ro = {}, re
     if (it.status) attrs.push(`data-status="${escapeHtml(it.status)}"`);
     if (cont[i]) attrs.push('data-run="continue"');
     const who = it.who ? `<span class="sg-chat-who">${redactHtml(it.who, ro)}</span> ` : '';
-    const time = it.time ? ` <time class="sg-chat-time" datetime="${escapeHtml(it.time)}">${clockOf(it.time)}</time>` : '';
+    const said = it.status ? statusWords(it.status) : '';
+    const time = it.time ? ` <time class="sg-chat-time" datetime="${escapeHtml(it.time)}">${clockOf(it.time)}${said ? ` <span class="sg-chat-sr">${escapeHtml(said)}</span>` : ''}</time>` : '';
     const reply = it.reply ? `<blockquote class="sg-chat-reply"><span class="sg-chat-sr">${escapeHtml(STRINGS.replyingTo)} </span>${it.reply.who ? `<span class="sg-chat-reply-who">${redactHtml(it.reply.who, ro)}</span> ` : ''}<span class="sg-chat-reply-text">${redactHtml(it.reply.text, ro)}</span></blockquote>` : '';
     const reaction = it.reaction ? ` <span class="sg-chat-reaction" role="img" aria-label="${escapeHtml(reactionLabel(it.reaction))}"><span aria-hidden="true">${escapeHtml(it.reaction)}</span></span>` : '';
     return `  <li ${attrs.join(' ')}>${who}${reply}<p class="sg-chat-text">${redactHtml(it.text, ro)}</p>${time}${reaction}</li>`;

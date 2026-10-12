@@ -15,7 +15,7 @@
 //     it could not send, in one polite voice. Skins draw it (Loader, Stamp).
 
 import { SgElement, defineComponent } from '../../core/component.js';
-import { play } from '../../sound/index.js';
+import { cue } from '../../sound/index.js';
 import { STRINGS, next, words, fieldName, SENDING_AFTER_MS } from './form.core.js';
 import '../field-note/field-note.js';
 
@@ -164,7 +164,7 @@ export class SgForm extends SgElement {
     this.update();
     // a failed submit already speaks through the toast it raises (its own error sound); a
     // successful one has no toast of its own, so it plays the confirmation here
-    if (this.status === 'ok') play('confirm', { register: this.register });
+    if (this.status === 'ok') cue('confirm', { register: this.register });
     this.emit('sg-form-state', { state: this.status, words: this.#words });
   }
 

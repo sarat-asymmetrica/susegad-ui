@@ -11,20 +11,22 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import { startServer, REPO_ROOT } from '../../tools/serve.mjs';
+import { sidewaysScroll } from '../../tools/lib/overflow.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 
 const outArg = process.argv.indexOf('--out');
 const OUT = outArg > 0 ? path.resolve(process.argv[outArg + 1]) : path.join(REPO_ROOT, 'out', 'docs');
 const registry = JSON.parse(fs.readFileSync(path.join(OUT, 'registry', 'registry.json'), 'utf8'));
-const axeSource = fs.readFileSync(path.join(REPO_ROOT, 'node_modules/axe-core/axe.min.js'), 'utf8');
+const axeSource = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
 
-const KINDS = { scene: 'scenes', component: 'components', recipe: 'recipes', package: 'foundations', surface: 'foundations' };
-const slug = item => (item.type === 'scene' ? item.name.replace(/^scene-/, '') : item.name);
+const KINDS = { scene: 'scenes', component: 'components', recipe: 'recipes', template: 'templates', package: 'foundations', surface: 'foundations' };
+const slug = item => (item.type === 'scene' ? item.name.replace(/^scene-/, '') : item.type === 'template' ? item.name.replace(/^template-/, '') : item.name);
 const INDEXES = ['/scenes', '/components', '/recipes', '/foundations', '/pencil-box'];
 
 const server = await startServer({ root: OUT, quiet: true, notFoundHtml: '404.html' });
@@ -138,7 +140,11 @@ try {
       // remember the scene's own canvas, to prove the move does not rebuild it
       await page.evaluate(() => { window.__canvas = document.querySelector('main sg-scene')?.shadowRoot?.querySelector('.stage canvas, .stage svg'); });
       await page.keyboard.press('Enter');
+      // a scene held back (reduced motion, quiet) is started by this very press, so it opens a moment later
+      await page.waitForFunction(() => document.getElementById('closer').open, null, { timeout: 8000 }).catch(() => {});
       await page.waitForTimeout(800);
+      // a held scene had no canvas to remember before the press: take the one it has now, then see it come home unchanged
+      await page.evaluate(() => { window.__canvas ??= document.querySelector('#closer-slot sg-scene')?.shadowRoot?.querySelector('.stage canvas, .stage svg'); });
       inside = await page.evaluate(() => ({ open: document.getElementById('closer').open, focus: document.activeElement?.id, moved: !!document.querySelector('#closer-slot sg-scene') }));
       await page.keyboard.press('Escape');
       await page.waitForTimeout(800);
@@ -152,6 +158,50 @@ try {
     check(`Look closer${reduced ? ' (reduced motion)' : ''}: opens on Close, Escape brings focus back, the scene is moved not rebuilt`,
       found && inside.open && inside.focus === 'closer-close' && inside.moved && !after.open && after.focus === 'Look closer' && after.home && after.same,
       found ? `${JSON.stringify(inside)} then ${JSON.stringify(after)}` : 'no Look closer button');
+    await context.close();
+  }
+
+  // ── 3c. a scene page does not jump when its poster settles, at 390 px ─
+  // The poster's width lived in a sheet adopted by script, so the page laid the poster out at its attribute size
+  // (688 px on a 390 px screen) and shrank it when the script arrived: CLS 0.110, and a sideways scroll with script off.
+  // The loader is held back 2.5 s here, as on a slow phone, and a frame loop reads the poster's box every frame (a headed
+  // browser paints that often; an idle headless page may not paint until the script is in, which hides the jump).
+  for (const [scene, register] of [['abri', 'warm'], ['paus', 'warm'], ['abri', 'quiet']]) {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+    const page = await context.newPage();
+    await page.addInitScript(r => {
+      try { localStorage.setItem('sg-docs-prefs', JSON.stringify({ register: r })); } catch { /* no storage */ }
+      window.__cls = 0; window.__wide = 0;
+      new PerformanceObserver(l => { for (const e of l.getEntries()) if (!e.hadRecentInput) window.__cls += e.value; }).observe({ type: 'layout-shift', buffered: true });
+      const tick = () => { const i = document.querySelector('sg-lazy img'); if (i) window.__wide = Math.max(window.__wide, Math.round(i.getBoundingClientRect().width)); requestAnimationFrame(tick); };
+      requestAnimationFrame(tick);
+    }, register);
+    await page.route('**/packages/core/lazy.js', async r => { await new Promise(res => setTimeout(res, 2500)); await r.continue(); });
+    await page.goto(`${server.url}/scenes/${scene}`, { waitUntil: 'commit' });
+    await page.waitForFunction(() => window.__ready === true, null, { timeout: 20000 }).catch(() => {});
+    await page.waitForTimeout(3000);
+    const o = await sidewaysScroll(page);
+    const m = { ...(await page.evaluate(() => ({ cls: window.__cls, wide: window.__wide }))), inner: o.viewWidth, scroll: o.scrollWidth };
+    check(`/scenes/${scene} at 390px ${register}: the poster never outgrows the screen and the layout shift is under 0.1`, m.wide <= m.inner && m.scroll <= m.inner && m.cls < 0.1, `CLS ${m.cls.toFixed(3)}, widest poster ${m.wide} px, scrollWidth ${m.scroll}`);
+    await context.close();
+  }
+
+  // ── 3d. Play stays under the finger: pressing it on a held scene does not move it, or the words below ─
+  {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await context.newPage();
+    await page.goto(`${server.url}/scenes/abri`, { waitUntil: 'load' });
+    await page.waitForFunction(() => window.__ready === true, null, { timeout: 15000 }).catch(() => {});
+    const box = () => page.evaluate(() => { const b = document.querySelector('[data-act="pause"]').getBoundingClientRect(), t = document.querySelector('.scene-text').getBoundingClientRect(); return { x: Math.round(b.x), y: Math.round(b.y), textTop: Math.round(t.top), scroll: scrollY }; });
+    const before = await box();
+    await page.click('[data-act="pause"]');
+    const busy = await page.evaluate(() => ({ busy: document.querySelector('.scene-art .controls').getAttribute('aria-busy'), said: document.querySelector('.scene-art .live').textContent }));
+    await page.waitForFunction(() => document.querySelector('sg-lazy').dataset.state === 'live', null, { timeout: 30000 }).catch(() => {});
+    await page.waitForTimeout(800);
+    const after = await box();
+    const label = await page.evaluate(() => document.querySelector('[data-act="pause"]').textContent);
+    check('Play on a held scene: the button stays where it was pressed, the words below do not move, and it says it is loading', before.x === after.x && before.y === after.y && before.textTop === after.textTop && label === 'Pause' && busy.said === 'loading the scene',
+      `before ${JSON.stringify(before)}, after ${JSON.stringify(after)}, while loading ${JSON.stringify(busy)}, then "${label}"`);
     await context.close();
   }
 
@@ -192,11 +242,36 @@ try {
   for (const p of ['/', '/start', '/scenes', '/components', '/pencil-box', '/scenes/paus', '/components/badge', '/recipes/booking', '/foundations/core']) {
     for (const [width, theme] of [[1440, 'light'], [390, 'dark']]) {
       const { context, page, status } = await open(p, { width, height: width < 600 ? 844 : 900, theme });
-      const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      const { overflow: over } = await sidewaysScroll(page);
       const v = await axe(page);
       check(`${p} at ${width}px ${theme}: axe clean, no sideways scroll`, status === 200 && v.length === 0 && over <= 0, [status !== 200 ? `status ${status}` : '', ...v, over > 0 ? `overflow ${over}px` : ''].filter(Boolean).join(', '));
       await context.close();
     }
+  }
+
+  // ── 7b. a template page links the site the build made from it, and that site fits a phone ─
+  // The made site is what a visitor opens from "See it working": the raw source pages under packages/templates/ refer to
+  // susegad/... paths that exist only in a made site, so they are not what is measured here.
+  {
+    const { context, page, status } = await open('/templates/event', { width: 1440 });
+    const href = await page.locator('a.btn-solid', { hasText: 'See it working' }).first().getAttribute('href').catch(() => null);
+    check('/templates/event offers "See it working", and it points at the made site', status === 200 && href === '/templates/event/site/', `status ${status}, href ${href}`);
+    await context.close();
+    const bad = [];
+    for (const path of ['/templates/event/site/', '/templates/event/site/gom-deva/', '/templates/event/site/gom-latn/']) {
+      for (const register of ['quiet', 'warm', 'playful']) {
+        const c = await open(`${path}?register=${register}`, { width: 390, height: 844 });
+        const o = await sidewaysScroll(c.page, 390);
+        if (c.status !== 200 || o.overflow || o.clipped || c.errors.length) bad.push(`${path} ${register}: status ${c.status}, overflow ${o.overflow}${o.clipped ? ' (clipped)' : ''}, errors ${c.errors.slice(0, 2).join(' | ') || 0}`);
+        await c.context.close();
+      }
+    }
+    check('the made event site at 390 px, 3 languages x 3 registers: 0 px sideways, nothing clipped, no failed request (a missing stylesheet is a 404 here)', !bad.length, bad.slice(0, 3).join(' ; '));
+  }
+
+  {
+    const robots = await (await fetch(server.url + '/robots.txt')).text();
+    check('robots.txt keeps crawlers off the raw template pages (they are served for create --registry, not for visitors)', /^Disallow: \/packages\/templates\/$/m.test(robots), robots.slice(0, 120));
   }
 
   // ── 8. the cross-origin embed: the use-this-scene box, proven ───────

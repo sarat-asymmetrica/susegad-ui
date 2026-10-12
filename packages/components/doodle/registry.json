@@ -1,0 +1,29 @@
+{
+  "name": "doodle",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Doodle",
+  "description": "Single-line food drawings, as if done with a marker, in whatever colour the text around them is: a fork lifting a twirl of spaghetti, ravioli, gnocchi, a lemon, a tomato, basil, a whisk, a rolling pin, wheat and a steaming bowl. Inline SVG, one or two unfilled strokes each, with a band mode that lays a seeded row of them edge to edge as a section divider. Quiet is a still hairline; warm draws itself once as it scrolls into view and then boils a little; playful adds a bolder line and a wiggle when touched. Works under a strict Content-Security-Policy.",
+  "version": "0.1.0",
+  "useFor": ["divider", "section-break", "spot-art", "food"],
+  "files": [
+    "doodle.js",
+    "doodle.core.js",
+    "doodle.motifs.js",
+    "doodle.css",
+    "skins/draw.js",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "doodle.prompt.md",
+    "doodle.docs.md"
+  ],
+  "dependencies": ["core-component", "core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "doodle.prompt.md",
+  "docs": "doodle.docs.md",
+  "budget": {
+    "jsBytes": 36864,
+    "reason": "A component (decision 0005 and 0010: 36 KB with the pieces counted). Today about 32.6 KB: element 2.7 KB, pure core 10.3 KB (path reading, the boil, band laying, timing), the motif table 9.6 KB (ten drawings of curve data; a kitchen adds its own), the SVG builder 9.4 KB, three one-line skins. No frame loop: the reveal and the wiggle are Web Animations, and the boil is one shared 5 Hz timer that runs only while a doodle is on screen."
+  }
+}

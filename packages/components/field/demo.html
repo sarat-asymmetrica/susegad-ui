@@ -24,7 +24,7 @@
 <body>
   <main>
     <h1>Field</h1>
-    <p class="lede">A label over a ruled line. In warm, the line inks under your words as you type; in playful, the ink wobbles while you write and settles when you stop. Without JavaScript it is the same label and ruled line, and it submits with the form.</p>
+    <p class="lede">A label over a ruled line, for a line of text, a longer message or a choice from a list. In warm, the line inks under your words as you type; in playful, the ink wobbles while you write and settles when you stop. Without JavaScript it is the same label and ruled line, and it submits with the form.</p>
 
     <h2>A line of text</h2>
     <form class="grid" action="/tools/harness/blank.html" method="get">
@@ -47,6 +47,15 @@
         <label for="code">Booking code</label>
         <p class="hint" id="code-hint">It is on your confirmation, like VQ-2026-10.</p>
         <input id="code" name="code" maxlength="12" aria-describedby="code-hint" value="VQ-2026-10">
+      </sg-field>
+      <sg-field>
+        <label for="room">Room</label>
+        <select id="room" name="room">
+          <option value="">Choose a room</option>
+          <option value="garden" selected>Garden room</option>
+          <option value="loft">Loft</option>
+          <option value="courtyard">Courtyard suite</option>
+        </select>
       </sg-field>
       <button type="submit" class="demo-button">Check these</button>
     </form>

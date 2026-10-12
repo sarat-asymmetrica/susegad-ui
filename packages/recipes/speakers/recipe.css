@@ -1,0 +1,48 @@
+/* The speakers recipe. The cards draw themselves (person-card); this file lays them out in a
+   grid and styles the track filter, the count and the empty state. */
+
+.sg-speakers { max-width: 62rem; container: sg-speakers / inline-size; }
+.sg-speakers h2 { font: 400 var(--sg-step-2, 1.4rem) / 1.15 var(--sg-font-display, inherit); margin: 0 0 var(--sg-space-3, 12px); }
+
+/* the track filter, optional: a fieldset of checkboxes in a wrapping row */
+.sg-speakers-tracks { margin: 0 0 var(--sg-space-3, 12px); padding: 0; border: 0; }
+.sg-speakers-tracks legend {
+  padding: 0; margin-bottom: var(--sg-space-1, 4px);
+  font: var(--sg-weight-medium, 500) var(--sg-step--1, 0.9rem) / 1.3 var(--sg-font-body, inherit);
+  font-variant-caps: all-small-caps; letter-spacing: 0.08em; color: var(--sg-text-soft, inherit);
+}
+.sg-speakers-tracks-row { display: flex; flex-wrap: wrap; gap: 0 var(--sg-space-4, 24px); }
+.sg-speakers-tracks label { display: block; margin-block: 0.15em; color: var(--sg-text, inherit); font-size: var(--sg-step--1, 0.9rem); }
+
+.sg-speakers-count { margin: 0 0 var(--sg-space-3, 12px); font-size: var(--sg-step--1, 0.9rem); color: var(--sg-text-soft, inherit); }
+
+/* the grid: as many columns of at least 19rem as fit, one on a phone */
+.sg-speakers-list {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: var(--sg-space-3, 16px);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+}
+.sg-speakers-list > li { min-width: 0; }
+.sg-speakers-list > li[hidden] { display: none; }
+
+/* the talk title is the card's one link: give it a finger-sized target without changing how the card reads */
+.sg-speakers-list .sg-person-link a { display: inline-flex; align-items: center; min-height: 44px; }
+
+.sg-speakers-empty {
+  margin: var(--sg-space-4, 24px) 0; padding: var(--sg-space-3, 16px);
+  border: var(--sg-hairline, 1px) dashed var(--sg-rule-strong, CanvasText);
+  border-radius: var(--sg-radius-2, 6px); background: var(--sg-surface-raised, Canvas);
+}
+.sg-speakers-empty p { margin: 0; color: var(--sg-text-soft, inherit); }
+
+/* the bloom avatar sits in the person-card's round disc: the flower is the picture, so the disc's ground steps back */
+/* the person-card's warm and playful discs draw their own ring (an inset box-shadow) and ground; behind a flower they are cleared, with the card's selector weight so it wins */
+.sg-speakers-list sg-person-card .sg-person-initials:has(sg-bloom) { background: transparent; border: 0; box-shadow: none; overflow: visible; }
+.sg-speakers-list .sg-person-initials sg-bloom { display: flex; vertical-align: top; } /* flex, so the flower is centred in the disc and not sat on a text baseline */
+
+/* With JavaScript off the person-card has drawn no disc, and its grid (a column for the disc, a column
+   for the words) auto-places the role line into the empty 0 px column, so it runs out of the card and
+   the page scrolls sideways. A card with no disc and no photo is one column of words. (The cause is in
+   person-card's own grid; reported, and this keeps the speakers page whole until it is fixed there.) */
+.sg-speakers-list sg-person-card > article:not(:has(.sg-person-initials, img.sg-person-photo)) { grid-template-columns: minmax(0, 1fr); }
+.sg-speakers-list sg-person-card, .sg-speakers-list sg-person-card > article > * { min-width: 0; overflow-wrap: anywhere; }

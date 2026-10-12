@@ -35,6 +35,10 @@ Show a sheet of Deccani abri, the marbled paper of Bijapur and Golconda, being m
 | a deckle edge, paper grain and a few tiny air bubbles | texture | The print is captured once into a layer, multiplied by painted paper, cut to a torn edge and dotted with pale specks where air was trapped under the sheet. |
 | hold the size still under them and let no drop land there | calm | The page reports where its text sits. Boundary points in those boxes, and within 30 units of them, are not carried by the stylus, the hand or the drift; drops aimed there never land, and the ripples and the stylus are not drawn there. |
 
+## On a page
+
+A bare `<sg-scene name="abri">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/abri/index.js">` with `<sg-scene name="abri" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing is decorative: its name is its `alt`, and it shows no state. Quiet and reduced motion show the lifted print, face up; it takes a moment to make, and the element reports ready once it is there. In playful the drawing takes focus: the arrow keys move a hand (a small ring) that drags the colours with it, and Enter or Space drops a colour where the hand is. Under any words laid over the tray the size holds still, and no drop lands there.

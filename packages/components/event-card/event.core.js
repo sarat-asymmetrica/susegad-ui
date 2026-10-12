@@ -9,8 +9,9 @@
 // otherwise), so a visitor in another zone still sees the venue's own clock.
 
 import { rng } from '../../engine/src/rng.js';
+import { IST, MONTHS, zoneOffset, wall, parseWhen, datetimeOf, clock, formatWhen } from '../../core/intl.core.js';
 
-export const ZONE = 'Asia/Kolkata';
+export const ZONE = IST;
 export const KINDS = { workshop: 'Workshop', 'supper-club': 'Supper club', 'pop-up': 'Pop-up', class: 'Class' };
 
 export const STRINGS = {
@@ -29,81 +30,10 @@ export const STRINGS = {
   beforeCount: n => `Before (${n})`,
 };
 
-const DAY = 86400000, MIN = 60000;
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+// The zone and clock arithmetic lives in core/intl.core.js, shared with every page that
+// says a time in IST; it is re-exported here so this module's callers and tests keep one door.
+export { zoneOffset, wall, parseWhen, datetimeOf, clock, formatWhen };
 const pad = n => String(n).padStart(2, '0');
-
-// ── zones ────────────────────────────────────────────────────────────────
-
-const formats = new Map();
-/** Milliseconds a zone's wall clock is ahead of UTC at an instant (5.5 hours for Asia/Kolkata). */
-export function zoneOffset(ms, zone = ZONE) {
-  let f = formats.get(zone);
-  if (!f) formats.set(zone, f = new Intl.DateTimeFormat('en-US', { timeZone: zone, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' }));
-  const p = Object.fromEntries(f.formatToParts(ms).map(x => [x.type, +x.value]));
-  return Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second) - Math.floor(ms / 1000) * 1000;
-}
-
-/** The wall clock in a zone at an instant: { y, m, d, h, min, wd (0 is Sunday), day (whole days since 1970) }. */
-export function wall(ms, zone = ZONE) {
-  const local = ms + zoneOffset(ms, zone), t = new Date(local);
-  return { y: t.getUTCFullYear(), m: t.getUTCMonth() + 1, d: t.getUTCDate(), h: t.getUTCHours(), min: t.getUTCMinutes(), wd: t.getUTCDay(), day: Math.floor(local / DAY) };
-}
-
-const WHEN = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?)?\s*(Z|[+-]\d{2}:?\d{2})?$/i;
-
-/**
- * "2026-10-04T11:00" to an instant. With no offset it is the wall-clock time in `zone`; with
- * "Z" or "+05:30" the offset wins. A date alone means midnight. NaN for anything else,
- * including a day that is not on the calendar (30 February).
- */
-export function parseWhen(text, zone = ZONE) {
-  const m = WHEN.exec(String(text ?? '').trim());
-  if (!m) return NaN;
-  const [y, mo, d, h = 0, mi = 0, s = 0] = m.slice(1, 7).map(x => (x == null ? undefined : Number(x)));
-  const guess = Date.UTC(y, mo - 1, d, h, mi, s);
-  const back = new Date(guess);
-  if (back.getUTCMonth() !== mo - 1 || back.getUTCDate() !== d || h > 23 || mi > 59 || s > 59) return NaN;
-  if (m[7]) {
-    if (/^z$/i.test(m[7])) return guess;
-    const sign = m[7][0] === '-' ? -1 : 1, digits = m[7].slice(1).replace(':', '');
-    return guess - sign * (+digits.slice(0, 2) * 60 + +digits.slice(2)) * MIN;
-  }
-  const first = guess - zoneOffset(guess, zone);
-  return guess - zoneOffset(first, zone);
-}
-
-/** "2026-10-04T11:00:00+05:30": what goes in a <time datetime>. */
-export function datetimeOf(ms, zone = ZONE) {
-  const w = wall(ms, zone), off = Math.round(zoneOffset(ms, zone) / MIN), a = Math.abs(off);
-  return `${w.y}-${pad(w.m)}-${pad(w.d)}T${pad(w.h)}:${pad(w.min)}:00${off < 0 ? '-' : '+'}${pad(Math.floor(a / 60))}:${pad(a % 60)}`;
-}
-
-// ── words ────────────────────────────────────────────────────────────────
-
-/** "11 am", "6:30 pm", "12 noon", "12 am" for midnight. */
-export function clock(ms, zone = ZONE) {
-  const { h, min } = wall(ms, zone);
-  if (h === 12 && !min) return '12 noon';
-  return `${h % 12 || 12}${min ? `:${pad(min)}` : ''} ${h < 12 ? 'am' : 'pm'}`;
-}
-
-const dayWords = w => `${WEEKDAYS[w.wd]} ${w.d} ${MONTHS[w.m - 1]}`;
-
-/**
- * "Sun 4 Oct, 11 am to 1 pm". Across midnight both ends carry their day:
- * "Sat 3 Oct, 8 pm to Sun 4 Oct, 1 am". No end, no "to". `year: true` adds it.
- */
-export function formatWhen(start, end, zone = ZONE, { year = false } = {}) {
-  const a = wall(start, zone), y = w => (year ? ` ${w.y}` : '');
-  let out = `${dayWords(a)}${y(a)}, ${clock(start, zone)}`;
-  if (Number.isFinite(end) && end > start) {
-    const b = wall(end, zone);
-    out += ` to ${b.day === a.day ? '' : `${dayWords(b)}${y(b)}, `}${clock(end, zone)}`;
-  }
-  return out;
-}
 
 // ── the clock ────────────────────────────────────────────────────────────
 

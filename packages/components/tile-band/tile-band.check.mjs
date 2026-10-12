@@ -8,6 +8,7 @@
 import { readFileSync } from 'node:fs';
 import { harness, settle } from '../../../tools/lib/component-check.mjs';
 import { contextOptions } from '../../../tools/lib/engine.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { server, browser, engine, check, open, openHtml, axe, axeNoJs, done } = await harness();
 const DEMO = '/packages/components/tile-band/demo.html';
@@ -183,7 +184,7 @@ const cell = (page, i) => page.evaluate(i => { const b = document.querySelector(
   await page.waitForTimeout(500);
   const f1 = await frames(page); await page.waitForTimeout(800);
   check('...and it is idle again afterwards', (await frames(page)) === f1);
-  check('at 390 px the page does not scroll sideways', (await page.evaluate(() => document.documentElement.scrollWidth)) <= 390);
+  check('at 390 px the page does not scroll sideways', (await sidewaysScroll(page, 390)).overflow === 0);
   await ctx.close();
 }
 {

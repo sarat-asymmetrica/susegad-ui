@@ -14,10 +14,10 @@
     h1 { font: 400 2.25rem/1.1 var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
     p.lede { color: var(--sg-text-soft); max-width: 42rem; }
     p.body-copy { max-width: 42rem; }
-    a.opener { display: inline-block; font: 500 0.9375rem/1 var(--sg-font-body); color: var(--sg-text); text-decoration: none;
+    a.opener, button.opener { display: inline-block; font: 500 0.9375rem/1 var(--sg-font-body); color: var(--sg-text); text-decoration: none;
       background: var(--sg-surface-raised); border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-pill);
       padding: 0.6em 1.1em; margin: 0 var(--sg-space-2) var(--sg-space-2) 0; }
-    a.opener:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+    a.opener:focus-visible, button.opener:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
     ul.rooms { list-style: none; margin: 0; padding: 0; }
     ul.rooms li { padding: var(--sg-space-2) 0; border-block-end: var(--sg-hairline) solid var(--sg-rule); }
   </style>
@@ -29,9 +29,10 @@
     <p class="body-copy">This paragraph sits behind every drawer on this page, for the same reason as Dialog's: to prove the backdrop keeps it present but never legible as text once the drawer is open. The rooms at Balcão open onto a shared verandah with cane chairs and a view of the mango tree, and none of that sentence should read through the scrim.</p>
 
     <a class="opener" href="./no-js.html" data-sg-drawer="rooms">The rooms</a>
+    <button class="opener" type="button" commandfor="rooms-dialog" command="show-modal">The rooms, no script needed</button>
 
     <sg-drawer id="rooms" edge="end">
-      <dialog>
+      <dialog id="rooms-dialog">
         <h2>The rooms</h2>
         <ul class="rooms">
           <li>Garden room, ground floor, one queen bed</li>

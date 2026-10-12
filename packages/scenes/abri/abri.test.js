@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import abri from './index.js';
 import {
-  plan, pushDrop, makeBath, stepBath, cloudRows, stylusAt, times, sheetSeed, stillAt, model, held, LOOKS, PALETTES, BATH, FW, FH, FC, FX0, FY0,
+  plan, pushDrop, makeBath, stepBath, cloudRows, stylusAt, times, sheetSeed, stillAt, model, held, freedom, LOOKS, PALETTES, BATH, FW, FH, FC, FX0, FY0,
 } from './model.js';
 import { meta } from './meta.js';
 
@@ -80,6 +80,26 @@ test('drops marked as landing under the words never land', () => {
   for (const d of B.drops) d.skip = true;
   for (let k = 0; k < 300; k++) stepBath(B, 1 / 60);
   assert.equal(B.polys.length, 0);
+});
+
+test('the drift eases in around the words: held inside the pad, partly free in the band, free beyond', () => {
+  const box = { x: 400, y: 600, w: 300, h: 40 };
+  for (const [x, y] of [[500, 620], [380, 590], [710, 660]]) {
+    assert.equal(freedom([box], x, y), 0);
+    assert.ok(held([box], x, y), 'freedom is 0 exactly where held() holds');
+  }
+  const band = [40, 60, 80].map(d => freedom([box], 550, box.y - d));
+  assert.ok(band[0] > 0 && band[0] < band[1] && band[1] < band[2] && band[2] < 1, band.join(', '));
+  assert.equal(freedom([box], 550, box.y - 95), 1);
+  assert.equal(freedom([], 550, 620), 1);
+  // the drift carries a point in the band a fraction of the way it carries a free one
+  const cloud = noCloud(); cloud.cx.fill(1);
+  const p = plan(2), B = makeBath(p, cloud);
+  B.t = p.cloud[0] + 3; B.drops = []; B.hold = [box];
+  B.polys.push({ col: '#000', pts: [550, box.y - 60, 900, 200, 900, 300] });
+  stepBath(B, 1 / 60);
+  const [bx, , fx] = B.polys[0].pts;
+  assert.ok(bx - 550 > 0 && bx - 550 < (fx - 900) * 0.7, `band moved ${(bx - 550).toFixed(3)}, free moved ${(fx - 900).toFixed(3)}`);
 });
 
 test('the stylus is somewhere only while it combs', () => {

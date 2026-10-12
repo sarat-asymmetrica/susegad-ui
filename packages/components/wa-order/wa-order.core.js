@@ -4,7 +4,7 @@
 // read on a phone, and into the wa.me link that opens WhatsApp with it already
 // written. Nothing here sends anything: the person presses send themselves.
 
-import { formatMoney } from '../menu/menu.core.js';
+import { formatMoney, istDay } from '../../core/intl.core.js';
 
 /** Every string a person reads or hears. Kathakar edits these. */
 export const STRINGS = {
@@ -110,11 +110,9 @@ export function formatDate(iso) {
   return `${DAYS[t.getUTCDay()]} ${d} ${MONTHS[mo - 1]} ${y}`;
 }
 
-const pad = n => String(n).padStart(2, '0');
-/** The earliest day (YYYY-MM-DD, in the device's own time) an order can be wanted for: now plus the notice. */
+/** The earliest day (YYYY-MM-DD, the kitchen's own day in IST, whatever zone the phone is in) an order can be wanted for: now plus the notice. */
 export function earliestDate(now = new Date(), minNoticeHours = 0) {
-  const t = new Date(+now + Math.max(0, Number(minNoticeHours) || 0) * 3600_000);
-  return `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`;
+  return istDay(+now + Math.max(0, Number(minNoticeHours) || 0) * 3600_000);
 }
 
 // ── the message ─────────────────────────────────────────────────────────────
@@ -163,7 +161,9 @@ export function composeOrder(order = {}, { level = 0 } = {}) {
   const business = plain(order.business);
   const out = [`Hello${business ? ` ${business}` : ''}! I would like to order:`, ''];
   for (const l of lines) out.push(lineText(l, level, cur));
-  out.push('', level < 1 ? `Estimated total: ${formatMoney(estimate(lines), cur)}. Please confirm the total and any delivery charge.` : `Estimated total: ${formatMoney(estimate(lines), cur)} (to confirm)`);
+  // a pickup has no delivery charge to confirm
+  const ask = order.fulfilment === 'pickup' ? 'Please confirm the total.' : 'Please confirm the total and any delivery charge.';
+  out.push('', level < 1 ? `Estimated total: ${formatMoney(estimate(lines), cur)}. ${ask}` : `Estimated total: ${formatMoney(estimate(lines), cur)} (to confirm)`);
   const details = [];
   const when = [formatDate(order.date), one(order.slot, 60)].filter(Boolean).join(', ');
   if (when) details.push(`When: ${when}`);
@@ -231,8 +231,8 @@ export function stampIn(motion) {
   if (motion !== 'full') return null;
   return {
     keyframes: [
-      { transform: 'scale(1.22) rotate(-3deg)', opacity: 0, offset: 0 },
-      { transform: 'scale(0.97) rotate(0.6deg)', opacity: 1, offset: 0.65 },
+      { transform: 'scale(1.07) rotate(-2deg)', opacity: 0, offset: 0 },
+      { transform: 'scale(0.985) rotate(0.5deg)', opacity: 1, offset: 0.65 },
       { transform: 'scale(1) rotate(0deg)', opacity: 1, offset: 1 },
     ],
     options: { duration: 320, easing: 'cubic-bezier(0.3, 0.7, 0.4, 1)', fill: 'none' },

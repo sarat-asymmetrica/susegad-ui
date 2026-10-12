@@ -21,6 +21,7 @@
 import { chromium } from 'playwright';
 import { startServer } from '../../../tools/serve.mjs';
 import { projectM, W, H, gbuffer, SOLIDS } from './world.js';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const BREAK = process.argv.includes('--break');
 const results = [];
@@ -43,7 +44,7 @@ const BREAKS = {
   hair: [/render\.js$/, s => s.replace("const mode = reg === 'quiet' ? 'hair' : 'ink'", "const mode = 'ink'").replace("isStill = frame.still || reg === 'quiet'", 'isStill = frame.still')],
   dusk: [/render\.js$/, s => s.replace("d.mood === 'auto' || !d.mood ? (isDark() ? 'dusk' : 'day') : d.mood", "'day'")],
   rim: [/paint[.]js$/, s => s.replace('tone > 1 && !rim ? 2', 'tone > 1 ? 2')],
-  sun: [/paint\.js$/, s => s.replace("if (!gb || mode === 'hair' || mood === 'dusk') return null;", 'return null;')],
+  sun: [/paint\.js$/, s => s.replace("if (!gb || mode === 'hair' || mood !== 'day') return null;", 'return null;')],
   warmhand: [/model\.js$/, s => s.replace(/warm: \{ swing: ([0-9.]+), motes: ([0-9]+), hand: false/, 'warm: { swing: $1, motes: $2, hand: true')],
   hand: [/model\.js$/, s => s.replace(/playful: \{ swing: ([0-9.]+), motes: ([0-9]+), hand: true/, 'playful: { swing: $1, motes: $2, hand: false')],
 };
@@ -184,7 +185,8 @@ for (const register of ['quiet', 'warm', 'playful']) for (const theme of ['light
 // 8. phone width
 {
   const p = await open({ register: 'warm', width: 390, height: 844 });
-  const r = await p.page.evaluate(() => ({ sw: document.scrollingElement.scrollWidth, iw: innerWidth, w: window.__piece.getBoundingClientRect().width }));
+  const o = await sidewaysScroll(p.page);
+  const r = { sw: o.scrollWidth, iw: o.viewWidth, ...(await p.page.evaluate(() => ({ w: window.__piece.getBoundingClientRect().width }))) };
   check('at 390 px there is no horizontal scroll and the drawing fits', r.sw <= r.iw && r.w <= r.iw, `scroll width ${r.sw}, window ${r.iw}, drawing ${r.w.toFixed(0)}`);
   await p.context.close();
 }

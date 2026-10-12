@@ -13,7 +13,7 @@ const ORDER = {
   business: 'Sample Pasta Studio', lines: LINES, date: '2026-10-11', slot: 'Morning (10 am to 1 pm)',
   fulfilment: 'delivery', area: 'Porvorim', name: 'Anjali', notes: 'Please ring the bell twice.', dietary: 'No nuts',
 };
-const NOW = new Date(2026, 9, 2, 14, 30); // 2 Oct 2026, 2:30 pm local
+const NOW = new Date('2026-10-02T14:30:00+05:30'); // 2 Oct 2026, 2:30 pm in Goa
 
 test('runs in Node with no DOM', () => {
   assert.equal(typeof document, 'undefined');
@@ -95,16 +95,18 @@ test('dates read as a person writes them', () => {
   assert.equal(formatDate(undefined), '');
 });
 
-test('earliest day: now plus the notice, in local time', () => {
+test('earliest day: now plus the notice, on the IST calendar of the kitchen', () => {
   assert.equal(earliestDate(NOW, 0), '2026-10-02');
   assert.equal(earliestDate(NOW, 8), '2026-10-02'); // 10:30 pm still today
   assert.equal(earliestDate(NOW, 10), '2026-10-03'); // 12:30 am tomorrow
   assert.equal(earliestDate(NOW, 24), '2026-10-03');
   assert.equal(earliestDate(NOW, 48), '2026-10-04');
-  assert.equal(earliestDate(new Date(2026, 11, 31, 23, 0), 2), '2027-01-01', 'across a year');
-  assert.equal(earliestDate(new Date(2026, 1, 28, 12, 0), 24), '2026-03-01', 'across a month');
+  assert.equal(earliestDate(new Date('2026-12-31T23:00:00+05:30'), 2), '2027-01-01', 'across a year');
+  assert.equal(earliestDate(new Date('2026-02-28T12:00:00+05:30'), 24), '2026-03-01', 'across a month');
   assert.equal(earliestDate(NOW, -5), '2026-10-02', 'negative notice is none');
   assert.equal(earliestDate(NOW, 'x'), '2026-10-02');
+  // 8 pm on 2 Oct in New York is already 3 Oct in Goa: the kitchen's day wins over the phone's
+  assert.equal(earliestDate(new Date('2026-10-02T20:00:00-04:00'), 0), '2026-10-03');
 });
 
 // ── the message ──
@@ -133,6 +135,15 @@ test('pickup says so, and carries no area', () => {
   const text = composeOrder({ ...ORDER, fulfilment: 'pickup', area: 'Porvorim' });
   assert.match(text, /^Pickup: I will collect it$/m);
   assert.ok(!text.includes('Porvorim'));
+});
+
+test('pickup never mentions delivery: the total asks to confirm the total only (any case)', () => {
+  const text = composeOrder({ ...ORDER, fulfilment: 'pickup' });
+  assert.ok(!/delivery/i.test(text), text);
+  assert.match(text, /^Estimated total: .*\. Please confirm the total\.$/m);
+  // delivery, and a message with no way chosen, still ask about the charge
+  assert.match(composeOrder({ ...ORDER, fulfilment: 'delivery' }), /any delivery charge/);
+  assert.match(composeOrder({ lines: ORDER.lines }), /any delivery charge/);
 });
 
 test('missing details leave no empty lines behind', () => {

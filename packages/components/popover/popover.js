@@ -12,12 +12,15 @@
 //
 // Without an id on the panel or a popovertarget on the trigger, the element
 // wires them itself, so a builder may leave both off and just nest a
-// [popover] element after a button. Attributes: register.
+// [popover] element after a button. Placement is CSS anchor positioning
+// (popover.css); the measured JS placement below runs only in a browser
+// that does not have it. Attributes: register.
 
 import { SgElement, defineComponent } from '../../core/component.js';
 import { placement } from './popover.core.js';
 
-let uid = 0;
+let uid = 0, anchorUid = 0;
+const anchors = typeof CSS !== 'undefined' && !!CSS.supports?.('anchor-name: --a');
 
 export class SgPopover extends SgElement {
   static native = '[popover]';
@@ -39,14 +42,22 @@ export class SgPopover extends SgElement {
 
     const onToggle = e => { this.toggleAttribute('data-open', e.newState === 'open'); this.update(); this.#place(); };
     panel.addEventListener('toggle', onToggle);
-    const onReflow = () => this.#place();
-    window.addEventListener('resize', onReflow);
-    window.addEventListener('scroll', onReflow, { capture: true, passive: true });
-    this.#off.push(
-      () => panel.removeEventListener('toggle', onToggle),
-      () => window.removeEventListener('resize', onReflow),
-      () => window.removeEventListener('scroll', onReflow, { capture: true }),
-    );
+    this.#off.push(() => panel.removeEventListener('toggle', onToggle));
+    if (anchors && this.#trigger) {
+      // the trigger is the anchor and the panel names it: the browser places, flips and follows it
+      const name = `--sg-popover-${++anchorUid}`;
+      this.#trigger.style.setProperty('anchor-name', name);
+      panel.style.setProperty('position-anchor', name);
+      this.#off.push(() => { this.#trigger.style.removeProperty('anchor-name'); panel.style.removeProperty('position-anchor'); });
+    } else {
+      const onReflow = () => this.#place();
+      window.addEventListener('resize', onReflow);
+      window.addEventListener('scroll', onReflow, { capture: true, passive: true });
+      this.#off.push(
+        () => window.removeEventListener('resize', onReflow),
+        () => window.removeEventListener('scroll', onReflow, { capture: true }),
+      );
+    }
   }
   disconnected() { this.#off.splice(0).forEach(f => f()); }
 
@@ -56,16 +67,17 @@ export class SgPopover extends SgElement {
   hidePopover() { this.native?.hidePopover(); }
   togglePopover() { this.native?.togglePopover(); }
 
-  /** Place the panel under its trigger, always measured: a bare
-   * `position: fixed` with no offsets falls back to the panel's static
-   * flow position, not its trigger, so this never relies on CSS alone. */
+  /** The fallback, for a browser without anchor positioning: place the
+   * panel under its trigger, measured, because a bare `position: fixed`
+   * with no offsets falls back to the panel's static flow position. */
   #place() {
-    if (!this.open || !this.native || !this.#trigger) return;
+    if (anchors || !this.open || !this.native || !this.#trigger) return;
     const t = this.#trigger.getBoundingClientRect();
     const panel = { width: this.native.offsetWidth, height: this.native.offsetHeight };
     const viewport = { width: window.innerWidth, height: window.innerHeight };
     const { left, above } = placement(t, panel, viewport);
     const s = this.native.style;
+    s.margin = '0';
     s.left = `${left}px`;
     if (above) { s.top = 'auto'; s.bottom = `${viewport.height - t.top + 6}px`; }
     else { s.bottom = 'auto'; s.top = `${t.bottom + 6}px`; }

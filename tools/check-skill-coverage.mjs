@@ -9,10 +9,13 @@
 // heading somewhere under SKILL.md or references/*.md.
 //
 //   node tools/check-skill-coverage.mjs
+//
+// It also holds every SKILL.md to the Agent Skills spec (tools/skill-spec.mjs, which runs on its own too).
 
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { checkRepoSkills } from './skill-spec.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '..');
@@ -115,6 +118,13 @@ function main() {
     return 1;
   }
   console.log(`All ${BASELINE.length} headings from the old SKILL.md are reachable from the new tree.`);
+  const spec = checkRepoSkills(ROOT);
+  if (spec.problems.length) {
+    console.error(`${spec.problems.length} Agent Skills spec problem(s):`);
+    for (const p of spec.problems) console.error(`  - ${p}`);
+    return 1;
+  }
+  console.log(`${spec.checked.length} skills meet the Agent Skills spec (${spec.checked.join(', ')}).`);
   return 0;
 }
 

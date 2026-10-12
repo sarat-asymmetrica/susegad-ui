@@ -36,6 +36,10 @@ Make a generative colour-field painting in plain JavaScript that builds itself o
 | one restrained palette per seed | colour | Each palette is a glow and three or four paints close in hue, so the painting stays one quiet colour with depth in it rather than many colours competing. The palette attribute chooses one by name. |
 | keep that breath away from any words laid over the painting | calm | The page reports where its text sits. Under those boxes, and 24 units round them, the painting is drawn again without the breath, so the words sit on paint that does not move. |
 
+## On a page
+
+A bare `<sg-scene name="maun">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/maun/index.js">` with `<sg-scene name="maun" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing is decorative: its name is its `alt`, and it shows no state. The making takes about ten seconds and then only a slow breath of light moves; the pause button stops even that. In playful the drawing takes focus, the arrow keys move a hand and Enter or Space scrapes a band of paint back, as a click does. Words laid over it sit on a scrim, and the breath keeps away from them.

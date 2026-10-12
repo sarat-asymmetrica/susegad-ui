@@ -6,7 +6,7 @@
   "description": "A long form walked one step at a time. Without JavaScript every step is a visible fieldset with one submit. With it, Back and Next, focus on each step's legend, progress in words, and nothing typed ever lost. Quiet is numbered stations; warm is a walk on a survey map, the road found round the hills with A*; playful adds footprints.",
   "version": "0.1.0",
   "files": ["stepper.js", "stepper.core.js", "stepper.css", "skins/map.js", "skins/quiet.js", "skins/warm.js", "skins/playful.js", "stepper.prompt.md", "stepper.docs.md"],
-  "dependencies": ["core-component", "core", "engine", "tokens"],
+  "dependencies": ["core-component", "core", "engine", "tokens", "sound"],
   "registers": ["quiet", "warm", "playful"],
   "prompt": "stepper.prompt.md",
   "docs": "stepper.docs.md",

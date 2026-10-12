@@ -80,3 +80,11 @@ test('the built site ships custom-elements.json, and its llms.txt points at it',
   const headers = fs.readFileSync(path.join(out, '_headers'), 'utf8');
   assert.match(headers, /^\/packages\/\*\n  Access-Control-Allow-Origin: \*$/m);
 });
+
+test('a template is listed under Templates, after the scenes and before the packages', () => {
+  const withTemplate = { ...index, items: [...index.items, { name: 'template-event', type: 'template', title: 'Event page', description: 'A starter site.', stability: 'experimental', docs: 'packages/templates/event/README.md' }] };
+  const { txt } = buildLlms(withTemplate, texts);
+  const at = txt.indexOf('## Templates');
+  assert.ok(at > txt.indexOf('## Scenes') && at < txt.indexOf('## Packages'), 'between scenes and packages');
+  assert.match(txt, /- \[Event page \(template-event, experimental\)\]\(packages\/templates\/event\/README\.md\): A starter site\./);
+});

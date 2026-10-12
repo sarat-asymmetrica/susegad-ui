@@ -32,6 +32,10 @@ Or load it from anywhere with `setThreeLoader(() => import('/vendor/three.js'))`
 | `chooseTier({ webgl, three, motion, lite, forced })` | `'live'`, `'2d'` or `'still'`. Pure. |
 | `depthToZ`, `reproject`, `projectPoint`, `coverWindow`, `cameraAt`, `follow`, `parseVec` | The camera maths. Pure. |
 
+### Words in z-space
+
+Pure (`occlusion.core.js`, `text.core.js`): `extentIn`, `flowShape`, `rowsOf`, `silhouetteOf`, `hugFloat`, `cssPolygon` (a silhouette in, a shape for the type tier out); `lineBoxes`, `spanStyle`, `quadPlan`, `baselineOf`, `frameCovering`, `worldAt`, `frustumOf` (line boxes and the camera arithmetic that puts a quad on the pixels its span occupies). Live (`occlusion.live.js`, `text.live.js`, loaded by dynamic `import()` on the live tier only): `projectMeshes(THREE, camera, meshes, frame)` and `createTextQuads(THREE, { scene, camera })`. The quads are pictures of words that are already in the page as real text: they repeat the DOM words and never replace them. None of these lays or measures a line; the type tier does (`packages/type/README.md`, "Words in z-space"). The veranda's turning pot is the worked example (`scenes/veranda/matka-view.js`).
+
 ## The tiers
 
 | Tier | When | Downloads three |

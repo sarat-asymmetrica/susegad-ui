@@ -40,6 +40,10 @@ Simulate Rajasthani hand block printing on khadi cotton in canvas JavaScript, wi
 | print exactly that share of the impressions and rest | state | With progress set, the count comes from the number alone, the block goes home, the scene rests until the attribute changes, and the status says the percentage in words. |
 | Leave the cloth plain wherever the page lays its own words over it | calm | An impression whose motif would land within 10 units of a text box is left out of the run, so the words sit on bare cotton and nothing is pressed under them. |
 
+## On a page
+
+A bare `<sg-scene name="neel">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/neel/index.js">` with `<sg-scene name="neel" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing's name is its `alt`. With `progress` set, the element says the percentage in a polite status region, at most once a second. The printing is slow and steady, and the pause button stops it. In playful the drawing takes focus: the arrow keys move a hand and Enter or Space presses both blocks there, as a click does. Nothing is pressed under any words laid over the cloth.

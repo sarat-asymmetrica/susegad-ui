@@ -10,9 +10,9 @@ sg-action-menu { display: contents; }
 
 sg-action-menu [role="menu"] {
   /* the popover UA stylesheet sets inset: 0, which stretches a fit-content
-     box across the whole viewport and leaves it pinned top-left; reset it
-     so action-menu.js's own left/top/bottom (set on open, in #place()) are the
-     only offsets in play. */
+     box across the whole viewport and leaves it pinned top-left; reset it.
+     The anchor block below places the list; action-menu.js's own left/top
+     (in #place()) is the fallback for a browser without anchor positioning. */
   position: fixed;
   inset: auto;
   margin: 0;
@@ -26,8 +26,43 @@ sg-action-menu [role="menu"] {
   font: var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif);
   box-shadow: var(--sg-lift, 0 8px 24px rgb(0 0 0 / 0.2));
 }
-sg-action-menu [role="menu"][popover]:popover-open { animation: sg-action-menu-in var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out); }
-@keyframes sg-action-menu-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* ── placement: below the trigger, flipped above or across when it will not fit.
+   A popovertarget trigger is the list's implicit anchor, so this works with
+   no script; action-menu.js names the anchor outright for the rest. */
+@supports (anchor-name: --a) {
+  sg-action-menu [role="menu"] {
+    position-anchor: auto;
+    top: anchor(bottom);
+    left: anchor(left);
+    margin-block: 6px;
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline, --sg-menu-tall;
+    overflow: auto;
+  }
+}
+/* a list taller than the room on either side takes the whole height of the viewport and scrolls */
+@position-try --sg-menu-tall {
+  top: 8px;
+  bottom: 8px;
+  margin-block: 0;
+  block-size: auto; /* the popover UA sheet says fit-content, which would not fill */
+}
+
+/* ── entering and leaving: the list is a transition from its first frame ────
+   Quiet: a 120 ms change of opacity, nothing else. Warm adds a short rise,
+   playful the spring. Reduced motion: it is simply there. */
+sg-action-menu [role="menu"][popover] {
+  --_dur: 120ms; --_ease: var(--sg-ease-out, ease-out); --_rise: 0px;
+  opacity: 0;
+  translate: 0 var(--_rise);
+  transition: opacity var(--_dur) var(--_ease), translate var(--_dur) var(--_ease), overlay var(--_dur) allow-discrete, display var(--_dur) allow-discrete;
+}
+sg-action-menu [role="menu"][popover]:popover-open { opacity: 1; translate: 0 0; }
+@starting-style {
+  sg-action-menu [role="menu"][popover]:popover-open { opacity: 0; translate: 0 var(--_rise); }
+}
+sg-action-menu[data-skin="warm"] [role="menu"] { --_dur: 180ms; --_rise: 6px; --_item-rise: 3px; }
+sg-action-menu[data-skin="playful"] [role="menu"] { --_dur: 260ms; --_ease: var(--sg-ease-spring, ease-out); --_rise: 10px; --_item-rise: 5px; }
 
 sg-action-menu [role="menuitem"] {
   display: block;
@@ -47,16 +82,59 @@ sg-action-menu [role="menuitem"]:hover,
 sg-action-menu [role="menuitem"]:focus { background: var(--sg-surface-sunk, ButtonFace); }
 sg-action-menu [role="menuitem"]:focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: -2px; }
 
-/* the teental stagger: each item's own entrance, on the beat action-menu.js sets */
+/* the teental stagger: each item's own entrance, on its own beat. The delay is
+   --sg-item-delay, set below in CSS from the item's place in the list, or by
+   action-menu.js (talaDelay()) in a browser without sibling-index(). */
 sg-action-menu [role="menu"][popover]:popover-open [role="menuitem"] {
   animation: sg-action-menu-item-in var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out) backwards;
   animation-delay: var(--sg-item-delay, 0ms);
 }
-@keyframes sg-action-menu-item-in { from { opacity: 0; transform: translateY(-2px); } to { opacity: 1; transform: none; } }
+@keyframes sg-action-menu-item-in { from { opacity: 0; translate: 0 var(--_item-rise, 0px); } to { opacity: 1; translate: 0 0; } }
+sg-action-menu[data-skin="playful"] [role="menu"][popover]:popover-open [role="menuitem"] { animation-timing-function: var(--sg-ease-spring, ease-out); }
+
+/* sam is beat 0 and the three khali beats (8, 9, 10) stay silent, so the 13
+   active slots run 0 to 7, then 11 to 15, and go round again 16 beats on;
+   nothing waits longer than 600 ms. The same arithmetic as talaDelay() in
+   tokens.js, which stays the source of truth and the fallback. */
+@property --sg-menu-i { syntax: "<integer>"; inherits: true; initial-value: 1; }
+@supports (animation-delay: calc(1s * sibling-index())) {
+  sg-action-menu [role="menu"] > * { --sg-menu-i: sibling-index(); }
+  sg-action-menu [role="menu"] [role="menuitem"] {
+    --_k: calc(var(--sg-menu-i) - 1);
+    --_s: mod(var(--_k), 13);
+    --sg-item-delay: min(600ms, var(--sg-tala-beat, 130ms) * (16 * round(down, var(--_k) / 13, 1) + var(--_s) + 3 * round(down, var(--_s) / 8, 1)));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  sg-action-menu [role="menu"][popover]:popover-open,
+  sg-action-menu [role="menu"][popover] { transition: none; }
   sg-action-menu [role="menu"][popover]:popover-open [role="menuitem"] { animation: none; }
 }
+
+/* ── pressed (the touch contract) ────────────────────────────────────────────
+   Down answers in the same frame, with no transition; letting go eases back
+   in under 150 ms. Quiet settles 1 px, warm shades the colour toward the ink,
+   playful gives a little. The keyboard never moves an item (arrow keys do not
+   press, and Enter or Space held down must not shake it), and reduced motion
+   keeps the shade and drops the movement. */
+sg-action-menu [role="menuitem"],
+sg-action-menu > :where(button, a[href]) {
+  transition: translate 120ms ease-out, scale 120ms var(--sg-ease-out, ease-out), box-shadow 100ms ease-out;
+}
+sg-action-menu [role="menuitem"]:active,
+sg-action-menu > :where(button, a[href]):active { transition: none; translate: 0 1px; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text, CanvasText) 8%, transparent); }
+sg-action-menu[data-skin="warm"] [role="menuitem"]:active,
+sg-action-menu[data-skin="warm"] > :where(button, a[href]):active { translate: none; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text, CanvasText) 16%, transparent); }
+sg-action-menu[data-skin="playful"] [role="menuitem"],
+sg-action-menu[data-skin="playful"] > :where(button, a[href]) { transition-timing-function: ease-out, var(--sg-ease-spring, ease-out), ease-out; }
+sg-action-menu[data-skin="playful"] [role="menuitem"]:active,
+sg-action-menu[data-skin="playful"] > :where(button, a[href]):active { translate: none; scale: 0.97; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-accent, Highlight) 20%, transparent); }
+@media (prefers-reduced-motion: reduce) {
+  sg-action-menu [role="menuitem"]:active,
+  sg-action-menu > :where(button, a[href]):active { translate: none !important; scale: none !important; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text, CanvasText) 16%, transparent); }
+}
+:root[data-sg-input="key"] sg-action-menu [role="menuitem"]:active,
+:root[data-sg-input="key"] sg-action-menu > :where(button, a[href]):active { translate: none !important; scale: none !important; }
 
 /* ── quiet: a ruled list ──────────────────────────────────────────────────── */
 sg-action-menu [role="menuitem"] + [role="menuitem"] { border-top: var(--sg-hairline, 1px) solid var(--sg-rule, CanvasText); }

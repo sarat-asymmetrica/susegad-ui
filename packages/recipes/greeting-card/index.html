@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  // ?register=quiet|warm|playful, ?theme=light|dark and ?palette=… set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute(`data-${k}`, v);
+  window.__ready = false; // set once the first card is drawn, so a screenshot is not of an empty frame
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Greeting cards</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="../../components/bloom/bloom.css">
+<link rel="stylesheet" href="./recipe.css">
+</head>
+<body>
+<main class="card-maker">
+  <header class="card-maker__head">
+    <h1>A greeting card with a flower of its own</h1>
+    <p class="card-maker__sub">Type a name and the flower grows from it: the same name always gives the same flower, and no two names give the same one. Save the card as a PNG to keep, or make a JPG to send.</p>
+  </header>
+
+  <div class="card-maker__cols">
+    <form id="maker" class="card-maker__form">
+      <label for="name">Name</label>
+      <input id="name" name="name" type="text" value="Maria Fernandes" maxlength="40" autocomplete="off" spellcheck="false">
+      <label for="line">A line for the card</label>
+      <input id="line" name="line" type="text" value="We look forward to seeing you." maxlength="90" autocomplete="off">
+      <div class="card-maker__buttons">
+        <button type="button" id="save" class="card-maker__button card-maker__button--primary">Save as PNG</button>
+        <button type="button" id="share" class="card-maker__button">Make a JPG to share</button>
+      </div>
+      <p id="status" class="card-maker__status" role="status"></p>
+    </form>
+
+    <figure class="card-maker__preview">
+      <canvas id="card" width="1080" height="1350" role="img" aria-label="Greeting card for Maria Fernandes"></canvas>
+    </figure>
+  </div>
+  <noscript><p class="card-maker__sub">Cards are drawn in your browser, so this page needs JavaScript.</p></noscript>
+</main>
+<script type="module">
+  import { mountCard } from './recipe.js';
+  mountCard().then(() => document.fonts.ready).then(() => setTimeout(() => { window.__ready = true; }, 100));
+</script>
+</body>
+</html>

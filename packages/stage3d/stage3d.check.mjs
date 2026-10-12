@@ -14,6 +14,7 @@
 //  5. control: the depth photo in warm on the GPU: the live tier asks for three (so the detector works).
 
 import { session, openTarget, waitReady } from '../../tools/lib/browser.mjs';
+import { gpuOf } from '../../tools/lib/gpu.mjs';
 
 const BREAK = process.argv.includes('--break');
 const GPU = ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'];
@@ -42,6 +43,9 @@ async function open(s, t, view = {}, { init = null } = {}) {
 }
 
 const s = await session({ args: GPU });
+// On a software renderer (a CI runner, or SG_FORCE_SOFTWARE_GL=1) the depth photo rightly draws in 2D, so the control (5) skips:
+// the live tier is not there to ask for three. Checks 1 to 4 still run; without the control they say no more than what they saw.
+const gate = await gpuOf(s.browser);
 const breakInit = BREAK ? "addEventListener('DOMContentLoaded', () => import('/node_modules/three/build/three.module.js').catch(() => {}));" : null;
 
 // 1: scene pages and the docs home
@@ -84,7 +88,7 @@ for (const [label, t, view, wait] of [
 }
 
 // 5: the control. The live tier must ask for three, or the detector above proves nothing.
-{
+if (!gate.skip('control: the live tier does request three.js, so the detector can see it')) {
   const t = { url: DEMO, register: 'warm', theme: 'light' };
   const p = await open(s, t);
   await waitReady(p.page, t, { timeout: 30000 });
@@ -96,5 +100,5 @@ for (const [label, t, view, wait] of [
 
 await s.done();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${results.length - failed} of ${results.length} pass${BREAK ? ' (--break: the no-3D checks should FAIL)' : ''}`);
+console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the no-3D checks should FAIL)' : ''}`);
 process.exit(BREAK ? 0 : failed ? 1 : 0);

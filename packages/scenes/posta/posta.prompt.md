@@ -40,6 +40,10 @@ Draw the sorting desk of an old post office in Fontainhas, in ink and wash on pa
 - A quiet sorting desk where letters settle into cubbies as progress advances.
 - A sunlit Goan post desk with floating dust motes and a crimson postbox flap.
 
+## On a page
+
+A bare `<sg-scene name="posta">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/posta/index.js">` with `<sg-scene name="posta" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing serves as visual atmosphere; slotted page text carries all essential messages. In quiet register or with prefers-reduced-motion, the scene presents a still architectural hairline drawing. In warm register, animations settle within eight and a half seconds and stop drawing. In playful, keyboard navigation with arrow keys and Enter or Space operates the flap, the balance scale, and the rubber stamp.

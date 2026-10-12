@@ -11,11 +11,12 @@
 // focus; Escape returns focus (native); the stagger is off under reduced
 // motion; forced colours simplify the list.
 
-import { chromium } from 'playwright';
+import { engineName, pickEngine, unsupportedIn } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const browser = await pickEngine().launch();
+const engine = engineName();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const demo = `${server.url}/packages/components/action-menu/demo.html`;
@@ -30,9 +31,38 @@ const demo = `${server.url}/packages/components/action-menu/demo.html`;
   check('no JS: the list starts closed', !(await p.isVisible('#account-menu')));
   await p.click('#account-trigger');
   check('no JS: clicking the trigger opens the list', await p.isVisible('#account-menu'));
+  // Which items does this engine put in the tab order? WebKit's default leaves links out (Safari reaches
+  // them with Option+Tab, which Playwright's WebKit does not do), so ask the engine instead of assuming.
+  const probe = await ctx.newPage(); // a page of its own: Tab moves the sequential-focus starting point, so it must not be this one
+  await probe.setContent('<a href="#x">x</a><button>b</button>');
+  await probe.keyboard.press('Tab');
+  const tabsToLinks = await probe.evaluate(() => document.activeElement.localName === 'a');
+  await probe.close();
   await p.keyboard.press('Tab');
   const firstFocused = await p.evaluate(() => document.activeElement.id);
-  check('no JS: Tab reaches the first real item', firstFocused === 'mi-profile', firstFocused);
+  const expected = tabsToLinks ? 'mi-profile' : 'mi-signout'; // written out, not read from the page: a reordered list must read red
+  if (!tabsToLinks) unsupportedIn(engine, 'Tab to a link', 'links are not tab stops in this engine by default, so Tab is asked for the first item it does stop at');
+  check(`no JS: Tab reaches the first real item${tabsToLinks ? '' : ' this engine tabs to'} (${expected})`, firstFocused === expected, firstFocused);
+  await ctx.close();
+}
+
+// control: the same walk on a copy whose list is out of order (Sign out first) must go red
+{
+  const ctx = await browser.newContext({ javaScriptEnabled: false });
+  await ctx.route('**/action-menu/demo.html', async r => {
+    const res = await r.fetch();
+    let html = await res.text();
+    const out = html.match(/ *<li role="none"><button type="button" role="menuitem" id="mi-signout">Sign out<\/button><\/li>\r?\n?/)[0];
+    html = html.replace(out, '').replace(/(<ul id="account-menu"[^>]*>\r?\n)/, `$1${out}`);
+    await r.fulfill({ response: res, body: html });
+  });
+  const p = await ctx.newPage();
+  await p.goto(demo);
+  await p.click('#account-trigger');
+  await p.keyboard.press('Tab');
+  const first = await p.evaluate(() => document.activeElement.id);
+  const order = await p.evaluate(() => [...document.querySelectorAll('#account-menu [role="menuitem"]')].map(e => e.id || e.textContent.trim()[0]).join());
+  check(`control: with Sign out moved to the front of the list, the first item reached is mi-signout, not mi-profile (${order})`, first === 'mi-signout' && first !== 'mi-profile', first);
   await ctx.close();
 }
 
@@ -57,7 +87,9 @@ for (const register of ['quiet', 'warm', 'playful']) {
 
   // AB1: the list must sit against its trigger, not at a static flow
   // position. AB2: its box should fit its four items, not balloon past them.
-  const rects = await p.evaluate(() => {
+  const rects = await p.evaluate(async () => {
+    // measure the settled box: playful's entry is a transition, and a rect read mid-way is a few px off under load
+    await Promise.all(document.getAnimations().map(a => a.finished.catch(() => {})));
     const t = document.getElementById('account-trigger').getBoundingClientRect();
     const menu = document.getElementById('account-menu').getBoundingClientRect();
     const items = [...document.querySelectorAll('#account-menu [role="menuitem"]')].map(el => el.getBoundingClientRect().height);
@@ -128,13 +160,20 @@ for (const register of ['quiet', 'warm', 'playful']) {
   // that never delays the roving focus action-menu.js already moved synchronously.
   if (register === 'playful') {
     await p.focus('#account-trigger');
+    // "At once" is timed inside the page, from the key's keydown to the first item's focusin, so
+    // the harness's own round trips can't count against the component (a 150 ms window polled
+    // from Node failed about one run in three on a quiet machine). Not the same task as the key
+    // press, since the popover's toggle handler moves focus, but far inside the stamp's bloom.
+    await p.evaluate(() => {
+      window.__atOnce = { down: null, focus: null };
+      document.addEventListener('keydown', e => { if (e.key === 'ArrowDown' && window.__atOnce.down === null) window.__atOnce.down = performance.now(); }, { capture: true });
+      document.addEventListener('focusin', e => { if (e.target.id === 'mi-profile' && window.__atOnce.focus === null) window.__atOnce.focus = performance.now(); });
+    });
     await p.keyboard.press('ArrowDown');
-    // "At once" is within 150 ms: far inside the stamp's bloom (hundreds of ms), but not the same
-    // task as the key press, since the popover's own toggle handler moves focus. Read in the same
-    // evaluate as the key press it failed 4 runs of 4 on a quiet machine, a race in the check.
-    await p.waitForFunction(() => document.activeElement?.id === 'mi-profile', null, { timeout: 150 }).catch(() => {});
-    const focusedAtOnce = await focused();
-    check(`${tag} focus lands on the first item at once, before the stamp has even started blooming`, focusedAtOnce === 'mi-profile');
+    await p.waitForFunction(() => window.__atOnce.focus !== null, null, { timeout: 3000 }).catch(() => {});
+    const atOnce = await p.evaluate(() => window.__atOnce);
+    const lag = atOnce.down !== null && atOnce.focus !== null ? atOnce.focus - atOnce.down : null;
+    check(`${tag} focus lands on the first item at once, before the stamp has even started blooming`, lag !== null && lag < 50, lag === null ? 'focus never reached mi-profile' : `${lag.toFixed(1)} ms from keydown to focus`);
     await p.waitForFunction(() => [...document.querySelectorAll('#account-menu .sg-action-menu-item-stamp')].every(s => s.getAnimations().every(a => a.playState !== 'running')), { timeout: 3000 });
     const stamps = await p.evaluate(() => [...document.querySelectorAll('#account-menu .sg-action-menu-item-stamp')].map(s => getComputedStyle(s).opacity));
     check(`${tag} every item's stamp blooms and fades fully, leaving no permanent mark`, stamps.length === 4 && stamps.every(o => o === '0'), JSON.stringify(stamps));
@@ -142,6 +181,23 @@ for (const register of ['quiet', 'warm', 'playful']) {
   }
 
   check(`${tag} no console or page errors`, errors.length === 0, errors.join(' | '));
+  await ctx.close();
+}
+
+// ── opened from the keyboard: Escape returns focus to the trigger, in every engine ──
+// (WebKit does not focus a button on a mouse click, so the pointer path below differs there: docs/BROWSERS.md)
+{
+  const ctx = await browser.newContext();
+  const p = await ctx.newPage();
+  await p.goto(`${demo}?register=quiet`);
+  await p.waitForFunction(() => window.__ready);
+  await p.focus('#account-trigger');
+  await p.keyboard.press('Enter');
+  await p.waitForFunction(() => document.getElementById('account-trigger').closest('sg-action-menu').open);
+  await p.keyboard.press('Escape');
+  await p.waitForFunction(() => !document.getElementById('account-trigger').closest('sg-action-menu').open);
+  const focused = await p.evaluate(() => document.activeElement.id);
+  check('opened from the keyboard: Escape closes the menu and returns focus to the trigger', focused === 'account-trigger', focused);
   await ctx.close();
 }
 
@@ -157,7 +213,9 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await p.waitForTimeout(60);
   const focused = await p.evaluate(() => document.activeElement.id);
   const open = await p.evaluate(() => document.getElementById('account-trigger').closest('sg-action-menu').open);
-  check('Escape closes the menu and returns focus to the trigger', !open && focused === 'account-trigger', focused);
+  // WebKit does not focus a button on a mouse click, so there is no focus to return to; the keyboard-opened case above asks the same question there
+  if (engine === 'webkit' && !open && focused === '') unsupportedIn(engine, 'focus return after a mouse open', 'a click does not focus the button in WebKit (docs/BROWSERS.md); see the keyboard-opened check');
+  else check('Escape closes the menu and returns focus to the trigger', !open && focused === 'account-trigger', focused);
   await ctx.close();
 }
 

@@ -42,6 +42,10 @@ Draw a topographic survey sheet of the Western Ghats above Goa in canvas JavaScr
 | keep them and the names off any words laid over the sheet | calm | The page reports where its text sits. A cloud, a spot height or a name within reach of those boxes is not drawn. |
 | Show the height under the pointer | interaction | The pointer position is read back from the height grid and rounded to the nearest contour, which is drawn again in red pencil. The keyboard hand’s height is said once in a polite live region. |
 
+## On a page
+
+A bare `<sg-scene name="ghat">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/ghat/index.js">` with `<sg-scene name="ghat" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing's name is its `alt`. With `progress` set, the status says how far the sheet is inked, at most once a second. In warm and playful the pointer reads the height of the ground as a pencilled note; in playful the drawing takes focus, the arrow keys move a hand over the sheet, and the height under it is said once in a polite live region ("Height here: 350 m"). Clouds and names are not drawn over words laid on the sheet.

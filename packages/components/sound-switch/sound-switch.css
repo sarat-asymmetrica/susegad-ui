@@ -115,3 +115,15 @@ sg-sound-switch .sg-sound-switch-art[data-on] .sg-sound-switch-slash { opacity: 
   sg-sound-switch input[type="checkbox"]::before,
   sg-sound-switch .sg-sound-switch-art { display: none !important; }
 }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-sound-switch .sg-sound-switch-art, sg-sound-switch input[type="checkbox"] { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-sound-switch:active input[type="checkbox"] { translate: 0 1px; border-color: color-mix(in oklab, var(--sg-rule-strong, CanvasText), var(--sg-text, CanvasText) 40%); transition: none !important; }
+sg-sound-switch:is([data-skin="warm"], [data-skin="playful"]):active input[type="checkbox"] { translate: none; border-color: transparent; }
+sg-sound-switch[data-skin="warm"]:active .sg-sound-switch-body { fill: color-mix(in oklab, var(--sg-text-soft, CanvasText), var(--sg-text, CanvasText) 40%); transition: none !important; }
+sg-sound-switch[data-skin="playful"]:active .sg-sound-switch-art { scale: 0.93; transition: none !important; }
+sg-sound-switch[data-skin="playful"]:active .sg-sound-switch-body { fill: color-mix(in oklab, var(--sg-text-soft, CanvasText), var(--sg-text, CanvasText) 30%); }
+@media (prefers-reduced-motion: reduce) {
+  sg-sound-switch:active :is(input, .sg-sound-switch-art) { translate: none !important; scale: none !important; }
+  sg-sound-switch .sg-sound-switch-art, sg-sound-switch input[type="checkbox"] { transition: none; }
+}

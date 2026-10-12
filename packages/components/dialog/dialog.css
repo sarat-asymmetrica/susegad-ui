@@ -72,6 +72,56 @@ sg-dialog[data-skin="playful"] .sg-dialog-card {
   box-shadow: 0 30px 70px -30px var(--sg-shadow);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  sg-dialog dialog, sg-dialog .sg-dialog-card { animation: none !important; transition: none !important; }
+/* ── entering and leaving: a transition from the first frame ────────────────
+   The dialog fades in from @starting-style and, where the browser can hold it
+   in the top layer while it goes (the overlay property), fades out again.
+   Quiet is 120 ms of opacity and nothing else. Warm adds a short rise on the
+   card, playful lets the card rise with a little give on the spring.
+   Reduced motion: it is simply there. */
+sg-dialog dialog {
+  --_dur: 120ms; --_ease: var(--sg-ease-out, ease-out); --_rise: 0px; --_give: 1;
+  opacity: 0;
 }
+sg-dialog dialog[open] { opacity: 1; transition: opacity var(--_dur) var(--_ease); }
+sg-dialog dialog::backdrop { opacity: 0; }
+sg-dialog dialog[open]::backdrop { opacity: 1; transition: opacity 120ms ease-out; }
+@starting-style {
+  sg-dialog dialog[open] { opacity: 0; }
+  sg-dialog dialog[open]::backdrop { opacity: 0; }
+}
+@supports (overlay: auto) {
+  sg-dialog dialog:not([open]) { transition: opacity var(--_dur) var(--_ease), overlay var(--_dur) allow-discrete, display var(--_dur) allow-discrete; }
+  sg-dialog dialog:not([open])::backdrop { transition: opacity 120ms ease-out; }
+}
+sg-dialog[data-skin="warm"] dialog { --_dur: 180ms; --_rise: 8px; }
+sg-dialog[data-skin="playful"] dialog { --_dur: 260ms; --_ease: var(--sg-ease-spring, ease-out); --_rise: 14px; --_give: 0.97; }
+sg-dialog:is([data-skin="warm"], [data-skin="playful"]) .sg-dialog-card { translate: 0 var(--_rise); scale: var(--_give); }
+sg-dialog:is([data-skin="warm"], [data-skin="playful"]) dialog[open] .sg-dialog-card {
+  translate: 0 0; scale: 1;
+  transition: translate var(--_dur) var(--_ease), scale var(--_dur) var(--_ease);
+}
+@starting-style {
+  sg-dialog:is([data-skin="warm"], [data-skin="playful"]) dialog[open] .sg-dialog-card { translate: 0 var(--_rise); scale: var(--_give); }
+}
+@supports (overlay: auto) {
+  sg-dialog:is([data-skin="warm"], [data-skin="playful"]) dialog:not([open]) .sg-dialog-card { transition: translate var(--_dur) var(--_ease), scale var(--_dur) var(--_ease); }
+}
+
+/* ── the card's buttons, pressed (the touch contract) ───────────────────────
+   Down answers in the same frame, with no transition; letting go eases back
+   in under 150 ms. Quiet settles 1 px, warm shades the colour toward the ink,
+   playful gives a little. The keyboard never moves them, and reduced motion
+   keeps the shade and drops the movement. */
+sg-dialog .sg-dialog-card button {
+  transition: translate 120ms ease-out, scale 120ms var(--sg-ease-out, ease-out), box-shadow 100ms ease-out;
+}
+sg-dialog .sg-dialog-card button:active { transition: none; translate: 0 1px; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text, CanvasText) 8%, transparent); }
+sg-dialog[data-skin="warm"] .sg-dialog-card button:active { translate: none; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text) 16%, transparent); }
+sg-dialog[data-skin="playful"] .sg-dialog-card button { transition-timing-function: ease-out, var(--sg-ease-spring, ease-out), ease-out; }
+sg-dialog[data-skin="playful"] .sg-dialog-card button:active { translate: none; scale: 0.97; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-accent, Highlight) 20%, transparent); }
+
+@media (prefers-reduced-motion: reduce) {
+  sg-dialog dialog, sg-dialog dialog::backdrop, sg-dialog .sg-dialog-card { animation: none !important; transition: none !important; }
+  sg-dialog .sg-dialog-card button:active { translate: none !important; scale: none !important; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text) 16%, transparent); }
+}
+:root[data-sg-input="key"] sg-dialog .sg-dialog-card button:active { translate: none !important; scale: none !important; }

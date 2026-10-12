@@ -27,11 +27,30 @@ export function resolveManifestPath(manifestDir, p, exists) {
 /** True when a normalised repo path stays inside packages/. */
 export const insidePackages = p => p.startsWith('packages/') && !p.split('/').includes('..');
 
+/** A template's own files: packages/templates/<name>/... */
+export const TEMPLATE_FILE = /^packages\/templates\/[^/]+\/(.+)$/;
+
 /**
  * Where a repo file lands in a builder's project, relative to the target folder.
  * packages/engine/src/noise.js -> susegad/engine/src/noise.js
+ * A template is a whole site, so its files land at the folder's root:
+ * packages/templates/event/gom-deva/index.html -> gom-deva/index.html
  */
 export function targetPathFor(repoPath) {
   if (!insidePackages(repoPath)) throw new Error(`${repoPath} is outside packages/, so the CLI has nowhere to put it`);
+  const own = repoPath.match(TEMPLATE_FILE);
+  if (own) return own[1];
   return 'susegad/' + repoPath.slice('packages/'.length);
+}
+
+/**
+ * The repo path a template's reference points at once its files are copied. A page copied to
+ * the project root says susegad/components/lang/lang.js, which is packages/components/lang/lang.js
+ * in the repo; anything else it names (site.css, posters/hero.jpg) is the template's own.
+ * @param {string} templateDir repo-rooted folder, e.g. packages/templates/event
+ * @param {string} target the reference as the project sees it, normalised and relative to the project root
+ */
+export function templateRefTarget(templateDir, target) {
+  if (target.startsWith('susegad/')) return 'packages/' + target.slice('susegad/'.length);
+  return posix.join(templateDir, target);
 }

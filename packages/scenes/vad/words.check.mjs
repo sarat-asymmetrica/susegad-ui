@@ -22,6 +22,7 @@
 
 import { readFileSync } from 'node:fs';
 import { harness } from '../../../tools/lib/component-check.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const h = await harness();
 const { check, browser, server } = h;
@@ -73,7 +74,7 @@ const probeContrast = page => page.evaluate(() => {
   const lin = v => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
   const L = (r, gg, b) => 0.2126 * lin(r) + 0.7152 * lin(gg) + 0.0722 * lin(b);
   // any CSS colour (oklch from the tokens, too) as sRGB and alpha, read back through a canvas pixel
-  const rgba = css => { const x = new OffscreenCanvas(1, 1).getContext('2d'); x.fillStyle = css; x.fillRect(0, 0, 1, 1); const d = x.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
+  const rgba = css => { const x = ((w, h) => { try { const c = new OffscreenCanvas(w, h); if (c.getContext('2d')) return c; } catch { /* no OffscreenCanvas, or none with a 2D context (WebKit on Windows, Safari before 17) */ } const c = document.createElement('canvas'); c.width = w; c.height = h; return c; })(1, 1).getContext('2d'); x.fillStyle = css; x.fillRect(0, 0, 1, 1); const d = x.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
   return [...sr.querySelectorAll('[data-line]')].map(s => {
     const r = s.getBoundingClientRect(), [tr, tg, tb, ta] = rgba(getComputedStyle(s).color);
     let al = ta; for (let n = s; n; n = n.parentElement ?? n.getRootNode().host) al *= +getComputedStyle(n).opacity;
@@ -137,11 +138,10 @@ const summary = rows => rows.map(r => `${r.name} ${(r.share * 100).toFixed(1)}% 
 
 // ── 3. 390 px and text at 200% ─────────────────────────────────────────────
 {
-  const flat = page => page.evaluate(() => {
+  const flat = async page => { const o = await sidewaysScroll(page); return page.evaluate(([vw, scroll]) => {
     const el = window.__piece, sr = el.shadowRoot, panel = sr.querySelector('.panel');
     return { words: sr.querySelector('.stage').dataset.words, panel: !panel.hidden, lines: [...sr.querySelectorAll('[data-line]')].map(s => parseFloat(getComputedStyle(s).fontSize)),
-      scroll: document.documentElement.scrollWidth, vw: innerWidth, clipped: [...el.children].filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.left < -1 || b.right > innerWidth + 1); }).length };
-  });
+      scroll, vw, clipped: [...el.children].filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.left < -1 || b.right > vw + 1); }).length }; }, [o.viewWidth, o.scrollWidth]); };
   for (const [name, opts] of [['390 px', { width: 390, height: 844 }], ['text at 200%', { root: '200%' }]]) {
     const { ctx, page } = await openAt(`${WORLD}&register=warm`, { reduced: true, ...opts });
     const ok = await settled(page, 'panel');

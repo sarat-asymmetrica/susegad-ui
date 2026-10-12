@@ -1,0 +1,304 @@
+{
+  "about": "HarfBuzz stand-in (tools/lib/hb-canvas.mjs) against headless Chromium canvas measureText. Written by tools/text-gate.calibrate.mjs; deviation = HarfBuzz minus Chromium; \"string\" rows are whole copy strings (what a line is made of), \"word\" rows are single words (what Pretext measures).",
+  "date": "2026-10-09",
+  "chromium": "153.0.8010.12",
+  "platform": "win32 x64",
+  "harfbuzzjs": "1.6.2",
+  "wawoff2": "2.0.1",
+  "sizesPx": [
+    14,
+    18,
+    24,
+    32
+  ],
+  "heldOutSizesPx": [
+    10.08,
+    15.19,
+    17.5,
+    22.03,
+    31.4
+  ],
+  "samples": 2492,
+  "heldOutSamples": 110,
+  "languages": [
+    "en-IN",
+    "gom-Deva",
+    "gom-Latn",
+    "kn"
+  ],
+  "fonts": [
+    {
+      "file": "packages/tokens/fonts/castoro/castoro-400-700-italic-latin.woff2",
+      "bytes": 50740,
+      "sha1": "8930ab61c742"
+    },
+    {
+      "file": "packages/tokens/fonts/castoro/castoro-400-700-latin.woff2",
+      "bytes": 49272,
+      "sha1": "8a48756ca5f0"
+    },
+    {
+      "file": "packages/tokens/fonts/kalam/kalam-300-devanagari.woff2",
+      "bytes": 47516,
+      "sha1": "6d48fca19069"
+    },
+    {
+      "file": "packages/tokens/fonts/kalam/kalam-300-latin.woff2",
+      "bytes": 16688,
+      "sha1": "b57a941dadab"
+    },
+    {
+      "file": "packages/tokens/fonts/kalam/kalam-400-devanagari.woff2",
+      "bytes": 52912,
+      "sha1": "00d7fb85184d"
+    },
+    {
+      "file": "packages/tokens/fonts/kalam/kalam-400-latin.woff2",
+      "bytes": 18248,
+      "sha1": "c9c34bdefab2"
+    },
+    {
+      "file": "packages/tokens/fonts/mukta/mukta-400-devanagari.woff2",
+      "bytes": 61024,
+      "sha1": "d1209b5ad38e"
+    },
+    {
+      "file": "packages/tokens/fonts/mukta/mukta-400-latin.woff2",
+      "bytes": 21356,
+      "sha1": "200e072f67e8"
+    },
+    {
+      "file": "packages/tokens/fonts/mukta/mukta-500-devanagari.woff2",
+      "bytes": 67512,
+      "sha1": "9ea9a053373d"
+    },
+    {
+      "file": "packages/tokens/fonts/mukta/mukta-500-latin.woff2",
+      "bytes": 22124,
+      "sha1": "e39b1cf4f8fc"
+    },
+    {
+      "file": "packages/tokens/fonts/mukta/mukta-600-devanagari.woff2",
+      "bytes": 65596,
+      "sha1": "65f828a245a2"
+    },
+    {
+      "file": "packages/tokens/fonts/mukta/mukta-600-latin.woff2",
+      "bytes": 21760,
+      "sha1": "e909a32fb025"
+    },
+    {
+      "file": "packages/tokens/fonts/notosanskannada/noto-sans-kannada-400-600-kannada.woff2",
+      "bytes": 46904,
+      "sha1": "49d711497ba0"
+    },
+    {
+      "file": "packages/tokens/fonts/tirodevanagarimarathi/tiro-devanagari-marathi-400-devanagari.woff2",
+      "bytes": 59828,
+      "sha1": "d7034700aec0"
+    },
+    {
+      "file": "packages/tokens/fonts/tirokannada/tiro-kannada-400-kannada.woff2",
+      "bytes": 46176,
+      "sha1": "e2e23fbe6bab"
+    }
+  ],
+  "fontsLoadedInChromium": [
+    "Mukta 400 U+0-2FF, U+304, U+",
+    "Mukta 500 U+0-2FF, U+304, U+",
+    "Mukta 500 U+900-97F, U+1CD0-",
+    "Mukta 600 U+0-2FF, U+304, U+",
+    "Kalam 300 U+0-2FF, U+304, U+",
+    "Kalam 400 U+0-2FF, U+304, U+",
+    "Kalam 400 U+900-97F, U+1CD0-",
+    "Noto Sans Kannada 400 600 U+964-965, U+C80-C"
+  ],
+  "stack": {
+    "string": {
+      "latin": {
+        "n": 120,
+        "maxAbsPx": 0.002,
+        "p95AbsPx": 0.001,
+        "maxRel": 0,
+        "p95Rel": 0,
+        "meanSigned": 0
+      },
+      "devanagari": {
+        "n": 60,
+        "maxAbsPx": 0.002,
+        "p95AbsPx": 0.001,
+        "maxRel": 0,
+        "p95Rel": 0,
+        "meanSigned": 0
+      },
+      "kannada": {
+        "n": 60,
+        "maxAbsPx": 0.001,
+        "p95AbsPx": 0.001,
+        "maxRel": 0,
+        "p95Rel": 0,
+        "meanSigned": 0
+      }
+    },
+    "word": {
+      "latin": {
+        "n": 1248,
+        "maxAbsPx": 0,
+        "p95AbsPx": 0,
+        "maxRel": 0,
+        "p95Rel": 0,
+        "meanSigned": 0
+      },
+      "devanagari": {
+        "n": 528,
+        "maxAbsPx": 0,
+        "p95AbsPx": 0,
+        "maxRel": 0,
+        "p95Rel": 0,
+        "meanSigned": 0
+      },
+      "kannada": {
+        "n": 476,
+        "maxAbsPx": 0,
+        "p95AbsPx": 0,
+        "maxRel": 0,
+        "p95Rel": 0,
+        "meanSigned": 0
+      }
+    }
+  },
+  "heldOut": {
+    "latin": {
+      "n": 40,
+      "maxAbsPx": 0.001,
+      "p95AbsPx": 0.001,
+      "maxRel": 0,
+      "p95Rel": 0,
+      "meanSigned": 0
+    },
+    "devanagari": {
+      "n": 30,
+      "maxAbsPx": 0,
+      "p95AbsPx": 0,
+      "maxRel": 0,
+      "p95Rel": 0,
+      "meanSigned": 0
+    },
+    "kannada": {
+      "n": 40,
+      "maxAbsPx": 0,
+      "p95AbsPx": 0,
+      "maxRel": 0,
+      "p95Rel": 0,
+      "meanSigned": 0
+    }
+  },
+  "bareKalamVsStack": {
+    "latin": {
+      "n": 56,
+      "maxAbsPx": 0,
+      "p95AbsPx": 0,
+      "maxRel": 0,
+      "p95Rel": 0,
+      "meanSigned": 0
+    },
+    "devanagari": {
+      "n": 28,
+      "maxAbsPx": 0,
+      "p95AbsPx": 0,
+      "maxRel": 0,
+      "p95Rel": 0,
+      "meanSigned": 0
+    },
+    "kannada": {
+      "n": 28,
+      "maxAbsPx": 684.403,
+      "p95AbsPx": 513.303,
+      "maxRel": 0.20713,
+      "p95Rel": 0.20713,
+      "meanSigned": 150.143
+    }
+  },
+  "worstStrings": [
+    {
+      "lang": "en-IN",
+      "script": "latin",
+      "role": "hand",
+      "px": 14,
+      "text": "“Come for the rain” — Mukta’s ‘quiet’ – ",
+      "chrome": 278.04,
+      "hb": 278.04,
+      "diff": 0
+    },
+    {
+      "lang": "en-IN",
+      "script": "latin",
+      "role": "hand",
+      "px": 18,
+      "text": "“Come for the rain” — Mukta’s ‘quiet’ – ",
+      "chrome": 357.48,
+      "hb": 357.48,
+      "diff": 0
+    },
+    {
+      "lang": "en-IN",
+      "script": "latin",
+      "role": "hand",
+      "px": 24,
+      "text": "“Come for the rain” — Mukta’s ‘quiet’ – ",
+      "chrome": 476.64,
+      "hb": 476.64,
+      "diff": 0
+    },
+    {
+      "lang": "en-IN",
+      "script": "latin",
+      "role": "hand",
+      "px": 32,
+      "text": "“Come for the rain” — Mukta’s ‘quiet’ – ",
+      "chrome": 635.52,
+      "hb": 635.52,
+      "diff": 0
+    },
+    {
+      "lang": "en-IN",
+      "script": "latin",
+      "role": "plain",
+      "px": 14,
+      "text": "“Come for the rain” — Mukta’s ‘quiet’ – ",
+      "chrome": 263.09,
+      "hb": 263.09,
+      "diff": 0
+    },
+    {
+      "lang": "en-IN",
+      "script": "latin",
+      "role": "plain",
+      "px": 18,
+      "text": "“Come for the rain” — Mukta’s ‘quiet’ – ",
+      "chrome": 338.26,
+      "hb": 338.26,
+      "diff": 0
+    },
+    {
+      "lang": "en-IN",
+      "script": "latin",
+      "role": "plain",
+      "px": 24,
+      "text": "“Come for the rain” — Mukta’s ‘quiet’ – ",
+      "chrome": 451.01,
+      "hb": 451.01,
+      "diff": 0
+    },
+    {
+      "lang": "en-IN",
+      "script": "latin",
+      "role": "plain",
+      "px": 32,
+      "text": "“Come for the rain” — Mukta’s ‘quiet’ – ",
+      "chrome": 601.34,
+      "hb": 601.34,
+      "diff": 0
+    }
+  ]
+}

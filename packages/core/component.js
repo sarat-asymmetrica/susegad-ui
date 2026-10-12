@@ -3,6 +3,7 @@
 // element carries the meaning; a skin, loaded lazily per register, adds an
 // aria-hidden decorative layer.
 
+import './input-modality.js';
 import { observeRegister, registerState, resolveMotion, REGISTERS } from './register.js';
 
 /** The skin loader for a register, falling back to a quieter one when a register has none. */

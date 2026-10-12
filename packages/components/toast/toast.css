@@ -25,6 +25,21 @@ sg-toast {
   box-shadow: 0 1px 0 var(--sg-rule), 0 14px 30px -22px var(--toast-shadow);
 }
 sg-toast[hidden], sg-toast-region[hidden] { display: none; }
+
+/* ── arriving and leaving: a transition from the first frame ────────────────
+   Quiet is 120 ms of opacity and nothing else. Warm adds a short rise (and its
+   letter unfolds, in toast/skins/warm.js), playful a longer one on the spring.
+   Leaving is the same, the other way. Reduced motion: it is simply there. */
+sg-toast {
+  --_dur: 120ms; --_ease: var(--sg-ease-out, ease-out); --_rise: 0px;
+  transition: opacity var(--_dur) var(--_ease), translate var(--_dur) var(--_ease);
+}
+@starting-style {
+  sg-toast { opacity: 0; translate: 0 var(--_rise); }
+}
+sg-toast[data-phase="leave"] { opacity: 0; translate: 0 calc(var(--_rise) * 0.5); }
+sg-toast[data-skin="warm"] { --_dur: 180ms; --_rise: 6px; }
+sg-toast[data-skin="playful"] { --_dur: 260ms; --_ease: var(--sg-ease-spring, ease-out); --_rise: 10px; }
 sg-toast[tone="success"] { --toast-tone: var(--sg-success); }
 sg-toast[tone="warning"] { --toast-tone: var(--sg-warning); }
 sg-toast[tone="error"] { --toast-tone: var(--sg-danger); }
@@ -100,7 +115,7 @@ sg-toast-region[data-layout="pile"][position^="top"]:not([data-expanded]) .sg-to
   grid-area: 2 / 1; align-self: start; transform: translateY(calc(var(--depth, 0) * 0.55rem)) scale(calc(1 - var(--depth, 0) * 0.035)); transform-origin: 50% 100%;
 }
 sg-toast-region[data-layout="pile"][position^="top"]:not([data-expanded]) .sg-toast-more { grid-area: 1 / 1; margin: 0 0 var(--sg-space-2); }
-sg-toast-region:defined .sg-toast-stack > sg-toast { transition: transform var(--sg-dur-calm) var(--sg-ease-out); }
+sg-toast-region:defined .sg-toast-stack > sg-toast { transition: transform var(--sg-dur-calm) var(--sg-ease-out), opacity var(--_dur) var(--_ease), translate var(--_dur) var(--_ease); }
 sg-toast-region[position="bottom-center"] .sg-toast-stack { inset-inline: 0; margin-inline: auto; }
 sg-toast-region[position="top-end"] .sg-toast-stack { inset-block: max(var(--sg-space-4), env(safe-area-inset-top)) auto; flex-direction: column-reverse; }
 sg-toast-region[position="top-center"] .sg-toast-stack { inset-block: max(var(--sg-space-4), env(safe-area-inset-top)) auto; inset-inline: 0; margin-inline: auto; flex-direction: column-reverse; }
@@ -163,6 +178,20 @@ sg-toast[data-skin="playful"] .sg-toast-icon { color: var(--toast-tone); }
 .sg-toast-postmark text { font: 600 5.6px/1 var(--sg-font-body); letter-spacing: 0.6px; fill: currentColor; }
 .sg-toast-postmark .date { font-size: 6.4px; letter-spacing: 0.2px; }
 
+/* ── the action and the close button, pressed (the touch contract) ──────────
+   Down answers in the same frame, with no transition; letting go eases back
+   in under 150 ms. Quiet settles 1 px, warm shades the colour toward the ink,
+   playful gives a little. The keyboard never moves them. */
+sg-toast :is(.sg-toast-action, .sg-toast-close) {
+  transition: translate 120ms ease-out, scale 120ms var(--sg-ease-out, ease-out), box-shadow 100ms ease-out, background-color 100ms ease-out;
+}
+sg-toast :is(.sg-toast-action, .sg-toast-close):active { transition: none; translate: 0 1px; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text, CanvasText) 8%, transparent); }
+sg-toast[data-skin="warm"] :is(.sg-toast-action, .sg-toast-close):active { translate: none; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text) 16%, transparent); }
+sg-toast[data-skin="playful"] :is(.sg-toast-action, .sg-toast-close) { transition-timing-function: ease-out, var(--sg-ease-spring, ease-out), ease-out, ease-out; }
+sg-toast[data-skin="playful"] :is(.sg-toast-action, .sg-toast-close):active { translate: none; scale: 0.97; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-accent, Highlight) 20%, transparent); }
+
 @media (prefers-reduced-motion: reduce) {
   sg-toast, sg-toast * { transition: none !important; }
+  sg-toast :is(.sg-toast-action, .sg-toast-close):active { translate: none !important; scale: none !important; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text) 16%, transparent); }
 }
+:root[data-sg-input="key"] sg-toast :is(.sg-toast-action, .sg-toast-close):active { translate: none !important; scale: none !important; }

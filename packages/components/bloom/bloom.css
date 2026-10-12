@@ -1,0 +1,58 @@
+/* <sg-bloom>. A flower head drawn as one SVG beside, or without, its words. The growth is here, in CSS: while a
+   head grows (playful only, and only when the skin marked its florets data-new), each floret's two paths scale up
+   from the floret's own base, delayed by its rank from the heart. The rank is sibling-count() minus sibling-index()
+   where the browser has them, and the --i the element wrote on the floret where it has not. The two agree, because
+   the DOM runs rim to heart. Nothing here depends on an inline style attribute. */
+
+@property --sg-bloom-n { syntax: "<integer>"; inherits: true; initial-value: 0; }
+
+sg-bloom { display: inline-flex; align-items: center; gap: var(--sg-space-3, 1rem); vertical-align: middle; max-inline-size: 100%; }
+sg-bloom[hidden] { display: none; }
+sg-bloom > svg { flex: none; inline-size: var(--sg-bloom-size, 8rem); max-inline-size: 100%; block-size: auto; aspect-ratio: 1; overflow: visible; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+sg-bloom > .sg-bloom-n { min-inline-size: 0; font: 400 var(--sg-step-2, 1.4rem) / 1.2 var(--sg-font-display, serif); color: var(--sg-text, currentColor); }
+
+/* quiet: one ink */
+sg-bloom .sg-bloom-d { fill: var(--sg-text, currentColor); }
+
+/* the florets arrive from the heart outward */
+sg-bloom .sg-bloom-f { --sg-bloom-n: var(--i, 0); }
+@supports (width: calc(sibling-index() * 1px)) {
+  sg-bloom .sg-bloom-f { --sg-bloom-n: calc(sibling-count() - sibling-index()); }
+}
+sg-bloom .sg-bloom-f[data-solo] { --sg-bloom-n: 0; }
+sg-bloom .sg-bloom-f[data-new] .sg-bloom-p {
+  transform-origin: 0 0;
+  animation: sg-bloom-grow var(--sg-dur-calm, 280ms) var(--sg-ease-spring, ease-out) both;
+  animation-delay: calc(var(--sg-bloom-n) * var(--sg-bloom-step, 10ms));
+}
+/* the ground, the light and the shadow grow with the head the first time, so it never starts as a bare disc */
+/* the area of a head grows with its count, so its radius grows as the square root of the time: the ground follows that curve and stays under the florets */
+sg-bloom[data-intro] :is(.sg-bloom-ground, .sg-bloom-shadow, .sg-bloom-light) {
+  transform-origin: 0 0;
+  animation: sg-bloom-ground var(--sg-bloom-total, 1.4s) linear(0, 0.316, 0.447, 0.548, 0.632, 0.707, 0.775, 0.837, 0.894, 0.949, 1) both;
+}
+/* the shadow only fades in once the head is half grown, so no sliver of it shows behind the first petals */
+sg-bloom[data-intro] .sg-bloom-shadow { animation-name: sg-bloom-shadow; }
+@keyframes sg-bloom-ground { from { scale: 0.04; } to { scale: 1; } }
+@keyframes sg-bloom-shadow { 0%, 40% { scale: 0.04; opacity: 0; } 100% { scale: 1; opacity: 1; } }
+sg-bloom[data-waiting] :is(.sg-bloom-f[data-new] .sg-bloom-p, .sg-bloom-ground, .sg-bloom-shadow, .sg-bloom-light) { animation-play-state: paused; }
+@keyframes sg-bloom-grow { from { scale: 0; opacity: 0; } 25% { opacity: 1; } to { scale: 1; opacity: 1; } }
+
+/* a press: the outer ring shivers, a few degrees about each petal's base */
+sg-bloom[data-shiver] .sg-bloom-f[data-ring] .sg-bloom-p {
+  transform-origin: 0 0;
+  animation: sg-bloom-shiver min(var(--sg-dur-calm, 280ms), 280ms) var(--sg-ease-out, ease-out) both;
+  animation-delay: calc(var(--ph, 0) * 5ms);
+}
+@keyframes sg-bloom-shiver { 0% { rotate: 0deg; } 30% { rotate: 5deg; } 60% { rotate: -4deg; } 100% { rotate: 0deg; } }
+
+@media (prefers-reduced-motion: reduce) {
+  sg-bloom :is(.sg-bloom-p, .sg-bloom-ground, .sg-bloom-shadow, .sg-bloom-light) { animation: none !important; }
+}
+
+/* forced colours: the head in the text colour, each petal edged in the page's colour, no tints */
+@media (forced-colors: active) {
+  sg-bloom .sg-bloom-p { fill: CanvasText; stroke: Canvas; stroke-width: 0.04; stroke-opacity: 1; }
+  sg-bloom .sg-bloom-c, sg-bloom .sg-bloom-shadow, sg-bloom .sg-bloom-ground, sg-bloom .sg-bloom-light { display: none; }
+  sg-bloom .sg-bloom-d { fill: CanvasText; }
+}

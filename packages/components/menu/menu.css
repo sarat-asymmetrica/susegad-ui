@@ -142,6 +142,14 @@ sg-menu .sg-menu-qty button {
   -webkit-tap-highlight-color: transparent;
 }
 sg-menu .sg-menu-qty button[aria-disabled="true"] { color: var(--sg-text-faint); cursor: default; }
+/* WCAG 2.4.11: the sticky total bar covers the foot of the screen, so a button that keyboard focus scrolls
+   to the edge would sit under it. Two lines, because the engines differ: Chromium and WebKit keep focus
+   scrolling clear by the button's scroll-margin, Firefox only by the scroller's scroll-padding. The distance
+   is a bar's height (about 113 px at 390 px wide, taller when its words wrap); a page whose bar is taller
+   sets --sg-menu-bar-clear. The padding is on the document: a menu inside its own scrolling box needs the
+   same line on that box. */
+sg-menu .sg-menu-qty button { scroll-margin-block-end: var(--sg-menu-bar-clear, 9rem); }
+:root:has(sg-menu .sg-menu-bar) { scroll-padding-block-end: var(--sg-menu-bar-clear, 9rem); }
 sg-menu .sg-menu-qty button:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); position: relative; z-index: 1; }
 sg-menu .sg-menu-count {
   min-inline-size: 2.25rem;
@@ -298,3 +306,62 @@ sg-menu[data-skin="playful"] .sg-menu-continue { background: var(--sg-accent); c
   sg-menu .sg-menu-qty, sg-menu .sg-menu-qty button, sg-menu .sg-menu-continue { border: 1px solid ButtonText; }
   sg-menu .sg-menu-name::after { border-color: CanvasText; }
 }
+
+/* ── arrivals: the tala stagger ── An item that has not been seen plays its
+   arrival once, on the teental cycle: sixteen beats of --sg-tala-beat, nothing
+   landing on the three khali beats (8 to 10). This is talaDelay() in tokens.js
+   written in CSS (arrive.test.js keeps the two agreeing); where sibling-index()
+   is missing, core/arrive.js hands each item the same delay. Only the first five
+   items have a beat of their own (the ones whose beat is inside the 600 ms cap);
+   every later item takes the fifth's (520 ms), so a long list cascades top to
+   bottom, the tail lands with the fifth, and nothing waits longer than 520 ms. Only arrivals play: arrive.js marks an item
+   data-seen when it has, so a sort or a re-append never does. Quiet gets none
+   (data-arrive is absent), and neither does reduced motion. */
+@keyframes sg-arrive { from { opacity: 0; translate: 0 var(--sg-arrive-rise, 0.5rem); scale: var(--sg-arrive-scale, 1); } }
+@media (prefers-reduced-motion: no-preference) {
+  sg-menu[data-arrive] .sg-menu-item:not([data-seen]) {
+    animation: sg-arrive var(--sg-dur-calm) var(--sg-ease-out) backwards;
+    animation-delay: var(--sg-arrive-delay, 0ms);
+  }
+  sg-menu[data-arrive="full"] .sg-menu-item:not([data-seen]) {
+    --sg-arrive-rise: 0.9rem; --sg-arrive-scale: 0.96;
+    animation-duration: var(--sg-dur-slow); animation-timing-function: var(--sg-ease-spring);
+  }
+  @supports (width: calc(sibling-index() * 1px)) {
+    sg-menu[data-arrive] .sg-menu-item:not([data-seen]) {
+      --sg-arrive-n: calc(sibling-index() - 1);
+      --sg-arrive-k: min(var(--sg-arrive-n), 4);
+      --sg-arrive-m: mod(var(--sg-arrive-k), 13);
+      animation-delay: var(--sg-arrive-delay, calc(var(--sg-tala-beat) * (16 * round(down, var(--sg-arrive-k) / 13, 1) + var(--sg-arrive-m) + 3 * round(down, var(--sg-arrive-m) / 8, 1))));
+    }
+  }
+}
+
+/* ── the touch contract: a press answers within a frame ── No transition on the
+   way in, so :active lands on the next frame; the way out eases back in under
+   150 ms. Quiet settles 1 px, warm shades the colour toward the ink, playful
+   gives a little and is let go on the spring. Reduced motion keeps the colour
+   and drops the movement; a key held down does not move anything. */
+sg-menu :is(.sg-menu-minus, .sg-menu-plus, .sg-menu-clear, .sg-menu-continue):not([aria-disabled="true"], :disabled) {
+  transition: translate 120ms var(--sg-ease-out), scale 120ms var(--sg-ease-out), background-color 120ms var(--sg-ease-out);
+}
+sg-menu[data-skin="playful"] :is(.sg-menu-minus, .sg-menu-plus, .sg-menu-clear, .sg-menu-continue):not([aria-disabled="true"], :disabled) { transition-timing-function: var(--sg-ease-spring); }
+sg-menu :is(.sg-menu-minus) { --press-base: var(--sg-surface); }
+sg-menu :is(.sg-menu-plus) { --press-base: var(--sg-surface); }
+sg-menu:is([data-skin="warm"], [data-skin="playful"]) :is(.sg-menu-plus) { --press-base: var(--sg-accent); }
+sg-menu :is(.sg-menu-clear) { --press-base: transparent; }
+sg-menu :is(.sg-menu-continue) { --press-base: transparent; }
+sg-menu:is([data-skin="warm"], [data-skin="playful"]) :is(.sg-menu-continue) { --press-base: var(--sg-accent); }
+sg-menu :is(.sg-menu-minus, .sg-menu-plus, .sg-menu-clear, .sg-menu-continue):not([aria-disabled="true"], :disabled):active {
+  transition: none; translate: 0 1px;
+  background-color: color-mix(in oklab, var(--press-base, transparent), var(--sg-text) 10%);
+}
+sg-menu[data-skin="warm"] :is(.sg-menu-minus, .sg-menu-plus, .sg-menu-clear, .sg-menu-continue):not([aria-disabled="true"], :disabled):active { translate: none; background-color: color-mix(in oklab, var(--press-base, transparent), var(--sg-text) 25%); }
+sg-menu[data-skin="playful"] :is(.sg-menu-minus, .sg-menu-plus, .sg-menu-clear, .sg-menu-continue):not([aria-disabled="true"], :disabled):active {
+  translate: none; scale: 0.97;
+  background-color: color-mix(in oklab, var(--press-base, transparent), var(--sg-text) 14%);
+}
+@media (prefers-reduced-motion: reduce) {
+  sg-menu :is(.sg-menu-minus, .sg-menu-plus, .sg-menu-clear, .sg-menu-continue):active { translate: none !important; scale: none !important; transition: none; }
+}
+:root[data-sg-input="key"] sg-menu :is(.sg-menu-minus, .sg-menu-plus, .sg-menu-clear, .sg-menu-continue):active { translate: none !important; scale: none !important; }

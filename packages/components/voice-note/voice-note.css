@@ -96,7 +96,8 @@ sg-voice-note .sg-voice-time {
 /* ── warm: pencil on paper ── */
 sg-voice-note[data-skin="warm"] .sg-voice-bar { border-color: transparent; border-radius: var(--sg-radius-3); box-shadow: inset 0 0 0 var(--sg-hairline) var(--sg-rule); }
 sg-voice-note[data-skin="warm"] .sg-voice-play { border: var(--sg-stroke) solid var(--sg-accent-text); color: var(--sg-accent-text); border-radius: 48% 52% 50% 50% / 52% 48% 52% 48%; }
-sg-voice-note[data-skin="warm"] .sg-voice-bars { stroke: var(--sg-pencil); }
+/* the unplayed bars are the seek control's visible track: the strong rule (3:1 on every surface, tested), not the pencil (1.4.11) */
+sg-voice-note[data-skin="warm"] .sg-voice-bars { stroke: var(--sg-rule-strong); }
 sg-voice-note[data-skin="warm"] .sg-voice-bars .sg-played { stroke: var(--sg-accent-text); }
 sg-voice-note[data-skin="warm"] .sg-voice-transcript { padding-inline-start: var(--sg-space-3); border-inline-start: var(--sg-stroke) solid var(--sg-rule); font-style: italic; }
 
@@ -112,4 +113,14 @@ sg-voice-note[data-skin="playful"] .sg-voice-time { color: var(--sg-text); }
   sg-voice-note .sg-voice-bars { stroke: GrayText; }
   sg-voice-note .sg-voice-bars .sg-played { stroke: Highlight; }
   sg-voice-note .sg-voice-bar { border: 1px solid CanvasText; }
+}
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-voice-note .sg-voice-play { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-voice-note .sg-voice-play:active { translate: 0 1px; filter: brightness(0.9); transition: none !important; }
+sg-voice-note[data-skin="warm"] .sg-voice-play:active { translate: none; }
+sg-voice-note[data-skin="playful"] .sg-voice-play:active { translate: none; scale: 0.97; }
+@media (prefers-reduced-motion: reduce) {
+  sg-voice-note .sg-voice-play { transition: none; }
+  sg-voice-note .sg-voice-play:active { translate: none !important; scale: none !important; }
 }

@@ -8,8 +8,11 @@ import { LOCKFILE, lockedHashes, readLock, writeLock } from './lockfile.js';
 import { diffLines, formatPatch } from './linediff.js';
 
 export const DEFAULT_DIR = 'src/lib';
-const TYPE_ORDER = ['package', 'scene', 'surface', 'component', 'recipe', 'adapter'];
-const TYPE_HEADINGS = { package: 'Packages', scene: 'Scenes', component: 'Components', recipe: 'Recipes', adapter: 'Adapters' };
+
+/** --dir when given; else the current folder if it holds the lockfile (a site `create` made); else src/lib. */
+export const targetDir = (args, cwd) => args.dir ?? (existsSync(join(cwd, LOCKFILE)) ? '.' : DEFAULT_DIR);
+const TYPE_ORDER = ['package', 'scene', 'surface', 'component', 'recipe', 'adapter', 'template'];
+const TYPE_HEADINGS = { package: 'Packages', scene: 'Scenes', component: 'Components', recipe: 'Recipes', adapter: 'Adapters', template: 'Templates' };
 const plural = (n, word, many = word + 's') => `${n} ${n === 1 ? word : many}`;
 const listing = names => names.length < 2 ? names.join('') : `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`;
 
@@ -54,6 +57,7 @@ export async function list(args, ctx) {
   }
   ctx.out('');
   ctx.out('Add one with: susegad add <name>    More about one: susegad info <name>');
+  if (reg.index.items.some(i => i.type === 'template')) ctx.out('A template is a whole site: start it in an empty folder with susegad create [folder] --template <name>.');
   return 0;
 }
 
@@ -167,7 +171,13 @@ export async function planAdd(reg, names, target, readFile) {
 export async function add(args, ctx) {
   if (!args.items.length) throw new CliError('Tell me what to add, for example: susegad add scene-kolam\nRun susegad list to see everything on the shelf.');
   const reg = await loadRegistry(ctx.registry, ctx.cwd);
-  const target = resolve(ctx.cwd, args.dir ?? DEFAULT_DIR);
+  for (const name of args.items) {
+    if (knownItem(reg, name).type === 'template') {
+      throw new CliError(`${name} is a whole site, not a piece to copy into a project, and adding it would scatter its pages and package.json among your files.
+Start a site from it in an empty folder instead: susegad create my-site${name === 'template-event' ? '' : ` --template ${name.replace(/^template-/, '')}`}`);
+    }
+  }
+  const target = resolve(ctx.cwd, targetDir(args, ctx.cwd));
   const shown = p => toPosix(relative(ctx.cwd, p)) || '.';
   const { items, lock } = await planAdd(reg, args.items, target);
 
@@ -208,23 +218,7 @@ export async function add(args, ctx) {
     return 0;
   }
 
-  for (const p of items) {
-    for (const f of p.files) {
-      if (f.status === 'same') continue;
-      mkdirSync(dirname(f.dest), { recursive: true });
-      writeFileSync(f.dest, f.content);
-    }
-    const before = lock.items[p.item.name];
-    lock.items[p.item.name] = {
-      version: p.item.version,
-      type: p.item.type,
-      hash: p.item.hash,
-      requested: p.requested || !!before?.requested,
-      files: Object.fromEntries(p.files.map(f => [f.to, f.hash])),
-    };
-  }
-  mkdirSync(target, { recursive: true });
-  writeLock(target, lock);
+  commit(items, lock, target);
 
   if (written) ctx.out(`Copied ${plural(written, 'file')} into ${shown(join(target, 'susegad'))}. ${written === 1 ? 'It is' : 'They are'} yours now, so change anything you like.`);
   else ctx.out(`Everything was already here and up to date in ${shown(join(target, 'susegad'))}.`);
@@ -237,6 +231,32 @@ export async function add(args, ctx) {
     for (const l of usage) ctx.out('  ' + l);
   }
   return 0;
+}
+
+/** Write a plan's files, then the lockfile, which records the registry's hash for each one. */
+export function commit(items, lock, target, skip = () => false) {
+  for (const p of items) {
+    const files = p.files.filter(f => !skip(f));
+    const skipped = p.files.filter(skip).map(f => f.to);
+    // a file written with create's choices in it differs from the registry's bytes: remember what it wrote
+    const written = Object.fromEntries(files.filter(f => hashContent(f.content) !== f.hash).map(f => [f.to, hashContent(f.content)]));
+    for (const f of files) {
+      if (f.status === 'same') continue;
+      mkdirSync(dirname(f.dest), { recursive: true });
+      writeFileSync(f.dest, f.content);
+    }
+    const before = lock.items[p.item.name];
+    lock.items[p.item.name] = {
+      version: p.item.version,
+      type: p.item.type,
+      hash: p.item.hash,
+      requested: p.requested || !!before?.requested,
+      files: Object.fromEntries(files.map(f => [f.to, f.hash])),
+      written, skipped,
+    };
+  }
+  mkdirSync(target, { recursive: true });
+  writeLock(target, lock);
 }
 
 function usageHint(reg, planned, target, cwd, pageRoot) {
@@ -279,7 +299,7 @@ function usageHint(reg, planned, target, cwd, pageRoot) {
 
 export async function diff(args, ctx) {
   const reg = await loadRegistry(ctx.registry, ctx.cwd);
-  const target = resolve(ctx.cwd, args.dir ?? DEFAULT_DIR);
+  const target = resolve(ctx.cwd, targetDir(args, ctx.cwd));
   const lock = readLock(target);
   const names = args.items.length ? args.items : Object.keys(lock.items).sort();
   if (!names.length) {
@@ -304,6 +324,7 @@ export async function diff(args, ctx) {
     for (const f of item.files) {
       const to = targetPathFor(f.path);
       seen.add(to);
+      if (locked.skipped?.includes(to)) continue;   // create left it out on purpose (--lang)
       const dest = join(target, to);
       if (!existsSync(dest)) {
         rows.push(to in locked.files
@@ -313,7 +334,7 @@ export async function diff(args, ctx) {
       }
       const mine = readFileSync(dest);
       const hash = hashContent(mine);
-      if (hash === f.hash) { rows.push(['same', to, '']); continue; }
+      if (hash === f.hash || hash === locked.written?.[to]) { rows.push(['same', to, '']); continue; }   // or exactly as create wrote it
       // Only now do we need the registry's copy, so a clean diff fetches nothing.
       const theirs = await read(f.path);
       const d = diffLines(theirs ? theirs.toString('utf8') : '', mine.toString('utf8'));

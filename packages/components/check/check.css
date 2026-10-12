@@ -104,3 +104,15 @@ sg-check .sg-check-stamp circle { fill: var(--sg-accent-text, CanvasText); }
   sg-check input[type="checkbox"]::before,
   sg-check .sg-check-art { display: none !important; }
 }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-check .sg-check-art, sg-check input[type="checkbox"] { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-check:active input[type="checkbox"] { translate: 0 1px; border-color: color-mix(in oklab, var(--sg-rule-strong, CanvasText), var(--sg-text, CanvasText) 40%); transition: none !important; }
+sg-check:is([data-skin="warm"], [data-skin="playful"]):active input[type="checkbox"] { translate: none; border-color: transparent; }
+sg-check[data-skin="warm"]:active .sg-check-box { stroke: var(--sg-text, CanvasText); transition: none !important; }
+sg-check[data-skin="playful"]:active .sg-check-art { scale: 0.93; transition: none !important; }
+sg-check[data-skin="playful"]:active .sg-check-box { stroke: color-mix(in oklab, var(--sg-accent-text, CanvasText), var(--sg-text, CanvasText) 30%); }
+@media (prefers-reduced-motion: reduce) {
+  sg-check:active :is(input, .sg-check-art) { translate: none !important; scale: none !important; }
+  sg-check .sg-check-art, sg-check input[type="checkbox"] { transition: none; }
+}

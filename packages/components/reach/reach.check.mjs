@@ -7,6 +7,7 @@
 import { harness, settle } from '../../../tools/lib/component-check.mjs';
 import { grantsPermission, unsupportedIn } from '../../../tools/lib/engine.mjs';
 import { readWaLink } from './reach.core.js';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { check, open, openHtml, axe, axeNoJs, done, engine } = await harness();
 const DEMO = '/packages/components/reach/demo.html';
@@ -116,8 +117,17 @@ for (const theme of ['light', 'dark']) {
 {
   const { ctx, page } = await open(DEMO, { width: 390 });
   await settle(page);
-  const w = await page.evaluate(() => document.documentElement.scrollWidth);
+  const { scrollWidth: w } = await sidewaysScroll(page, 390);
   check('at 390 px the page does not scroll sideways', w <= 390, `${w}`);
+  await ctx.close();
+}
+{
+  // 1.4.10: 320 CSS px is the reflow width; the demo's grid must not hold the page wider than that
+  const { ctx, page } = await open(DEMO, { width: 320 });
+  await settle(page);
+  const o = await sidewaysScroll(page, 320);
+  const r = { w: o.scrollWidth, wide: await page.evaluate(vw => [...document.querySelectorAll('body *')].filter(e => e.getBoundingClientRect().right > vw + 1).slice(0, 2).map(e => e.localName + '.' + String(e.className).split(' ')[0]), o.viewWidth) };
+  check('at 320 px the page does not scroll sideways', r.w <= 320, `${r.w}${r.wide.length ? '; past the edge: ' + r.wide.join(', ') : ''}`);
   await ctx.close();
 }
 

@@ -254,3 +254,16 @@ test('with no --registry (registry: null, how the README installs it) the tools 
   const info = await callTool('info', { name: 'scene-vad' }, { registry: null, cwd: process.cwd() });
   assert.notEqual(info.isError, true, JSON.stringify(info).slice(0, 300));
 });
+
+test('template is a known kind: search, list and info show template-event from the real registry', async () => {
+  const real = JSON.parse(readFileSync(fileURLToPath(new URL('../../registry/registry.json', import.meta.url)), 'utf8'));
+  assert.deepEqual(searchItems(real, { kind: 'template' }).map(i => i.name), ['template-event']);
+  const env = { registry: fileURLToPath(new URL('../../', import.meta.url)) };
+  const search = TOOLS.find(t => t.inputSchema?.properties?.kind);
+  assert.ok(search.inputSchema.properties.kind.enum.includes('template'));
+  const found = await callTool('search', { kind: 'template' }, env);
+  assert.deepEqual(found.results.map(i => i.name), ['template-event']);
+  const info = await callTool('info', { name: 'template-event' }, env);
+  assert.equal(info.name ?? info.item?.name, 'template-event');
+  assert.ok(info.files.some(f => f.path === 'packages/templates/event/index.html'));
+});

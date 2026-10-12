@@ -19,7 +19,8 @@
     "core-component",
     "core",
     "tokens",
-    "event-card"
+    "event-card",
+    "core-arrive"
   ],
   "registers": [
     "quiet",

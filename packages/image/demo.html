@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="demo-ready" content="manual">
+<title>Image tier</title>
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 46rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .lede { margin: 0 0 var(--sg-space-4); max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); color: var(--sg-text-soft); max-width: var(--sg-measure); margin: var(--sg-space-3) 0 0; }
+
+  /* The still: plain CSS. Floats, and aspect-ratio from the width and height attributes (the browser reserves the box). */
+  .flow { margin: 0; }
+  .flow::after { content: ''; display: block; clear: both; }
+  .flow p { margin: 0 0 var(--sg-space-3); }
+  .flow figure { margin: 0 0 12px; width: 40%; }
+  .flow figure[data-side="right"] { float: right; margin-left: 12px; }
+  .flow figure[data-side="left"] { float: left; margin-right: 12px; width: 34%; }
+  .flow img { display: block; width: 100%; height: auto; border-radius: var(--sg-radius-2); background: var(--sg-surface-sunken, #8884); }
+  /* The live tier: the figures are sized by script from the oracle, so a late picture fades into a box that is already there. */
+  .flow[data-flow="live"] img { background: var(--sg-surface-sunken, #8884); }
+  .flow[data-flow="live"] [data-line] { cursor: text; }
+  .flow[data-pending] { visibility: hidden; } /* live tier only: set by the script below, and always lifted */
+</style>
+</head>
+<body>
+<main>
+  <h1>Words round pictures</h1>
+  <p class="lede">A paragraph laid by the type tier beside two floated photographs. The boxes are reserved from the pictures' headers before their bytes arrive, so the words are in place first and nothing moves when the pictures land.</p>
+
+  <div class="flow" id="flow">
+    <figure data-side="right" data-share="0.4">
+      <img id="jetty" src="./fixtures/jetty.png" width="960" height="640" alt="A wooden jetty running out into a calm sea at dusk, the low sun laying a path of light across the water.">
+    </figure>
+    <p>By the time the ferry reaches the jetty the sun is already low, and the water has gone the colour of brass. Someone on the planks is mending a net, someone else is counting crates, and nobody is in a hurry. The boards are soft with salt and the posts lean a little, the way old things lean when they have been trusted for a long time.</p>
+    <figure data-side="left" data-share="0.34" data-y="236" data-ratio="0.75">
+      <img id="door" src="./fixtures/laterite.png" style="aspect-ratio: 3 / 4" alt="A lime-washed arched doorway in a red laterite wall, its double doors dark and closed.">
+    </figure>
+    <p>Up the lane the houses are built of laterite, cut warm from the ground and left to darken in the rain. Each doorway has its arch, each arch its border of lime, and behind the doors the evening is being cooked. You can smell coconut oil and fish. The pictures here were sized from their headers alone, long before they were done arriving, and the words found their places first.</p>
+  </div>
+  <p class="note" id="status" aria-live="polite">Choosing how to lay the words.</p>
+</main>
+
+<script type="module">
+  import { registerState } from '../core/register.js';
+  const root = document.getElementById('flow'), status = document.getElementById('status');
+  const state = registerState(root);
+  const live = state.register !== 'quiet' && !state.reducedMotion;
+  window.__flowLive = live;
+  if (!live) {
+    // quiet and reduced motion: plain CSS wraps the words round the floats. No oracle, no type tier, no extra request.
+    status.textContent = 'Plain CSS: the browser wraps the words round the floated pictures, and reserves each box from its width and height.';
+    window.__demoReady();
+  } else {
+    root.dataset.pending = '';
+    const lift = () => root.removeAttribute('data-pending');
+    setTimeout(lift, 1500); // never stay hidden if the live tier is slow or fails
+    try {
+      const { mountFlow } = await import('./flow.live.js');
+      const { imageOracle } = await import('./measure.js');
+      const flow = window.__flow = mountFlow(root, { gap: 12, minWidth: 112 });
+      const laid = await flow.ready;
+      const src = id => imageOracle.peek(document.getElementById(id).getAttribute('src'));
+      status.textContent = `Laid by the type tier: ${laid.lines.length} lines. The jetty's size came from its attributes (${src('jetty')?.source}); the doorway's from its header (${src('door')?.source}).`;
+    } catch (e) {
+      status.textContent = 'The live tier did not load, so the browser wraps the words round the pictures.';
+      console.error(e);
+    } finally { lift(); window.__demoReady(); }
+  }
+</script>
+</body>
+</html>

@@ -1,51 +1,152 @@
 name: CI
 
 # This file lives at tools/publish/overlay/.github/workflows/ci.yml in the
-# private repo; node registry/build.mjs's export (tools/publish/export.mjs)
-# lays the overlay/ folder over the public snapshot, so this is the file
-# that actually reaches GitHub. Steps mirror the README's "Run it here" and
-# docs/RELEASING.md's release checklist: keep them in sync by hand.
+# private repo; the export (tools/publish/export.mjs) lays the overlay/ folder
+# over the public snapshot, so this is the file that actually reaches GitHub.
+# Steps mirror the README's "Run it here" and docs/RELEASING.md's release
+# checklist: keep them in sync by hand.
+#
+# Every job has a timeout-minutes. On 6 October 2026 the unit tests and the
+# Firefox checks each hung until GitHub's six-hour limit; a hang now costs
+# minutes, and the summary job still reports what every shard saw.
 
 on:
   push:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # A check that runs past this is killed and counted as failed (tools/lib/run-check.mjs).
+  SG_CHECK_TIMEOUT_S: 600
+
 jobs:
-  # Everything except the browser checks: fast, and a hard gate.
+  # Everything except the browser checks: fast, and a hard gate. Two unit tests
+  # drive Chromium (the saving-footer recipe and the overflow yardstick), so it
+  # installs Chromium too.
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
+          cache: npm
       - run: npm ci
-      - run: npm test
+      - id: pw
+        run: echo "version=$(node -p "require('playwright/package.json').version")" >> "$GITHUB_OUTPUT"
+      - id: browsers
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-chromium-${{ steps.pw.outputs.version }}
+      - if: steps.browsers.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - if: steps.browsers.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+      # npm test with a per-file limit. node --test only reads --test-timeout
+      # before the file globs (after them it is taken as one more glob), and it
+      # is not allowed in NODE_OPTIONS, so the command is package.json's own
+      # with the flag put in front.
+      - name: npm test (each test file at most 5 minutes)
+        shell: bash
+        run: |
+          script=$(node -p "require('./package.json').scripts.test")
+          [[ $script == "node --test "* ]] || { echo "::error::package.json's test script no longer starts with 'node --test': $script"; exit 1; }
+          eval "node --test --test-timeout=300000 ${script#node --test }"
       - run: node registry/build.mjs --check
       - run: node tools/cem.mjs --check
       - run: node tools/check-skill-coverage.mjs
       - run: node tools/skill-inventory.mjs --check
 
-  # One job per engine, so a Firefox failure does not stop WebKit or Chromium
-  # from running or being reported. Chromium is a hard gate (58/58, see
-  # docs/BROWSERS.md); WebKit and Firefox are not yet -- both have real,
-  # triaged, documented gaps left (also in docs/BROWSERS.md) that are not
-  # this workflow's job to hide with continue-on-error forever. Move an
-  # engine off continue-on-error once its docs/BROWSERS.md entry says 0 open
+  # The browser checks, one job per engine and shard, so a slow or failing
+  # shard never stops the others from running or being reported. Chromium is a
+  # hard gate (see docs/BROWSERS.md); WebKit and Firefox are not yet, as both
+  # have real, triaged, documented gaps left (also in docs/BROWSERS.md). Move
+  # an engine off continue-on-error once its docs/BROWSERS.md entry says 0 open
   # findings for it.
+  #
+  # tools/checks.mjs --shard=<i>/<n> (1-based) runs the i-th of n slices,
+  # balanced by each check's recorded duration (tools/lib/check-durations.json).
+  # With four shards each, --dry expects about 16 minutes a shard in every
+  # engine; Chromium shard 1/4 took 34 minutes in WSL on 4 busy cores, with
+  # two checks killed at a 300 s limit, hence 600 s and 60 minutes. Change a
+  # shard count here and in the matrix together.
   check:
+    name: check (${{ matrix.engine }} ${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
         engine: [chromium, webkit, firefox]
+        shard: [1, 2, 3, 4]
     continue-on-error: ${{ matrix.engine != 'chromium' }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
+          cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps ${{ matrix.engine }}
-      - run: node tools/checks.mjs --engine=${{ matrix.engine }}
+      - id: pw
+        run: echo "version=$(node -p "require('playwright/package.json').version")" >> "$GITHUB_OUTPUT"
+      - id: browsers
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ matrix.engine }}-${{ steps.pw.outputs.version }}
+      - if: steps.browsers.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps ${{ matrix.engine }}
+      - if: steps.browsers.outputs.cache-hit == 'true'
+        run: npx playwright install-deps ${{ matrix.engine }}
+      # shell: bash runs with pipefail, so tee keeps the checks' exit code
+      - name: checks (${{ matrix.engine }}, shard ${{ matrix.shard }} of 4)
+        shell: bash
+        run: |
+          mkdir -p .ci
+          node tools/checks.mjs --engine=${{ matrix.engine }} --shard=${{ matrix.shard }}/4 2>&1 | tee .ci/checks.log
+      - name: keep the last lines for the summary
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p .ci/tail
+          { echo "### ${{ matrix.engine }} ${{ matrix.shard }}/4: ${{ job.status }}"; echo '```'; tail -n 25 .ci/checks.log 2>/dev/null || echo "(no output: the checks never started)"; echo '```'; } > .ci/tail/${{ matrix.engine }}-${{ matrix.shard }}.md
+      - if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: tail-${{ matrix.engine }}-${{ matrix.shard }}
+          path: .ci/tail/
+          retention-days: 7
+
+  # One page with every shard's last lines, in engine order, even when a shard
+  # failed or timed out.
+  summary:
+    needs: check
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: tail-*
+          path: tails
+          merge-multiple: true
+      - shell: bash
+        run: |
+          {
+            echo "## Browser checks"
+            for e in chromium webkit firefox; do
+              for s in 1 2 3 4; do
+                f="tails/$e-$s.md"
+                if [[ -f $f ]]; then cat "$f"; else echo "### $e $s/4: no report (the shard was cancelled or never ran)"; fi
+              done
+            done
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -5,6 +5,7 @@
 //   node packages/components/now-note/now-note.check.mjs
 
 import { harness, settle } from '../../../tools/lib/component-check.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { check, open, openHtml, axe, axeNoJs, done } = await harness();
 const DEMO = '/packages/components/now-note/demo.html';
@@ -63,7 +64,7 @@ const honesty = page => page.evaluate(() => [...document.querySelectorAll('sg-no
 {
   const { ctx, page } = await open(DEMO, { width: 390 });
   await settle(page);
-  const w = await page.evaluate(() => document.documentElement.scrollWidth);
+  const { scrollWidth: w } = await sidewaysScroll(page, 390);
   check('at 390 px the page does not scroll sideways', w <= 390, `${w}`);
   await ctx.close();
 }

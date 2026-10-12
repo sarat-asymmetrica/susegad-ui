@@ -40,6 +40,10 @@ Draw a South Indian kolam as a web component, entirely with canvas and no image 
 | let time stop moving the line | state | With progress set, the model ignores time and the element stops its loop. The drawing moves only when the work moves, and the same number is read out as text. |
 | move the kolam aside | calm | The element reports the boxes of slotted text in the scene’s units. If they cover the kolam, it moves into the largest clear band beside them and shrinks only as much as it must. |
 
+## On a page
+
+A bare `<sg-scene name="kolam">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/kolam/index.js">` with `<sg-scene name="kolam" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 - The drawing is an image with the label "A kolam: one unbroken line looping around a grid of dots", or the `label` attribute.

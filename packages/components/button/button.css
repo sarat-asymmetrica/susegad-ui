@@ -33,7 +33,8 @@ sg-button > a {
   transition: background-color var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out),
               border-color var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out),
               color var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out),
-              transform var(--sg-dur-instant, 70ms) var(--sg-ease-out, ease-out);
+              translate 120ms var(--sg-ease-out, ease-out),
+              scale 150ms var(--sg-ease-spring, ease-out);
 }
 sg-button > button:hover,
 sg-button > a:hover {
@@ -91,7 +92,7 @@ sg-button[data-skin="warm"]:is(:hover, :focus-within) .sg-button-boil path {
 sg-button[data-skin="warm"] > button,
 sg-button[data-skin="warm"] > a { border-color: var(--sg-rule, CanvasText); }
 
-/* ── playful: the stamped chip, pressing in, with an ink spread on release ── */
+/* ── playful: the stamped chip, giving a little under a press ── */
 sg-button[data-skin="playful"] > button,
 sg-button[data-skin="playful"] > a {
   border-radius: var(--sg-radius-1, 2px);
@@ -101,10 +102,6 @@ sg-button[data-skin="playful"] > a {
   font-weight: var(--sg-weight-bold, 700);
 }
 sg-button[data-skin="playful"] > [data-tone="accent"] { color: var(--sg-on-accent, HighlightText); }
-sg-button[data-skin="playful"] > button:active,
-sg-button[data-skin="playful"] > a:active {
-  transform: translateY(1px) scale(0.97);
-}
 sg-button[data-skin="playful"] .sg-button-ink {
   position: absolute;
   inset: 0;
@@ -124,4 +121,30 @@ sg-button[data-skin="playful"] .sg-button-ink {
   sg-button .sg-button-ink { display: none !important; }
   sg-button > button,
   sg-button > a { border-color: ButtonText !important; background: revert !important; }
+}
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-button > button:active:not(:disabled),
+sg-button > a:active:not([aria-disabled="true"]) {
+  translate: 0 1px;
+  background: color-mix(in oklab, var(--sg-surface-raised, ButtonFace), var(--sg-text, CanvasText) 8%);
+  transition: none !important;
+}
+sg-button > [data-tone="accent"]:active:not(:disabled) { background: var(--sg-accent, Highlight); filter: brightness(0.9); }
+sg-button[data-skin="warm"] > :is(button, a):active:not(:disabled, [aria-disabled="true"]) {
+  translate: none;
+  border-color: color-mix(in oklab, var(--sg-rule, CanvasText), var(--sg-text, CanvasText) 25%);
+  background: color-mix(in oklab, var(--sg-surface-raised, ButtonFace), var(--sg-text, CanvasText) 12%);
+}
+sg-button[data-skin="warm"]:active .sg-button-boil { opacity: 1; transition: none; }
+sg-button[data-skin="warm"]:active .sg-button-boil path { stroke: color-mix(in oklab, var(--sg-accent-text, CanvasText), var(--sg-text, CanvasText) 25%); }
+sg-button[data-skin="playful"] > :is(button, a):active:not(:disabled, [aria-disabled="true"]) {
+  translate: none;
+  scale: 0.97;
+  background: color-mix(in oklab, var(--sg-surface-raised, ButtonFace), var(--sg-text, CanvasText) 8%);
+}
+sg-button[data-skin="playful"] > [data-tone="accent"]:active:not(:disabled) { background: var(--sg-accent, Highlight); }
+@media (prefers-reduced-motion: reduce) {
+  sg-button > :is(button, a) { transition: none; }
+  sg-button > :is(button, a):active { translate: none !important; scale: none !important; }
 }

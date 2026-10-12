@@ -1,0 +1,5 @@
+{
+  "probeFails": [
+    "transition .* runs on press-in"
+  ]
+}

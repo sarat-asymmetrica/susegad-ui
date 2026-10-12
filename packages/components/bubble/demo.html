@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bubble</title>
+<link rel="stylesheet" href="./bubble.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 80rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: 0 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-4); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--sg-space-5); margin-top: var(--sg-space-5); }
+  .panel { display: grid; gap: var(--sg-space-4); justify-items: start; background: var(--sg-surface); color: var(--sg-text); border: var(--sg-hairline) solid var(--sg-rule); border-radius: var(--sg-radius-3); padding: var(--sg-space-4) 16px; }
+  .panel > sg-bubble { max-inline-size: 100%; inline-size: 100%; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Bubble</h1>
+  <p class="lede">Speech, thought and shout bubbles whose words are the page's own text, laid into the bubble's real shape. The speakers and words here are made up.</p>
+  <div class="grid">
+    <section data-register="quiet" aria-labelledby="h-quiet">
+      <h2 id="h-quiet">Quiet</h2>
+      <div class="panel">
+        <sg-bubble kind="speech" tail="bottom-left" speaker="Crow">
+          <figure><p>The fish was this big, I tell you, and the bus to Mapusa left without us.</p></figure>
+        </sg-bubble>
+        <sg-bubble kind="thought" tail="bottom-left" speaker="Crow">
+          <figure><p>Perhaps the ferry will be late again, and the tea cold.</p></figure>
+        </sg-bubble>
+        <sg-bubble kind="shout" tail="bottom-right" speaker="Bread man">
+          <figure><p>Pao! Hot pao, fresh from the oven, come and get it!</p></figure>
+        </sg-bubble>
+        <sg-bubble kind="speech" tail="bottom" speaker="Crow">
+          <figure><p>Hm.</p></figure>
+        </sg-bubble>
+        <sg-bubble kind="speech" tail="top-left" lang="gom-Deva" label="मासळी विकपी म्हणटा">
+          <figure><p>आज मासळी भोव ताजी आसा, खरें सांगतां.</p></figure>
+        </sg-bubble>
+        <sg-bubble kind="thought" tail="right" speaker="Cat">
+          <figure><p>Heads. Only the heads, she promised. Where is she, then? She said <em>half past ten</em> and the clock says it is later than that, and I have been very patient.</p></figure>
+        </sg-bubble>
+      </div>
+    </section>
+    <section data-register="warm" aria-labelledby="h-warm">
+      <h2 id="h-warm">Warm</h2>
+      <div class="panel">
+        <sg-bubble kind="speech" tail="bottom-left" speaker="Crow">
+          <figure><p>The fish was this big, I tell you, and the bus to Mapusa left without us.</p></figure>
+        </sg-bubble>
+        <sg-bubble kind="thought" tail="bottom-left" speaker="Crow">
+          <figure><p>Perhaps the ferry will be late again, and the tea cold.</p></figure>
+        </sg-bubble>
+        <sg-bubble kind="shout" tail="bottom-right" speaker="Bread man">
+          <figure><p>Pao! Hot pao, fresh from the oven, come and get it!</p></figure>
+        </sg-bubble>
+        <sg-bubble kind="speech" tail="bottom" speaker="Crow">
+          <figure><p>Hm.</p></figure>
+        </sg-bubble>
+        <sg-bubble kind="speech" tail="top-left" lang="gom-Deva" label="मासळी विकपी म्हणटा">
+          <figure><p>आज मासळी भोव ताजी आसा, खरें सांगतां.</p></figure>
+        </sg-bubble>
+        <sg-bubble kind="thought" tail="right" speaker="Cat">
+          <figure><p>Heads. Only the heads, she promised. Where is she, then? She said <em>half past ten</em> and the clock says it is later than that, and I have been very patient.</p></figure>
+        </sg-bubble>
+      </div>
+    </section>
+    <section data-register="playful" aria-labelledby="h-playful">
+      <h2 id="h-playful">Playful</h2>
+      <div class="panel">
+        <sg-bubble kind="speech" tail="bottom-left" speaker="Crow">
+          <figure><p>The fish was this big, I tell you, and the bus to Mapusa left without us.</p></figure>
+        </sg-bubble>
+        <sg-bubble kind="thought" tail="bottom-left" speaker="Crow">
+          <figure><p>Perhaps the ferry will be late again, and the tea cold.</p></figure>
+        </sg-bubble>
+        <sg-bubble kind="shout" tail="bottom-right" speaker="Bread man">
+          <figure><p>Pao! Hot pao, fresh from the oven, come and get it!</p></figure>
+        </sg-bubble>
+        <sg-bubble kind="speech" tail="bottom" speaker="Crow">
+          <figure><p>Hm.</p></figure>
+        </sg-bubble>
+        <sg-bubble kind="speech" tail="top-left" lang="gom-Deva" label="मासळी विकपी म्हणटा">
+          <figure><p>आज मासळी भोव ताजी आसा, खरें सांगतां.</p></figure>
+        </sg-bubble>
+        <sg-bubble kind="thought" tail="right" speaker="Cat">
+          <figure><p>Heads. Only the heads, she promised. Where is she, then? She said <em>half past ten</em> and the clock says it is later than that, and I have been very patient.</p></figure>
+        </sg-bubble>
+      </div>
+    </section>
+  </div>
+  <p class="note">Placeholder words. The Devanagari line is Konkani, a first draft by a non-native writer, and still wants a native reader.</p>
+</main>
+<script type="module">
+  import './bubble.js';
+</script>
+</body>
+</html>

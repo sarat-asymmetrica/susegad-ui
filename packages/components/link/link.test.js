@@ -46,9 +46,10 @@ test('the CSS switches off the native underline only where a drawn one replaces 
   assert.match(forced, /text-decoration-line:\s*underline\s*!important/);
 });
 
-test('warm: the drawn line stays hidden (transitions from its own length) until hover or focus', () => {
-  assert.match(css, /\.sg-link-ink path\s*\{[^}]*transition:\s*stroke-dashoffset/);
-  assert.match(css, /:is\(:hover, :focus-within\)\s*\.sg-link-ink path\s*\{\s*stroke-dashoffset:\s*0\s*!important/);
+test('warm: the drawn line is there at rest and inked heavier on hover or focus', () => {
+  assert.ok(!/stroke-dashoffset/.test(css), 'nothing hides the line at rest');
+  assert.match(css, /\.sg-link-ink path\s*\{[^}]*transition:\s*stroke-width/);
+  assert.match(css, /:is\(:hover, :focus-within\)\s*\.sg-link-ink path\s*\{\s*stroke-width:\s*2\.4/);
 });
 
 // ── WCAG 1.4.1/1.4.11: a link must be distinguishable from body text by more than colour ──

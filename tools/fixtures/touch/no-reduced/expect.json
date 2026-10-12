@@ -1,0 +1,8 @@
+{
+  "fails": [
+    "no reduced-motion handling"
+  ],
+  "probeFails": [
+    "still moves under reduced motion"
+  ]
+}

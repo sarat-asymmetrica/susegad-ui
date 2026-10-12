@@ -7,15 +7,19 @@
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { startServer } from '../serve.mjs';
+import path from 'node:path';
 import { contextOptions, engineName, pickEngine } from './engine.mjs';
+import { acquireSlot } from './slots.mjs';
 
 export const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 const AXE = await readFile(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
 
 export async function harness() {
+  // One machine-wide browser slot for the life of this check (skipped when runCheck holds one for it); freed in done() or at exit.
+  const release = await acquireSlot({ label: path.basename(process.argv[1] ?? 'check') });
   const server = await startServer({ quiet: true });
   const engine = engineName();
-  const browser = await pickEngine(engine).launch();
+  const browser = await pickEngine(engine).launch().catch(e => { release(); throw e; });
   const results = [];
   const check = (name, ok, detail = '') => {
     results.push({ name, ok: !!ok });
@@ -71,14 +75,82 @@ export async function harness() {
     return v;
   }
   async function done() {
-    await browser.close();
-    await server.close?.();
-    const failed = results.filter(r => !r.ok).length;
-    console.log(failed ? `${failed} of ${results.length} checks failed` : `all ${results.length} checks pass`);
-    process.exit(failed ? 1 : 0);
+    const code = await finish(results, [() => browser.close(), () => server.close?.()]);
+    release();
+    process.exit(code);
   }
   return { server, browser, engine, check, open, openHtml, axe, axeNoJs, done };
 }
 
 /** Every animation on the page, settled. */
-export const settle = page => page.evaluate(() => Promise.all(document.getAnimations().map(a => a.finished.catch(() => {}))));
+/**
+ * Print the verdict first, then close what is open, each close raced against
+ * `closeMs`: under load Playwright's close can block for good, and a check that
+ * has already decided must not hang the suite waiting for it. Returns the exit code.
+ */
+export async function finish(results, closers, { closeMs = 20000, log = console.log } = {}) {
+  const failed = results.filter(r => !r.ok).length;
+  log(failed ? `${failed} of ${results.length} checks failed` : `all ${results.length} checks pass`);
+  for (const close of closers) {
+    let timer;
+    const late = new Promise(resolve => { timer = setTimeout(() => resolve('late'), closeMs); });
+    const outcome = await Promise.race([Promise.resolve().then(close).then(() => 'closed', () => 'closed'), late]);
+    clearTimeout(timer);
+    if (outcome === 'late') { log(`(closing took over ${closeMs / 1000} s; leaving it to the exit)`); break; }
+  }
+  return failed ? 1 : 0;
+}
+
+// Waits for the animations that will end: a paused one (a bloom below the fold waits to be seen)
+// or an endless one (a loader) never finishes, and waiting on it hangs the check.
+export const settle = page => page.evaluate(() => Promise.all(document.getAnimations()
+  .filter(a => a.playState === 'running' && Number.isFinite(a.effect?.getComputedTiming?.().endTime ?? Infinity))
+  .map(a => a.finished.catch(() => {}))));
+
+/**
+ * The drawn venue locator's shapes that fall back to the UA default: a shape is "styled" when its
+ * fill, stroke or opacity differs from a fresh unclassed element of the same tag in the same svg.
+ * Also reports the walking route's computed paint, which must be a stroked line with no fill.
+ * (The event template once drew a route and a stop with classes nobody styled: a black wedge.)
+ */
+export function locatorShapes(page) {
+  return page.evaluate(() => {
+    const sel = 'path, circle, rect, ellipse, line, polyline, polygon';
+    const svg = document.querySelector('.sg-venue-locator svg'), unstyled = [];
+    const look = e => { const c = getComputedStyle(e); return `${c.fill}|${c.stroke}|${c.opacity}`; };
+    for (const e of svg.querySelectorAll(sel)) {
+      const bare = document.createElementNS('http://www.w3.org/2000/svg', e.localName);
+      svg.append(bare);
+      if (look(e) === look(bare)) unstyled.push(e.getAttribute('class') || e.localName);
+      bare.remove();
+    }
+    const walk = svg.querySelector('.sg-loc-walk'), w = walk && getComputedStyle(walk);
+    return { n: svg.querySelectorAll(sel).length, unstyled, walk: w ? { fill: w.fill, stroke: w.stroke, dash: w.strokeDasharray } : null };
+  });
+}
+
+/**
+ * The walking route's contrast (WCAG 1.4.11, 3:1) against what it touches, from computed colours. The route runs
+ * along the road, so its neighbours are the road (blended over the surface by its opacity) and the surface; when a
+ * visible halo is drawn under it (wider, same dashes), the halo is its only neighbour. Colours are normalised through
+ * a canvas so color-mix() and the like come out as plain rgb in every engine.
+ */
+export function locatorRouteContrast(page) {
+  return page.evaluate(() => {
+    const g = Object.assign(document.createElement('canvas'), { width: 1, height: 1 }).getContext('2d', { willReadFrequently: true });
+    const rgb = v => { g.clearRect(0, 0, 1, 1); g.fillStyle = '#000'; g.fillStyle = v; g.fillRect(0, 0, 1, 1); return [...g.getImageData(0, 0, 1, 1).data].slice(0, 3); };
+    const lum = c => c.reduce((a, v, i) => { v /= 255; return a + [0.2126, 0.7152, 0.0722][i] * (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4); }, 0);
+    const ratio = (a, b) => { const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
+    const svg = document.querySelector('.sg-venue-locator svg');
+    const walk = getComputedStyle(svg.querySelector('.sg-loc-walk')), haloEl = svg.querySelector('.sg-loc-walk-halo');
+    const halo = haloEl && getComputedStyle(haloEl);
+    const haloShown = !!halo && halo.display !== 'none' && halo.stroke !== 'none' && parseFloat(halo.strokeWidth) > parseFloat(walk.strokeWidth) && halo.strokeDasharray === walk.strokeDasharray;
+    const surface = rgb(getComputedStyle(svg).backgroundColor);
+    const road = getComputedStyle(svg.querySelector('.sg-loc-road')), a = parseFloat(road.opacity), rs = rgb(road.stroke);
+    const roadOver = rs.map((v, i) => v * a + surface[i] * (1 - a));
+    const line = rgb(walk.stroke);
+    const neighbours = haloShown ? { halo: rgb(halo.stroke) } : { surface, road: roadOver };
+    const ratios = Object.fromEntries(Object.entries(neighbours).map(([k, c]) => [k, Math.round(ratio(line, c) * 100) / 100]));
+    return { haloShown, ratios, min: Math.min(...Object.values(ratios)) };
+  });
+}

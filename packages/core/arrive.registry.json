@@ -1,0 +1,23 @@
+{
+  "name": "core-arrive",
+  "type": "package",
+  "stability": "experimental",
+  "title": "Core: arrivals",
+  "description": "The JavaScript half of the tala stagger for lists that arrive (menu, event-list, gallery, data-table rows). The stagger itself is CSS in each component; this marks an item seen once its arrival has played so a sort or a re-append never replays it, starts a later batch again from the first beat, switches arrivals off in quiet and under reduced motion, and where sibling-index() is missing hands each item its delay from talaDelay(). Items that would wait past the 600 ms cap arrive with the first beat.",
+  "version": "0.1.0",
+  "files": [
+    "arrive.js"
+  ],
+  "dependencies": [
+    "tokens"
+  ],
+  "budget": {
+    "jsBytes": 4096,
+    "reason": "One small helper shared by four lists instead of four copies."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

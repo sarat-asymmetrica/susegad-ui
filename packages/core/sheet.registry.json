@@ -1,0 +1,16 @@
+{
+  "name": "core-sheet",
+  "type": "package",
+  "stability": "experimental",
+  "title": "Core: constructable stylesheets",
+  "description": "adopt(root, css): a piece's styles as one shared constructable stylesheet, so a strict Content-Security-Policy (style-src 'self') has nothing to block. A shadow root adopts it; an element root adopts onto its document, once; a <style> only where adoptedStyleSheets is missing.",
+  "version": "0.1.0",
+  "files": ["sheet.js"],
+  "dependencies": [],
+  "budget": { "jsBytes": 1024, "reason": "One small function." },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

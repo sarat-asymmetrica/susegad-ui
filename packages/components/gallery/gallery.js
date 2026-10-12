@@ -24,6 +24,9 @@
 
 import { SgElement, defineComponent } from '../../core/component.js';
 import { consentOf, pendingLine, columnsFor } from './gallery.core.js';
+import { arrive } from '../../core/arrive.js';
+import { langOf, langOfKey, strings, t } from '../../core/strings.js';
+import { BY_LANG } from '../../core/strings.table.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 
@@ -36,7 +39,7 @@ export class SgGallery extends SgElement {
     playful: () => import('./skins/playful.js'),
   };
 
-  #dialog = null; #made = new Set(); #watch = null; #ro = null;
+  #dialog = null; #made = new Set(); #watch = null; #ro = null; #arrive = null;
 
   get slots() { return [...this.querySelectorAll('.sg-gallery-slot')]; }
   get pending() { return this.slots.filter(s => consentOf(s.getAttribute('consent')) === 'pending'); }
@@ -47,10 +50,12 @@ export class SgGallery extends SgElement {
     this.#watch.observe(this, { subtree: true, attributes: true, attributeFilter: ['consent'] });
     this.#ro = new ResizeObserver(() => this.#columns());
     this.#ro.observe(this);
+    this.#arrive = arrive(this, '.sg-gallery-slot');
     this.refresh();
   }
 
   disconnected() {
+    this.#arrive?.stop(); this.#arrive = null;
     this.#watch?.disconnect(); this.#watch = null;
     this.#ro?.disconnect(); this.#ro = null;
     this.#made.forEach(n => n.remove()); this.#made.clear();
@@ -122,12 +127,15 @@ export class SgGallery extends SgElement {
     btn.type = 'button';
     btn.className = 'sg-gallery-open';
     btn.setAttribute('aria-haspopup', 'dialog');
-    if (slot.dataset.consent === 'granted') btn.setAttribute('aria-label', `${img.alt}, open larger`);
+    if (slot.dataset.consent === 'granted') btn.setAttribute('aria-label', t(this.#words(), 'openLarger', img.alt));
     img.replaceWith(btn);
     btn.append(img);
     this.#made.add(btn);
     btn.addEventListener('click', () => this.#open(slot, img, btn));
   }
+
+  /** The library's own words in the page's language (decision 0025): the shared table, English where it has no Konkani yet. */
+  #words() { return strings(BY_LANG, langOf(this)); }
 
   /** The grid's columns, from the core, told to the CSS as a custom property. */
   #columns() {
@@ -147,12 +155,18 @@ export class SgGallery extends SgElement {
       const fig = doc.createElement('figure');
       this.#dialog.append(fig);
       const close = doc.createElement('button');
-      close.type = 'button'; close.className = 'sg-gallery-close'; close.textContent = 'Close';
+      close.type = 'button'; close.className = 'sg-gallery-close';
       this.#made.add(this.#dialog);
       this.#dialog.append(close);
       this.#dialog.addEventListener('close', () => this.update());
       this.append(this.#dialog);
     }
+    const words = this.#words(), page = langOf(this);
+    const closeBtn = this.#dialog.querySelector('.sg-gallery-close');
+    closeBtn.textContent = t(words, 'close');
+    // words with no translation yet are English, and say so
+    const from = langOfKey(BY_LANG, page, 'close');
+    if (from === 'en' && !/^en(-|$)/.test(page)) closeBtn.lang = 'en'; else closeBtn.removeAttribute('lang');
     const fig = this.#dialog.querySelector('figure');
     let pic = fig.querySelector('img');
     if (!pic) {
@@ -166,7 +180,7 @@ export class SgGallery extends SgElement {
     pic.width = img.naturalWidth || undefined;
     pic.height = img.naturalHeight || undefined;
     fig.querySelector('figcaption').textContent = caption?.textContent ?? img.alt;
-    this.#dialog.setAttribute('aria-label', `${fig.querySelector('figcaption').textContent}, a photograph`);
+    this.#dialog.setAttribute('aria-label', t(words, 'aPhotograph', fig.querySelector('figcaption').textContent));
     this.#dialog.querySelector('.sg-gallery-close').onclick = () => this.#dialog.close();
     this.#dialog.showModal();
     this.#dialog.querySelector('.sg-gallery-close').focus();

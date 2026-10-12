@@ -1,0 +1,9 @@
+/* Fixture for tools/touch.check.mjs: broken on purpose, see expect.json. */
+sg-fx-no-press { display: block; padding: 12px; }
+sg-fx-no-press button { border: 1px solid CanvasText; background: Canvas; color: CanvasText; padding: 8px 14px; font: inherit; transition: translate 120ms ease-out, background-color 120ms ease-out; }
+sg-fx-no-press label { display: inline-flex; gap: 6px; margin-inline-end: 10px; }
+sg-fx-no-press label span { padding: 2px 8px; border: 1px solid CanvasText; transition: background-color 200ms; }
+sg-fx-no-press input:checked + span { background: color-mix(in oklab, Canvas, CanvasText 15%); }
+sg-fx-no-press :is(button, input):focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { sg-fx-no-press :is(button, label span):active { translate: none; } }
+:root[data-sg-input="key"] sg-fx-no-press * { transition: none !important; }

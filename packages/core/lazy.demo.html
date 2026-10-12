@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="demo-ready" content="manual">
+<title>Poster first</title>
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 60rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: 400 var(--sg-step-2) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  .lede { margin: 0 0 var(--sg-space-4); max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: var(--sg-space-4); }
+  .case { min-width: 0; }
+  .frame { border-radius: var(--sg-radius-3); overflow: hidden; box-shadow: var(--sg-lift); }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sg-space-3); margin-top: var(--sg-space-2); color: var(--sg-text-soft); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Poster first</h1>
+  <p class="lede">The picture is the first paint and reads with no script. The scene is fetched when it can be seen, and not at all under reduced motion, Save-Data, the quiet register or a small device: there the poster stays as the still, and the page can offer Play.</p>
+
+  <div class="pair">
+    <section class="case" aria-labelledby="a-title">
+      <h2 id="a-title">Starts when seen</h2>
+      <div class="frame">
+        <sg-lazy id="warm" src="/packages/scenes/kolam/index.js" register="warm">
+          <picture><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23efe6d2'/%3E%3Ccircle cx='150' cy='100' r='60' fill='none' stroke='%23b4543a' stroke-width='3' stroke-dasharray='2 10' stroke-linecap='round'/%3E%3C/svg%3E" width="300" height="200" alt="A ring of rice-flour dots, the poster for the kolam" decoding="async"></picture>
+          <sg-scene name="kolam" seed="3" hidden></sg-scene>
+        </sg-lazy>
+      </div>
+      <p class="row"><output id="warm-said">poster</output></p>
+    </section>
+
+    <section class="case" aria-labelledby="b-title">
+      <h2 id="b-title">Held in the quiet register</h2>
+      <div class="frame">
+        <sg-lazy id="quiet" src="/packages/scenes/kolam/index.js" register="quiet">
+          <picture><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23efe6d2'/%3E%3Ccircle cx='150' cy='100' r='60' fill='none' stroke='%23b4543a' stroke-width='1.5'/%3E%3C/svg%3E" width="300" height="200" alt="A single ring, the quiet poster for the kolam" decoding="async"></picture>
+          <sg-scene name="kolam" seed="3" hidden></sg-scene>
+        </sg-lazy>
+      </div>
+      <p class="row"><button type="button" class="btn" id="play">Play the scene</button><output id="quiet-said">poster</output></p>
+    </section>
+  </div>
+</main>
+<script type="module">
+  import '/packages/core/lazy.js';
+  const said = (id, el) => {
+    const out = document.getElementById(id);
+    const tell = () => { out.textContent = el.dataset.hold && el.state !== 'live' ? `${el.state}, held for ${el.dataset.hold}` : el.state; };
+    el.addEventListener('sg-lazy', tell); tell();
+  };
+  const warm = document.getElementById('warm'), quiet = document.getElementById('quiet');
+  said('warm-said', warm); said('quiet-said', quiet);
+  document.getElementById('play').addEventListener('click', () => quiet.start());
+  // ready once the warm one has drawn, or after a moment if this browser holds it back
+  Promise.race([new Promise(r => warm.addEventListener('sg-lazy', () => warm.state === 'live' && r())), new Promise(r => setTimeout(r, 9000))]).then(() => window.__demoReady());
+</script>
+</body>
+</html>

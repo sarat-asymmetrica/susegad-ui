@@ -18,7 +18,7 @@ import { resolveOrder } from '@susegad/cli/src/graph.js';
 export const REGISTERS = ['quiet', 'warm', 'playful'];
 export const THEMES = ['light', 'dark'];
 export const POSTER_BASE = 'https://susegad.asymmetrica.ai/posters/';
-export const KINDS = ['package', 'scene', 'surface', 'component', 'recipe', 'adapter'];
+export const KINDS = ['package', 'scene', 'surface', 'component', 'recipe', 'adapter', 'template'];
 const SITE = 'https://susegad.asymmetrica.ai';
 
 // One load per registry location per process; the index is small and stable.
@@ -130,7 +130,7 @@ export async function cliCommand(command, toolArgs = {}) {
 export const TOOLS = [
   {
     name: 'search',
-    description: 'Find Susegad UI pieces on the shelf. Searches names, titles and descriptions; narrow by kind (package, scene, surface, component, recipe, adapter) or register (quiet, warm, playful).',
+    description: 'Find Susegad UI pieces on the shelf. Searches names, titles and descriptions; narrow by kind (package, scene, surface, component, recipe, adapter, template) or register (quiet, warm, playful).',
     inputSchema: {
       type: 'object',
       properties: {

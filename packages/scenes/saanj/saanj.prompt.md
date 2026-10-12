@@ -36,6 +36,10 @@ Draw dusk over Goan paddy fields in canvas JavaScript, with no image files: a fl
 | let the flock fly round them | calm | The page reports where its words sit. A bird inside one of those boxes, grown by 28 units, is pushed out through the nearest edge, so the flock streams round the text; birds going home to the palms keep their line. |
 | fly fewer birds | governor | The flock is stepped and drawn only up to the governor’s share of its birds, never fewer than 120: all 620 at full quality in playful, 496 in warm. |
 
+## On a page
+
+A bare `<sg-scene name="saanj">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/saanj/index.js">` with `<sg-scene name="saanj" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing's name is its `alt`; nothing the scene shows carries meaning of its own, so it says nothing in its status. In playful the drawing takes focus: the arrow keys fly a hawk (drawn faintly, so a sighted keyboard user can see it) and Enter or Space startles the birds beside it. The pause button stops the flock in warm and playful.

@@ -3,9 +3,8 @@
 //   node packages/components/link/link.check.mjs
 //
 // No JavaScript: the native link works and is announced correctly. With
-// JavaScript, in quiet, warm and playful: the same; warm's line stays
-// undrawn until hover or focus and draws back out on leave; playful's kolam
-// line is always drawn; forced colours bring back the native underline.
+// JavaScript, in quiet, warm and playful: the same; every register's line is there at rest in a sentence,
+// warm's inks heavier on hover and focus; forced colours bring back the native underline.
 
 import { chromium } from 'playwright';
 import { startServer } from '../../../tools/serve.mjs';
@@ -42,24 +41,50 @@ for (const register of ['quiet', 'warm', 'playful']) {
   const tag = `${register}:`;
 
   if (register === 'warm') {
-    const offsetAt = async () => p.evaluate(s => {
-      const path = document.querySelector(s).closest('sg-link').querySelector('.sg-link-ink path');
-      return { off: getComputedStyle(path).strokeDashoffset, dash: getComputedStyle(path).strokeDasharray };
-    }, '#see-rooms');
-    const before = await offsetAt();
-    check(`${tag} the drawn line starts fully undrawn`, before.off === before.dash && before.off !== '0px', JSON.stringify(before));
+    const widthAt = async () => p.evaluate(s => parseFloat(getComputedStyle(document.querySelector(s).closest('sg-link').querySelector('.sg-link-ink path')).strokeWidth), '#see-rooms');
+    const before = await widthAt();
+    check(`${tag} the drawn line is already there at rest`, before > 0 && await p.evaluate(s => !!document.querySelector(s).closest('sg-link').querySelector('.sg-link-ink path').getAttribute('d'), '#see-rooms'), `${before}px`);
     await p.hover('#see-rooms');
     await p.waitForTimeout(320);
-    const during = await offsetAt();
-    check(`${tag} hovering draws the line in`, during.off === '0px', JSON.stringify(during));
+    const during = await widthAt();
+    check(`${tag} hovering inks it heavier`, during > before * 1.4, `${before}px to ${during}px`);
     await p.mouse.move(0, 0);
     await p.waitForTimeout(320);
-    const after = await offsetAt();
-    check(`${tag} leaving draws it back out`, after.off === after.dash, JSON.stringify(after));
+    const after = await widthAt();
+    check(`${tag} leaving lets it back to its rest weight`, Math.abs(after - before) < 0.05, `${after}px`);
   }
   if (register === 'playful') {
     const drawn = await p.evaluate(s => !!document.querySelector(s).closest('sg-link').querySelector('.sg-link-ink path').getAttribute('d'), '#see-rooms');
     check(`${tag} the kolam line is drawn without needing hover`, drawn);
+  }
+
+  // 1.4.1: a link inside a sentence is told from the words around it by more than colour, at rest (no hover, no
+  // focus). Instrument: screenshot the strip under the link's text with the link as it is, then again with its
+  // underline taken away (the drawn line hidden, any text-decoration off), and count the pixels that changed.
+  // With nothing to take away the count is 0, so the probe can say "no underline" as well as "underline".
+  {
+    const sel = '.prose sg-link:first-of-type a';
+    await p.mouse.move(0, 0);
+    await p.evaluate(() => document.activeElement?.blur());
+    await p.locator(sel).scrollIntoViewIfNeeded();
+    const strip = async () => {
+      const box = await p.locator(sel).boundingBox();
+      const clip = { x: Math.floor(box.x), y: Math.floor(box.y + box.height - 6), width: Math.ceil(box.width), height: 12 };
+      const png = await p.screenshot({ clip });
+      return { clip, png };
+    };
+    const rest = await strip();
+    await p.addStyleTag({ content: `${'.prose'} sg-link .sg-link-ink { visibility: hidden !important } .prose sg-link a { text-decoration-line: none !important }` });
+    const bare = await strip();
+    const changed = await p.evaluate(async ([a, b]) => {
+      const load = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = `data:image/png;base64,${src}`; });
+      const px = async src => { const i = await load(src), c = document.createElement('canvas'); c.width = i.width; c.height = i.height; const g = c.getContext('2d'); g.drawImage(i, 0, 0); return { d: g.getImageData(0, 0, c.width, c.height).data, w: c.width }; };
+      const [x, y] = [await px(a), await px(b)];
+      const cols = new Set();
+      for (let i = 0; i < x.d.length; i += 4) if (Math.abs(x.d[i] - y.d[i]) + Math.abs(x.d[i + 1] - y.d[i + 1]) + Math.abs(x.d[i + 2] - y.d[i + 2]) > 60) cols.add((i / 4) % x.w);
+      return { cols: cols.size, w: x.w };
+    }, [rest.png.toString('base64'), bare.png.toString('base64')]);
+    check(`${tag} a link in a sentence has an underline at rest (rest versus underline removed)`, changed.cols >= changed.w * 0.7, `${changed.cols} of ${changed.w} columns changed`);
   }
 
   const snap = await p.locator('#see-rooms').ariaSnapshot();

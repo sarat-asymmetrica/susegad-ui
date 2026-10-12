@@ -6,6 +6,7 @@
 //   node packages/components/postcard/postcard.check.mjs
 
 import { harness, settle } from '../../../tools/lib/component-check.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { check, open, openHtml, axe, axeNoJs, done } = await harness();
 const DEMO = '/packages/components/postcard/demo.html';
@@ -183,8 +184,17 @@ for (const register of ['quiet', 'warm', 'playful']) for (const style of ['badge
 {
   const { ctx, page } = await open(DEMO, { width: 390, touch: true });
   await settle(page);
-  const w = await page.evaluate(() => document.documentElement.scrollWidth);
+  const { scrollWidth: w } = await sidewaysScroll(page, 390);
   check('at 390 px the page does not scroll sideways', w <= 390, `${w}`);
+  await ctx.close();
+}
+{
+  // 1.4.10: 320 CSS px is the reflow width; the demo's grid must not hold the page wider than that
+  const { ctx, page } = await open(DEMO, { width: 320, touch: true });
+  await settle(page);
+  const o = await sidewaysScroll(page, 320);
+  const r = { w: o.scrollWidth, wide: await page.evaluate(vw => [...document.querySelectorAll('body *')].filter(e => e.getBoundingClientRect().right > vw + 1).slice(0, 2).map(e => e.localName + '.' + String(e.className).split(' ')[0]), o.viewWidth) };
+  check('at 320 px the page does not scroll sideways', r.w <= 320, `${r.w}${r.wide.length ? '; past the edge: ' + r.wide.join(', ') : ''}`);
   await ctx.close();
 }
 

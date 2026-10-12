@@ -1,0 +1,411 @@
+{
+ "$source": "CI run 37411212459 (gh run view 37411212459 -R sarat-asymmetrica/susegad-ui --log), seconds per engine; a check crashed before it ran, or missing, falls back (shard.core.js durationOf)",
+ "packages/components/accordion/accordion.check.mjs": {
+  "chromium": 19.4,
+  "webkit": 23.8,
+  "firefox": 23.6
+ },
+ "packages/components/action-menu/action-menu.check.mjs": {
+  "chromium": 5.3
+ },
+ "packages/components/button/button.check.mjs": {
+  "chromium": 2.9
+ },
+ "packages/components/chat-thread/chat-thread.check.mjs": {
+  "chromium": 4.6,
+  "webkit": 5.7,
+  "firefox": 7.6
+ },
+ "packages/components/check/check.check.mjs": {
+  "chromium": 2.8,
+  "webkit": 4.7,
+  "firefox": 4.8
+ },
+ "packages/components/combobox/combobox.check.mjs": {
+  "chromium": 3,
+  "webkit": 4.7,
+  "firefox": 5.1
+ },
+ "packages/components/data-table/data-table.check.mjs": {
+  "chromium": 5.1,
+  "webkit": 6.6,
+  "firefox": 8.9
+ },
+ "packages/components/date-range/date-range.check.mjs": {
+  "chromium": 2.2,
+  "webkit": 3.3,
+  "firefox": 3.7
+ },
+ "packages/components/dialog/dialog.check.mjs": {
+  "chromium": 6.6
+ },
+ "packages/components/drawer/drawer.check.mjs": {
+  "chromium": 4.5
+ },
+ "packages/components/event-card/event-card.check.mjs": {
+  "chromium": 12,
+  "webkit": 20.5,
+  "firefox": 20.1
+ },
+ "packages/components/event-list/event-list.check.mjs": {
+  "chromium": 5,
+  "webkit": 8.2,
+  "firefox": 8.1
+ },
+ "packages/components/field-note/field-note.check.mjs": {
+  "chromium": 4.5,
+  "webkit": 4.7,
+  "firefox": 5.9
+ },
+ "packages/components/field/field.check.mjs": {
+  "chromium": 9.1,
+  "webkit": 10.4,
+  "firefox": 11.6
+ },
+ "packages/components/file-drop/file-drop.check.mjs": {
+  "chromium": 7.5,
+  "webkit": 4.8,
+  "firefox": 5.7
+ },
+ "packages/components/form/form.check.mjs": {
+  "chromium": 4.5,
+  "webkit": 5.1,
+  "firefox": 6.1
+ },
+ "packages/components/gallery/gallery.check.mjs": {
+  "chromium": 16.4,
+  "webkit": 25.8,
+  "firefox": 17.6
+ },
+ "packages/components/link/link.check.mjs": {
+  "chromium": 2.4
+ },
+ "packages/components/loader/loader.check.mjs": {
+  "chromium": 3,
+  "webkit": 3.4,
+  "firefox": 4.5
+ },
+ "packages/components/menu/menu.check.mjs": {
+  "chromium": 15,
+  "webkit": 18.1,
+  "firefox": 19.3
+ },
+ "packages/components/now-note/now-note.check.mjs": {
+  "chromium": 2.6,
+  "webkit": 4,
+  "firefox": 4.6
+ },
+ "packages/components/otp/otp.check.mjs": {
+  "chromium": 3.3,
+  "webkit": 3.7,
+  "firefox": 4.7
+ },
+ "packages/components/person-card/person-card.check.mjs": {
+  "chromium": 5.5,
+  "webkit": 7.7,
+  "firefox": 10.3
+ },
+ "packages/components/popover/popover.check.mjs": {
+  "chromium": 3
+ },
+ "packages/components/postcard/postcard.check.mjs": {
+  "chromium": 11.2,
+  "webkit": 15.2,
+  "firefox": 14.4
+ },
+ "packages/components/quote/quote.check.mjs": {
+  "chromium": 5.4,
+  "webkit": 6.5,
+  "firefox": 8.1
+ },
+ "packages/components/radio/radio.check.mjs": {
+  "chromium": 2.9,
+  "webkit": 4.6,
+  "firefox": 5.9
+ },
+ "packages/components/reach/reach.check.mjs": {
+  "chromium": 6.2,
+  "webkit": 4.9,
+  "firefox": 5.5
+ },
+ "packages/components/scroll-section/scroll-section.check.mjs": {
+  "chromium": 5.3
+ },
+ "packages/components/select/select.check.mjs": {
+  "chromium": 2.9,
+  "webkit": 3.3,
+  "firefox": 3.7
+ },
+ "packages/components/signature/signature.check.mjs": {
+  "chromium": 3.3,
+  "webkit": 2,
+  "firefox": 4.5
+ },
+ "packages/components/site-footer/site-footer.check.mjs": {
+  "chromium": 7.4,
+  "webkit": 10.1,
+  "firefox": 13.4
+ },
+ "packages/components/site-nav/site-nav.check.mjs": {
+  "chromium": 3.7,
+  "webkit": 4.9,
+  "firefox": 6.9
+ },
+ "packages/components/sound-switch/sound-switch.check.mjs": {
+  "chromium": 5.3,
+  "webkit": 7,
+  "firefox": 7.4
+ },
+ "packages/components/stepper/stepper.check.mjs": {
+  "chromium": 5.5,
+  "webkit": 5.9,
+  "firefox": 7.6
+ },
+ "packages/components/tabs/tabs.check.mjs": {
+  "chromium": 3.8
+ },
+ "packages/components/tile-band/tile-band.check.mjs": {
+  "chromium": 24.1,
+  "webkit": 28.9,
+  "firefox": 29.6
+ },
+ "packages/components/toast/toast.check.mjs": {
+  "chromium": 37.7,
+  "webkit": 38.3,
+  "firefox": 39.2
+ },
+ "packages/components/toggle/toggle.check.mjs": {
+  "chromium": 6,
+  "webkit": 7.2,
+  "firefox": 8.2
+ },
+ "packages/components/tooltip/tooltip.check.mjs": {
+  "chromium": 4.4
+ },
+ "packages/components/voice-note/voice-note.check.mjs": {
+  "chromium": 8.2,
+  "webkit": 10.7,
+  "firefox": 11.1
+ },
+ "packages/components/wa-order/wa-order.check.mjs": {
+  "chromium": 23.9,
+  "webkit": 28.7,
+  "firefox": 29.3
+ },
+ "packages/core/calm.check.mjs": {
+  "chromium": 4.3,
+  "webkit": 4.5,
+  "firefox": 5.7
+ },
+ "packages/core/component.check.mjs": {
+  "chromium": 1,
+  "webkit": 0.9,
+  "firefox": 1.9
+ },
+ "packages/core/orient.check.mjs": {
+  "chromium": 20.4,
+  "webkit": 20.8,
+  "firefox": 21.8
+ },
+ "packages/core/scene-element.check.mjs": {
+  "chromium": 1.9,
+  "webkit": 3.8,
+  "firefox": 2.4
+ },
+ "packages/export/export.check.mjs": {
+  "chromium": 3.7,
+  "firefox": 2.9
+ },
+ "packages/folio/diagram/diagram.check.mjs": {
+  "chromium": 13.2,
+  "webkit": 14.3,
+  "firefox": 15.3
+ },
+ "packages/player/player.check.mjs": {
+  "chromium": 13.6,
+  "webkit": 14.3,
+  "firefox": 13
+ },
+ "packages/recipes/booking/recipe.check.mjs": {
+  "chromium": 7.1,
+  "webkit": 7.9
+ },
+ "packages/recipes/enquiry/enquiry.check.mjs": {
+  "chromium": 3.9,
+  "webkit": 4.5,
+  "firefox": 5.1
+ },
+ "packages/recipes/file-upload/recipe.check.mjs": {
+  "chromium": 16.7,
+  "webkit": 14.3,
+  "firefox": 14.7
+ },
+ "packages/recipes/member-directory/recipe.check.mjs": {
+  "chromium": 7,
+  "webkit": 7.4,
+  "firefox": 9.4
+ },
+ "packages/recipes/proposal/proposal.check.mjs": {
+  "chromium": 16.5
+ },
+ "packages/recipes/site-shell/recipe.check.mjs": {
+  "chromium": 18
+ },
+ "packages/recipes/studio-home/recipe.check.mjs": {
+  "chromium": 7.2,
+  "webkit": 9.4,
+  "firefox": 9.8
+ },
+ "packages/scenes/abri/abri.check.mjs": {
+  "chromium": 118.6,
+  "webkit": 115.5,
+  "firefox": 111.4
+ },
+ "packages/scenes/chai/chai.check.mjs": {
+  "chromium": 41.2,
+  "webkit": 33.8,
+  "firefox": 36
+ },
+ "packages/scenes/chiro/chiro.check.mjs": {
+  "chromium": 148.8,
+  "webkit": 135.8,
+  "firefox": 139.7
+ },
+ "packages/scenes/dar/dar.check.mjs": {
+  "chromium": 27.4
+ },
+ "packages/scenes/ferry/ferry.check.mjs": {
+  "chromium": 20.9
+ },
+ "packages/scenes/ghat/ghat.check.mjs": {
+  "chromium": 38.2,
+  "webkit": 40,
+  "firefox": 38
+ },
+ "packages/scenes/kairi/kairi.check.mjs": {
+  "chromium": 27.8,
+  "webkit": 28,
+  "firefox": 28.2
+ },
+ "packages/scenes/khazan/khazan.check.mjs": {
+  "chromium": 53,
+  "webkit": 51,
+  "firefox": 49.1
+ },
+ "packages/scenes/mankurad/mankurad.check.mjs": {
+  "chromium": 158.5,
+  "webkit": 165.4,
+  "firefox": 146.4
+ },
+ "packages/scenes/maun/maun.check.mjs": {
+  "chromium": 183.1,
+  "webkit": 179.4,
+  "firefox": 181.9
+ },
+ "packages/scenes/mosaico/mosaico.check.mjs": {
+  "chromium": 55.4,
+  "webkit": 55.6,
+  "firefox": 54.7
+ },
+ "packages/scenes/neel/neel.check.mjs": {
+  "chromium": 41.2,
+  "webkit": 34.3,
+  "firefox": 32.4
+ },
+ "packages/scenes/nod/nod.check.mjs": {
+  "chromium": 15.4
+ },
+ "packages/scenes/pahat/pahat.check.mjs": {
+  "chromium": 39.4
+ },
+ "packages/scenes/prahar/prahar.check.mjs": {
+  "chromium": 23.5,
+  "webkit": 26.3,
+  "firefox": 24.8
+ },
+ "packages/scenes/saanj/saanj.check.mjs": {
+  "chromium": 64.1,
+  "webkit": 66.5,
+  "firefox": 64.7
+ },
+ "packages/scenes/shet/shet.check.mjs": {
+  "chromium": 276,
+  "webkit": 266.3,
+  "firefox": 251.8
+ },
+ "packages/scenes/themb/themb.check.mjs": {
+  "chromium": 58.2,
+  "webkit": 25.7
+ },
+ "packages/scenes/tinto/tinto.check.mjs": {
+  "chromium": 83.2,
+  "webkit": 82.1,
+  "firefox": 82.5
+ },
+ "packages/scenes/tinto/words.check.mjs": {
+  "webkit": 107.6,
+  "firefox": 101.8
+ },
+ "packages/scenes/toran/toran.check.mjs": {
+  "chromium": 26.4,
+  "webkit": 27.5,
+  "firefox": 29.2
+ },
+ "packages/scenes/vad/vad.check.mjs": {
+  "chromium": 82.9,
+  "webkit": 75.8,
+  "firefox": 73.3
+ },
+ "packages/scenes/vad/words.check.mjs": {
+  "chromium": 147.3,
+  "webkit": 104.6,
+  "firefox": 106.5
+ },
+ "packages/scenes/vahi/vahi.check.mjs": {
+  "chromium": 10.4
+ },
+ "packages/scenes/vel/vel.check.mjs": {
+  "chromium": 159.8,
+  "firefox": 159.4
+ },
+ "packages/scenes/veranda/arrange.check.mjs": {
+  "chromium": 51.8
+ },
+ "packages/scenes/veranda/flow.check.mjs": {
+  "chromium": 38.8
+ },
+ "packages/scenes/veranda/notes.check.mjs": {
+  "chromium": 36.2
+ },
+ "packages/scenes/veranda/stage.check.mjs": {
+  "chromium": 200.5
+ },
+ "packages/scenes/veranda/veranda.check.mjs": {
+  "chromium": 36.8
+ },
+ "packages/scenes/veranda/words.check.mjs": {
+  "chromium": 127.8
+ },
+ "packages/sound/scapes/paus-rain.check.mjs": {
+  "chromium": 3.6,
+  "webkit": 4,
+  "firefox": 4.3
+ },
+ "packages/sound/scapes/rampon-koel.check.mjs": {
+  "chromium": 15.2,
+  "webkit": 16.4,
+  "firefox": 16.4
+ },
+ "packages/stage3d/depth-photo/depth-photo.check.mjs": {
+  "chromium": 16.2
+ },
+ "packages/stage3d/stage3d.check.mjs": {
+  "chromium": 7.8
+ },
+ "packages/transitions/kantar/kantar.check.mjs": {
+  "chromium": 13.8
+ },
+ "packages/transitions/page.check.mjs": {
+  "chromium": 1.3
+ }
+}

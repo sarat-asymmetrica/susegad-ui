@@ -90,3 +90,13 @@ sg-quote .sg-quote-mark path { transform-box: fill-box; transform-origin: 40% 70
   sg-quote .sg-quote-bracket { stroke: CanvasText; }
   sg-quote .sg-quote-mark { fill: CanvasText; }
 }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-quote .sg-quote-source { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-quote .sg-quote-source:active { translate: 0 1px; color: color-mix(in oklab, var(--sg-accent-text, LinkText), var(--sg-text, CanvasText) 25%); text-decoration-thickness: 2px; transition: none !important; }
+sg-quote[data-skin="warm"] .sg-quote-source:active { translate: none; }
+sg-quote[data-skin="playful"] .sg-quote-source:active { translate: none; scale: 0.97; }
+@media (prefers-reduced-motion: reduce) {
+  sg-quote .sg-quote-source { transition: none; }
+  sg-quote .sg-quote-source:active { translate: none !important; scale: none !important; }
+}

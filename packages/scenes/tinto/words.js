@@ -13,11 +13,12 @@
 
 import { SHOPS, PLAQUE_H, slateOf, minSizes, boardSizes, inWorld } from './model.js';
 import { createJunctions } from '../../type/junctions.js';
+import { stackOf } from '../../type/stacks.js';
 
 export const CHALK = '#f4f1e7';
 export const ENAMEL_INK = '#1d2742';
-const HAND = 'Kalam';
-const PLAIN = 'Mukta'; // plaques and cards carry hours, and Kalam's 1 reads as a capital I
+// the families are the token stacks (--sg-font-hand, --sg-font-body), not one name: a canvas inherits nothing, and Kalam has no Kannada
+// plaques and cards use the body stack: they carry hours, and Kalam's 1 reads as a capital I
 const CSS = `.words{grid-area:1/1;position:relative;align-self:center;width:100%;pointer-events:none;z-index:1}
 .words [data-line]{pointer-events:auto;cursor:text;color:${CHALK}}
 .words h1,.words h2,.words h3,.words h4,.words p{margin:0;font:inherit}
@@ -25,15 +26,19 @@ const CSS = `.words{grid-area:1/1;position:relative;align-self:center;width:100%
 
 const rootSize = () => parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
 
+// a page with no canvas to measure with (the oracle says so by name) keeps the flat reading: no board, no plaques, the panel and the list
+const orFlat = f => { try { return f(); } catch (e) { if (e?.name === 'NoMeasuringCanvas') return null; throw e; } };
+
 export function createWords({ host, scene, W, H, invalidate }) {
   const mk = (tag, cls = '') => Object.assign(document.createElement(tag), { className: cls });
+  const HAND = stackOf(host, 'hand'), PLAIN = stackOf(host, 'body');
   const layer = mk('div', 'words'), board = mk('div'), probe = mk('span', 'probe'), style = mk('style');
   style.textContent = CSS;
   layer.setAttribute('part', 'words');
   layer.style.aspectRatio = `${W} / ${H}`;
   layer.append(style, board, probe);
   host.after(layer);
-  let type = null, loading = null, key = '', state = { board: null, plaques: null, open: null };
+  let type = null, loading = null, key = '', fontsAsk = '', fontsOk = '', state = { board: null, plaques: null, open: null };
   const shops = createJunctions({
     layer, flatParent: host.parentNode, label: 'Shops in the square', family: PLAIN, ink: ENAMEL_INK, W, H,
     items: SHOPS.map(s => ({ id: s.id, name: s.sign, info: s.info, detail: s.detail })),
@@ -43,6 +48,9 @@ export function createWords({ host, scene, W, H, invalidate }) {
   const ro = new ResizeObserver(() => { key = ''; invalidate(); });
   ro.observe(probe); // the probe is 1rem wide: text zoom moves it
   const mo = new MutationObserver(() => { key = ''; invalidate(); });
+  // a face that finishes loading after the board was laid (it failed once and came back, or was fetched for something else): lay out again in it
+  const onFonts = () => { key = ''; invalidate(); };
+  document.fonts?.addEventListener?.('loadingdone', onFonts);
   if (scene) mo.observe(scene, { childList: true, subtree: true, characterData: true });
 
   function load() {
@@ -63,19 +71,28 @@ export function createWords({ host, scene, W, H, invalidate }) {
   function update(register, words) {
     const world = inWorld(register, words), shopsOn = words === 'world';
     if (world && !type) load();
-    const ready = world && type, blocks = ready && scene ? type.readBlocks(scene) : null;
+    const ready = world && type;
+    let blocks = ready && scene ? type.readBlocks(scene) : null;
+    // measure only once the faces for these very words are loaded (a Kannada board needs Noto Sans Kannada, which a canvas never fetches itself)
+    if (blocks) {
+      const need = blocks.map(b => b.text).join(' ');
+      if (fontsOk !== need) { // pending: no layout until the faces have arrived, then one relayout (a layout in a fallback face would stick)
+        if (fontsAsk !== need) { fontsAsk = need; type.fontReady(`400 20px ${HAND}`, need).then(() => { if (fontsAsk === need) { fontsOk = need; key = ''; invalidate(); } }); }
+        blocks = null;
+      }
+    }
     const scale = host.clientWidth / W, rootPx = rootSize();
     const k = `${world}|${shopsOn}|${!!type}|${scale.toFixed(4)}|${rootPx}|${blocks ? blocks.map(b => b.tag + b.text).join('|') : ''}`;
     if (k !== key) {
       key = k;
       const min = minSizes(rootPx);
-      const laid = ready && scale > 0 && blocks ? layBoard(blocks, scale, rootPx) : null;
-      const boxes = ready && scale > 0 ? shops.measure(SHOPS, Math.max(min.label, 17 * scale), scale, { target: min.target, maxH: PLAQUE_H }) : null;
+      const laid = ready && scale > 0 && blocks ? orFlat(() => layBoard(blocks, scale, rootPx)) : null;
+      const boxes = ready && scale > 0 ? orFlat(() => shops.measure(SHOPS, Math.max(min.label, 17 * scale), scale, { target: min.target, maxH: PLAQUE_H })) : null;
       board.replaceChildren();
       if (laid) {
         const els = laid.blocks.map(b => mk(b.tag));
         board.append(...els);
-        type.project(laid.lines, laid.blocks.map((b, i) => ({ el: els[i], font: `400 ${b.px}px ${HAND}, cursive`, lineHeight: b.lineHeight })), { W, H });
+        type.project(laid.lines, laid.blocks.map((b, i) => ({ el: els[i], font: `400 ${b.px}px ${HAND}`, lineHeight: b.lineHeight })), { W, H });
       }
       scene?.holdReading?.(!!laid);
       shops.place(boxes, shopsOn);
@@ -89,6 +106,6 @@ export function createWords({ host, scene, W, H, invalidate }) {
 
   return {
     update,
-    destroy() { ro.disconnect(); mo.disconnect(); scene?.holdReading?.(false); shops.destroy(); layer.remove(); },
+    destroy() { ro.disconnect(); mo.disconnect(); document.fonts?.removeEventListener?.('loadingdone', onFonts); scene?.holdReading?.(false); shops.destroy(); layer.remove(); },
   };
 }

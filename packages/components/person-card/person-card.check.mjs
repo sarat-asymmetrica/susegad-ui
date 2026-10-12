@@ -7,6 +7,7 @@
 //   node packages/components/person-card/person-card.check.mjs
 
 import { harness, settle } from '../../../tools/lib/component-check.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { server, browser, engine, check, open, openHtml, axe, axeNoJs, done } = await harness();
 const DEMO = '/packages/components/person-card/demo.html';
@@ -152,6 +153,15 @@ for (const register of ['quiet', 'warm', 'playful']) {
   check('without JavaScript: initials cards show no disc (the element draws it) and the photo card still shows its photo', r.filter(c => !c.photo).every(c => !c.disc) && r.filter(c => c.photo).every(c => true), JSON.stringify(r.filter(c => c.photo)));
   await ctx.close();
 }
+for (const width of [390, 320]) {
+  // no JavaScript means no initials disc; the words must take the whole card, not a 0 px column
+  const { ctx, page } = await open(`${DEMO}?register=quiet`, { js: false, width, touch: true });
+  const o = await sidewaysScroll(page, width);
+  check(`without JavaScript at ${width} px: the page does not scroll sideways`, o.overflow === 0, JSON.stringify(o));
+  const out = await page.evaluate(() => [...document.querySelectorAll('sg-person-card > article > *')].filter(e => e.getBoundingClientRect().right > e.closest('article').getBoundingClientRect().right + 1).length);
+  check(`without JavaScript at ${width} px: nothing runs out of its card`, out === 0, `${out} elements`);
+  await ctx.close();
+}
 {
   const v = await axeNoJs(DEMO);
   check('axe without JavaScript: 0 violations', !v.length, v.join('; '));
@@ -159,7 +169,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 for (const register of ['quiet', 'playful']) {
   const { ctx, page, errors } = await open(`${DEMO}?register=${register}`, { width: 390, height: 844 });
   await settle(page);
-  const w = await page.evaluate(() => document.documentElement.scrollWidth);
+  const { scrollWidth: w } = await sidewaysScroll(page, 390);
   check(`at 390 px the ${register} demo does not scroll sideways`, w <= 390, `${w}`);
   check(`at 390 px the ${register} demo raises no console errors`, !errors.length, errors.join(' | '));
   await page.screenshot({ path: '.shots/person-card/phone-390-' + register + '.png', fullPage: false });

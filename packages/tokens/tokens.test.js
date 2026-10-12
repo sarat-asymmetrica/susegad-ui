@@ -106,6 +106,23 @@ test('the Azulejo palette: cream glaze, cobalt ink, lemon and leaf, and a night 
   assert.ok(dark.surface.l < 0.3 && light.surface.l > 0.9, 'cream by day, deep cobalt by night');
 });
 
+// ── the Haldi palette ────────────────────────────────────────────────────
+
+test('the Haldi palette: poster pigments as printed, a bright cream day and a curry-leaf night', () => {
+  const v = palettes.haldi;
+  const printed = { turmeric: '#F9C61F', marigold: '#F5A01A', 'curry-leaf': '#2F5D1E', tomato: '#B3261E', cream: '#FBF1D9', coral: '#F6B08C' };
+  for (const [name, hex] of Object.entries(printed)) assert.equal(v.pigments[name].hex, hex, `${name} is the printed value`);
+  const light = resolveRoles('haldi', 'light'), dark = resolveRoles('haldi', 'dark');
+  assert.equal(light.surface.hex, '#FBF1D9', 'the day ground is the poster cream');
+  assert.ok(dark.surface.l < 0.3 && dark.surface.h > 130 && dark.surface.h < 150, 'the night ground is deep green');
+  for (const name of ['turmeric', 'marigold', 'coral']) {
+    assert.ok(contrast(painted(v.pigments[name]), painted(light.surface)) < 3, `${name} is a fill: it is not offered as text on cream`);
+  }
+  assert.ok(contrast(painted(dark.accent), painted(dark.surface)) >= 4.5, 'turmeric reads as text on the night ground');
+  assert.equal(dark.accent.hex, '#F9C61F', 'the yellows stay pigment at night');
+  assert.equal(light.accent.hex, '#B3261E', 'tomato is the day accent, unmoved');
+});
+
 // ── the contrast gate ───────────────────────────────────────────────────────
 
 /** The colour a browser paints: 8-bit sRGB. Contrast is checked on that, not on the ideal value. */

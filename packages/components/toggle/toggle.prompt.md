@@ -9,7 +9,7 @@ A native switch: a checkbox with `role="switch"`, so a screen reader says "switc
 <script type="module" src="susegad/components/toggle/toggle.js"></script>
 
 <sg-toggle>
-  <label><input type="checkbox" role="switch" name="breakfast" value="yes" checked> Breakfast every morning</label>
+  <label><input type="checkbox" role="switch" switch name="breakfast" value="yes" checked> Breakfast every morning</label>
 </sg-toggle>
 ```
 
@@ -25,6 +25,7 @@ Make a toggle web component around a real `<input type="checkbox" role="switch">
 
 | When you say | Technique | What happens |
 |---|---|---|
+| `switch` attribute | native first | On an iPhone a real tap on a native switch gives the system haptic; other engines ignore it. The element adds it if a builder forgot. Never click a hidden switch from script to fake it. |
 | `role="switch"` | native first | The browser exposes a switch with on and off. Written in the HTML it works without JavaScript; the element adds it if a builder forgot. |
 | a `::before` thumb that slides across | CSS | The thumb is translated by the track's width minus its own; the transition uses `--sg-dur-quick`, which the tokens take to 0.01ms under reduced motion. |
 | slides into the keeper … keyed off `data-on` | CSS transition | The skin only toggles `data-on` on the SVG. The bolt group moves 8.5 units, exactly far enough to seat inside the keeper's inner wall (the tests check it), with `--sg-dur-calm` and `--sg-ease-spring`. |

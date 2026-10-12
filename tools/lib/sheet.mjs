@@ -11,7 +11,7 @@ function cellHtml(c) {
     ...(c.errors?.console ?? []).map(e => `console: ${e}`),
     ...(c.errors?.page ?? []).map(e => `page error: ${e}`),
     ...(c.errors?.requests ?? []).map(e => `request: ${e}`),
-    ...(c.overflow && !c.overflow.pass ? [`horizontal overflow: ${c.overflow.scrollWidth}px in a ${c.overflow.innerWidth}px viewport`] : []),
+    ...(c.overflow && !c.overflow.pass ? [`horizontal overflow: ${c.overflow.scrollWidth}px in a ${c.overflow.viewWidth}px viewport`] : []),
     ...(c.pointer?.status === 'fail' ? [`pointer: ${c.pointer.reason}`] : []),
   ];
   const checks = [

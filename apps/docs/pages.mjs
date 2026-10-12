@@ -90,7 +90,7 @@ export async function writePages({ root, out, registry, posters, write }) {
   });
 
   // ── components, recipes, foundations ──────────────────────────────
-  for (const type of ['component', 'recipe', 'package']) {
+  for (const type of ['component', 'recipe', 'template', 'package']) {
     const items = (type === 'package' ? [...of('package'), ...of('surface')] : of(type)).sort((a, b) => a.title.localeCompare(b.title));
     // foundations are mostly plumbing with nothing to show; one poster among them makes a ragged grid, so none
     put(`${KINDS[type].key}.html`, indexPage(type, { items, posters: type === 'package' ? {} : posters }));
@@ -99,7 +99,8 @@ export async function writePages({ root, out, registry, posters, write }) {
       put(`${pathOf(item)}.html`, itemPage(item, {
         list: items, index,
         poster: posters[item.name],
-        demo: card.demoUrl,
+        // a template's source pages need the library beside them, so its "demo" is the site the build made from it
+        demo: item.type === 'template' ? `/templates/${slugOf(item)}/site/` : card.demoUrl,
         docsHtml: item.docs ? siteLinks(mdToHtml(read(item.docs), { prefix: 'doc-' }), item.docs) : '',
         promptHtml: item.prompt ? mdToHtml(read(item.prompt), { shift: 1, prefix: 'prompt-' }) : '',
         deps: (item.dependencies || []).map(d => byName.get(d)).filter(Boolean),

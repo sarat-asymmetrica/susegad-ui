@@ -82,6 +82,7 @@ sg-veranda-stage .note[data-active]{box-shadow:0 0 0 2px var(--sg-accent,Highlig
 sg-veranda-stage .note p{margin:0}
 sg-veranda-stage .note-grip{position:absolute;top:-11px;right:-11px;width:22px;height:22px;display:grid;place-items:center;padding:0;border-radius:50%;border:1px solid var(--sg-rule-strong,GrayText);background:var(--sg-surface-raised,Canvas);color:var(--sg-text,CanvasText);cursor:grab;touch-action:none;font-size:11px;line-height:1}
 sg-veranda-stage .note-grip:focus-visible{outline:2px solid var(--sg-focus,Highlight);outline-offset:2px}
+sg-veranda-stage .notes-list button:focus-visible{outline:2px solid var(--sg-focus,Highlight);outline-offset:2px}
 sg-veranda-stage .note.dragging{z-index:3;opacity:.92}
 sg-veranda-stage .notes-list{margin:var(--sg-space-3,12px) 0 0;padding:0;list-style:none;font-size:.9rem;color:var(--sg-text-soft,GrayText)}
 sg-veranda-stage .notes-list li{margin:.15em 0}
@@ -95,7 +96,13 @@ sg-veranda-stage[data-moving] .flow-card{-webkit-backdrop-filter:none!important;
 sg-veranda-stage[data-register=warm] .flow-card,sg-veranda-stage[data-register=playful] .flow-card{background:color-mix(in oklab,var(--sg-surface-raised,Canvas) var(--sg-glass-tint,56%),transparent);-webkit-backdrop-filter:blur(var(--sg-glass-blur,14px)) saturate(1.15);backdrop-filter:blur(var(--sg-glass-blur,14px)) saturate(1.15);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--sg-rule-strong,GrayText) 45%,transparent),0 14px 30px -18px var(--sg-shadow,rgb(0 0 0/.4))}}
 sg-veranda-stage .matka-cv{pointer-events:none}
 sg-veranda-stage .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-sg-veranda-stage .wait{position:absolute;inset:0;display:grid;place-items:center;color:var(--sg-text-soft,GrayText);font-size:.9rem}`;
+sg-veranda-stage .wait{position:absolute;inset:0;display:grid;place-items:center;color:var(--sg-text-soft,GrayText);font-size:.9rem}
+/* touch contract: a press answers in every register (docs/contributing/touch-contract.md) */
+sg-veranda-stage :is(.lens-btn,.note-grip,.notes-list button){transition:translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out)}
+sg-veranda-stage :is(.lens-btn,.note-grip,.notes-list button):active{translate:0 1px;background:color-mix(in oklab, var(--sg-surface-raised,Canvas), var(--sg-text, CanvasText) 10%);transition:none!important}
+sg-veranda-stage[data-register=warm] :is(.lens-btn,.note-grip,.notes-list button):active{translate:none;border-color:color-mix(in oklab, var(--sg-rule-strong,GrayText), var(--sg-text, CanvasText) 45%);background:color-mix(in oklab, var(--sg-surface-raised,Canvas), var(--sg-text, CanvasText) 14%)}
+sg-veranda-stage[data-register=playful] :is(.lens-btn,.note-grip,.notes-list button):active{translate:none;scale:.97}
+@media (prefers-reduced-motion:reduce){sg-veranda-stage :is(.lens-btn,.note-grip,.notes-list button){transition:none}sg-veranda-stage :is(.lens-btn,.note-grip,.notes-list button):active{translate:none!important;scale:none!important}}`;
 
 let styled = false;
 const isDark = el => {
@@ -107,7 +114,7 @@ const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 export class SgVerandaStage extends HTMLElement {
   static observedAttributes = ['pane-depth', 'words-at', 'lens', 'walk', 'pane-turn'];
   #els = null; #dp = null; #assets = null; #d = DEPTH.home; #mv = null; #off = []; #built = false; #reg = 'warm';
-  #flowP = null; #matka = null;
+  #flowP = null; #matka = null; #clipKey = '';
   #notes = []; #noteEls = new Map(); #noteTexts = []; #noteKey = ''; #noteRaf = 0; #uid = 1; #walk = null; #drag = null;
   #lens = ''; #lensLooks = new Map(); #lensRaf = 0; #lensKey = '';
   #clear = new Map(); #maskTimer = 0; #maskUrl = ''; #maskFor = null; #status = null; #raf = 0; #tween = null; #focusTo = null;
@@ -136,7 +143,11 @@ export class SgVerandaStage extends HTMLElement {
   connectedCallback() {
     if (this.#built) return;
     this.#built = true;
-    if (!styled) { document.head.append(Object.assign(document.createElement('style'), { textContent: CSS })); styled = true; }
+    if (!styled) {
+      styled = true;
+      try { const sh = new CSSStyleSheet(); sh.replaceSync(CSS); document.adoptedStyleSheets = [...document.adoptedStyleSheets, sh]; } // constructable, so a strict CSP allows it
+      catch { document.head.append(Object.assign(document.createElement('style'), { textContent: CSS })); }
+    }
     const words = [...this.childNodes];
     const frame = Object.assign(document.createElement('div'), { className: 'frame' });
     const stage = Object.assign(document.createElement('div'), { className: 'stage' });
@@ -216,6 +227,7 @@ export class SgVerandaStage extends HTMLElement {
     if (this.getAttribute('lens')) this.#setLens(this.getAttribute('lens'));
     this.#renderNotes();
     if (this.hasAttribute('walk')) this.#walkSet(true);
+    this.addEventListener('sg-flow-clip', e => { if (!e.detail.clipped) return; this.#clipKey = `${this.#els.stage.clientWidth}|${getComputedStyle(document.documentElement).fontSize}`; setTimeout(() => { if (this.#built) this.#layout(); }, 0); });
     this.addEventListener('sg-flow', () => { this.#camSoon(); this.#arrangeSoon(); });
     const set = this.#dp.set.bind(this.#dp);
     this.#dp.set = params => { set(params); this.#camAt = performance.now(); this.#moving(); this.#camSoon(); };
@@ -250,8 +262,14 @@ export class SgVerandaStage extends HTMLElement {
     const { frame, stage, panel } = this.#els, w = stage.clientWidth;
     this.#sz = { w, h: stage.clientHeight }; // read here, where the browser has just laid the stage out, and never per frame: a read after a style write forces a layout
     if (!w) return;
-    const home = frame.classList.contains('stacked') ? false : panel.offsetHeight / stage.clientHeight > 0.45;
-    frame.classList.toggle('stacked', w < 560 || home);
+    // stacked when narrow, when the words' pane would fill the stage, or when the pot's pane was clipped by the frame (larger text); a
+    // stage that stacked for the last two stays stacked until its width or the text size changes (the pane's height is not read while stacked)
+    const key = `${w}|${getComputedStyle(document.documentElement).fontSize}`;
+    if (!frame.classList.contains('stacked') && panel.offsetHeight / stage.clientHeight > 0.45) this.#clipKey = key;
+    const was = frame.classList.contains('stacked'), now = w < 560 || this.#clipKey === key;
+    frame.classList.toggle('stacked', now);
+    // the pot's paragraph follows the stage: flat below the picture when stacked, a pot again when it is not (torn down or attached once per change)
+    if (was !== now && this.dataset.ready !== undefined && this.#flowP) this.#flowOn().then(() => this.#arrangeSoon(0));
     this.#lensOk();
     this.#measure();
     this.#camSoon();
@@ -269,13 +287,16 @@ export class SgVerandaStage extends HTMLElement {
     const para = this.#flowP, { frame, notesLayer } = this.#els;
     if (!para) return;
     this.#matka?.destroy(); this.#matka = null;
-    if (frame.classList.contains('stacked')) { para.style.cssText = ''; para.dataset.flat = ''; this.#els.list.before(para); return; }
+    if (frame.classList.contains('stacked')) { para.style.cssText = ''; para.dataset.flat = ''; this.#els.list.before(para); this.dataset.flow = 'flat'; return; }
     delete para.dataset.flat;
+    if (!para.isConnected) this.#els.list.before(para); // the words stay on the page, as written and plainly visible, while the pot's tier loads; attachMatka moves them into the pane in one step
     const live = this.#dp.tier === 'live' && this.#reg !== 'quiet' && !reduced();
     const { attachMatka } = await import('./matka-view.js');
     if (!this.#built) return;
     this.#matka = await attachMatka(this, { stage: this.#els.stage, layer: notesLayer, para, dp: this.#dp, mood: this.getAttribute('mood') || (isDark(this) ? 'dusk' : 'day'), live });
-    this.dataset.flow = live ? 'live' : 'still';
+    // the pane does not fit the frame at this text size: stack before anything was built, and the stage stays stacked until its width or the text size changes
+    if (!this.#matka) { this.#clipKey = `${this.#els.stage.clientWidth}|${getComputedStyle(document.documentElement).fontSize}`; this.#layout(); return; }
+    this.dataset.flow = this.#matka?.mode ?? 'still'; // live (three: spans and quads), spans (motion, no WebGL), still (quiet, reduced: nothing measured)
   }
 
   // ── notes ─────────────────────────────────────────────────────────────────

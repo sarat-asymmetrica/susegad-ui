@@ -113,3 +113,13 @@ sg-accordion[data-skin="playful"] > details > *:not(summary) { color: var(--sg-t
   sg-accordion > details { border-block-end: 1px solid CanvasText; }
   sg-accordion > details > summary::before { border-color: CanvasText; }
 }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-accordion > details > summary { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-accordion > details > summary:active { translate: 0 1px; background: color-mix(in oklab, transparent, var(--sg-text, CanvasText) 6%); transition: none !important; }
+sg-accordion[data-skin="warm"] > details > summary:active { translate: none; background: none; color: color-mix(in oklab, var(--sg-text, CanvasText), var(--sg-text, CanvasText) 25%); box-shadow: inset 0 -2px 0 color-mix(in oklab, var(--sg-accent, CanvasText), var(--sg-text, CanvasText) 25%); }
+sg-accordion[data-skin="playful"] > details > summary:active { translate: none; scale: 0.985; background: color-mix(in oklab, transparent, var(--sg-text, CanvasText) 8%); }
+@media (prefers-reduced-motion: reduce) {
+  sg-accordion > details > summary { transition: none; }
+  sg-accordion > details > summary:active { translate: none !important; scale: none !important; }
+}

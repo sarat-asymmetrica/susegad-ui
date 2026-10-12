@@ -17,7 +17,7 @@ sg-field[hidden] { display: none; }
 /* the label matches every other form part's (select, combobox): the page's size and face, medium weight */
 sg-field > label { font-weight: var(--sg-weight-medium, 500); line-height: 1.35; color: var(--sg-text); }
 
-sg-field :is(input, textarea) {
+sg-field :is(input, textarea, select) {
   position: relative; z-index: 1;
   box-sizing: border-box;
   inline-size: 100%;
@@ -33,20 +33,53 @@ sg-field :is(input, textarea) {
   min-block-size: 2.75rem; /* a 44 px target, like every other form part */
   caret-color: var(--sg-accent-text);
 }
-sg-field :is(input, textarea)::placeholder { color: var(--sg-text-faint); opacity: 1; }
-sg-field :is(input, textarea):hover { --field-rule: var(--sg-text-soft); }
-sg-field :is(input, textarea):focus-visible {
+sg-field :is(input, textarea, select)::placeholder { color: var(--sg-text-faint); opacity: 1; }
+sg-field :is(input, textarea, select):hover { --field-rule: var(--sg-text-soft); }
+sg-field :is(input, textarea, select):focus-visible {
   outline: var(--sg-focus-width) solid var(--sg-focus);
   outline-offset: var(--sg-focus-offset);
   border-block-end-color: var(--sg-text);
 }
 /* an error: the rule turns to the danger colour and thickens; the field note says why */
-sg-field :is(input, textarea)[aria-invalid="true"] {
+sg-field :is(input, textarea, select)[aria-invalid="true"] {
   --field-rule: var(--sg-danger);
   border-block-end-width: 2px;
   --field-ink: var(--sg-danger);
 }
 sg-field:has([aria-invalid="true"]) { --field-ink: var(--sg-danger); }
+
+/* a select is the same ruled line. The browser's own arrow stays wherever customizable select is not
+   supported (and in forced colours); where it is, the arrow is the same stroked caret sg-select draws, one per register */
+sg-field select {
+  --field-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10'%3E%3Cpath d='M1.5 1.5 8 8l6.5-6.5' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+sg-field[data-skin="warm"] select { --field-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10'%3E%3Cg fill='none' stroke='black' stroke-linecap='round'%3E%3Cpath d='M1.3 1.6C3.2 3.5 5.4 6.3 8.6 9' stroke-width='1.9'/%3E%3Cpath d='M7.1 8.7C9.3 6.2 11.9 3.6 14.8 1.1' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E"); }
+sg-field[data-skin="playful"] select { --field-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10'%3E%3Cpath d='M2 2.2 8 7.8l6-5.6' fill='none' stroke='black' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+@supports (appearance: base-select) {
+  sg-field select,
+  sg-field select::picker(select) { appearance: base-select; }
+  sg-field select { display: flex; align-items: center; gap: 0.75rem; }
+  sg-field select::picker-icon {
+    content: '';
+    inline-size: 0.8rem;
+    block-size: 0.5rem;
+    margin-inline-start: auto;
+    background: var(--sg-text-soft);
+    mask: var(--field-caret) center / contain no-repeat;
+  }
+  sg-field[data-skin="warm"] select::picker-icon { inline-size: 0.95rem; block-size: 0.6rem; background: var(--sg-text); }
+  sg-field[data-skin="playful"] select::picker-icon { inline-size: 1rem; block-size: 0.65rem; background: var(--sg-accent-text); }
+  sg-field select::picker(select) {
+    margin-block-start: 0.25rem;
+    padding: 0.25rem;
+    color: var(--sg-text);
+    background: var(--sg-surface);
+    border: var(--sg-hairline) solid var(--sg-rule-strong);
+    border-radius: var(--sg-radius-1);
+  }
+}
 
 /* a textarea is ruled like a notebook page; the rules scroll with the words */
 sg-field textarea {
@@ -61,6 +94,10 @@ sg-field textarea {
   box-shadow: inset 0 -1px 0 var(--field-rule);
 }
 sg-field textarea[aria-invalid="true"] { box-shadow: inset 0 -2px 0 var(--sg-danger); }
+/* it grows with the words, a line at a time, to a ceiling, and then scrolls. Only where field-sizing exists: elsewhere it keeps its rows, unclipped */
+@supports (field-sizing: content) {
+  sg-field textarea { field-sizing: content; max-block-size: calc(var(--field-line) * 14 + 0.25rem); overflow-y: auto; }
+}
 
 /* the character count, near the end of a maxlength */
 .sg-field-count { justify-self: end; font: 400 0.8125rem/1.3 var(--sg-font-body); color: var(--sg-text-soft); min-block-size: 1.1em; }
@@ -75,11 +112,11 @@ sg-field:is([data-skin="warm"], [data-skin="playful"]) {
   --field-nib: var(--sg-text);
 }
 sg-field[data-skin="playful"] { --field-pencil: var(--sg-accent-text); --field-nib: var(--sg-accent-text); --field-ink: var(--sg-accent); }
-sg-field:is([data-skin="warm"], [data-skin="playful"]):has(:is(input, textarea):hover) { --field-pencil: var(--sg-text); }
+sg-field:is([data-skin="warm"], [data-skin="playful"]):has(:is(input, textarea, select):hover) { --field-pencil: var(--sg-text); }
 sg-field:is([data-skin="warm"], [data-skin="playful"]):has([aria-invalid="true"]) { --field-pencil: var(--sg-danger); --field-nib: var(--sg-danger); --field-ink: var(--sg-danger); }
-sg-field:is([data-skin="warm"], [data-skin="playful"]) input { border-block-end-color: transparent; }
+sg-field:is([data-skin="warm"], [data-skin="playful"]) :is(input, select) { border-block-end-color: transparent; }
 /* warm writes on the paper itself, like a form filled in by hand: no well, only the pencil rule */
-sg-field[data-skin="warm"] :is(input, textarea) { background-color: transparent; }
+sg-field[data-skin="warm"] :is(input, textarea, select) { background-color: transparent; }
 sg-field:is([data-skin="warm"], [data-skin="playful"]) textarea { box-shadow: none; padding-inline-start: 2rem; }
 sg-field[data-skin="playful"] textarea { padding-inline-start: 2.25rem; }
 
@@ -99,5 +136,13 @@ sg-field[data-skin="playful"] textarea { padding-inline-start: 2.25rem; }
 /* ── forced colours: the system's own rule, and no drawing ─────────── */
 @media (forced-colors: active) {
   .sg-field-ink { display: none; }
-  sg-field :is(input, textarea) { border-block-end: 1px solid CanvasText !important; box-shadow: none !important; }
+  sg-field :is(input, textarea, select) { border-block-end: 1px solid CanvasText !important; box-shadow: none !important; }
+  /* the arrow is drawn in a mask, which forced colours would flatten to the page colour */
+  sg-field select::picker-icon { background: CanvasText !important; forced-color-adjust: none; }
 }
+
+/* ── the touch contract: a select answers a press within a frame, by colour (a writing surface does not move) ── */
+sg-field select { transition: background-color 120ms var(--sg-ease-out); }
+sg-field select:active { transition: none; background-color: color-mix(in oklab, var(--sg-surface-sunk), var(--sg-text) 10%); }
+sg-field[data-skin="warm"] select:active { background-color: color-mix(in oklab, var(--sg-surface), var(--sg-text) 25%); }
+sg-field[data-skin="playful"] select:active { background-color: color-mix(in oklab, var(--sg-surface-sunk), var(--sg-text) 14%); }

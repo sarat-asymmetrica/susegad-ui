@@ -1,8 +1,10 @@
 // Shared browser plumbing: launch, open a target with its errors captured, wait for it.
 
+import path from 'node:path';
 import { startServer } from '../serve.mjs';
 import { targetPath } from './target.mjs';
-import { contextOptions, engineName, pickEngine } from './engine.mjs';
+import { contextOptions, engineName, launchArgs, pickEngine } from './engine.mjs';
+import { acquireSlot } from './slots.mjs';
 
 export const PHONE = { width: 390, height: 844, dpr: 3, touch: true };
 export const DESKTOP = { width: 1280, height: 900, dpr: 1, touch: false };
@@ -51,16 +53,29 @@ const HOLD_SCRIPT = `(() => {
   }) });
 })();`;
 
-/** Start the server and the browser together; `done()` closes both. */
+/**
+ * Start the server and the browser together; `done()` closes both. Takes a machine-wide browser slot
+ * first (slots.mjs; waits when they are all taken, skips when runCheck already holds one for this
+ * process) and gives it back in `done()`.
+ */
 export async function session({ headed = false, args = [] } = {}) {
-  const server = await startServer({ quiet: true });
-  const engine = engineName();
-  const browser = await pickEngine(engine).launch({ headless: !headed, args });
-  return {
-    server, browser, engine, base: server.url,
-    version: browser.version(),
-    async done() { await browser.close(); await server.close(); },
-  };
+  const release = await acquireSlot({ label: path.basename(process.argv[1] ?? 'session') });
+  let server, browser;
+  try {
+    server = await startServer({ quiet: true });
+    const engine = engineName();
+    browser = await pickEngine(engine).launch({ headless: !headed, args: launchArgs(engine, args) });
+    return {
+      server, browser, engine, base: server.url,
+      version: browser.version(),
+      async done() { try { await browser.close(); await server.close(); } finally { release(); } },
+    };
+  } catch (e) {
+    try { await browser?.close(); } catch { /* never launched */ }
+    try { await server?.close?.(); } catch { /* never started */ }
+    release();
+    throw e;
+  }
 }
 
 /**
@@ -150,6 +165,12 @@ export async function waitReady(page, t, { timeout = 15000 } = {}) {
     try { await page.waitForFunction(() => window.__ready === true, null, { timeout }); }
     catch { return { ok: false, reason: `the page declared window.__ready but never set it within ${timeout / 1000} s` }; }
   }
+  // Lists that arrive on the tala (menu, event-list, gallery, data-table) are mid-fade for their first
+  // second; every gate reads the page once they have arrived, never mid-fade. Finite ones only, capped.
+  await page.evaluate(() => Promise.race([
+    Promise.all(document.getAnimations().filter(a => a.animationName === 'sg-arrive').map(a => a.finished.catch(() => {}))),
+    new Promise(r => setTimeout(r, 2000)),
+  ]));
   await page.waitForTimeout(300);
   return { ok: true };
 }

@@ -88,3 +88,16 @@ sg-date-range:is([data-skin="warm"], [data-skin="playful"]) .sg-dr-day:is(.is-ar
 .sg-dr-ink { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; }
 .sg-dr-ribbon { position: relative; block-size: 76px; }
 .sg-dr-ribbon-art { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+.sg-dr-day, .sg-dr-nav, .sg-dr-seasons summary { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+.sg-dr-seasons summary:active { translate: 0 1px; color: color-mix(in oklab, var(--sg-text, CanvasText), var(--sg-text, CanvasText) 25%); transition: none !important; }
+[data-skin="warm"] .sg-dr-seasons summary:active { translate: none; }
+[data-skin="playful"] .sg-dr-seasons summary:active { translate: none; scale: 0.97; }
+.sg-dr-day:active:not([aria-disabled="true"]), .sg-dr-nav:active:not(:disabled) { translate: 0 1px; border-color: color-mix(in oklab, var(--sg-rule-strong, currentColor), var(--sg-text, CanvasText) 40%); transition: none !important; }
+[data-skin="warm"] .sg-dr-day:active:not([aria-disabled="true"]), [data-skin="warm"] .sg-dr-nav:active:not(:disabled) { translate: none; background-color: color-mix(in oklab, var(--sg-selection, Highlight), var(--sg-text, CanvasText) 25%); }
+[data-skin="playful"] .sg-dr-day:active:not([aria-disabled="true"]), [data-skin="playful"] .sg-dr-nav:active:not(:disabled) { translate: none; scale: 0.97; }
+@media (prefers-reduced-motion: reduce) {
+  .sg-dr-day, .sg-dr-nav, .sg-dr-seasons summary { transition: none; }
+  .sg-dr-day:active, .sg-dr-nav:active, .sg-dr-seasons summary:active { translate: none !important; scale: none !important; }
+}

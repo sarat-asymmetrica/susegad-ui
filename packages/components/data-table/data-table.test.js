@@ -37,7 +37,7 @@ test('the rupee goes in front, and a number the code cannot read says nothing', 
   assert.equal(rupee(125000), '₹1,25,000');
   assert.equal(rupee(450), '₹450');
   assert.equal(rupee(12500000), '₹1,25,00,000');
-  assert.equal(rupee(-500), '₹-500');
+  assert.equal(rupee(-500), '-₹500');
   assert.equal(rupee('soon'), '');
   assert.equal(rupee(null), '');
 });

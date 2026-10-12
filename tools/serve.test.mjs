@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { startServer, resolveInside, mimeFor } from './serve.mjs';
+import { startServer, resolveInside, mimeFor, templateLibraryPath } from './serve.mjs';
 
 test('resolveInside keeps paths inside the root', () => {
   const root = path.resolve('/srv/site');
@@ -89,5 +89,19 @@ test('serves byte ranges, so media can seek', async () => {
     r = await fetch(`${s.url}/a.bin`);
     assert.equal(r.headers.get('accept-ranges'), 'bytes');
     assert.equal(await r.text(), '0123456789');
+  } finally { await s.close(); }
+});
+
+test('a template source page finds the library where create would have put it', async () => {
+  assert.equal(templateLibraryPath('/packages/templates/event/susegad/core/lazy.css'), '/packages/core/lazy.css');
+  assert.equal(templateLibraryPath('/packages/templates/event/gom-deva/susegad/core/lazy.css'), '/packages/core/lazy.css');
+  assert.equal(templateLibraryPath('/packages/templates/event/site.css'), null);
+  assert.equal(templateLibraryPath('/packages/core/lazy.css'), null);
+  const s = await startServer({ quiet: true });
+  try {
+    const r = await fetch(`${s.url}/packages/templates/event/susegad/core/lazy.css`);
+    assert.equal(r.status, 200);
+    assert.match(r.headers.get('content-type'), /css/);
+    assert.equal((await fetch(`${s.url}/packages/templates/event/susegad/core/nope.css`)).status, 404);
   } finally { await s.close(); }
 });

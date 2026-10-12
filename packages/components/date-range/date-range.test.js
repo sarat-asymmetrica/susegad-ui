@@ -53,9 +53,9 @@ test('short prices are lakh-aware; full prices in labels use Indian grouping', (
   assert.equal(shortPrice(125000), '1.3L');
   assert.equal(shortPrice(0), '');
   const s = { arr: '2026-11-16', dep: null };
-  assert.equal(labelFor('2026-11-16', dayInfo('2026-11-16', ctx, RATES), s, RATES.window), 'Mon 16 Nov 2026, your arrival, free night, ₹20,000');
+  assert.equal(labelFor('2026-11-16', dayInfo('2026-11-16', ctx, RATES), s, RATES.window), 'Mon 16 Nov 2026, your arrival, free night, ₹20,000 (20k)');
   assert.equal(labelFor('2026-11-13', dayInfo('2026-11-13', ctx, RATES), s, RATES.window), 'Fri 13 Nov 2026, taken, you can leave on this day');
-  assert.equal(labelFor('2026-12-26', dayInfo('2026-12-26', ctx, RATES), s, RATES.window), 'Sat 26 Dec 2026, free night, ₹48,000, Christmas week');
+  assert.equal(labelFor('2026-12-26', dayInfo('2026-12-26', ctx, RATES), s, RATES.window), 'Sat 26 Dec 2026, free night, ₹48,000 (48k), Christmas week');
   assert.equal(labelFor('2026-11-21', dayInfo('2026-11-21', ctx, RATES), s, RATES.window), 'Sat 21 Nov 2026, on hold for another guest');
   assert.equal(labelFor('2026-10-21', dayInfo('2026-10-21', ctx, RATES), s, RATES.window), "Wed 21 Oct 2026, too soon, arrivals need 2 days' notice");
   assert.match(labelFor('2027-07-10', dayInfo('2027-07-10', ctx, RATES), s, RATES.window), /not open for booking yet$/);

@@ -9,6 +9,7 @@
 // calm rects on each move, once a frame at most, so a renderer makes room live.
 // The place is remembered by the page: `sg-words-moved` out, `words-at` in.
 
+import { adopt } from './sheet.js';
 import { room, canMove, placeOf, offsetOf, clampTo, nudge, dirOf, avoid, movedSaid, homeSaid, limitSaid, parseWordsAt } from './movable.core.js';
 
 const CSS = `
@@ -38,13 +39,13 @@ const HELP = 'Drag to move the words. Arrow keys move them, Shift for bigger ste
  */
 export function attach(host, { root, els, register, measure }) {
   const { stage, panel, toggle } = els, frame = stage.parentNode;
-  const style = document.createElement('style'); style.textContent = CSS;
+  adopt(root, CSS); // a constructable sheet, so a strict CSP has no inline <style> to block
   const grip = document.createElement('button');
   grip.type = 'button'; grip.className = 'grip'; grip.part = 'grip'; grip.hidden = true;
   grip.setAttribute('aria-label', 'Move the words'); grip.setAttribute('aria-describedby', 'mv-help'); grip.innerHTML = ICON;
   const help = Object.assign(document.createElement('div'), { id: 'mv-help', className: 'vh', textContent: HELP });
   const status = Object.assign(document.createElement('div'), { className: 'vh' }); status.setAttribute('role', 'status');
-  root.append(style, help, status); panel.append(grip);
+  root.append(help, status); panel.append(grip);
 
   let place = null;            // { x, y } in [0, 1], or null at home
   let cur = { dx: 0, dy: 0 };   // what is applied now, px

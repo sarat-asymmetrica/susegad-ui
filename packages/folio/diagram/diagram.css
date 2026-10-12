@@ -123,3 +123,12 @@ sg-diagram[data-at]:not([data-at="0"]) .sg-d-label.is-now .sg-d-label-text { fil
 
 /* once things are moving along the flows, the still dots step aside */
 sg-diagram[data-moving] .sg-d-dots { display: none; }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-diagram .sg-diagram-stepper button, sg-diagram .sg-diagram-text summary { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-diagram .sg-diagram-stepper button:active:not([aria-disabled="true"]) { translate: 0 1px; background: color-mix(in oklab, transparent, var(--sg-text, CanvasText) 8%); color: color-mix(in oklab, var(--sg-accent-text), var(--sg-text, CanvasText) 25%); transition: none !important; }
+sg-diagram .sg-diagram-text summary:active { translate: 0 1px; color: color-mix(in oklab, var(--sg-text, CanvasText), var(--sg-text, CanvasText) 25%); transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  sg-diagram .sg-diagram-stepper button, sg-diagram .sg-diagram-text summary { transition: none; }
+  sg-diagram :is(.sg-diagram-stepper button, .sg-diagram-text summary):active { translate: none !important; }
+}

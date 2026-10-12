@@ -57,14 +57,6 @@ sg-drawer[data-edge="start"] dialog { inset: 0 auto 0 0; border-inline: 0; borde
 sg-drawer[data-edge="top"] dialog { inset: 0 0 auto 0; inline-size: 100%; max-inline-size: none; block-size: min(70vh, 30rem); border-inline: 0; border-block-end: var(--sg-hairline) solid var(--sg-rule-strong); box-shadow: 0 24px 60px -30px var(--sg-shadow); }
 sg-drawer[data-edge="bottom"] dialog { inset: auto 0 0 0; inline-size: 100%; max-inline-size: none; block-size: min(70vh, 30rem); border-inline: 0; border-block-start: var(--sg-hairline) solid var(--sg-rule-strong); box-shadow: 0 -24px 60px -30px var(--sg-shadow); }
 
-/* quiet's slide-in: a transform on the dialog itself (it is the panel), timed by the register's own duration token */
-sg-drawer:not([data-skin="warm"]):not([data-skin="playful"]) dialog[open] { animation: sg-drawer-in var(--sg-dur-calm, 320ms) var(--sg-ease-out, ease-out) both; }
-@keyframes sg-drawer-in { from { transform: var(--sg-drawer-off, translateX(100%)); } to { transform: translate(0, 0); } }
-sg-drawer[data-edge="end"] dialog { --sg-drawer-off: translateX(100%); }
-sg-drawer[data-edge="start"] dialog { --sg-drawer-off: translateX(-100%); }
-sg-drawer[data-edge="top"] dialog { --sg-drawer-off: translateY(-100%); }
-sg-drawer[data-edge="bottom"] dialog { --sg-drawer-off: translateY(100%); }
-
 /* ── warm and playful: the dialog is full-bleed (Carepa fills the whole
    viewport, exactly like Dialog's does), and .sg-drawer-card is the panel,
    placed and animated at the edge inside it. [open] gates every rule that
@@ -76,7 +68,6 @@ sg-drawer[data-skin="playful"] dialog[open] {
   inset: 0; margin: 0; max-inline-size: none; max-block-size: none;
   inline-size: 100%; block-size: 100%;
   background: transparent; box-shadow: none; border: 0;
-  animation: none; /* the dialog itself no longer slides; .sg-drawer-card does */
 }
 sg-drawer[data-skin="warm"] .sg-drawer-scrim,
 sg-drawer[data-skin="playful"] .sg-drawer-scrim {
@@ -89,7 +80,6 @@ sg-drawer[data-skin="playful"] .sg-drawer-card {
   inline-size: min(26rem, 92vw); block-size: 100%;
   background: color-mix(in oklab, var(--sg-surface-raised) 97%, transparent);
   box-shadow: -18px 0 46px -26px var(--sg-shadow);
-  animation: sg-drawer-in var(--sg-dur-calm, 320ms) var(--sg-ease-out, ease-out) both;
 }
 sg-drawer[data-edge="start"][data-skin="warm"] .sg-drawer-card,
 sg-drawer[data-edge="start"][data-skin="playful"] .sg-drawer-card {
@@ -114,9 +104,58 @@ sg-drawer[data-skin="playful"] .sg-drawer-card::before {
 sg-drawer[data-edge="start"][data-skin="warm"] .sg-drawer-card::before,
 sg-drawer[data-edge="start"][data-skin="playful"] .sg-drawer-card::before { inset-inline-start: auto; inset-inline-end: -1px; }
 
-/* playful: the panel's slide start is timed to the Teental cycle's first beat (skins/playful.js sets this var via talaDelay(1)) */
-sg-drawer[data-skin="playful"] .sg-drawer-card { animation-delay: var(--sg-drawer-delay, 0ms); }
+/* ── entering and leaving: a transition from the first frame ────────────────
+   Quiet: the panel is the dialog, and it changes opacity for 120 ms, nothing
+   else. Warm and playful: the dialog fades, and the panel slides in from its
+   edge (a short slide in warm, a longer one on the spring in playful, timed to
+   the Teental cycle's first beat). Where the browser can hold the drawer in
+   the top layer while it goes (the overlay property) it leaves the same way.
+   Reduced motion: it is simply there. */
+sg-drawer dialog {
+  --_dur: 120ms; --_ease: var(--sg-ease-out, ease-out); --_slide: 0rem;
+  opacity: 0;
+}
+sg-drawer dialog[open] { opacity: 1; transition: opacity var(--_dur) var(--_ease); }
+sg-drawer dialog::backdrop { opacity: 0; }
+sg-drawer dialog[open]::backdrop { opacity: 1; transition: opacity 120ms ease-out; }
+@starting-style {
+  sg-drawer dialog[open] { opacity: 0; }
+  sg-drawer dialog[open]::backdrop { opacity: 0; }
+}
+@supports (overlay: auto) {
+  sg-drawer dialog:not([open]) { transition: opacity var(--_dur) var(--_ease), overlay var(--_dur) allow-discrete, display var(--_dur) allow-discrete; }
+  sg-drawer dialog:not([open])::backdrop { transition: opacity 120ms ease-out; }
+}
+sg-drawer[data-skin="warm"] dialog { --_dur: 200ms; --_slide: 2rem; }
+sg-drawer[data-skin="playful"] dialog { --_dur: 280ms; --_ease: var(--sg-ease-spring, ease-out); --_slide: 3rem; }
+sg-drawer:dir(rtl) dialog { --_flip: -1; }
+sg-drawer[data-edge="end"] dialog { --_in-x: calc(var(--_flip, 1) * var(--_slide)); --_in-y: 0px; }
+sg-drawer[data-edge="start"] dialog { --_in-x: calc(var(--_flip, 1) * -1 * var(--_slide)); --_in-y: 0px; }
+sg-drawer[data-edge="top"] dialog { --_in-x: 0px; --_in-y: calc(-1 * var(--_slide)); }
+sg-drawer[data-edge="bottom"] dialog { --_in-x: 0px; --_in-y: var(--_slide); }
+sg-drawer:is([data-skin="warm"], [data-skin="playful"]) .sg-drawer-card { translate: var(--_in-x, 0px) var(--_in-y, 0px); opacity: 0; }
+sg-drawer:is([data-skin="warm"], [data-skin="playful"]) dialog[open] .sg-drawer-card {
+  translate: 0 0; opacity: 1;
+  transition: translate var(--_dur) var(--_ease) var(--sg-drawer-delay, 0ms), opacity var(--_dur) var(--_ease) var(--sg-drawer-delay, 0ms);
+}
+@starting-style {
+  sg-drawer:is([data-skin="warm"], [data-skin="playful"]) dialog[open] .sg-drawer-card { translate: var(--_in-x, 0px) var(--_in-y, 0px); opacity: 0; }
+}
+@supports (overlay: auto) {
+  sg-drawer:is([data-skin="warm"], [data-skin="playful"]) dialog:not([open]) .sg-drawer-card { transition: translate var(--_dur) var(--_ease), opacity var(--_dur) var(--_ease); }
+}
+
+/* ── the panel's buttons, pressed (the touch contract): see dialog.css for the rule of it ── */
+sg-drawer .sg-drawer-card button {
+  transition: translate 120ms ease-out, scale 120ms var(--sg-ease-out, ease-out), box-shadow 100ms ease-out;
+}
+sg-drawer .sg-drawer-card button:active { transition: none; translate: 0 1px; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text, CanvasText) 8%, transparent); }
+sg-drawer[data-skin="warm"] .sg-drawer-card button:active { translate: none; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text) 16%, transparent); }
+sg-drawer[data-skin="playful"] .sg-drawer-card button { transition-timing-function: ease-out, var(--sg-ease-spring, ease-out), ease-out; }
+sg-drawer[data-skin="playful"] .sg-drawer-card button:active { translate: none; scale: 0.97; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-accent, Highlight) 20%, transparent); }
 
 @media (prefers-reduced-motion: reduce) {
-  sg-drawer dialog[open], sg-drawer .sg-drawer-card { animation: none !important; }
+  sg-drawer dialog, sg-drawer dialog::backdrop, sg-drawer .sg-drawer-card { animation: none !important; transition: none !important; }
+  sg-drawer .sg-drawer-card button:active { translate: none !important; scale: none !important; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text) 16%, transparent); }
 }
+:root[data-sg-input="key"] sg-drawer .sg-drawer-card button:active { translate: none !important; scale: none !important; }

@@ -6,7 +6,7 @@
 // so the same code is tested against a fixture and run against the real tree.
 
 /** Reading order for the page; a type with no items is left out. */
-export const TYPE_ORDER = ['component', 'recipe', 'scene', 'package'];
+export const TYPE_ORDER = ['component', 'recipe', 'scene', 'template', 'package'];
 
 export const TYPE_META = {
   component: {
@@ -20,6 +20,10 @@ export const TYPE_META = {
   scene: {
     title: 'Scenes',
     blurb: 'A model plus a renderer, run by <sg-scene>. The masthead kolam is one of these.',
+  },
+  template: {
+    title: 'Templates',
+    blurb: 'Whole starter sites. Start one in an empty folder with the create command of the CLI; it copies the pieces the site uses.',
   },
   package: {
     title: 'Packages',
@@ -61,7 +65,8 @@ function plateName(name) {
  */
 export function toCard(item, fileExists, isPlated = () => false) {
   const base = dirOf(item.manifest);
-  const demoFile = ['demo.html', 'index.html'].find(f => fileExists(`${base}/${f}`));
+  // a template's pages refer to the library as susegad/..., so they open only once `create` has made the site: no demo link
+  const demoFile = item.type === 'template' ? undefined : ['demo.html', 'index.html'].find(f => fileExists(`${base}/${f}`));
   let demoUrl = demoFile ? `/${base}/${demoFile}` : null;
   let previewKind = null;
   let sceneName = null;

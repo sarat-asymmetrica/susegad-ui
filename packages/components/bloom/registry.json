@@ -1,0 +1,33 @@
+{
+  "name": "bloom",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Bloom",
+  "description": "A flower head laid out by Vogel's model, drawn face-on as SVG: a marigold (zendu) first. Floret i sits at i times the golden angle and a radius of root i, so the head is evenly dense with no grid and no overlap, and adding a floret never moves the ones already placed. That lets a count be drawn honestly (37 people, 37 florets, and the number in text beside it), a head grow one floret at a time, and every name have its own flower (seed-from). Quiet is single-ink dots, still. Warm is the zendu palette, ruffled petals lit from the upper left, still. Playful grows from the heart outward in CSS (sibling-index() with a --i fallback) and shivers its outer ring when pressed. Reduced motion and Save-Data show the finished head. Draws at most 400 florets. Works under a strict Content-Security-Policy.",
+  "version": "0.1.0",
+  "useFor": ["flower", "marigold", "zendu", "avatar", "placeholder-avatar", "count", "greeting-card", "decoration", "phyllotaxis"],
+  "files": [
+    "bloom.js",
+    "bloom.core.js",
+    "bloom.css",
+    "skins/head.js",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "bloom.prompt.md",
+    "bloom.docs.md"
+  ],
+  "dependencies": ["core-component", "core", "engine", "tokens"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "bloom.prompt.md",
+  "docs": "bloom.docs.md",
+  "budget": {
+    "jsBytes": 24576,
+    "reason": "A component (0005, 0009): element 3.9 KB, pure core 9 KB (the layout, the zendu palette and petal, the words for assistive technology), the head builder 8 KB, three one-line skins. 22,011 B measured. The layout itself is the engine's phyllotaxis.js and is counted there. No frame loop: growth and the shiver are CSS animations the browser runs."
+  },
+  "motif": {
+    "origin": "india",
+    "tier": "everyday",
+    "gloss": "The zendu, the orange and saffron marigold of every Indian flower seller's tray and market, drawn as a flower and nothing more: never placed with deity imagery or framed as a puja element."
+  }
+}

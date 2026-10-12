@@ -168,6 +168,63 @@ check('a disabled code takes no focus', await p.evaluate(() => document.activeEl
 
 check('no console or page errors', errors.length === 0, errors.join(' | '));
 
+// ── 1.4.11: an empty box's border is 3:1 against the page in every palette, theme and register ──
+// Painted colours are read from the page (a 1x1 canvas resolves oklch() and color-mix() to the sRGB the
+// user sees; a translucent border is laid over the page colour first), then judged with WCAG's formula.
+{
+  const lum = ([r, g, b]) => [r, g, b].map(v => { const s = v / 255; return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4; }).reduce((a, v, i) => a + v * [0.2126, 0.7152, 0.0722][i], 0);
+  const ratio = (a, b) => { const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
+  const ctx = await browser.newContext(contextOptions(engine, { viewport: { width: 1000, height: 800 } }));
+  const q = await ctx.newPage();
+  const cells = [], low = [];
+  for (const palette of ['susegad', 'casa', 'azulejo', 'haldi']) for (const theme of ['light', 'dark']) for (const register of ['quiet', 'warm', 'playful']) {
+    await q.goto(`${url}?register=${register}&theme=${theme}&palette=${palette}`);
+    await q.waitForFunction(() => window.__ready === true && document.querySelector('sg-otp')?.dataset.skin);
+    const got = await q.evaluate(() => {
+      const paint = css => { const c = document.createElement('canvas'); c.width = c.height = 1; const g = c.getContext('2d', { willReadFrequently: true }); g.clearRect(0, 0, 1, 1); g.fillStyle = css; g.fillRect(0, 0, 1, 1); const d = g.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
+      const box = document.querySelector('sg-otp .sg-otp-box:not([data-filled])');
+      const page = paint(getComputedStyle(document.documentElement).getPropertyValue('--sg-surface') || 'white');
+      const bg = paint(getComputedStyle(document.body).backgroundColor);
+      const edge = paint(getComputedStyle(box).borderTopColor);
+      return { page: bg[3] === 1 ? bg : page, edge };
+    });
+    const [pr, pg, pb] = got.page, a = got.edge[3];
+    const edge = got.edge.slice(0, 3).map((c, i) => Math.round(c * a + got.page[i] * (1 - a)));
+    const r = ratio(edge, [pr, pg, pb]);
+    cells.push(r);
+    if (r < 3) low.push(`${palette} ${theme} ${register}: ${r.toFixed(2)}`);
+  }
+  check(`1.4.11: an empty box's border is 3:1 against the page in 4 palettes x light and dark x 3 registers (${cells.length} cells, lowest ${Math.min(...cells).toFixed(2)})`, cells.length === 24 && !low.length, low.slice(0, 4).join('; '));
+  await ctx.close();
+}
+
+// ── 2.1.2: Tab leaves the code and Shift+Tab comes back, with the code empty, part filled and full ──
+{
+  const tabsOut = async (trap) => {
+    const ctx = await browser.newContext(contextOptions(engine, { viewport: { width: 1000, height: 800 } }));
+    const q = await ctx.newPage();
+    await q.goto(`${url}?register=warm`);
+    await q.waitForFunction(() => window.__ready === true && document.querySelector('sg-otp')?.dataset.skin);
+    if (trap) await q.evaluate(() => document.querySelector('#code').addEventListener('keydown', e => { if (e.key === 'Tab') e.preventDefault(); }));
+    const steps = [];
+    for (const digits of ['', '48', '482913']) {
+      await q.fill('#code', '');
+      await q.focus('#code');
+      if (digits) await q.keyboard.type(digits);
+      await q.keyboard.press('Tab');
+      const out = await q.evaluate(() => document.activeElement.id !== 'code' && !document.activeElement.closest('sg-otp'));
+      await q.keyboard.press('Shift+Tab');
+      const back = await q.evaluate(() => document.activeElement.id === 'code');
+      steps.push(out && back);
+    }
+    await ctx.close();
+    return steps;
+  };
+  const free = await tabsOut(false), trapped = await tabsOut(true);
+  check('2.1.2: with the code empty, part filled and full, Tab leaves it and Shift+Tab returns to it', free.every(Boolean), JSON.stringify(free));
+  check('2.1.2 control: the same probe on a code that swallows Tab reports a trap', trapped.some(x => !x), JSON.stringify(trapped));
+}
+
 await browser.close();
 await server.close();
 const failed = results.filter(r => !r.ok).length;

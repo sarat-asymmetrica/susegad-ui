@@ -10,7 +10,7 @@
 // JavaScript. The element names itself a region after its heading and gathers
 // the content into a body; the skin adds the picture: a hairline drawing in
 // quiet, a scene beside the words in warm (still for reduced motion) and a
-// scene you can play with in playful.
+// scene you can play with in playful when scene-interactive="true" (otherwise a picture).
 
 import { SgElement, defineComponent } from '../../core/component.js';
 import { sceneName, sceneParams } from './empty.core.js';

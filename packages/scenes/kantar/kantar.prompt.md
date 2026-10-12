@@ -59,6 +59,10 @@ Draw a tiatr stage in plain JavaScript on a canvas: a painted proscenium with a 
 | Put the first row of the house in the bottom of the picture | loop | Seven backs of heads along the lower edge, each on its own phase because an audience is never in unison, each with a rim of stage light. They bob on the beat and one of them puts a hand up on the refrain. |
 | Let the pit play in the same beat | loop | A bow that travels, a cymbal that shivers on the off beat and a conductor's arm that comes down on one, all read from the same beat as the singer. |
 
+## On a page
+
+A bare `<sg-scene name="kantar">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/kantar/index.js">` with `<sg-scene name="kantar" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The stage's accessible name is its `alt`. No text is drawn into the canvas. All song lyrics, scene titles, and interlude announcements live in real DOM elements inside `<sg-scene>` and polite `aria-live` regions. Screen readers announce the current set when it opens and the kantar words as they are sung. In the quiet register and under reduced motion, the scene presents a lit, calm still with no looping motion.

@@ -41,6 +41,10 @@ Grow a banyan tree in pen and ink on handmade paper, in canvas JavaScript. Use t
 | show the grown tree, still, under any words | calm | The page reports where its text sits; inside those boxes, and 20 units round them, the first finished variant is drawn over the growing tree, so the words never sit on moving ink. |
 | write its own words in the sky beside the tree | calm | With words="world", the type tier (Pretext) lays each line from a fixed margin to the canopy’s edge, one width per line, at the largest size you can read; the words stay real text. The paragraph is laid again only four times while the tree grows, each time against the canopy as it will be when that quarter of the growth ends, so no leaf ever grows under a line. On a phone or with text at 200% the words go back to the panel. |
 
+## On a page
+
+A bare `<sg-scene name="vad">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/vad/index.js">` with `<sg-scene name="vad" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing's name is its `alt`. With `progress` set, the element says the percentage in a polite status region. Once grown, the ink boils a few times a second; the pause button stops it, and quiet and reduced motion show the grown tree still. In playful the drawing takes focus and Enter or Space grows a new banyan. Under any words laid over it, the tree is shown grown and still. With `words="world"`, the words in the sky are the page’s own heading and paragraph, one span per line, read in order; they hold only while the body is at least 0.875rem and the heading 1.25rem.

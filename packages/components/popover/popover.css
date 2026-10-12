@@ -9,9 +9,10 @@ sg-popover { display: contents; }
 
 sg-popover [popover] {
   /* the popover UA stylesheet sets inset: 0, which stretches a fit-content
-     box across the whole viewport and leaves it pinned top-left; reset it
-     so popover.js's own left/top/bottom (set on open, in #place()) are the
-     only offsets in play. */
+     box across the whole viewport and leaves it pinned top-left; reset it.
+     Where the browser has anchor positioning, the block below places the
+     panel against its trigger; popover.js's own left/top (in #place()) is
+     the fallback for a browser that does not. */
   position: fixed;
   inset: auto;
   box-sizing: border-box;
@@ -25,11 +26,55 @@ sg-popover [popover] {
   font: var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif);
   box-shadow: var(--sg-lift, 0 8px 24px rgb(0 0 0 / 0.2));
 }
-sg-popover [popover]:popover-open { animation: sg-popover-in var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out); }
-@keyframes sg-popover-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) {
-  sg-popover [popover]:popover-open { animation: none; }
+
+/* ── placement: below the trigger, flipped above or across when it will not fit ──
+   A popovertarget trigger is the panel's implicit anchor, so this works with
+   no script at all; popover.js names the anchor outright for the rest. */
+@supports (anchor-name: --a) {
+  sg-popover [popover] {
+    position-anchor: auto;
+    top: anchor(bottom);
+    left: anchor(left);
+    margin-block: 6px;
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+  }
 }
+
+/* ── entering and leaving: the panel is a transition from its first frame ────
+   Quiet: a 120 ms change of opacity, nothing else. Warm adds a short rise,
+   playful the spring. Reduced motion: it is simply there. */
+sg-popover [popover] {
+  --_dur: 120ms; --_ease: var(--sg-ease-out, ease-out); --_rise: 0px;
+  opacity: 0;
+  translate: 0 var(--_rise);
+  transition: opacity var(--_dur) var(--_ease), translate var(--_dur) var(--_ease), overlay var(--_dur) allow-discrete, display var(--_dur) allow-discrete;
+}
+sg-popover [popover]:popover-open { opacity: 1; translate: 0 0; }
+@starting-style {
+  sg-popover [popover]:popover-open { opacity: 0; translate: 0 var(--_rise); }
+}
+sg-popover[data-skin="warm"] [popover] { --_dur: 180ms; --_rise: 6px; }
+sg-popover[data-skin="playful"] [popover] { --_dur: 260ms; --_ease: var(--sg-ease-spring, ease-out); --_rise: 10px; }
+@media (prefers-reduced-motion: reduce) {
+  sg-popover [popover] { transition: none; }
+}
+
+/* ── the trigger, pressed (the touch contract) ──────────────────────────────
+   Down answers in the same frame, with no transition; letting go eases back
+   in under 150 ms. Quiet settles 1 px, warm shades the colour toward the ink,
+   playful gives a little. The keyboard never moves it, and reduced motion
+   keeps the shade and drops the movement. */
+sg-popover > :where(button, a[href]) {
+  transition: translate 120ms ease-out, scale 120ms var(--sg-ease-out, ease-out), box-shadow 100ms ease-out;
+}
+sg-popover > :where(button, a[href]):active { transition: none; translate: 0 1px; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text, CanvasText) 8%, transparent); }
+sg-popover[data-skin="warm"] > :where(button, a[href]):active { translate: none; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text, CanvasText) 16%, transparent); }
+sg-popover[data-skin="playful"] > :where(button, a[href]) { transition-timing-function: ease-out, var(--sg-ease-spring, ease-out), ease-out; }
+sg-popover[data-skin="playful"] > :where(button, a[href]):active { translate: none; scale: 0.97; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-accent, Highlight) 20%, transparent); }
+@media (prefers-reduced-motion: reduce) {
+  sg-popover > :where(button, a[href]):active { translate: none !important; scale: none !important; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text, CanvasText) 16%, transparent); }
+}
+:root[data-sg-input="key"] sg-popover > :where(button, a[href]):active { translate: none !important; scale: none !important; }
 
 /* ── warm: the inland-letter card, a folded top corner ───────────────────── */
 sg-popover[data-skin="warm"] [popover] {
@@ -52,6 +97,10 @@ sg-popover[data-skin="warm"] [popover]::after {
 sg-popover[data-skin="playful"] [popover] {
   border-width: 2px;
   border-color: var(--sg-accent, Highlight);
+  /* the postmark pokes 12 px past the corner; the UA's overflow: auto made that a 16 px sideways scroll.
+     Clip instead (not a scroll container), and let the stamp show for the margin it needs. */
+  overflow: clip;
+  overflow-clip-margin: 14px;
 }
 sg-popover[data-skin="playful"] [popover]::before {
   content: "";
@@ -73,3 +122,6 @@ sg-popover[data-skin="playful"] [popover]::before {
   sg-popover [popover]::after { display: none !important; }
   sg-popover [popover] { border: 1px solid CanvasText !important; box-shadow: none !important; }
 }
+
+/* touch contract: focus (docs/contributing/touch-contract.md) */
+sg-popover :is(button, a, [tabindex]):focus-visible { outline: var(--sg-focus-width, 2px) solid var(--sg-focus, Highlight); outline-offset: var(--sg-focus-offset, 2px); }

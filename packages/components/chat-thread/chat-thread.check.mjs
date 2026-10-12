@@ -8,6 +8,7 @@
 import { harness, settle } from '../../../tools/lib/component-check.mjs';
 import { unsupportedIn } from '../../../tools/lib/engine.mjs';
 import { renderThread } from './chat-thread.core.js';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { check, open, openHtml, axe, axeNoJs, done, engine } = await harness();
 const DEMO = '/packages/components/chat-thread/demo.html';
@@ -190,8 +191,57 @@ for (const width of [1280, 390]) {
 {
   const { ctx, page: p } = await open(DEMO, { width: 390 });
   await settle(p);
-  const w = await p.evaluate(() => document.documentElement.scrollWidth);
+  const { scrollWidth: w } = await sidewaysScroll(p, 390);
   check('at 390 px the page does not scroll sideways', w <= 390, `${w}`);
+  await ctx.close();
+}
+
+// ── delivery ticks: words for assistive technology, and read told from delivered by shape ──
+// 1.1.1: the tick is CSS art, so each status is also said in words inside .sg-chat-time.
+// 1.4.1: a read tick and a delivered tick differ in shape (read is a solid chip with the ticks cut
+// out). Each tick's box is screenshotted and thresholded to an ink mask (a pixel is ink when it is far
+// from the box's own background, whatever its hue), and the two masks are compared position by
+// position: how much of the ink of either is in only one of them. A recolour alone leaves that near 0
+// (it did, 0.98 of the ink in common, before the fix).
+{
+  const { ctx, page } = await open(`${DEMO}?theme=light`, { width: 1280 });
+  await settle(page);
+  const inkOf = async (section, status) => {
+    const li = page.locator(`section[data-register="${section}"] li[data-status="${status}"]`).first();
+    const time = li.locator('.sg-chat-time');
+    await time.scrollIntoViewIfNeeded();
+    // the playful bubbles bounce in as they arrive: shoot the settled frame
+    await page.evaluate(() => Promise.all(document.getAnimations().filter(a => a.effect?.getComputedTiming().iterations !== Infinity).map(a => a.finished.catch(() => {}))));
+    const box = await time.boundingBox();
+    const em = await time.evaluate(el => parseFloat(getComputedStyle(el).fontSize));
+    const clip = { x: Math.floor(box.x + box.width - em * 1.6), y: Math.floor(box.y), width: Math.ceil(em * 1.6), height: Math.ceil(box.height) };
+    const png = await page.screenshot({ clip, path: process.env.SG_DEBUG_SHOTS ? `${process.env.SG_DEBUG_SHOTS}/tick-${section}-${status}.png` : undefined });
+    return page.evaluate(async b64 => {
+      const img = new Image();
+      await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = `data:image/png;base64,${b64}`; });
+      const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+      const g = c.getContext('2d'); g.drawImage(img, 0, 0);
+      const d = g.getImageData(0, 0, c.width, c.height).data;
+      const bg = [d[0], d[1], d[2]];
+      const mask = [];
+      for (let i = 0; i < d.length; i += 4) mask.push(Math.abs(d[i] - bg[0]) + Math.abs(d[i + 1] - bg[1]) + Math.abs(d[i + 2] - bg[2]) > 90 ? 1 : 0);
+      return mask;
+    }, png.toString('base64'));
+  };
+  for (const reg of ['quiet', 'warm', 'playful']) {
+    const said = {};
+    for (const status of ['delivered', 'read']) {
+      const li = page.locator(`section[data-register="${reg}"] li[data-status="${status}"]`).first();
+      said[status] = (await li.ariaSnapshot()).includes(status === 'read' ? 'Read' : 'Delivered');
+    }
+    check(`${reg}: a delivered and a read message each say so in words to assistive technology`, said.delivered && said.read, JSON.stringify(said));
+    const [d, r] = [await inkOf(reg, 'delivered'), await inkOf(reg, 'read')];
+    const n = Math.min(d.length, r.length);
+    let only = 0, either = 0;
+    for (let i = 0; i < n; i++) { if (d[i] || r[i]) either++; if (d[i] !== r[i]) only++; }
+    const apart = only / Math.max(either, 1);
+    check(`${reg}: a read tick differs from a delivered tick in shape, not colour alone`, apart >= 0.5, `${only} of ${either} ink pixels are in only one of the two (${apart.toFixed(2)})`);
+  }
   await ctx.close();
 }
 

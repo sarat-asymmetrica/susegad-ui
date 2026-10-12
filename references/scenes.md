@@ -37,6 +37,7 @@ Every scene, generated from `registry/registry.json` by `node tools/skill-invent
 - **tinto** {background, hero} -- A crowded Goan village square at half past ten, where every figure has a line: the poder on his round, a fish seller and her cat, a card game under the tree, the bus to Mapusa. Point at anyone to read their line; every line is also real text for screen readers. Quiet is a still, warm an easy morning with a slow round of captions, playful the full square with a keyboard hand. For empty states and 404s (focus pins one line). With words="world", the page’s words are chalked on a board outside the Taverna and each shop hangs its hours on a plaque that opens its detail; quiet and small screens keep them flat.
 - **tollem** {background, hero} -- Looking down into a Goan pool at noon: a WebGL net of light over pale tiles, a frangipani that drops a flower now and then, and a full 2D painting when WebGL is missing, lost or too slow. Quiets under text, shows progress as a flower's place across the pool, and ripples under a finger or the arrow keys.
 - **toran** {divider, section-break} -- A Goan doorway on the morning of Chovoth, with a garland of marigolds and mango leaves strung across it from three nails: a Verlet rope that sags, swings in a noise breeze and settles. Quiet is the garland at rest with petals on the step; warm a gentle breeze; playful the full breeze, and the hand (pointer or arrow keys) brushes it, knocking petals loose that drift down and stay. Night with a lantern on dark pages.
+- **vaati** {hero, story} -- The bowl fills: seen from above, fresh pasta (ravioli, tortellini, gnocchi or farfalle) flies in from the edges along spinning arcs and settles, nudging the pieces already there; sauce is poured and spreads in a swirl, grated cheese falls and catches, basil lands, and the bowl rests. Quiet is a hairline still; warm is ink and wash; playful is flat poster colour with a bold outline, and a click tosses the pasta so it lands again. The progress attribute fills the bowl exactly that much, and sg-scene-settled says once that the meal is made.
 - **vad** {background, hero} -- A banyan grows in pen and ink by space colonisation: branch tips reach for the nearest points of an umbrella canopy, limbs thicken by the pipe model, leaf masses are hatched over a green wash, and aerial roots drop and thicken into pillar trunks round a stone platform. Quiet is the grown tree; warm grows it slowly and lets the ink boil; playful grows a new one on Enter. Set progress and the tree grows exactly as far as the work has. With words="world", the page’s words are written in the sky beside the tree, each line ending where the canopy begins, and make room for it four times as it grows.
 - **vahi** {story} -- The pile becomes a ledger: loose receipts, invoices, a bill book and a scrawled chit lift one at a time from a teak table, drift over an open account book while their line is written, and settle on a neat stack; then the book closes and its string is wound. Quiet is a hairline plan of the closed book and the stack; playful scatters the pile at a click. The progress attribute sorts exactly that much.
 - **vel** {hero, section-break} -- A magenta bougainvillea grows from behind a laterite compound wall by a seeded L-system, arches up and spills down the lime-washed cap, drawn as inline SVG. Quiet is the grown vine as a still, warm grows it and lets a breeze move a few tips while a bract lets go now and then, playful stirs the branch under the hand and shakes bracts loose. For heroes and seasonal sections over a wall of text.
@@ -55,6 +56,24 @@ Every scene, generated from `registry/registry.json` by `node tools/skill-invent
 | every param | Each scene's params, as kebab-case attributes (below). |
 
 Changing any attribute updates the scene with no glue code, so a server can drive it by swapping attributes (htmx works as it is). Numbers are clamped to their range, and an unreadable value falls back to the default. A bare boolean attribute is true; `false`, `0`, `off` and `no` are false. Removing a param attribute returns it to its default.
+
+### Poster first: `<sg-lazy>`
+
+A scene costs the engine and its own code before anyone has seen it. For a page where the scene is not the first thing the reader needs (a long page, a phone, a hero on a slow connection), put a poster in front of it and let the scene load when it is wanted. `<sg-lazy>` is its own small element (`packages/core/lazy.js`, item `core-lazy`) and does not touch `<sg-scene>`:
+
+```html
+<link rel="stylesheet" href="/packages/core/lazy.css">
+<script type="module" src="/packages/core/lazy.js"></script>
+<sg-lazy src="/packages/scenes/kolam/index.js">
+  <picture>
+    <source type="image/avif" srcset="kolam.avif"><source type="image/webp" srcset="kolam.webp">
+    <img src="kolam.jpg" width="720" height="480" alt="A kolam of rice flour" decoding="async">
+  </picture>
+  <sg-scene name="kolam" hidden></sg-scene>
+</sg-lazy>
+```
+
+The poster is the first paint and reads with no JavaScript. The scene is fetched when `sg-lazy` is within 200 px of the screen and the page has loaded, and never by itself under reduced motion, Save-Data, the quiet register or a device with 2 GB of memory or less: there the poster stays as the finished still. `start()` runs it anyway when a viewer asks (for example from a Play button the page offers). `data-state` is `poster`, `loading`, `live` or `failed`, and `data-hold` says why the poster is kept. Put the scene's words beside the `<sg-lazy>`, not inside the scene. Make the three poster files with the page's build (AVIF, WebP, JPG, as decision 0023 says); `posterPicture()` in `lazy.core.js` writes the markup. The docs site's scene pages are built this way.
 
 ### Slotted content and the scrim
 

@@ -83,7 +83,7 @@ export function buildCss() {
    tokens.test.js checks the two agree and that every text role meets WCAG 2.2 AA.
 
    Selectors, all usable on :root or any element:
-     data-palette="susegad|casa|azulejo"   colour palette (default susegad)
+     data-palette="susegad|casa|azulejo|haldi"   colour palette (default susegad)
      data-theme="light|dark"          absent: follow prefers-color-scheme
      data-register="quiet|warm|playful" (or register="...")  default warm
 
@@ -142,10 +142,12 @@ export function buildCss() {
   fb.push(block(':root', hexDecls(palettes.susegad, 'light'), '  '));
   fb.push(block(':root[data-palette="casa"]', hexDecls(palettes.casa, 'light'), '  '));
   fb.push(block(':root[data-palette="azulejo"]', hexDecls(palettes.azulejo, 'light'), '  '));
+  fb.push(block(':root[data-palette="haldi"]', hexDecls(palettes.haldi, 'light'), '  '));
   fb.push(`  @media (prefers-color-scheme: dark) {\n${block(':root:not([data-theme="light"])', hexDecls(palettes.susegad, 'dark'), '    ')}\n${block(':root[data-palette="casa"]:not([data-theme="light"])', hexDecls(palettes.casa, 'dark'), '    ')}\n${block(':root[data-palette="azulejo"]:not([data-theme="light"])', hexDecls(palettes.azulejo, 'dark'), '    ')}\n  }`);
   fb.push(block(':root[data-theme="dark"]', hexDecls(palettes.susegad, 'dark'), '  '));
   fb.push(block(':root[data-palette="casa"][data-theme="dark"]', hexDecls(palettes.casa, 'dark'), '  '));
   fb.push(block(':root[data-palette="azulejo"][data-theme="dark"]', hexDecls(palettes.azulejo, 'dark'), '  '));
+  fb.push(block(':root[data-palette="haldi"][data-theme="dark"]', hexDecls(palettes.haldi, 'dark'), '  '));
   parts.push(`/* Browsers without light-dark(): the same palettes in hex, on :root only. */\n@supports not (color: light-dark(#000, #fff)) {\n${fb.join('\n')}\n}`);
 
   // Registers.
@@ -164,7 +166,7 @@ export function buildCss() {
 
   // Type details.
   const indic = type.indicLangs.map(l => `:lang(${l})`).join(', ');
-  parts.push(`/* Indic scripts carry matras above and below the line. Konkani in Romi is Latin. */\n${block(indic, Object.entries(type.leadingIndic).map(([k, v]) => `--sg-leading-${k}: ${v};`))}\n${block(':lang(kok-Latn)', Object.entries(type.leading).map(([k, v]) => `--sg-leading-${k}: ${v};`))}`);
+  parts.push(`/* Indic scripts carry matras above and below the line. Konkani in Romi is Latin. gom (Goan Konkani) and kok are one language here (decision 0025). English inside an Indic page takes Latin leading. */\n${block(indic, Object.entries(type.leadingIndic).map(([k, v]) => `--sg-leading-${k}: ${v};`))}\n${block(':lang(en), :lang(kok-Latn), :lang(gom-Latn)', Object.entries(type.leading).map(([k, v]) => `--sg-leading-${k}: ${v};`))}`);
   parts.push(`/* A true pencil hairline on dense screens. */\n@media (min-resolution: 2dppx) {\n${block(':root', [`--sg-hairline: ${line.hairlineRetina};`], '  ')}\n}`);
 
   // Utilities last, so they win over anything above at equal specificity.

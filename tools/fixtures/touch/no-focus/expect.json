@@ -1,0 +1,8 @@
+{
+  "fails": [
+    "no :focus-visible style"
+  ],
+  "probeFails": [
+    "keyboard focus"
+  ]
+}

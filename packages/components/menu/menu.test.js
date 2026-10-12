@@ -40,7 +40,8 @@ test('money: decimals only when there are some, and never float noise', () => {
   assert.equal(formatMoney(1234.05), '₹1,234.05');
   assert.equal(formatMoney(-450), '-₹450');
   assert.equal(formatMoney(NaN), '');
-  assert.equal(formatMoney('450'), '');
+  assert.equal(formatMoney('450'), '₹450', 'a numeric string reads');
+  assert.equal(formatMoney('soon'), '');
 });
 
 test('money: another currency groups in thousands; a word gets a space', () => {

@@ -2,7 +2,7 @@
 // hover/focus outline; this skin adds the theatre a "stamped" list needs
 // to actually read as stamped (Rasika's S2, Wave 5): as the list opens,
 // each item lands with a small ink impression behind it, timed to its own
-// teental beat (action-menu.js's own `--sg-item-delay`, read back here rather
+// teental beat (the item's computed animation-delay, read back here rather
 // than recomputed, so the stamp and the entrance are always in step).
 //
 // The impression is a purely decorative, aria-hidden layer behind the
@@ -36,7 +36,9 @@ export function mount(host, ctx) {
     if (!landing) return; // reduced motion, or quiet-equivalent state motion
     for (const item of ctx.native.querySelectorAll('[role="menuitem"]')) {
       const stamp = ensureStamp(item);
-      const delay = parseFloat(item.style.getPropertyValue('--sg-item-delay')) || 0;
+      // the item's own beat, whether the stylesheet or the script set it
+      const d = getComputedStyle(item).animationDelay;
+      const delay = (parseFloat(d) || 0) * (d.endsWith('ms') ? 1 : 1000);
       anims.push(stamp.animate(landing.frames, { ...landing.timing, delay }));
     }
   }

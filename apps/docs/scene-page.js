@@ -6,46 +6,51 @@
 
 const root = document.documentElement;
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
-const stage = document.querySelector('main sg-scene');
-const still = document.querySelector('.scene-still');
+const lazy = document.querySelector('main sg-lazy');
+const stage = lazy?.querySelector('sg-scene');
 const controls = document.querySelector('.scene-art .controls');
-const name = stage?.getAttribute('name');
 const pkg = rel => new URL(`../../packages/${rel}`, import.meta.url).href;
-
-async function mount() {
-  if (!name) return false;
-  try {
-    await import(pkg('core/index.js'));
-    await import(pkg(`scenes/${name}/index.js`));
-    return true;
-  } catch (err) {
-    console.warn(`scene ${name} did not load, so the still stays`, err?.message ?? err);
-    return false;
-  }
-}
 
 const done = () => { window.__ready = true; };
 
-if (await mount()) {
-  // the still stays over the stage until the drawing's first frame is on it
-  const reveal = () => { if (still) still.hidden = true; };
-  stage.addEventListener('sg-ready', () => { reveal(); sync(); done(); }, { once: true });
-  setTimeout(done, 15000); // never hold a check forever; the still is still a page
+// The poster is the first paint. <sg-lazy> fetches the scene when it is near the screen and nothing
+// asks for stillness (reduced motion, Save-Data, the quiet register, a small device); a viewer who
+// presses Play gets it anyway. The words and the poster read without any of this.
+let defined = false;
+if (lazy) {
+  try { await import(pkg('core/lazy.js')); defined = true; } catch (err) { console.warn('the scene loader did not load, so the poster stays', err?.message ?? err); }
+}
 
-  // ── the controls ─────────────────────────────────────────────────
-  controls.hidden = false;
-  const btn = act => controls.querySelector(`[data-act="${act}"]`);
+if (defined) {
   const live = controls.querySelector('.live');
+  const btn = act => controls.querySelector(`[data-act="${act}"]`);
+  const started = () => lazy.state === 'live';
   /** The viewer's intent, not the loop: a scene off screen is paused but still "playing". */
   const wants = () => !!(stage.wanted ?? stage.playing);
   function sync() {
-    btn('pause').textContent = wants() ? 'Pause' : 'Play';
-    live.textContent = wants() ? 'drawn live in your browser' : stage.dataset.userPaused ? 'paused' : 'a still frame; press Play to run it';
+    const on = started(), loading = lazy.state === 'loading', held = !!lazy.holding;
+    // Play stays first and the row keeps its room, so nothing moves under the finger; buttons show as they apply.
+    const show = (act, v) => btn(act).classList.toggle('is-off', !v);
+    show('pause', on || held); show('closer', on || held); show('replay', on); show('reseed', on);
+    controls.setAttribute('aria-busy', String(loading));
+    btn('pause').textContent = on && wants() ? 'Pause' : 'Play';
+    live.textContent = loading ? 'loading the scene' : on && wants() ? 'drawn live in your browser' : stage.dataset.userPaused ? 'paused' : held || on ? 'a still frame; press Play to run it' : '';
   }
+  lazy.addEventListener('sg-lazy', () => { sync(); if (started()) done(); else if (lazy.state === 'failed') done(); });
+  stage.addEventListener('sg-ready', () => { sync(); done(); }, { once: true });
+  // a page whose poster is all anyone sees (held, or not yet scrolled to) is ready as soon as its picture is
+  const poster = lazy.querySelector('img');
+  const settle = () => { if (lazy.holding || lazy.state === 'failed') done(); };
+  poster?.decode().catch(() => {}).then(settle);
+  setTimeout(done, 15000); // never hold a check forever; the poster is still a page
+  sync();
+
+  // ── the controls ─────────────────────────────────────────────────
   for (const ev of ['sg-play', 'sg-pause', 'sg-state']) stage.addEventListener(ev, sync);
   btn('replay').addEventListener('click', () => { delete stage.dataset.userPaused; stage.replay?.(); stage.play?.(); sync(); });
   btn('reseed').addEventListener('click', () => { stage.reseed?.(); sync(); });
   btn('pause').addEventListener('click', () => {
+    if (!started()) { lazy.start(); return; } // held back until now: the viewer asked
     if (wants()) { stage.pause?.(); stage.dataset.userPaused = '1'; }
     else { delete stage.dataset.userPaused; stage.play?.(); }
     sync();
@@ -72,7 +77,9 @@ if (await mount()) {
     const r = slot.getBoundingClientRect();
     stage.style.width = `${Math.floor(Math.min(r.width, r.height * (W / H)))}px`;
   };
-  btn('closer').addEventListener('click', () => {
+  btn('closer').addEventListener('click', async () => {
+    if (open) return;
+    if (!started() && !(await lazy.start({ play: false }))) return; // held back until now: the viewer asked to look, not to watch it move
     if (open) return;
     const hold = document.createElement('div');
     hold.className = 'stage-hold';

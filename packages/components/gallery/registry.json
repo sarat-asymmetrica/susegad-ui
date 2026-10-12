@@ -19,7 +19,9 @@
     "core-component",
     "core",
     "engine",
-    "tokens"
+    "tokens",
+    "core-arrive",
+    "core-strings"
   ],
   "registers": [
     "quiet",

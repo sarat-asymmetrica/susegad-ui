@@ -16,6 +16,7 @@
     "test": "node --test \"packages/**/*.test.js\" \"tools/**/*.test.mjs\" \"registry/**/*.test.mjs\" \"apps/**/*.test.js\" \"apps/**/*.test.mjs\" \"sketchbook/**/*.test.js\"",
     "serve": "node tools/serve.mjs",
     "check": "node tools/checks.mjs",
+    "gates": "npm test && node registry/build.mjs --check && node tools/cem.mjs --check && node tools/skill-inventory.mjs --check",
     "cem": "node tools/cem.mjs",
     "skill-coverage": "node tools/check-skill-coverage.mjs",
     "skill-inventory": "node tools/skill-inventory.mjs",
@@ -26,8 +27,12 @@
   "devDependencies": {
     "axe-core": "^4.13.0",
     "esbuild": "0.28.2",
+    "harfbuzzjs": "1.6.2",
+    "jsqr": "^1.4.0",
     "playwright": "^1.63.0",
+    "sharp": "0.35.4",
     "subset-font": "2.9.0",
+    "wawoff2": "2.0.1",
     "wrangler": "4.141.0"
   },
   "repository": {

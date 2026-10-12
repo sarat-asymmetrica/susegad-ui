@@ -35,6 +35,7 @@ import { fileURLToPath } from 'node:url';
 import { harness } from '../../../tools/lib/component-check.mjs';
 import { contextOptions } from '../../../tools/lib/engine.mjs';
 import { room, offsetOf, placeOf, STEP, BIG_STEP } from '../../core/movable.core.js';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const h = await harness();
 const { check, browser, server, engine } = h;
@@ -83,12 +84,12 @@ async function grown(page) {
 // ── in-page probes ─────────────────────────────────────────────────────────
 
 /** Rects (client px) of the stage, the panel and the grip, and what the element says about itself. */
-const geometry = page => page.evaluate(() => {
+const geometry = async page => ({ ...(await page.evaluate(() => {
   const el = window.__piece, sr = el.shadowRoot, box = e => { const r = e.getBoundingClientRect(); return { left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width, height: r.height, x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
   const g = sr.querySelector('.grip'), p = sr.querySelector('.panel');
   const say = [...sr.querySelectorAll('[role=status]')].at(-1)?.textContent ?? '';
-  return { stage: box(sr.querySelector('.stage')), panel: box(p), grip: g ? box(g) : null, gripShown: !!g && !g.hidden, transform: p.style.transform, said: say, at: el.wordsAt, stacked: sr.querySelector('.frame').classList.contains('stacked'), scrollW: document.documentElement.scrollWidth, clientW: document.documentElement.clientWidth };
-});
+  return { stage: box(sr.querySelector('.stage')), panel: box(p), grip: g ? box(g) : null, gripShown: !!g && !g.hidden, transform: p.style.transform, said: say, at: el.wordsAt, stacked: sr.querySelector('.frame').classList.contains('stacked') };
+})), ...await (async () => { const o = await sidewaysScroll(page); return { scrollW: o.scrollWidth, clientW: o.viewWidth }; })() });
 /** Where the slotted words really are, in logical units (not what the element says it measured). */
 const wordBoxes = page => page.evaluate(() => {
   const el = window.__piece, s = el.shadowRoot.querySelector('.stage').getBoundingClientRect(), k = 1200 / s.width;
@@ -141,7 +142,7 @@ if (want('1')) {
   const same = (a, b) => h.browser.newContext().then(async c => {
     const p = await c.newPage();
     const r = await p.evaluate(async ([x, y]) => {
-      const img = async s => { const i = new Image(); i.src = `data:image/png;base64,${s}`; await i.decode(); const cv = new OffscreenCanvas(i.width, i.height), g = cv.getContext('2d'); g.drawImage(i, 0, 0); return { w: i.width, h: i.height, d: g.getImageData(0, 0, i.width, i.height).data }; };
+      const img = async s => { const i = new Image(); i.src = `data:image/png;base64,${s}`; await i.decode(); const cv = ((w, h) => { try { const c = new OffscreenCanvas(w, h); if (c.getContext('2d')) return c; } catch { /* no OffscreenCanvas, or none with a 2D context (WebKit on Windows, Safari before 17) */ } const c = document.createElement('canvas'); c.width = w; c.height = h; return c; })(i.width, i.height), g = cv.getContext('2d'); g.drawImage(i, 0, 0); return { w: i.width, h: i.height, d: g.getImageData(0, 0, i.width, i.height).data }; };
       const A = await img(x), B = await img(y);
       if (A.w !== B.w || A.h !== B.h) return { size: `${A.w}x${A.h} vs ${B.w}x${B.h}`, differ: -1 };
       let n = 0; for (let i = 0; i < A.d.length; i += 4) if (A.d[i] !== B.d[i] || A.d[i + 1] !== B.d[i + 1] || A.d[i + 2] !== B.d[i + 2]) n++;
@@ -265,7 +266,12 @@ if (want('3')) {
 // ── 4. contrast through the glass ─────────────────────────────────────────────
 // Real pixels: the page is photographed with the words made transparent, so what is under each line box is the glass
 // itself (tint, blur and drawing), and the words' real colour is held against every one of those pixels.
-const TWENTY = { 'packages/tokens/tokens.css': [['--sg-glass-tint: 74%;', '--sg-glass-tint: 20%;'], ['--sg-glass-tint: 66%;', '--sg-glass-tint: 20%;']] };
+// tokens.css holds the 74% tint twice (the default block at the top and the warm block, which wins the cascade) and a pair replaces one match, so each is named by the rule that follows it.
+const TWENTY = { 'packages/tokens/tokens.css': [
+  ['--sg-glass-tint: 74%;\n}\n\n[data-theme="light"]', '--sg-glass-tint: 20%;\n}\n\n[data-theme="light"]'],
+  ['--sg-glass-tint: 74%;\n}\n\n[data-register="playful"]', '--sg-glass-tint: 20%;\n}\n\n[data-register="playful"]'],
+  ['--sg-glass-tint: 66%;', '--sg-glass-tint: 20%;'],
+] };
 async function glassContrast(register, theme, place, patch = {}) {
   const { ctx, page, errors } = await openAt(`${GLASS}&register=${register}&theme=${theme}&words=${place.join(',')}`, { patch });
   await grown(page);
@@ -273,7 +279,7 @@ async function glassContrast(register, theme, place, patch = {}) {
   await frames(page, 3);
   // the words' colours and boxes first, then hide them and the grip
   const lines = await page.evaluate(() => {
-    const rgba = css => { const x = new OffscreenCanvas(1, 1).getContext('2d'); x.fillStyle = css; x.fillRect(0, 0, 1, 1); const d = x.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
+    const rgba = css => { const x = ((w, h) => { try { const c = new OffscreenCanvas(w, h); if (c.getContext('2d')) return c; } catch { /* no OffscreenCanvas, or none with a 2D context (WebKit on Windows, Safari before 17) */ } const c = document.createElement('canvas'); c.width = w; c.height = h; return c; })(1, 1).getContext('2d'); x.fillStyle = css; x.fillRect(0, 0, 1, 1); const d = x.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
     const el = document.getElementById('glass');
     const out = [...el.children].map(c => { const r = c.getBoundingClientRect(), cs = getComputedStyle(c); return { tag: c.tagName, x: r.left, y: r.top, w: r.width, h: r.height, ink: rgba(cs.color) }; });
     const st = document.createElement('style'); st.id = 'hide'; st.textContent = '#glass h2, #glass p { color: transparent !important; }'; document.head.append(st);
@@ -287,7 +293,7 @@ async function glassContrast(register, theme, place, patch = {}) {
       const png = await page.screenshot({ clip: { x: l.x, y: l.y, width: l.w, height: l.h } });
       const r = await page.evaluate(async ([b64, ink]) => {
         const i = new Image(); i.src = `data:image/png;base64,${b64}`; await i.decode();
-        const cv = new OffscreenCanvas(i.width, i.height), g = cv.getContext('2d'); g.drawImage(i, 0, 0);
+        const cv = ((w, h) => { try { const c = new OffscreenCanvas(w, h); if (c.getContext('2d')) return c; } catch { /* no OffscreenCanvas, or none with a 2D context (WebKit on Windows, Safari before 17) */ } const c = document.createElement('canvas'); c.width = w; c.height = h; return c; })(i.width, i.height), g = cv.getContext('2d'); g.drawImage(i, 0, 0);
         const d = g.getImageData(0, 0, i.width, i.height).data;
         const lin = v => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
         const L = (r, gg, b) => 0.2126 * lin(r) + 0.7152 * lin(gg) + 0.0722 * lin(b);
@@ -338,7 +344,7 @@ async function flat(width, height, { root = null, patch = {}, words = '0.5,0.5' 
   await page.waitForTimeout(600);
   const g = await geometry(page);
   const named = await page.getByRole('button', { name: 'Move the words' }).count();
-  const wordsSeen = await page.evaluate(() => { const el = document.getElementById('glass'), b = el.shadowRoot.querySelector('.stage').getBoundingClientRect(); return [...el.children].every(c => { const r = c.getBoundingClientRect(); return r.width > 0 && r.right <= innerWidth + 1 && r.left >= -1; }); });
+  const wordsSeen = await page.evaluate(vw => { const el = document.getElementById('glass'), b = el.shadowRoot.querySelector('.stage').getBoundingClientRect(); return [...el.children].every(c => { const r = c.getBoundingClientRect(); return r.width > 0 && r.right <= vw + 1 && r.left >= -1; }); }, (await sidewaysScroll(page)).viewWidth);
   await ctx.close();
   return { ...g, named, wordsSeen, errors };
 }

@@ -1,0 +1,10 @@
+/* Fixture for tools/touch.check.mjs: broken on purpose, see expect.json. */
+sg-fx-arrow-motion { display: block; padding: 12px; }
+sg-fx-arrow-motion button { border: 1px solid CanvasText; background: Canvas; color: CanvasText; padding: 8px 14px; font: inherit; transition: translate 120ms ease-out, background-color 120ms ease-out; }
+sg-fx-arrow-motion label { display: inline-flex; gap: 6px; margin-inline-end: 10px; }
+sg-fx-arrow-motion label span { padding: 2px 8px; border: 1px solid CanvasText; transition: background-color 200ms; }
+sg-fx-arrow-motion input:checked + span { background: color-mix(in oklab, Canvas, CanvasText 15%); }
+sg-fx-arrow-motion label:active span { translate: 0 1px; filter: brightness(0.9); transition: none; }
+sg-fx-arrow-motion button:active { translate: 0 1px; background-color: color-mix(in oklab, Canvas, CanvasText 12%); transition: none; }
+sg-fx-arrow-motion :is(button, input):focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { sg-fx-arrow-motion :is(button, label span):active { translate: none; } }

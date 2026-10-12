@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="demo-ready" content="manual">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bloom</title>
+<link rel="stylesheet" href="./bloom.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 60rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-2); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--sg-space-4); align-items: flex-end; }
+  figure { margin: 0; display: grid; gap: var(--sg-space-2); justify-items: center; font-size: var(--sg-step--1); color: var(--sg-text-soft); }
+  .count-row { display: flex; flex-wrap: wrap; gap: var(--sg-space-3); align-items: center; }
+  .count-row .demo-button { justify-self: auto; }
+  .names { display: flex; flex-wrap: wrap; gap: var(--sg-space-3); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Bloom</h1>
+  <p class="lede">A marigold seen face-on, laid out by Vogel's model: each floret turned a golden angle from the last. Seed it from a name and every person has their own.</p>
+
+  <h2>Zendu, in the page's register</h2>
+  <sg-bloom id="hero" seed-from="Maria Fernandes" size="lg" label="Maria's bloom"></sg-bloom>
+
+  <h2>Quiet, warm and playful</h2>
+  <div class="row">
+    <figure><sg-bloom register="quiet" seed-from="Asha" size="160"></sg-bloom>quiet</figure>
+    <figure><sg-bloom register="warm" seed-from="Asha" size="160"></sg-bloom>warm</figure>
+    <figure><sg-bloom register="playful" seed-from="Asha" size="160" id="grower"></sg-bloom>playful</figure>
+  </div>
+
+  <h2>An honest count</h2>
+  <div class="count-row">
+    <sg-bloom id="tally" count="37" label="people registered" size="140"></sg-bloom>
+    <button type="button" class="demo-button" id="more">One more</button>
+    <button type="button" class="demo-button" id="fewer">One fewer</button>
+  </div>
+  <p class="note">The number is text beside the flower. The florets already placed never move when one is added.</p>
+
+  <h2>One bloom per name</h2>
+  <div class="names">
+    <sg-bloom seed-from="Asha" label="Asha's bloom" size="104"></sg-bloom>
+    <sg-bloom seed-from="Bruno" label="Bruno's bloom" size="104"></sg-bloom>
+    <sg-bloom seed-from="Chandra" label="Chandra's bloom" size="104"></sg-bloom>
+    <sg-bloom seed-from="Dev" label="Dev's bloom" size="104"></sg-bloom>
+    <sg-bloom seed-from="Esha" label="Esha's bloom" size="104"></sg-bloom>
+  </div>
+
+  <h2>Your own words</h2>
+  <sg-bloom count="12" size="sm">12 volunteers have taken a stall.</sg-bloom>
+
+  <h2>Sizes, and the cap</h2>
+  <div class="row">
+    <figure><sg-bloom size="sm" seed-from="size"></sg-bloom>sm</figure>
+    <figure><sg-bloom size="md" seed-from="size"></sg-bloom>md</figure>
+    <figure><sg-bloom count="600" size="md" seed-from="size">600 guests</sg-bloom>600 guests, 400 florets</figure>
+  </div>
+</main>
+<script type="module">
+  import './bloom.js';
+  // ready once every bloom has drawn its head, so a screenshot is never of empty space
+  const blooms = [...document.querySelectorAll('sg-bloom')];
+  Promise.all(blooms.map(b => (b.querySelector('svg') ? 0 : new Promise(r => b.addEventListener('sg-skin', r, { once: true })))))
+    .then(() => document.fonts.ready).then(() => setTimeout(window.__demoReady, 100));
+  const tally = document.getElementById('tally');
+  const set = n => tally.setAttribute('count', String(Math.max(0, n)));
+  document.getElementById('more').addEventListener('click', () => set(Number(tally.getAttribute('count')) + 1));
+  document.getElementById('fewer').addEventListener('click', () => set(Number(tally.getAttribute('count')) - 1));
+</script>
+</body>
+</html>

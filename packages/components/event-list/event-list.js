@@ -25,6 +25,7 @@
 import { SgElement, defineComponent } from '../../core/component.js';
 import { ZONE, STRINGS, parseWhen } from '../event-card/event.core.js';
 import { planList, sameOrder } from './event-list.core.js';
+import { arrive } from '../../core/arrive.js';
 
 const MAX_WAIT = 2 ** 31 - 1;
 
@@ -38,7 +39,7 @@ export class SgEventList extends SgElement {
   };
 
   #upcoming = null; #before = null; #beforeList = null; #summary = null; #empty = null; #made = []; #timer = 0; #was = true; #plan = null;
-  #mo = null;
+  #mo = null; #arrive = null;
 
   connected() {
     const doc = this.ownerDocument;
@@ -71,10 +72,12 @@ export class SgEventList extends SgElement {
     // a card added later (a framework, a fetch) joins the calendar
     this.#mo = new MutationObserver(list => { if (list.some(m => [...m.addedNodes, ...m.removedNodes].some(n => n.localName === 'sg-event-card'))) this.sync(); });
     this.#mo.observe(this, { childList: true });
+    this.#arrive = arrive(this, 'sg-event-card');
     this.sync();
   }
 
   disconnected() {
+    this.#arrive?.stop(); this.#arrive = null;
     clearTimeout(this.#timer); this.#timer = 0;
     this.#mo?.disconnect();
     // hand the cards back to where the author put them: directly in the list, in the order shown

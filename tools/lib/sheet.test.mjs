@@ -6,7 +6,7 @@ const cell = (over = {}) => ({
   id: 'warm-phone-light', register: 'warm', view: 'phone', width: 390, theme: 'light', reduced: false,
   shot: 'warm-phone-light.png', ready: { ok: true },
   errors: { console: [], page: [], requests: [], warnings: [], count: 0 },
-  overflow: { scrollWidth: 390, innerWidth: 390, pass: true },
+  overflow: { scrollWidth: 390, viewWidth: 390, pass: true },
   pointer: { status: 'pass' }, pass: true, ...over,
 });
 

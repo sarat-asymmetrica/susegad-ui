@@ -28,8 +28,10 @@ Make a custom element that stages a drawing and its depth map through a depth-ph
 | the picture's own projection every frame | interaction | `#placeNotes()` calls `place(u, v, d)` for each note's anchor whenever the picture's corners move. |
 | the depth under it | fields | `nearestAnchor()` scores the anchors by picture distance plus the depth difference. |
 | stopping at each note nearest first | easing | `walkAt()`: each stop owns an equal share of the scroll, the first 45% moving the camera, the rest holding. |
-| its own small canvas | shader | matka-view.js builds a lathe, a torus and a tube in three.js and renders them with two lights into a transparent canvas. |
+| its own canvas | shader | matka-view.js builds a lathe, a torus and a tube in three.js and renders them with two lights into a transparent canvas that also covers the pane's column, so the words' quads share its scene and camera. |
 | a width per line | model | `flowShape()` returns the wider side of the column beside the silhouette from `extentIn()` over the projected vertices; the type tier's `layIntoShape()` lays the lines. The column ends at the pot's middle, so the pot straddles the pane's edge. |
+| the words with depth | quads | the one layout's lines become line boxes (`lineBoxes`), painted as DOM spans (the real words) and as a textured quad per line from stage3d's `text.live.js`, which only repeats them and never replaces them; the spans' ink is transparent only while the quads are on screen, and comes back in forced colours, after a lost context and when the quad painter fails. |
+| nothing measured when nothing moves | still | in quiet and under reduced motion the paragraph is plain text beside a float whose `shape-outside` is the silhouette (`hugFloat()`), and the type tier is not requested. |
 | sixteen steps a turn | easing | `quantise()`: the layout is redone only when the turn's step changes, and the lines that have not changed are not written. |
 
 ## Accessibility

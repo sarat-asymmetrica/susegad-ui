@@ -25,6 +25,8 @@
 // Event: sg-change { lines: [{ id, name, unit, qty, unitPrice, tags }], total, count }.
 
 import { SgElement, defineComponent } from '../../core/component.js';
+import { cue } from '../../sound/index.js';
+import { arrive } from '../../core/arrive.js';
 import { STRINGS, MAX_QTY, normalizeMenu, menuHTML, summarize, totalLine, announce, clampQty } from './menu.core.js';
 
 const $ = (root, sel) => root.querySelector(sel);
@@ -70,7 +72,7 @@ export class SgMenu extends SgElement {
   #ui = new Map();       // dish id → { count, minus, plus }
   #qtys = new Map();
   #bar = null; #total = null; #head = null; #clear = null; #next = null;
-  #last = null; #nonce = 0; #ready = false; #off = [];
+  #last = null; #nonce = 0; #ready = false; #off = []; #arrive = null;
 
   get currency() { return this.getAttribute('currency') || '₹'; }
   get maxQty() { return clampQty(this.getAttribute('max-qty') || MAX_QTY, MAX_QTY) || MAX_QTY; }
@@ -102,9 +104,11 @@ export class SgMenu extends SgElement {
 
   connected() {
     this.#ready = true;
+    this.#arrive = arrive(this, '.sg-menu-item');
     this.#build();
   }
   disconnected() {
+    this.#arrive?.stop(); this.#arrive = null;
     this.#ready = false;
     this.#teardown();
   }
@@ -171,7 +175,7 @@ export class SgMenu extends SgElement {
 
     const onClick = e => {
       const b = e.target.closest?.('.sg-menu-minus, .sg-menu-plus');
-      if (b && this.contains(b)) { const id = b.closest('.sg-menu-item')?.dataset.id; if (id) this.#set(id, (this.#qtys.get(id) ?? 0) + Number(b.dataset.dir)); }
+      if (b && this.contains(b)) { const id = b.closest('.sg-menu-item')?.dataset.id; if (id) this.#press(id, Number(b.dataset.dir)); }
       else if (e.target.closest?.('.sg-menu-clear') === this.#clear) this.clear();
     };
     this.addEventListener('click', onClick);
@@ -185,6 +189,12 @@ export class SgMenu extends SgElement {
     this.querySelectorAll('.sg-menu-qty').forEach(n => n.remove());
     this.#ui.clear();
     this.#bar = this.#total = this.#head = this.#clear = this.#next = null;
+  }
+
+  /** A reader's press on a stepper. The first of a dish is the moment it joins the order, so that one is confirmed; the rest are quiet counting. */
+  #press(id, dir) {
+    const was = this.#qtys.get(id) ?? 0;
+    if (this.#set(id, was + dir) && was === 0 && dir > 0) cue('confirm', { register: this.register });
   }
 
   #set(id, qty) {

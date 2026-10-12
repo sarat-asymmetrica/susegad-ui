@@ -7,6 +7,7 @@
 
 import { harness, settle } from '../../../tools/lib/component-check.mjs';
 import { contextOptions } from '../../../tools/lib/engine.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { server, browser, engine, check, open, openHtml, axe, axeNoJs, done } = await harness();
 const DEMO = '/packages/components/accordion/demo.html';
@@ -206,7 +207,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await settle(page);
   await page.click('sg-accordion > details:nth-of-type(1) > summary');
   await settle(page);
-  const w = await page.evaluate(() => document.documentElement.scrollWidth);
+  const { scrollWidth: w } = await sidewaysScroll(page, 390);
   check('at 390 px the open accordion does not scroll sideways', w <= 390, `${w}`);
   const box = await page.evaluate(() => { const d = document.querySelector('sg-accordion > details'); const r = d.getBoundingClientRect(); return { left: +r.left.toFixed(1), width: +r.width.toFixed(1) }; });
   check('at 390 px the accordion fills the column between the body margins', box.left === 8 && box.width === 374 && box.left + box.width === 382, JSON.stringify(box));
@@ -215,7 +216,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 {
   const { ctx, page } = await open(`${DEMO}?register=playful`, { width: 390 });
   await settle(page);
-  const w = await page.evaluate(() => document.documentElement.scrollWidth);
+  const { scrollWidth: w } = await sidewaysScroll(page, 390);
   check('at 390 px the demo (playful) does not scroll sideways', w <= 390, `${w}`);
   await ctx.close();
 }
@@ -240,6 +241,8 @@ for (const register of ['quiet', 'warm', 'playful']) {
 {
   // the open transition is real when motion is allowed: it is one the page can watch
   const { ctx, page } = await fixture('acc-motion', PAGE(FAQ({ register: 'playful' }), { register: 'playful' }));
+  // the skin loads after the element connects, and it is the skin that sets data-motion (the transitions hang on it): wait on that state, not on time
+  await page.waitForSelector('sg-accordion[data-motion="full"]', { timeout: 10000 }).catch(() => {});
   const moving = await page.evaluate(() => {
     const d = document.querySelector('sg-accordion > details');
     const c = getComputedStyle(d, '::details-content');
@@ -264,7 +267,6 @@ for (const register of ['quiet', 'warm', 'playful']) {
     return { openCount: await page.locator('main details[open]').count(), firstAnswer: await page.locator('main details:nth-of-type(1) > p').isVisible() };
   };
   const control = await noJsProbe((await fixture('acc-control', BROKEN)).page);
-  console.log('FAIL  control: the exclusive-group probe on plain details with no name (two stay open together) reads red, as it must');
   const onElement = await noJsProbe((await fixture('acc-control-element', PAGE(FAQ(), { js: false }))).page);
   check('control: the probe reads red on markup the element never touched (all three open at once), so it can fail', control.openCount === 3 && control.firstAnswer === true, JSON.stringify(control));
   check('and the same probe passes on the element: one open, the first closed', onElement.openCount === 1 && onElement.firstAnswer === false, JSON.stringify(onElement));

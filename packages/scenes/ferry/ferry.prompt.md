@@ -34,6 +34,10 @@ Draw a Goan river from a high bank as a blue ballpoint sketch on cream paper, us
 | Keep the water still under any text | calm | Strokes that fall under slotted text use the same wobble in all three water drawings, so the river under the words does not move. |
 | a dotted route from a small jetty on the far side | seed | The route is a Catmull-Rom curve through the four stops, measured once so the ferry can be placed by stop number. The far bank's palms, roofs and hills come from the seed. |
 
+## On a page
+
+A bare `<sg-scene name="ferry">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/ferry/index.js">` with `<sg-scene name="ferry" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The step labels live in the page, never in the drawing. With `step` set, the element says "stop 2 of 4" in a polite status region, after its `label` ("How it goes: stop 2 of 4"). Without `step`, it says nothing and the ferry waits at the first stop. In playful, the drawing takes focus and Enter or Space sends the ferry on, which changes the status too. Quiet and reduced motion show the ferry still at its stop.

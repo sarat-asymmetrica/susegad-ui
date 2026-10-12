@@ -28,6 +28,7 @@
 
 import { chromium } from 'playwright';
 import { startServer } from '../../../tools/serve.mjs';
+import { gpuOf } from '../../../tools/lib/gpu.mjs';
 import { projectM, depthByte, S, gbuffer, SOLIDS, GW, GH } from './world.js';
 
 const BREAK = process.argv.includes('--break');
@@ -36,6 +37,8 @@ const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const server = await startServer({ quiet: true });
 const browser = await chromium.launch({ args: GPU });
+// On a software renderer (a CI runner, or SG_FORCE_SOFTWARE_GL=1) the stage rightly draws in 2D: the live-tier clauses (1, 3, 6, 9, 10) skip.
+const gate = await gpuOf(browser);
 const WORLD_JS = new RegExp('veranda/world' + String.fromCharCode(92) + '.js');
 const THREE = /\/node_modules\/three\/|three\.named\.js|\/three(\.module|\.core)?\.js/;
 const PILLAR = projectM(1.5, 1.2, 3.22).slice(0, 2);
@@ -89,9 +92,9 @@ async function tierAndWait(p, want) {
 // 1. the live control
 {
   const p = await open();
-  const t = await tierAndWait(p, 'live');
+  const t = await tierAndWait(p, gate.gpu.software ? undefined : 'live'); // no waiting a minute for a tier a software renderer will not pick
   const s = await seen(p.page);
-  check('control: warm on the GPU draws live, asks for three.js, and shows the finished veranda', t.tier === 'live' && p.three().length > 0 && finished(s), `tier ${t.tier}, ${p.three().length} three requests, ${show(s)}`);
+  if (!gate.skip('control: warm on the GPU draws live, asks for three.js, and shows the finished veranda')) check('control: warm on the GPU draws live, asks for three.js, and shows the finished veranda', t.tier === 'live' && p.three().length > 0 && finished(s), `tier ${t.tier}, ${p.three().length} three requests, ${show(s)}`);
   check('the stage page has no console errors', p.errors.length === 0, p.errors[0] ?? '');
   await p.context.close();
 }
@@ -109,7 +112,8 @@ async function tierAndWait(p, want) {
   const t = await tierAndWait(p, '2d');
   const s = await seen(p.page);
   const reason = await p.page.evaluate(() => document.getElementById('tier').textContent);
-  check('with three.js blocked: the 2D tier says why, and shows a finished still', t.tier === '2d' && t.drawn && finished(s) && /three\.js did not load/.test(reason), `tier ${t.tier}, "${reason}", ${show(s)}`);
+  // a software renderer is 2D before three is ever asked for, so the reason is the renderer's, not "three.js did not load"
+  if (!gate.skip('with three.js blocked: the 2D tier says why, and shows a finished still')) check('with three.js blocked: the 2D tier says why, and shows a finished still', t.tier === '2d' && t.drawn && finished(s) && /three\.js did not load/.test(reason), `tier ${t.tier}, "${reason}", ${show(s)}`);
   await p.context.close();
 }
 // 4 and 5. reduced motion, quiet
@@ -121,7 +125,7 @@ for (const [label, opts] of [['reduced motion', { reduced: true }], ['quiet', { 
   await p.context.close();
 }
 // 6. the still is on screen before three loads
-{
+if (!gate.skip('the still is on screen while three.js is still loading')) {
   const patch = BREAK ? h => h.replace('const a = await verandaAssets({ mood });', "await import('three'); const a = await verandaAssets({ mood });") : null;
   const p = await open({ holdThree: 6000, patch });
   await p.page.waitForTimeout(4500); // long enough for the drawing to be made, short of the six seconds three.js is held
@@ -168,9 +172,10 @@ for (const [label, opts] of [['reduced motion', { reduced: true }], ['quiet', { 
     { what: "the lamp's left edge", side: -1, ...edge(0.09, 2.37, 4.26, 0.55, 0.55), rows: [0.06, 0.1] },
   ];
   const patch = BREAK ? src => src.replace("box(`pillar${i}`, 'laterite', 1.32, 1.68, 0.3, 2.0, zc - PILLAR, zc + PILLAR),", "box(`pillar${i}`, 'laterite', 1.32, 1.68, 0.3, 2.0, zc - PILLAR, zc + PILLAR, { subject: true }),") : null;
-  const p = await open({ register: 'warm', worldPatch: patch });
-  const t = await tierAndWait(p, 'live');
-  for (const c of cases) {
+  const todo = cases.filter(c => !gate.skip(`no pale rim: ${c.what} (live tier, focus ${c.focus})`));
+  const p = todo.length ? await open({ register: 'warm', worldPatch: patch }) : null;
+  const t = p ? await tierAndWait(p, 'live') : null;
+  for (const c of todo) {
     const r = await p.page.evaluate(async ({ at, d, focus, side, rows }) => {
       // an export-size target: its look pass is at the drawing's own resolution, which shows an edge most plainly
       const tg = await window.__dp.canvasFor(1200, 800); tg.set({ focus });
@@ -191,13 +196,13 @@ for (const [label, opts] of [['reduced motion', { reduced: true }], ['quiet', { 
     }, { at: c.at, d: c.d, focus: c.focus, side: c.side, rows: c.rows });
     check(`no pale rim: ${c.what} (live tier, focus ${c.focus})`, t.tier === 'live' && r.tested >= 5 && r.worst < 40, `${r.tested} dark-background rows tested, brightest excess out of the edge ${r.worst}${r.worst >= 40 ? `, at ${JSON.stringify(r.where)} (x, y, pixel, background)` : ''}`);
   }
-  await p.context.close();
+  await p?.context.close();
 }
 
 // 10. no GPU stall per frame: after the first frame the live tier never reads pixels back. (A harvested line, `!this.dataset.drawn`,
 //     was true for the empty string that data-drawn holds, so every drawn frame did a readPixels: a GPU sync that cost 14 ms a
 //     frame once anything else drew beside the picture. --break puts the line back.)
-{
+if (!gate.skip('no GPU stall per frame: sixty frames of a moving camera on the live tier read no pixels back')) {
   const fix = "if (!this.#ready || this.dataset.drawn === undefined) {", bug = "if (!this.#ready || !this.dataset.drawn) {";
   const p = await open({ register: 'warm', spyReads: true, dpPatch: BREAK ? src => src.replace(fix, bug) : null });
   const t = await tierAndWait(p, 'live');
@@ -214,5 +219,5 @@ for (const [label, opts] of [['reduced motion', { reduced: true }], ['quiet', { 
 
 await browser.close(); await server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${results.length - failed} of ${results.length} pass${BREAK ? ' (--break: the still-before-three check and the depth check should FAIL)' : ''}`);
+console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the still-before-three check and the depth check should FAIL)' : ''}`);
 process.exit(BREAK ? 0 : failed ? 1 : 0);

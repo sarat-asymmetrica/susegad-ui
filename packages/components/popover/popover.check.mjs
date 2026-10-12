@@ -7,11 +7,11 @@
 // the same, plus the panel near the bottom of the page flips above; forced
 // colours simplify the card.
 
-import { chromium } from 'playwright';
+import { pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const browser = await pickEngine().launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const demo = `${server.url}/packages/components/popover/demo.html`;
@@ -27,7 +27,8 @@ const demo = `${server.url}/packages/components/popover/demo.html`;
   await p.click('button[popovertarget="rates"]');
   check('no JS: clicking the trigger opens the panel', !before && await p.isVisible('#rates'));
   await p.keyboard.press('Escape');
-  check('no JS: Escape closes it', !(await p.isVisible('#rates')));
+  // it fades out over 120ms: wait for it to be gone rather than reading the first frame of the exit
+  check('no JS: Escape closes it', await p.waitForSelector('#rates', { state: 'hidden', timeout: 2000 }).then(() => true, () => false));
   const focused = await p.evaluate(() => document.activeElement.getAttribute('popovertarget'));
   check('no JS: focus returns to the trigger', focused === 'rates');
   await ctx.close();
@@ -97,6 +98,27 @@ for (const register of ['warm', 'playful']) {
     return { display: cs.display };
   });
   check(`${register}, forced colours: the postmark/fold is hidden`, fc.display === 'none', JSON.stringify(fc));
+  await ctx.close();
+}
+
+// ── 1.4.10: at 390 px and at 320 px an open panel cannot be scrolled sideways, in every register ──
+// The probe tries to scroll it: scrollLeft = 50 and read back. (scrollWidth alone would also count painted
+// decoration that an `overflow: clip` panel shows but nobody can scroll to.)
+for (const width of [390, 320]) for (const register of ['quiet', 'warm', 'playful']) {
+  const ctx = await browser.newContext({ viewport: { width, height: 800 } });
+  const p = await ctx.newPage();
+  await p.goto(`${demo}?register=${register}`);
+  await p.waitForFunction(() => window.__ready);
+  const rows = [];
+  for (const id of ['rates', 'kn-rates']) {
+    await p.click(`button[popovertarget="${id}"]`);
+    await p.waitForFunction(i => document.getElementById(i).matches(':popover-open'), id);
+    rows.push(await p.evaluate(i => { const el = document.getElementById(i), r = el.getBoundingClientRect(); el.scrollLeft = 50; const moved = el.scrollLeft; el.scrollLeft = 0;
+      return { id: i, moved, scrollW: el.scrollWidth, clientW: el.clientWidth, left: Math.round(r.left), right: Math.round(r.right), page: document.documentElement.scrollWidth }; }, id));
+    await p.keyboard.press('Escape');
+  }
+  const bad = rows.filter(r => r.moved > 0 || r.left < 0 || r.right > width || r.page > width);
+  check(`${register} at ${width} px: the open panels do not scroll sideways, inside the screen`, !bad.length, bad.map(r => `${r.id}: scrolled ${r.moved} px sideways (scrollWidth ${r.scrollW} vs clientWidth ${r.clientW}), box ${r.left}-${r.right}`).join('; ') || rows.map(r => `${r.id} scrolls ${r.moved} px`).join(', '));
   await ctx.close();
 }
 

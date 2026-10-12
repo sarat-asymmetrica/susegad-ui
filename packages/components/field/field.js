@@ -1,4 +1,4 @@
-// <sg-field>: a label and a text input or textarea, written on a ruled line.
+// <sg-field>: a label and a text input, textarea or select, written on a ruled line.
 //
 //   <sg-field>
 //     <label for="name">Your name</label>
@@ -6,11 +6,12 @@
 //     <sg-field-note for="name" validate></sg-field-note>
 //   </sg-field>
 //
-// The label and the native control do all the work: typing, autofill,
+// The label and the native control do all the work: typing, choosing, autofill,
 // validation, submitting with the form, and all of it without JavaScript
 // (field.css draws the ruled line). The element links a label that lacks
 // `for`, marks data-filled, counts characters near a maxlength, and hands the
-// skin what it needs to ink the line under the words.
+// skin what it needs to ink the line under the words. With no supported
+// control inside, it is plain light DOM and the skins draw nothing.
 
 import { SgElement, defineComponent } from '../../core/component.js';
 import { STRINGS, countState } from './field.core.js';
@@ -20,7 +21,7 @@ export { STRINGS };
 let uid = 0;
 
 export class SgField extends SgElement {
-  static native = 'input, textarea';
+  static native = 'input:not([type=radio], [type=checkbox], [type=hidden], [type=submit], [type=button], [type=reset], [type=image], [type=file], [type=range], [type=color]), textarea, select';
   static skins = {
     quiet: () => import('./skins/quiet.js'),
     warm: () => import('./skins/warm.js'),

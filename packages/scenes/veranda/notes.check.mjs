@@ -20,6 +20,7 @@
 
 import { chromium } from 'playwright';
 import { startServer } from '../../../tools/serve.mjs';
+import { gpuOf } from '../../../tools/lib/gpu.mjs';
 import { ANCHORS, anchorPoint, projectM } from './world.js';
 
 const BREAK = process.argv.includes('--break');
@@ -27,6 +28,10 @@ const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const server = await startServer({ quiet: true });
 const browser = await chromium.launch({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] });
+// On a software renderer (a CI runner, or SG_FORCE_SOFTWARE_GL=1) the stage draws in 2D, which steps between stills even with motion on,
+// and the CPU rasterises the picture: the reduced-motion comparison (needs a free-running camera) and the stall clause (4b) skip
+// (`skip  <clause>  (no GPU: <renderer>)`, tools/lib/gpu.mjs).
+const gate = await gpuOf(browser);
 
 const BREAKS = {
   noFollow: [/stage-element\.js$/, s => s.replace("if (key === this.#noteKey && !this.#drag) return;", "if (this.#noteKey && !this.#drag) return;")],
@@ -136,7 +141,7 @@ async function dropOn(p, id, at) {
   const stops = new Set(still.map(r => r.dolly.toFixed(3)));
   const moving = await drive(false, []);
   const free = new Set(moving.map(r => r.dolly.toFixed(3)));
-  check('under reduced motion the camera takes only the stops\' own positions: one still per section', stops.size <= 6 && free.size > stops.size + 3, `${stops.size} positions under reduced motion, ${free.size} with motion`);
+  if (!gate.skip("under reduced motion the camera takes only the stops' own positions: one still per section")) check('under reduced motion the camera takes only the stops\' own positions: one still per section', stops.size <= 6 && free.size > stops.size + 3, `${stops.size} positions under reduced motion, ${free.size} with motion`);
   // the 2D tier repaints the whole picture on the CPU for each change of camera, so with motion on it steps between stills too
   const flat = await drive(false, ['walk2dContinuous'], true);
   const flatPos = new Set(flat.map(r => r.dolly.toFixed(3)));
@@ -145,7 +150,7 @@ async function dropOn(p, id, at) {
 
 // 4b. the walk does not stall: no main-thread task over 50 ms and no frame over 250 ms while scrolling through every stop. (Remaking the pane's mask while the
 //     picture moved made this machine's integrated GPU stall for a second in raster, and a GPU-backed mask canvas had made toBlob a 100 ms readback stall.)
-{
+if (!gate.skip('the walk does not stall: scrolling through every stop, no main-thread task over 50 ms and no frame over 250 ms')) {
   const long = async patches => {
     const p = await open({ path: 'walk.html', patches });
     const r = await p.page.evaluate(async () => {
@@ -186,5 +191,5 @@ async function dropOn(p, id, at) {
 
 await browser.close(); await server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${results.length - failed} of ${results.length} pass${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
+console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
 process.exit(BREAK ? 0 : failed ? 1 : 0);

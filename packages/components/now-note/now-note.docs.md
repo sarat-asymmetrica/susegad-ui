@@ -38,3 +38,23 @@ Nothing moves.
 
 - The state is words; the badge's shape and colour back it up.
 - The sticky note and the board keep their own colours in either page theme; their words are tested at 4.5:1.
+
+### Conformance (WCAG 2.2 AA)
+
+| Criterion | Status | How it was checked |
+|---|---|---|
+| 1.1.1 Non-text content | Meets | The tape, the frame and the chalk are CSS decoration with no words in them; the state is the badge's words ("Taking on one new project") and the date is text. `packages/components/now-note/now-note.check.mjs`: "without JavaScript: the words, the state in words and the date all show". |
+| 1.3.1 Info and relationships | Meets | A `<section>` named by its heading, a `<time datetime>` for the date and the state in a `<p>`; the element adds the age after the date. `now-note.check.mjs`: "each note says how long ago, in words", and axe without JavaScript: 0 violations. |
+| 1.4.1 Use of color | Meets | Availability is words ("Taking on one new project", "Heads-down till October", "Booked till March"); the badge's colour backs them up. An old note says "This note may be out of date." in words (`now-note.check.mjs`, "every note older than 45 days says it may be out of date; no fresh one does"). |
+| 1.4.3 Contrast (minimum) | Meets | `packages/components/now-note/now-note.test.js`, "AA: <palette>: words on the sticky note and the chalkboard read at 4.5:1 in any theme" (the note and the board keep their own colours in either theme); `packages/tokens/tokens.test.js` for the plain register. `now-note.check.mjs`: axe in light and dark, all three registers: 0 violations. |
+| 1.4.4 Resize text | Meets | Manual test, 2026-10-07: demo with the root font size at 200 percent, three registers, no sideways scroll and nothing clipped (throwaway Playwright script). |
+| 1.4.10 Reflow | Meets | `now-note.check.mjs`: "at 390 px the page does not scroll sideways". Manual test, 2026-10-07: demo at 320 CSS px, three registers, no sideways scroll (document width 320). |
+| 1.4.11 Non-text contrast | Meets | There is no control and no graphic that carries meaning: state and age are words (`packages/components/now-note/now-note.check.mjs`, "without JavaScript: the words, the state in words and the date all show"). |
+| 1.4.12 Text spacing | Meets | Manual test, 2026-10-07: the WCAG text-spacing values (line height 1.5, letter 0.12em, word 0.16em, paragraph 2em) injected on the demo, three registers, no clipped or overlapping text, including the sticky note and the chalkboard (throwaway Playwright script). No check in the repository asserts it yet. |
+| 4.1.2 Name, role, value | Meets | Native elements only, nothing to operate; the section is named by the author's heading. `now-note.check.mjs`: axe with and without JavaScript, 0 violations. |
+
+**The page author owns:**
+
+- The heading, the note, the availability words and the date, in the language of the page, and `lang` on text in another language (3.1.2).
+- The `<time datetime>` being true, and a `stale-after` that suits how often the note changes.
+- Using either the element's age line or the build's own `ageInWords()`, not both.

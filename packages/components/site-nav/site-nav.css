@@ -142,3 +142,14 @@ sg-site-nav[data-skin="playful"] summary { border-width: var(--sg-stroke-bold); 
   sg-site-nav .sg-site-nav-pencil { stroke: LinkText; }
   sg-site-nav ul a[aria-current] { border: 2px solid LinkText; }
 }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-site-nav ul a, sg-site-nav summary, sg-site-nav .sg-site-nav-home { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-site-nav :is(ul a, summary, .sg-site-nav-home):active { translate: 0 1px; color: color-mix(in oklab, var(--sg-text, CanvasText), var(--sg-text, CanvasText) 25%); transition: none !important; }
+sg-site-nav ul a:active { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.25em; }
+sg-site-nav[data-skin="warm"] :is(ul a, summary, .sg-site-nav-home):active { translate: none; }
+sg-site-nav[data-skin="playful"] :is(ul a, summary, .sg-site-nav-home):active { translate: none; scale: 0.97; }
+@media (prefers-reduced-motion: reduce) {
+  sg-site-nav ul a, sg-site-nav summary, sg-site-nav .sg-site-nav-home { transition: none; }
+  sg-site-nav :is(ul a, summary, .sg-site-nav-home):active { translate: none !important; scale: none !important; }
+}

@@ -6,6 +6,9 @@
 //   node registry/build.mjs --check         fail if the written index is out of date
 //   node registry/build.mjs --strict        treat missing fields and thin manifests as errors
 //   node registry/build.mjs --root <dir> [--out <file>]   build another tree (the tests use fixtures)
+//   --shadcn-out <dir> [--base-url <url>]   also write the shadcn view there (registry/shadcn.mjs says what it holds).
+//                                           Never committed: the docs build writes it to /r/. --check always builds it in
+//                                           memory and validates it (--no-shadcn skips that)
 //
 // Each manifest is validated against registry/schema.json, every file it lists must exist,
 // dependencies must exist and must not loop, and each item gets its source bytes and a
@@ -13,7 +16,7 @@
 // budget fails the build, and a scene gets 40 KB unless it declares up to 64 KB with a reason.
 // Output is sorted and has no timestamps: the same sources give the same bytes.
 
-import { existsSync, readFileSync, readdirSync, statSync, writeFileSync, mkdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validate } from '../packages/cli/src/validate.js';
@@ -21,7 +24,8 @@ import { checkGraph, resolveOrder } from '../packages/cli/src/graph.js';
 import { absoluteRefs, relativeRefs } from '../packages/cli/src/imports.js';
 import { hashContent, hashParts } from '../packages/cli/src/hash.js';
 import { stripComments } from '../packages/cli/src/strip.js';
-import { insidePackages, resolveManifestPath, toPosix } from '../packages/cli/src/paths.js';
+import { shadcnView, validateView, DEFAULT_BASE_URL } from './shadcn.mjs';
+import { insidePackages, resolveManifestPath, templateRefTarget, toPosix, TEMPLATE_FILE } from '../packages/cli/src/paths.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const schema = JSON.parse(readFileSync(join(here, 'schema.json'), 'utf8'));
@@ -136,7 +140,9 @@ export function buildRegistry({ root, out = join(root, 'registry', 'registry.jso
       if (owners.has(path) && owners.get(path) !== name) warnings.push(`${manifestPath}: ${path} is also listed by ${owners.get(path)}`);
       owners.set(path, name);
       const content = readFileSync(join(root, path));
-      files.push({ path, bytes: content.length, hash: hashContent(content) });
+      // bytes of the LF text the git index holds, as hashContent reads it, so a CRLF checkout counts the same
+      const bytes = content.includes(0) ? content.length : content.length - (content.toString('latin1').match(/\r\n/g)?.length ?? 0);
+      files.push({ path, bytes, hash: hashContent(content) });
     }
     files.sort((a, b) => a.path.localeCompare(b.path));
 
@@ -236,7 +242,12 @@ export function buildRegistry({ root, out = join(root, 'registry', 'registry.jso
       for (const abs of absoluteRefs(f.path, text)) {
         warnings.push(`${item.manifest}: ${f.path} loads "${abs}", a root path that works on the dev server but not in a builder's project`);
       }
-      for (const { spec, target } of relativeRefs(f.path, text)) {
+      // A template's pages are written for where they land: at the project root, with the library beside
+      // them as susegad/. Read each reference from there, then find the repo file it will be.
+      const own = item.type === 'template' && f.path.match(TEMPLATE_FILE);
+      const dir = own && f.path.slice(0, f.path.length - own[1].length - 1);
+      const refs = own ? relativeRefs(own[1], text).map(r => ({ spec: r.spec, target: templateRefTarget(dir, r.target) })) : relativeRefs(f.path, text);
+      for (const { spec, target } of refs) {
         if (reachable.has(target)) continue;
         // A folder reference ('./fixtures/') is copied when a file inside it is: the folder then exists in the copy.
         if (target.endsWith('/') && [...reachable].some(p => p.startsWith(target))) continue;
@@ -296,6 +307,10 @@ function main(argv) {
 
   const text = serialise(index);
   const shown = toPosix(relative(process.cwd(), out)) || out;
+  const baseUrl = arg('--base-url') ?? DEFAULT_BASE_URL;
+  const wantView = !argv.includes('--no-shadcn') && (check || arg('--shadcn-out'));
+  const view = wantView ? shadcnView(index, { root, baseUrl }) : null;
+  const viewDir = arg('--shadcn-out') && resolve(arg('--shadcn-out'));
   if (check) {
     const current = existsSync(out) ? readFileSync(out, 'utf8').replace(/\r\n/g, '\n') : null;
     if (current !== text) {
@@ -303,7 +318,23 @@ function main(argv) {
       return 1;
     }
     console.log(`${shown} is up to date with ${index.items.length} item${index.items.length === 1 ? '' : 's'}.`);
+    if (view) {
+      const bad = validateView(view, { baseUrl });
+      if (bad.length) {
+        console.error(`The shadcn view built from the registry has ${bad.length} problem${bad.length === 1 ? '' : 's'}:`);
+        for (const p of bad.slice(0, 10)) console.error(`  - ${p}`);
+        return 1;
+      }
+      console.log(`The shadcn view builds and validates: ${view.size} files (the index and ${view.size - 1} items).`);
+    }
     return 0;
+  }
+  if (view && viewDir) {
+    const viewShown = toPosix(relative(process.cwd(), viewDir)) || viewDir;
+    mkdirSync(viewDir, { recursive: true });
+    for (const name of readdirSync(viewDir)) if (name.endsWith('.json') && !view.has(name)) rmSync(join(viewDir, name));
+    for (const [name, content] of view) writeFileSync(join(viewDir, name), content);
+    console.log(`Wrote ${viewShown}: the shadcn view, ${view.size} files (the index and ${view.size - 1} items).`);
   }
   mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, text);

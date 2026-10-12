@@ -1,0 +1,16 @@
+{
+  "name": "core-input",
+  "type": "package",
+  "stability": "experimental",
+  "title": "Core: input modality",
+  "description": "One attribute on the root, data-sg-input, that says whether a moving key (an arrow, Home, End, Page Up or Down) is held or the last input was a pointer, so CSS can drop motion from repeated keyboard actions. Installed on import; core-component imports it. The touch contract's keyboard rule (docs/contributing/touch-contract.md).",
+  "version": "0.1.0",
+  "files": ["input-modality.js"],
+  "dependencies": [],
+  "budget": { "jsBytes": 1536, "reason": "The touch contract: a pure key tracker (tested in Node) and four listeners installed once, trimmed to the code and one header." },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

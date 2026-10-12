@@ -1,0 +1,21 @@
+{
+  "name": "image",
+  "type": "package",
+  "title": "Image tier",
+  "description": "A picture's size, known early, so text laid by script can wrap round a picture before its bytes arrive: an oracle that reads the intrinsic size from the file header (PNG, JPEG with EXIF orientation, GIF, WebP, AVIF) by a streamed fetch it cancels, falling back to a warmed image, with the pure geometry beside it (fitRect, reserve, and a column with floated pictures as a shape for the type tier), and a live surface that lays a paragraph round reserved boxes so nothing moves when the pictures arrive. Plain CSS first: quiet, reduced motion and no JavaScript never load it (decisions 0029 and 0030).",
+  "version": "0.1.0",
+  "stability": "experimental",
+  "files": ["header.core.js", "measure.js", "layout.core.js", "flow.live.js", "README.md", "image.prompt.md", "image.docs.md"],
+  "dependencies": ["type"],
+  "prompt": "image.prompt.md",
+  "docs": "image.docs.md",
+  "budget": {
+    "jsBytes": 40960,
+    "reason": "The second oracle of the bake-and-reflow core (decision 0030), built as the type tier is: the header parser (header.core.js, 8.5 KB, six formats), the oracle (measure.js, 8.4 KB), the pure geometry (layout.core.js, 8.3 KB) and the live surface (flow.live.js, 8.3 KB), about 33.5 KB of source with its comments, a share of it prose. The owner allows budgets to flex while the foundations go in; to be optimized later. The oracle and the live surface load only on the live tier, by dynamic import."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

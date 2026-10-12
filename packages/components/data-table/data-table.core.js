@@ -1,7 +1,7 @@
 // <sg-data-table>: the pure core, shared by the element, the tests and the docs.
 // Runs in Node. Three jobs:
 //
-//   1. Indian money: groupIndian() writes 125000 as "1,25,000" and 12500000 as
+//   1. Indian money (from core-intl): groupIndian() writes 125000 as "1,25,000" and 12500000 as
 //      "1,25,00,000" (lakh and crore, the 2-2-3 rhythm), never the Western
 //      125,000, and without a locale library, which would group Western-style
 //      on most machines. rupee() puts the rupee in front.
@@ -10,25 +10,14 @@
 //   3. The sort state machine: nextSort() turns a click into the next column
 //      and direction, and ariaSort() gives the aria-sort value the th carries.
 
-/** Non-finite input gets no grouping at all: null, never "NaN". */
-export function groupIndian(n) {
-  const t = n == null || n === '' ? NaN : typeof n === 'number' ? n : Number(String(n).trim());
-  if (!Number.isFinite(t)) return null;
-  const neg = t < 0, [int, frac] = (neg ? -t : t).toString().split('.');
-  const rest = int.slice(0, -3), groups = [int.slice(-3)];
-  for (let i = rest.length; i > 0; i -= 2) groups.unshift(rest.slice(Math.max(0, i - 2), i));
-  let out = groups.join(',');
-  if (frac !== undefined) out += '.' + frac;
-  return (neg ? '-' : '') + out;
-}
+import { groupIndian, rupees } from '../../core/intl.core.js';
 
-/** "₹1,25,000". Non-finite input gives an empty string: a cell says nothing rather than a lie. */
-export function rupee(n, { paise = 0 } = {}) {
-  const t = n == null || n === '' ? NaN : typeof n === 'number' ? n : Number(String(n).trim());
-  if (!Number.isFinite(t)) return '';
-  const v = paise > 0 ? t.toFixed(paise) : t;
-  return `₹${groupIndian(v)}`;
-}
+// The grouping and the rupee live in core/intl.core.js (core-intl), shared with menu, wa-order
+// and every page that writes money. Re-exported so this module keeps one door.
+export { groupIndian };
+
+/** "₹1,25,000". A `paise` above 0 always shows two decimals. Non-finite input gives an empty string: a cell says nothing rather than a lie. */
+export const rupee = (n, { paise = 0 } = {}) => rupees(n, { paise: paise > 0 ? true : 'auto' });
 
 // ── what a cell sorts as ────────────────────────────────────────────────
 

@@ -6,14 +6,32 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { startServer } from '../../../tools/serve.mjs';
+import { acquireSlot } from '../../../tools/lib/slots.mjs';
 
 let chromium = null;
 try { ({ chromium } = await import('playwright')); } catch { /* no browser: skipped below */ }
 
-test('typing is never disturbed by saving, failing or recovering', { skip: !chromium && 'playwright is not installed', timeout: 60000 }, async () => {
-  const { url, close } = await startServer({ port: 0, quiet: true });
-  const browser = await chromium.launch();
+/**
+ * A browser slot, a server and a browser for one test, all three given back however the test
+ * ends, a failed launch included. On a runner with no browser installed the launch threw before
+ * the try: the leaked server kept node --test waiting forever, and the leaked slot made the next
+ * test wait for itself. The slot is machine-wide like every check's (docs/RUNBOOK.md §4); the wait
+ * for one counts against the test's timeout, so that is generous.
+ */
+async function withBrowser(fn) {
+  const release = await acquireSlot({ label: 'saving-footer recipe.browser.test.js' });
+  let server = null, browser = null;
   try {
+    server = await startServer({ port: 0, quiet: true });
+    browser = await chromium.launch();
+    return await fn(browser, server.url);
+  } finally {
+    try { await browser?.close(); } finally { server?.close(); release(); }
+  }
+}
+
+test('typing is never disturbed by saving, failing or recovering', { skip: !chromium && 'playwright is not installed', timeout: 300000 }, async () => {
+  await withBrowser(async (browser, url) => {
     const page = await browser.newPage();
     const problems = [];
     page.on('pageerror', e => problems.push(e.message));
@@ -77,16 +95,11 @@ test('typing is never disturbed by saving, failing or recovering', { skip: !chro
     for (const line of said) assert.match(line, /^(Saved at \d\d:\d\d|Not saved)$/, `heard: ${JSON.stringify(said)}`);
     assert.ok(said.includes('Not saved') && said.at(-1).startsWith('Saved at'), `heard: ${JSON.stringify(said)}`);
     for (let i = 1; i < said.length; i++) assert.notEqual(said[i], said[i - 1], 'nothing is said twice in a row');
-  } finally {
-    await browser.close();
-    close();
-  }
+  });
 });
 
-test('the gallery stills are silent; the live footer still speaks', { skip: !chromium && 'playwright is not installed', timeout: 60000 }, async () => {
-  const { url, close } = await startServer({ port: 0, quiet: true });
-  const browser = await chromium.launch();
-  try {
+test('the gallery stills are silent; the live footer still speaks', { skip: !chromium && 'playwright is not installed', timeout: 300000 }, async () => {
+  await withBrowser(async (browser, url) => {
     const page = await browser.newPage();
     const problems = [];
     page.on('pageerror', e => problems.push(e.message));
@@ -107,16 +120,11 @@ test('the gallery stills are silent; the live footer still speaks', { skip: !chr
     assert.equal(await page.locator('#notes .saving-footer__said[role=status]').count(), 1);
     assert.equal(await page.locator('#notes sg-connecting [role=status]').count(), 1);
     assert.deepEqual(problems, []);
-  } finally {
-    await browser.close();
-    close();
-  }
+  });
 });
 
-test('the live connection is quiet on load and speaks only when it changes (R3)', { skip: !chromium && 'playwright is not installed', timeout: 60000 }, async () => {
-  const { url, close } = await startServer({ port: 0, quiet: true });
-  const browser = await chromium.launch();
-  try {
+test('the live connection is quiet on load and speaks only when it changes (R3)', { skip: !chromium && 'playwright is not installed', timeout: 300000 }, async () => {
+  await withBrowser(async (browser, url) => {
     for (const register of ['quiet', 'warm', 'playful']) {
       const page = await browser.newPage();
       // every write to a connection's words while its region is live, from the first script on
@@ -139,8 +147,5 @@ test('the live connection is quiet on load and speaks only when it changes (R3)'
       assert.ok(heard.every(t => /^Connection: /.test(t)) && !heard.includes('Connection: connected'), `${register}: heard ${JSON.stringify(heard)}`);
       await page.close();
     }
-  } finally {
-    await browser.close();
-    close();
-  }
+  });
 });

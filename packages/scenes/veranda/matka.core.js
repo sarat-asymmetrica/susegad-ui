@@ -39,27 +39,14 @@ export function surfacePoints(theta, m = MATKA, seg = 28) {
 /** Points to the picture: the pot's foot centre at (cx, cy) px, \`px\` px per unit of its height, looking straight on. */
 export const toScreen = (pts, cx, cy, px) => pts.map(p => [cx + p.x * px, cy - p.y * px]);
 
-/** The pot's extent in a band of the picture, from screen points: [left, right] of the points within [top, bottom], or null. */
-export function extentIn(screen, top, bottom, slack = 1.5) {
-  let l = Infinity, r = -Infinity;
-  for (const [x, y] of screen) if (y >= top - slack && y <= bottom + slack) { if (x < l) l = x; if (x > r) r = x; }
-  return r >= l ? [l, r] : null;
-}
+// The pot's silhouette in a band (extentIn) and the room a column has beside it (flowShape) are the stage3d tier's occlusion
+// helper, for any 3D object; the pot only supplies its surface points. Re-exported so the scene keeps one import.
+export { extentIn, flowShape, silhouetteOf, hugFloat } from '../../stage3d/occlusion.core.js';
 
-/**
- * The room a paragraph has on each line of a column round the pot, as a shape for the type tier: for the band top..bottom,
- * the wider side of the column left or right of the pot (with \`pad\` px between), or the whole column where the pot is not.
- * \`col\` is { x, y, w, h } in px; \`extent(top, bottom)\` is the pot's [left, right] there (extentIn over the current pose).
- */
-export function flowShape(col, extent, pad = 8) {
-  return (top, bottom) => {
-    if (top < col.y - 1e-6 || bottom > col.y + col.h + 1e-6) return null;
-    const e = extent(top, bottom);
-    if (!e) return { x: col.x, w: col.w };
-    const left = { x: col.x, w: e[0] - pad - col.x }, right = { x: e[1] + pad, w: col.x + col.w - (e[1] + pad) };
-    const best = right.w >= left.w ? right : left;
-    return best.w > 0 ? best : null;
-  };
+/** Pot heights are laid out at `hq` px per pot height. The pane's column in px from the pot's foot: ends at the pot's middle (the pot straddles the pane's edge, about a third of it outside) and starts a little above its lip. `grow` makes it taller (larger text needs more lines than the pot's height allows for). */
+export function columnAt(hq, grow = 1) {
+  const w = Math.round(hq * 4.3);
+  return { x: hq * 0.05 - w, y: -hq * 1.15, w, h: Math.round(hq * 3.3 * grow) };
 }
 
 /** The pose steps: the layout is done at a turn quantised to 1/\`steps\`, so a line moves at most once per step, not every frame. */

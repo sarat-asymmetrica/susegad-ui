@@ -15,6 +15,7 @@
 
 import { SgElement, defineComponent } from '../../core/component.js';
 import { STRINGS, sift, parseSize, formatSize } from './file-drop.core.js';
+import { cue } from '../../sound/index.js';
 
 export { STRINGS, sift, accepts, describeAccept, formatSize, parseSize } from './file-drop.core.js';
 
@@ -98,6 +99,7 @@ export class SgFileDrop extends SgElement {
     this.seq++;
     this.last = kept.length ? 'added' : messages.length ? 'turned-away' : 'cleared';
     this.#render(messages);
+    if (kept.length) cue('confirm', { register: this.register });
     this.emit('sg-files', { files: [...input.files], messages });
     this.update();
   }

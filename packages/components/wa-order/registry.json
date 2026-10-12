@@ -21,7 +21,9 @@
     "field",
     "menu",
     "engine",
-    "tokens"
+    "tokens",
+    "core-intl",
+    "sound"
   ],
   "registers": [
     "quiet",

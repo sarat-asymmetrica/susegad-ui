@@ -16,14 +16,18 @@
 //     </ul>
 //   </sg-action-menu>
 //
-// Attributes: register.
+// The list is placed by CSS anchor positioning and staggered by CSS
+// (sibling-index()); this file does both by hand only in a browser that
+// lacks them. Attributes: register.
 
 import { SgElement, defineComponent } from '../../core/component.js';
 import { wrap, typeaheadIndex, placement } from './action-menu.core.js';
 import { talaDelay } from '../../tokens/tokens.js';
 
-let uid = 0;
+let uid = 0, anchorUid = 0;
 const TYPEAHEAD_MS = 500;
+const anchors = typeof CSS !== 'undefined' && !!CSS.supports?.('anchor-name: --a');
+const cssStagger = typeof CSS !== 'undefined' && !!CSS.supports?.('animation-delay', 'calc(1s * sibling-index())');
 
 export class SgActionMenu extends SgElement {
   static native = '[role="menu"]';
@@ -52,6 +56,12 @@ export class SgActionMenu extends SgElement {
     // A builder who forgot role="menuitem" on the items still gets a working menu.
     if (!menu.querySelector('[role="menuitem"]')) for (const el of menu.querySelectorAll('a, button')) el.setAttribute('role', 'menuitem');
 
+    if (anchors) {
+      const name = `--sg-action-menu-${++anchorUid}`;
+      this.#trigger.style.setProperty('anchor-name', name);
+      menu.style.setProperty('position-anchor', name);
+      this.#off.push(() => { this.#trigger.style.removeProperty('anchor-name'); menu.style.removeProperty('position-anchor'); });
+    }
     this.#refreshItems();
 
     const on = (el, type, fn, opts) => { el.addEventListener(type, fn, opts); this.#off.push(() => el.removeEventListener(type, fn, opts)); };
@@ -64,9 +74,11 @@ export class SgActionMenu extends SgElement {
       const i = item ? this.#items.indexOf(item) : -1;
       if (i >= 0 && i !== this.#active) this.#move(i);
     });
-    const onReflow = () => this.#place();
-    on(window, 'resize', onReflow);
-    on(window, 'scroll', onReflow, { capture: true, passive: true });
+    if (!anchors) {
+      const onReflow = () => this.#place();
+      on(window, 'resize', onReflow);
+      on(window, 'scroll', onReflow, { capture: true, passive: true });
+    }
   }
 
   disconnected() {
@@ -87,7 +99,8 @@ export class SgActionMenu extends SgElement {
     this.toggleAttribute('data-open', this.#open);
     if (this.#open) {
       this.#refreshItems();
-      this.#items.forEach((it, i) => it.style.setProperty('--sg-item-delay', `${talaDelay(i)}ms`));
+      // the stylesheet staggers with sibling-index(); talaDelay() is the same beats, for a browser without it
+      if (!cssStagger) this.#items.forEach((it, i) => it.style.setProperty('--sg-item-delay', `${talaDelay(i)}ms`));
       this.#place();
       if (this.#pendingFocus === 'last') this.#move(this.#items.length - 1); else this.#move(0);
       this.#pendingFocus = 'first';
@@ -98,17 +111,17 @@ export class SgActionMenu extends SgElement {
     this.update();
   }
 
-  /** Place the list against its trigger: below by default, above near the
-   * bottom of the page, always measured, never left to a default flow
-   * position (which is what a bare `position: fixed` with no offsets falls
-   * back to). */
+  /** The fallback, for a browser without anchor positioning: below the
+   * trigger, or above near the bottom of the page, measured (a bare
+   * `position: fixed` with no offsets falls back to its flow position). */
   #place() {
-    if (!this.#open || !this.#trigger) return;
+    if (anchors || !this.#open || !this.#trigger) return;
     const t = this.#trigger.getBoundingClientRect();
     const panel = { width: this.native.offsetWidth, height: this.native.offsetHeight };
     const viewport = { width: window.innerWidth, height: window.innerHeight };
     const { left, above } = placement(t, panel, viewport);
     const s = this.native.style;
+    s.margin = '0';
     s.left = `${left}px`;
     if (above) { s.top = 'auto'; s.bottom = `${viewport.height - t.top + 6}px`; }
     else { s.bottom = 'auto'; s.top = `${t.bottom + 6}px`; }

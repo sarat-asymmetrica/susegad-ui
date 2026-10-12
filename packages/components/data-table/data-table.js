@@ -28,7 +28,9 @@
 // Attributes: register. Events: sg-table-sort { id, dir } on every change.
 
 import { SgElement, defineComponent } from '../../core/component.js';
-import { ariaSort, cellValue, groupIndian, nextSort, sortRows } from './data-table.core.js';
+import { ariaSort, cellValue, nextSort, sortRows } from './data-table.core.js';
+import { rupees } from '../../core/intl.core.js';
+import { arrive } from '../../core/arrive.js';
 
 export class SgDataTable extends SgElement {
   static native = 'table';
@@ -39,7 +41,7 @@ export class SgDataTable extends SgElement {
     playful: () => import('./skins/playful.js'),
   };
 
-  #sort = null; #sortable = []; #heads = new Map(); #order = [];
+  #sort = null; #sortable = []; #heads = new Map(); #order = []; #arrive = null;
 
   connected() {
     const table = this.native;
@@ -50,7 +52,10 @@ export class SgDataTable extends SgElement {
     this.#money(table);
     this.#headers(table);
     this.#apply(false);
+    this.#arrive = arrive(this, 'tbody tr');
   }
+
+  disconnected() { this.#arrive?.stop(); this.#arrive = null; }
 
   /** The table scrolls inside the element; the page never scrolls sideways. */
   #wrap(table) {
@@ -65,11 +70,11 @@ export class SgDataTable extends SgElement {
     wrap.append(table);
   }
 
-  /** Every td[data-money] is rewritten from the pure core: 125000 becomes ₹1,25,000. */
+  /** Every td[data-money] is rewritten from core-intl: 125000 becomes ₹1,25,000. */
   #money(table) {
     for (const td of table.querySelectorAll('td[data-money]')) {
-      const v = groupIndian(td.getAttribute('data-money'));
-      if (v != null && !td.children.length) td.textContent = `₹${v}`;
+      const v = rupees(td.getAttribute('data-money'));
+      if (v && !td.children.length) td.textContent = v;
     }
   }
 
@@ -109,9 +114,11 @@ export class SgDataTable extends SgElement {
         const th = this.#sortable.find(s => s.th.getAttribute('data-sort') === this.#sort.id)?.th;
         if (!th) return;
         const rows = [...tbody.rows], col = th.cellIndex;
+        this.#arrive?.seen(rows);
         for (const r of sortRows(rows, this.#sort.dir, row => cellValue(row.cells[col]))) tbody.append(r);
       } else {
         // no sort: the written order, whatever a previous sort did
+        this.#arrive?.seen(this.#order);
         for (const r of this.#order) if (r.parentNode === tbody) tbody.append(r);
       }
     }

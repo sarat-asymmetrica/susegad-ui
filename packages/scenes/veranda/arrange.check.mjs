@@ -27,12 +27,16 @@
 
 import { chromium } from 'playwright';
 import { startServer } from '../../../tools/serve.mjs';
+import { gpuOf } from '../../../tools/lib/gpu.mjs';
 
 const BREAK = process.argv.includes('--break');
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const server = await startServer({ quiet: true });
 const browser = await chromium.launch({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] });
+// The stall clause (4) measures GPU raster of two backdrop blurs; on a software renderer (a CI runner, or SG_FORCE_SOFTWARE_GL=1)
+// the CPU rasterises them, so a 250 ms ceiling says nothing about the product. It skips (`skip  <clause>  (no GPU: <renderer>)`, tools/lib/gpu.mjs).
+const gate = await gpuOf(browser);
 
 const BREAKS = {
   ignoresOthers: [/stage-element\.js$/, s => s.replace('#others() { const flow', '#others() { return []; const flow')],
@@ -166,7 +170,7 @@ for (const patches of BREAK ? [['ignoresOthers'], ['loadAndReleaseOnly'], ['chip
     const over = rows.filter(r => r.cover.worst > 0.15);
     if (!only || only === 'loadAndReleaseOnly') check('never hidden while things move: at each stop of the walk back out, and with the lens off and on, no line of the pane is more than 15% behind something nearer', !over.length && prep.worst <= 0.15 && rows.length === 9, over.length ? over.map(r => `${r.label}: ${(r.cover.worst * 100).toFixed(0)}% at depth ${r.cover.d.toFixed(2)}`).join(' | ') : `worst ${(Math.max(...rows.map(r => r.cover.worst)) * 100).toFixed(1)}% over ${rows.length} states; the words start the walk back at depth ${prep.d.toFixed(2)}, ${(prep.worst * 100).toFixed(0)}% covered`);
   }
-  if (!only || only === 'blurWhileMoving') {
+  if ((!only || only === 'blurWhileMoving') && !gate.skip('no stall while the camera moves with both panes of glass on screen: six seconds of camera movement, three fresh contexts, no frame over 250 ms')) {
     const worst = [];
     for (let k = 0; k < 3; k++) worst.push(await longestFrame(patches));
     check('no stall while the camera moves with both panes of glass on screen: six seconds of camera movement, three fresh contexts, no frame over 250 ms', worst.every(w => w <= 250), `longest frames ${worst.join(', ')} ms`);
@@ -179,5 +183,5 @@ for (const patches of BREAK ? [['ignoresOthers'], ['loadAndReleaseOnly'], ['chip
 
 await browser.close(); await server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${results.length - failed} of ${results.length} pass${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
+console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
 process.exit(BREAK ? 0 : failed ? 1 : 0);

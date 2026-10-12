@@ -1,0 +1,11 @@
+/* Fixture for tools/touch.check.mjs: broken on purpose, see expect.json. */
+sg-fx-no-focus { display: block; padding: 12px; }
+sg-fx-no-focus button { border: 1px solid CanvasText; background: Canvas; color: CanvasText; padding: 8px 14px; font: inherit; transition: translate 120ms ease-out, background-color 120ms ease-out; }
+sg-fx-no-focus label { display: inline-flex; gap: 6px; margin-inline-end: 10px; }
+sg-fx-no-focus label span { padding: 2px 8px; border: 1px solid CanvasText; transition: background-color 200ms; }
+sg-fx-no-focus input:checked + span { background: color-mix(in oklab, Canvas, CanvasText 15%); }
+sg-fx-no-focus label:active span { translate: 0 1px; filter: brightness(0.9); transition: none; }
+sg-fx-no-focus button:active { translate: 0 1px; background-color: color-mix(in oklab, Canvas, CanvasText 12%); transition: none; }
+@media (prefers-reduced-motion: reduce) { sg-fx-no-focus :is(button, label span):active { translate: none; } }
+:root[data-sg-input="key"] sg-fx-no-focus * { transition: none !important; }
+sg-fx-no-focus :is(button, input) { outline: none; }

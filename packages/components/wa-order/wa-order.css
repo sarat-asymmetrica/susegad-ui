@@ -218,3 +218,17 @@ sg-wa-order[data-skin="playful"] .sg-wa-written { border: 2px solid var(--sg-suc
   sg-wa-order .sg-wa-choice { border: 1px solid ButtonText; }
   sg-wa-order .sg-wa-choice:has(input:checked) { border: 2px solid Highlight; }
 }
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-wa-order .sg-wa-send, sg-wa-order .sg-wa-choice, sg-wa-order .sg-wa-menu-link, sg-wa-order :is(input[type="date"], select) { transition: translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-wa-order .sg-wa-send:not([aria-disabled="true"]):active { translate: 0 1px; filter: brightness(0.9); transition: none !important; }
+sg-wa-order :is(.sg-wa-choice, .sg-wa-menu-link):active, sg-wa-order :is(input[type="date"], select):active { translate: 0 1px; filter: brightness(0.93); transition: none !important; }
+sg-wa-order[data-skin="warm"] .sg-wa-send:not([aria-disabled="true"]):active { translate: none; background: color-mix(in oklab, var(--sg-accent), var(--sg-text, CanvasText) 25%); border-color: color-mix(in oklab, var(--sg-accent), var(--sg-text, CanvasText) 25%); filter: none; }
+sg-wa-order[data-skin="warm"] :is(.sg-wa-choice, .sg-wa-menu-link):active, sg-wa-order[data-skin="warm"] :is(input[type="date"], select):active { translate: none; border-color: color-mix(in oklab, var(--sg-rule-strong, CanvasText), var(--sg-text, CanvasText) 40%); }
+sg-wa-order[data-skin="playful"] .sg-wa-send:not([aria-disabled="true"]):active { filter: brightness(0.92); }
+sg-wa-order[data-skin="playful"] :is(.sg-wa-choice, .sg-wa-menu-link):active { translate: none; scale: 0.97; }
+sg-wa-order[data-skin="playful"] :is(input[type="date"], select):active { translate: none; scale: 0.985; }
+@media (prefers-reduced-motion: reduce) {
+  sg-wa-order .sg-wa-send, sg-wa-order .sg-wa-choice, sg-wa-order .sg-wa-menu-link, sg-wa-order :is(input[type="date"], select) { transition: none; }
+  sg-wa-order :is(.sg-wa-send, .sg-wa-choice, .sg-wa-menu-link, input[type="date"], select):active { translate: none !important; scale: none !important; transform: none !important; }
+}

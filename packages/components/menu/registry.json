@@ -20,7 +20,10 @@
     "core",
     "field",
     "engine",
-    "tokens"
+    "tokens",
+    "core-intl",
+    "sound",
+    "core-arrive"
   ],
   "registers": [
     "quiet",

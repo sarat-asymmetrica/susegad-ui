@@ -38,6 +38,10 @@ Draw a Goan paddy field through one year, in canvas JavaScript with no image fil
 | the field holds at that point of the year | state | progress 0 is the dry April field and 1 the field dry again after the harvest. With it set, time stands still, the scene rests, and the status says how far through the year it is. |
 | hold the picture under them still | calm | Under the page’s text boxes, and 30 units round them, the field is shown as it was at the start of each six-second step of the year, so the words sit on a picture that does not move while the season turns round them. |
 
+## On a page
+
+A bare `<sg-scene name="shet">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/shet/index.js">` with `<sg-scene name="shet" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing's name is its `alt`. With `progress` set, the element says how far through the year the field is, naming the work from its `label`. The year turns slowly and the pause button stops it; the still is the ripening gold. In playful the drawing takes focus: the arrow keys move a hand (drawn as a small ring) that the wind follows, and Enter or Space sends a gust across the rice. Under any words laid over the field the picture holds still.

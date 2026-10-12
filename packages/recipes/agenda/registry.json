@@ -1,0 +1,37 @@
+{
+  "name": "agenda",
+  "type": "recipe",
+  "stability": "experimental",
+  "title": "Agenda",
+  "description": "A conference agenda across one or two days, with rooms and tracks, that knows what is on stage now. The page is plain HTML with every time written out in IST; with JavaScript each session may say 'Now on stage, until 11:15 am' or 'Next, at 2 pm' in words (never colour alone), finished ones go quiet but stay readable, and one calm status line follows the Indian clock once a minute. It never moves focus, never announces, and counts in Panjim's days whatever zone the visitor's machine is in.",
+  "version": "0.1.0",
+  "files": [
+    "recipe.js",
+    "recipe.strings.js",
+    "recipe.css",
+    "index.html",
+    "README.md",
+    "recipe.prompt.md"
+  ],
+  "dependencies": [
+    "core-intl",
+    "core-strings",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "recipe.prompt.md",
+  "docs": "README.md",
+  "budget": {
+    "jsBytes": 15360,
+    "reason": "Two modules: the pure now/next/finished core and wiring (recipe.js, 10,136 bytes) and the words by language (recipe.strings.js, 3,932 bytes, with each Konkani sentence in two scripts); 14,068 today, raised from 14,336 on 7 October 2026 so the next key is not the one that breaks it. It needs no component and no timer faster than a minute."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

@@ -9,6 +9,8 @@
 //   <slug>-sheet.png   all 15 cells tiled into ONE labelled image, each tagged with its verdict
 //   <slug>-open.png    the open states, for interactive pieces (second sheet)
 //   <slug>-warm-strip.png + <slug>-warm-facts.json   the warm strip with --facts, for anything that moves
+//   content/           a scene with the page's words slotted, at its main stage (warp.core.js:
+//                      abri's drift, not the first seconds), per register, desktop light and phone dark
 //   axe.json, perf.json, tests.json
 //   pack.json, pack.md the whole pack's summary: axe per register/theme, the perf ratio to
 //                      Paus with CPU busy, budget measured/declared, the item's own tests,
@@ -23,7 +25,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ownerOf } from './gate-tier.core.js';
-import { targetFrom } from './lib/target.mjs';
+import { targetFrom, REGISTERS } from './lib/target.mjs';
+import { WARP_SCRIPT, stageSeconds } from './warp.core.js';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
@@ -31,7 +34,6 @@ const changed = argv.includes('--changed');
 const outFlag = argv.indexOf('--out');
 const outRoot = (outFlag > 0 && argv[outFlag + 1]) || path.join('.shots', 'pack');
 const items = argv.filter(a => !a.startsWith('--') && a !== outRoot);
-if (argv.includes('--out')) items.splice(items.indexOf(outRoot), 1);
 
 const registry = JSON.parse(fs.readFileSync(path.join(REPO, 'registry', 'registry.json'), 'utf8'));
 const regItems = registry.items;
@@ -117,6 +119,12 @@ for (const name of items) {
     pack.strip.facts = facts;
   } else pack.notes.push('not a scene or surface: no warm strip (one strip if it moves, the reviewer decides)');
 
+  // 3b. a scene with words slotted, at the moment it exists for (the calm zone is only seen with words)
+  if (item.type === 'scene') {
+    try { pack.content = await contentShots({ slug, dir }); }
+    catch (e) { pack.notes.push(`content shots failed: ${e.message}`); console.log(`FAIL  content shots ${slug}: ${e.message}`); }
+  }
+
   // 4. axe, per register and theme
   if (target) {
     const ax = run(`axe ${slug}`, 'tools/axe.mjs', [...target.split(' '), '--json']);
@@ -165,11 +173,50 @@ for (const name of items) {
   console.log(pack.sheet ? `  sheet ${pack.sheet}` : '  (no sheet: see notes)');
 }
 
-const bad = results.filter(p => p.matrix?.failed?.length || p.tests?.status || p.axe?.status || p.perf?.status || p.matrix?.status);
+const bad = results.filter(p => p.content?.files?.some(f => !f.ok) || p.matrix?.failed?.length || p.tests?.status || p.axe?.status || p.perf?.status || p.matrix?.status);
 if (bad.length) console.error(`packs with failures: ${bad.map(p => p.item).join(', ')}`);
 process.exit(bad.length ? 1 : 0);
 
 // --------------------------------------------------------------------------- helpers
+
+/**
+ * The scene with content=1 at its main stage, per register: desktop light and phone dark. The
+ * stage is reached by warping (tools/warp.core.js), so abri's drift at u 33 costs the time its
+ * frames take, not 33 s of the clock; the two views of a register run side by side.
+ * Files: <dir>/content/<slug>-content-<register>-<desktop-light|phone-dark>.png
+ */
+async function contentShots({ slug, dir }) {
+  const { session, openTarget, waitReady, shoot, PHONE, DESKTOP } = await import('./lib/browser.mjs');
+  const t0 = Date.now();
+  const out = path.join(REPO, dir, 'content');
+  fs.mkdirSync(out, { recursive: true });
+  const s = await session();
+  const files = [];
+  try {
+    for (const register of REGISTERS) {
+      const views = [['desktop-light', DESKTOP, 'light'], ['phone-dark', PHONE, 'dark']];
+      const seconds = stageSeconds(slug, register);
+      const done = await Promise.all(views.map(async ([label, view, theme]) => {
+        const t = { ...targetFrom({ scene: slug, register, theme, content: true }), freeze: undefined };
+        const { context, page } = await openTarget(s, t, view);
+        try {
+          const ready = await waitReady(page, t);
+          if (!ready.ok) return { label, register, ok: false, reason: ready.reason };
+          await page.evaluate(WARP_SCRIPT);
+          await page.evaluate(sec => window.__warp.to(sec), seconds);
+          const moment = await page.evaluate(() => window.__warp.moment());
+          const file = path.join(out, `${slug}-content-${register}-${label}.png`);
+          await shoot(page, '#box', file);
+          return { label, register, ok: true, seconds, moment, file: path.relative(REPO, file).replaceAll('\\', '/') };
+        } finally { await context.close(); }
+      }));
+      files.push(...done);
+    }
+  } finally { await s.done(); }
+  const secs = (Date.now() - t0) / 1000;
+  console.log(`${files.every(f => f.ok) ? 'ok  ' : 'FAIL'}  content shots ${slug}  (${secs.toFixed(1)}s)`);
+  return { seconds: secs, files };
+}
 
 /** One tiled PNG of the matrix cells, each cell labelled with its verdict. */
 async function tileSheet({ slug, dir, cells }) {
@@ -210,7 +257,7 @@ async function tileSheet({ slug, dir, cells }) {
       const why = [];
       if (!cell.ready?.ok) why.push(`not ready: ${cell.ready?.reason ?? '?'}`);
       if (cell.errors?.count) why.push(`${cell.errors.count} errors`);
-      if (cell.overflow && !cell.overflow.pass) why.push(`sideways scroll (${cell.overflow.scrollWidth} > ${cell.overflow.innerWidth})`);
+      if (cell.overflow && !cell.overflow.pass) why.push(`sideways scroll (${cell.overflow.scrollWidth} > ${cell.overflow.viewWidth})`);
       if (cell.pointer?.status === 'fail') why.push(`tap ${JSON.stringify(cell.pointer.expected)} landed ${JSON.stringify(cell.pointer.got)}`);
       if (cell.pointer?.status === 'not run') why.push('tap not run');
       const png = cell.shot ? cell.pngB64 : null;
@@ -234,10 +281,15 @@ function writePackMd(pack) {
     L.push(`- Matrix: ${pack.matrix.cells} cells, ${pack.matrix.failed.length} failed${pack.matrix.failed.length ? `: ${pack.matrix.failed.join(', ')}` : ''}. One picture: ${pack.slug}-sheet.png.`);
   }
   if (pack.open) L.push(`- Open states: ${pack.open.what}: ${pack.open.sheet}`);
+  if (pack.content) {
+    const ok = pack.content.files.filter(f => f.ok);
+    L.push(`- Content shots (words slotted, at the main stage): ${ok.length} of ${pack.content.files.length} in content/; ${ok.filter(f => f.moment?.stage).map(f => `${f.register}/${f.label} ${f.moment.stage} u ${f.moment.u}`).join('; ') || 'moment not exposed by the scene'}`);
+  }
   if (pack.strip) L.push(`- Warm strip: ${pack.slug}-warm-strip.png${pack.strip.facts?.length ? `, facts: ${pack.strip.facts.join(' | ')}` : ''}`);
   if (pack.axe?.runs && Array.isArray(pack.axe.runs)) {
-    const v = pack.axe.runs.filter(r => r.violations || r.incomplete);
-    L.push(`- Axe: ${pack.axe.runs.length} register/theme runs${v.length ? `, violations in ${v.length}: ${v.map(r => `${r.register}/${r.theme} ${r.ids.join('+')}`).join('; ')}` : ', no violations'}`);
+    // incomplete is axe's "look by hand" list (text over a canvas, say), not a violation: count it apart
+    const v = pack.axe.runs.filter(r => r.violations), hand = pack.axe.runs.filter(r => r.incomplete && !r.violations);
+    L.push(`- Axe: ${pack.axe.runs.length} register/theme runs${v.length ? `, violations in ${v.length}: ${v.map(r => `${r.register}/${r.theme} ${r.ids.join('+')}`).join('; ')}` : ', no violations'}${hand.length ? `; ${hand.length} with items to check by hand (axe incomplete)` : ''}`);
   }
   if (pack.perf?.result) {
     const r = pack.perf.result;

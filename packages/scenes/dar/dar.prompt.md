@@ -29,6 +29,10 @@ Draw the front of a Goan house as an elevation, in ink and wash on paper, with c
 | a click by the bolt slides it back or home | interaction | activate() looks at where your hand is: within reach of the bolt it toggles the bolt, anywhere else it gives the key a push away from your hand. |
 | Lay lime plaster over a laterite wall | hatch | Every surface is a wash under hatching: the laterite pitted and hatched, the tiles hatched darker at each row's edge, the panels shaded on their lower bevels. |
 
+## On a page
+
+A bare `<sg-scene name="dar">` mounts at once. Where the scene is not the first thing a reader needs (a long page, a phone, a slow connection), make it poster-first: put its poster, as a `<picture>` of AVIF, WebP and JPG, inside `<sg-lazy src="/packages/scenes/dar/index.js">` with `<sg-scene name="dar" hidden></sg-scene>` beside it, and link `core/lazy.css`. The scene is then fetched only when it is near the screen, and the poster stays as the still under reduced motion, Save-Data, the quiet register and small devices. See `core/lazy.docs.md`.
+
 ## Accessibility
 
 The drawing says nothing a person needs; the page text carries the message. Warm plays once and rests, so nothing moves for long. In playful, the drawing takes focus: Enter or Space swings the key, and with the keyboard hand moved to the bolt (arrow keys), Enter or Space slides it. Quiet and reduced motion show the finished still: the key at rest on its hook and the bolt home.

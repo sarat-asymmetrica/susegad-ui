@@ -1,20 +1,16 @@
-// The type tier's pure half, in Node. Pretext measures with a canvas; Node has
-// none, so (as in Pretext's own suite) a fake OffscreenCanvas answers: every
-// grapheme is half the font size wide. That proves our geometry (shapes, one
+// The type tier's pure geometry, in Node, through createLayout(fakeOracle):
+// no Pretext, no canvas, no shim. The fake oracle makes every grapheme half the
+// font size wide and breaks at spaces. That proves our geometry (shapes, one
 // width per line, logical units, fitting, cards), not a browser's glyphs; the
-// scenes' browser checks cover real Kalam.
+// scenes' browser checks cover real Kalam, and pretext.test.js covers the real
+// oracle's path.
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { createLayout, rect, arch, slant, calmOf } from './layout.core.js';
+import { createFakeOracle } from './oracle.fake.js';
 
-const graphemes = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
-const count = t => [...graphemes.segment(t)].length;
-globalThis.OffscreenCanvas = class {
-  getContext() {
-    return { font: '10px sans-serif', measureText(t) { const px = parseFloat(/([\d.]+)px/.exec(this.font)[1]); return { width: count(t) * px * 0.5 }; } };
-  }
-};
-const T = await import('./layout.js');
+const T = { ...createLayout(createFakeOracle()), rect, arch, slant, calmOf };
 
 const PARA = 'Our lowest rate, June to September. The veranda stays dry and the paddy turns green.';
 const block = (text, px, extra = {}) => ({ prepared: T.prepare(text, `${px}px Kalam`), lineHeight: px * 1.3, ...extra });
@@ -83,7 +79,7 @@ test('fitSize: the largest size that fits, or null (the flat reading)', () => {
   const fit = T.fitSize([30, 26, 22, 18, 14], build, shape, { top: 10, bottom: 190 });
   assert.ok(fit && fit.size < 30, 'a smaller size was needed');
   assert.equal(T.layIntoShape(build(fit.size + 4), shape, { top: 10, bottom: 190 }).fits, false);
-  assert.equal(T.fitSize([30, 26], build, shape, { top: 10, bottom: 190 }), null);
+  assert.equal(T.fitSize([30, 28], build, shape, { top: 10, bottom: 190 }), null);
   // the halving search finds what trying every size in turn finds, with fewer tries
   const sizes = Array.from({ length: 33 }, (_, i) => 30 - i * 0.5);
   let tries = 0;
@@ -158,4 +154,30 @@ test('labelBox: the words plus padding, never under a 24 px target', () => {
 
 test('calmOf pads each line box into a calm rect', () => {
   assert.deepEqual(T.calmOf([{ x: 10, y: 20, w: 30, h: 8 }], 2), [{ x: 8, y: 18, w: 34, h: 12 }]);
+});
+
+test('exact fit: text that ends exactly at the bottom of the shape fits (no spare line is asked for)', () => {
+  // 10 px text, 12 px lines, 3 words per line at most: "aaaa bbbb" / "cccc dddd" fill 24 px exactly
+  const shape = T.rect(0, 0, 50, 24);
+  const exact = T.layIntoShape([block('aaaa bbbb cccc dddd', 10, { lineHeight: 12 })], shape, { top: 0, bottom: 24 });
+  assert.equal(exact.lines.length, 2);
+  assert.equal(exact.bottom, 24);
+  assert.equal(exact.fits, true);
+  // one more word needs a third line the shape does not have: still not a fit
+  const over = T.layIntoShape([block('aaaa bbbb cccc dddd eeee', 10, { lineHeight: 12 })], shape, { top: 0, bottom: 24 });
+  assert.equal(over.fits, false);
+  // and setBlocks / fitSize accept the size that fills the room exactly
+  assert.ok(T.fitSize([10], () => [block('aaaa bbbb cccc dddd', 10, { lineHeight: 12 })], shape, { top: 0, bottom: 24 }));
+});
+
+test('forget: prepared text is dropped, and the oracle is told (widths taken in a fallback face must not stick)', () => {
+  let cleared = 0;
+  const oracle = { ...createFakeOracle(), clear: () => { cleared++; } };
+  const L = createLayout(oracle);
+  const a = L.prepare('Come for the rain', '20px Kalam');
+  assert.equal(L.prepare('Come for the rain', '20px Kalam'), a, 'cached');
+  L.forget();
+  assert.equal(cleared, 1);
+  assert.notEqual(L.prepare('Come for the rain', '20px Kalam'), a, 'prepared again after forget');
+  assert.doesNotThrow(() => createLayout(createFakeOracle()).forget(), 'an oracle with no clear is fine');
 });

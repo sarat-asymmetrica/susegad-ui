@@ -5,6 +5,7 @@
 
 import { pickEngine } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const server = await startServer({ quiet: true });
 const browser = await pickEngine().launch();
@@ -19,7 +20,15 @@ const PAGE = `
     <button id="send">Send</button>
   </form>`;
 
-async function open({ register = 'warm', js = true, reduced = false } = {}) {
+const SELECT_PAGE = `
+  <form id="f" action="/tools/harness/blank.html" method="get">
+    <sg-field><label for="town">Town</label>
+      <select id="town" name="town"><option value="">Choose a town</option><option value="a-03">Aldona</option><option value="s-17">Siolim</option></select></sg-field>
+    <sg-field><label for="nm">Your name</label><input id="nm" name="name"></sg-field>
+    <sg-field><label>Just a note</label><p>No control in here, so nothing to ink.</p></sg-field>
+  </form>`;
+
+async function open({ register = 'warm', js = true, reduced = false, html = PAGE } = {}) {
   const ctx = await browser.newContext({ javaScriptEnabled: js, reducedMotion: reduced ? 'reduce' : 'no-preference' });
   const p = await ctx.newPage();
   const errors = [];
@@ -39,7 +48,7 @@ async function open({ register = 'warm', js = true, reduced = false } = {}) {
     await import('/packages/components/field/field.js');
     await customElements.whenDefined('sg-field');
     await new Promise(r => document.querySelector('sg-field').addEventListener('sg-skin', r, { once: true }));
-  }, { html: PAGE, register });
+  }, { html, register });
   return { ctx, p, errors };
 }
 
@@ -95,6 +104,83 @@ const inkOf = (p, sel) => p.evaluate(s => {
   await ctx.close();
 }
 
+
+// ── a select inside sg-field: every register, no page error, the native select stays the control ──
+for (const register of ['quiet', 'warm', 'playful']) for (const width of [1280, 390]) {
+  const ctx = await browser.newContext({ viewport: { width, height: 800 } });
+  const p = await ctx.newPage();
+  const errors = [];
+  p.on('pageerror', e => errors.push(String(e)));
+  p.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
+  await p.goto(`${server.url}/tools/harness/blank.html`);
+  await p.evaluate(async ({ html, register }) => {
+    document.documentElement.dataset.register = register;
+    document.head.insertAdjacentHTML('beforeend', '<link rel="stylesheet" href="/packages/tokens/tokens.css"><link rel="stylesheet" href="/packages/components/field/field.css">');
+    document.body.innerHTML = html;
+    await import('/packages/components/field/field.js');
+    await customElements.whenDefined('sg-field');
+    await Promise.all([...document.querySelectorAll('sg-field')].map(f => new Promise(r => { f.addEventListener('sg-skin', r, { once: true }); setTimeout(r, 2500); }))); // a skin that throws never says sg-skin; the checks below then fail instead of hanging
+  }, { html: SELECT_PAGE, register });
+  const words = () => p.evaluate(() => { const f = document.querySelector('sg-field'); return [...f.querySelectorAll('.sg-field-words path')].map(x => Math.round(x.getBBox().width)); });
+  const rest = await p.evaluate(() => {
+    const f = document.querySelector('sg-field'), s = f.querySelector('select');
+    return { control: f.control === s, filled: f.hasAttribute('data-filled'), pencil: f.querySelectorAll('.sg-field-pencil path').length, labelled: s.labels.length === 1 };
+  });
+  const before = await words();
+  await p.selectOption('#town', 's-17');
+  if (register !== 'quiet') await p.waitForFunction(() => document.querySelector('sg-field .sg-field-words path'), null, { timeout: 3000 }).catch(() => {}); // wait on the ink, not on the clock
+  const after = await words();
+  const textW = await p.evaluate(() => { const s = document.getElementById('town'); const c = document.createElement('canvas').getContext('2d'); const cs = getComputedStyle(s); c.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`; return Math.round(c.measureText(s.selectedOptions[0].text).width); });
+  const filled = await p.evaluate(() => document.querySelector('sg-field').hasAttribute('data-filled'));
+  const plain = await p.evaluate(() => { const f = document.querySelectorAll('sg-field')[2]; return !f.querySelector('svg') && f.children.length === 2; });
+  const page = (await sidewaysScroll(p)).overflow === 0;
+  const inked = register !== 'quiet';
+  check(`${register} at ${width}px: a select in sg-field loads its skin, stays the labelled control, and throws nothing`, rest.control && rest.labelled && !rest.filled && errors.length === 0, `${JSON.stringify(rest)} ${errors.join(' | ')}`);
+  check(`${register} at ${width}px: ${inked ? 'the pencil rule is drawn, and the ink follows the chosen option' : 'the hairline needs no drawing'}`,
+    inked ? rest.pencil === 2 && before.length === 0 && after.length === 1 && Math.abs(after[0] - textW) <= 2 && filled : rest.pencil === 0 && after.length === 0 && filled, `pencil ${rest.pencil}, ink ${before.length}->${after}, option ${textW} px`);
+  check(`${register} at ${width}px: a sg-field with no supported control stays plain, and the page does not scroll sideways`, plain && page && errors.length === 0, errors.join(' | '));
+  await ctx.close();
+}
+
+// ── the select's arrow shows under forced colours too, and radios and checkboxes are left alone ──
+const inkPixels = async (p, box) => {
+  const png = await p.screenshot({ clip: box });
+  return p.evaluate(async b64 => {
+    const bmp = await createImageBitmap(await (await fetch(`data:image/png;base64,${b64}`)).blob());
+    const c = Object.assign(document.createElement('canvas'), { width: bmp.width, height: bmp.height }), g = c.getContext('2d');
+    g.drawImage(bmp, 0, 0);
+    const d = g.getImageData(0, 0, bmp.width, bmp.height).data, bg = [d[0], d[1], d[2]];
+    let n = 0;
+    for (let i = 0; i < d.length; i += 4) if (Math.abs(d[i] - bg[0]) + Math.abs(d[i + 1] - bg[1]) + Math.abs(d[i + 2] - bg[2]) > 120) n++;
+    return n;
+  }, png.toString('base64'));
+};
+for (const register of ['quiet', 'warm', 'playful']) for (const forced of [false, true]) {
+  const ctx = await browser.newContext({ viewport: { width: 700, height: 500 }, forcedColors: forced ? 'active' : 'none' });
+  const p = await ctx.newPage();
+  const errors = [];
+  p.on('pageerror', e => errors.push(String(e)));
+  await p.goto(`${server.url}/tools/harness/blank.html`);
+  await p.evaluate(async ({ html, register }) => {
+    document.documentElement.dataset.register = register;
+    document.head.insertAdjacentHTML('beforeend', '<link rel="stylesheet" href="/packages/tokens/tokens.css"><link rel="stylesheet" href="/packages/components/field/field.css">');
+    document.body.innerHTML = html + '<sg-field id="tick"><label><input type="checkbox" name="c"> Send me the menu</input></label></sg-field>';
+    await import('/packages/components/field/field.js');
+    await customElements.whenDefined('sg-field');
+    await new Promise(r => { const f = document.querySelector('sg-field'); f.addEventListener('sg-skin', r, { once: true }); setTimeout(r, 2500); });
+  }, { html: SELECT_PAGE, register });
+  await p.waitForTimeout(150);
+  const box = await p.evaluate(() => { const r = document.getElementById('town').getBoundingClientRect(); return { x: Math.floor(r.right - 40), y: Math.floor(r.top + 4), width: 32, height: Math.floor(r.height - 10) }; });
+  const n = await inkPixels(p, box);
+  check(`${register}${forced ? ' under forced colours' : ''}: the select's arrow is drawn in its box`, n >= 8, `${n} arrow pixels`);
+  if (!forced && register === 'warm') {
+    const boxed = await p.evaluate(() => document.getElementById('tick').control === null);
+    const rings = await p.evaluate(() => document.querySelectorAll('#tick svg').length);
+    check('a checkbox inside sg-field is not taken as its control, so nothing is drawn for it', boxed && rings === 0 && errors.length === 0, `svg ${rings} ${errors.join(' | ')}`);
+  }
+  await ctx.close();
+}
+
 // ── the demo: every note wraps, nothing is clipped, in every register, wide and narrow ──
 for (const register of ['quiet', 'warm', 'playful']) for (const width of [1280, 390]) {
   const ctx = await browser.newContext({ viewport: { width, height: 900 } });
@@ -110,9 +196,9 @@ for (const register of ['quiet', 'warm', 'playful']) for (const width of [1280, 
       scroll: note.scrollWidth, client: note.clientWidth, clip: getComputedStyle(note).clipPath,
       inside: box.right <= field.right + 1, lines: Math.round(box.height / parseFloat(getComputedStyle(note).lineHeight)),
       fields: [...document.querySelectorAll('sg-field')].filter(f => f.scrollWidth > f.clientWidth + 1).length,
-      page: document.documentElement.scrollWidth <= innerWidth,
     };
   });
+  r.page = (await sidewaysScroll(p)).overflow === 0;
   check(`${register} at ${width}px: the field note wraps inside its field, whole, and no field overflows`, r.scroll <= r.client + 1 && r.clip === 'none' && r.inside && r.fields === 0 && r.page, JSON.stringify(r));
   await ctx.close();
 }

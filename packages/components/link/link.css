@@ -25,7 +25,7 @@ sg-link > a:focus-visible {
 }
 sg-link > a:visited { color: var(--sg-accent-text, VisitedText); }
 
-/* ── warm: the ink underline, drawn on hover and focus ───────────────────── */
+/* ── warm: the ink underline, drawn at rest, inked heavier on hover and focus ── */
 sg-link[data-skin="warm"] > a { text-decoration-line: none; }
 sg-link[data-skin="warm"] .sg-link-ink {
   position: absolute;
@@ -42,9 +42,9 @@ sg-link[data-skin="warm"] .sg-link-ink path {
   stroke-width: 1.4;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
-  transition: stroke-dashoffset var(--sg-dur-calm, 280ms) var(--sg-ease-ink, ease-out);
+  transition: stroke-width var(--sg-dur-quick, 140ms) var(--sg-ease-ink, ease-out);
 }
-sg-link[data-skin="warm"]:is(:hover, :focus-within) .sg-link-ink path { stroke-dashoffset: 0 !important; }
+sg-link[data-skin="warm"]:is(:hover, :focus-within) .sg-link-ink path { stroke-width: 2.4; }
 
 /* ── playful: the kolam line, always drawn, in the accent ink ───────────── */
 sg-link[data-skin="playful"] > a { text-decoration-line: none; }
@@ -69,4 +69,18 @@ sg-link[data-skin="playful"] .sg-link-ink path {
 @media (forced-colors: active) {
   sg-link .sg-link-ink { display: none !important; }
   sg-link > a { text-decoration-line: underline !important; color: LinkText !important; }
+}
+
+/* touch contract: press, release, keyboard-repeat and reduced motion (docs/contributing/touch-contract.md) */
+sg-link > a { transition: color var(--sg-dur-quick, 140ms) var(--sg-ease-out, ease-out), translate 120ms var(--sg-ease-out, ease-out), scale 150ms var(--sg-ease-spring, ease-out); }
+sg-link { transition: scale 150ms var(--sg-ease-spring, ease-out); }
+sg-link > a:active { translate: 0 1px; color: color-mix(in oklab, var(--sg-accent-text, LinkText), var(--sg-text, CanvasText) 25%); text-decoration-thickness: calc(var(--sg-stroke, 1.5px) * 1.6); transition: none !important; }
+sg-link[data-skin="warm"] > a:active { translate: none; }
+sg-link[data-skin="warm"]:active .sg-link-ink path { stroke: color-mix(in oklab, var(--sg-accent-text, LinkText), var(--sg-text, CanvasText) 30%); stroke-width: 2.4; transition: none !important; }
+sg-link[data-skin="playful"]:active { scale: 0.97; transition: none !important; }
+sg-link[data-skin="playful"] > a:active { translate: none; color: color-mix(in oklab, var(--sg-accent-text, LinkText), var(--sg-text, CanvasText) 18%); }
+@media (prefers-reduced-motion: reduce) {
+  sg-link, sg-link > a { transition: none; }
+  sg-link > a:active { translate: none !important; }
+  sg-link[data-skin="playful"]:active { scale: none !important; }
 }

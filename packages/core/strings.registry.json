@@ -1,0 +1,16 @@
+{
+  "name": "core-strings",
+  "type": "package",
+  "stability": "experimental",
+  "title": "Core: strings by language",
+  "description": "The library's own words in more than one language (decision 0025). strings(byLang, tag) lays the lookup chain for a language tag over English, never crossing a script, so a missing Konkani key reads in English and Romi never borrows Devanagari; langOf(el) reads the nearest lang; t() gives a string or calls a function entry; unreviewed() lists the entries no native reader has checked. strings.table.js holds the words several components share, in English and in placeholder Konkani (Devanagari and Romi).",
+  "version": "0.1.0",
+  "files": ["strings.js", "strings.table.js"],
+  "dependencies": [],
+  "budget": { "jsBytes": 6400, "reason": "Pure and tiny: tag handling and the chain (strings.js, 3,878 bytes) and the shared table (strings.table.js, 2,327 bytes) with every Konkani entry written in two scripts (Devanagari costs three bytes a letter). 6,205 bytes today; raised from 6144 on 7 October 2026 for the Konkani entries, with about 3% to spare." },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

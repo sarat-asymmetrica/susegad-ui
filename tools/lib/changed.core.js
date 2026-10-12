@@ -1,0 +1,232 @@
+// Which browser checks does a diff need? The pure half of `node tools/checks.mjs --changed`
+// (tools/lib/changed.mjs reads git and the registry, tools/checks.mjs runs the result).
+//
+// A diff selects a check when:
+//   - it touches a shared primitive (SHARED): then it selects everything, because a changed
+//     signature in a shared function broke a stage no folder rule would have found;
+//   - it touches the folder the check lives in (not for the shared folders that only hold
+//     checks of several pieces, see GENERIC), or the check itself;
+//   - it touches a registry item that owns the check, or an item that item depends on,
+//     however far down the chain (registry `dependencies` are item names);
+//   - it touches something the check is known to cover (COVERS);
+//   - it touches a component, and the check is the microinteraction check (TOUCH_CHECK).
+//
+// With a `context` (what each check loads: tools/lib/changed-deps.mjs reads it from the imports and
+// package-lock.json), two shared primitives are narrowed:
+//   - a tools/lib/ file selects the checks that import it, at any depth; everything only when it is
+//     part of the server, the harness, the slots, overflow or the runner (context.everyAll);
+//   - package-lock.json or package.json selects everything only when a dependency that every check
+//     runs inside changed: one the harness, the server or the runner loads (playwright, axe-core and
+//     theirs: context.everyAllPackages). Any other changed dependency selects the checks that load it,
+//     browser or Node-only, and a note names what no browser check loads.
+// Without a context both still select everything, as before.
+
+/** A change under any of these selects every check. Entries ending in "/" are folders; the others are exact files. */
+export const SHARED = [
+  'packages/core/', 'packages/engine/', 'packages/tokens/', 'tools/lib/', 'package.json',
+  // every check serves its page through these:
+  'package-lock.json', 'tools/serve.mjs', 'tools/harness/',
+];
+
+/**
+ * Files under SHARED that no browser check reads: the text gate's own tooling (Node only, see NODE_CHECKS). Editing these
+ * must not make every browser check run. Entries are prefixes of the repo-relative path.
+ */
+export const NOT_SHARED = ['tools/lib/text-gate', 'tools/lib/hb-canvas', 'tools/lib/bake-gate'];
+
+const TEXT_GATE_INPUTS = [
+  'packages/type/', 'packages/tokens/fonts', 'packages/tokens/tokens.css',
+  'packages/scenes/tinto/model.js', 'packages/scenes/vad/model.js', 'packages/scenes/veranda/matka.core.js',
+  // the scene code whose lay-out options the manifest mirrors by hand (a change to a size list, a family or a shape argument there is a change to find here)
+  'packages/scenes/tinto/words.js', 'packages/scenes/vad/render.js', 'packages/scenes/veranda/matka-view.js',
+  'tools/text-gate', 'tools/lib/text-gate', 'tools/lib/hb-canvas',
+];
+
+/**
+ * Checks that need no browser: tools/checks.mjs runs them itself, in a plain child process, and they never take a
+ * browser slot. `inputs` are what selects one (folders end in "/", the rest are prefixes of the repo-relative path); a diff
+ * that touches a shared primitive selects them all, like the browser checks.
+ */
+export const NODE_CHECKS = {
+  // the text gate lays the gate copy into the scenes' shapes with the real fonts: its inputs are the type tier, the fonts and
+  // token stacks, the pure scene models it reads, the gate's own tooling and the fixtures (copy, calibration)
+  'tools/text-gate.mjs': TEXT_GATE_INPUTS,
+  // the bake gate runs the text gate (its inputs, above) and the pure reflow half of colour, motion, sound and, later, image:
+  // the tokens, transitions, sound and image packages, and its own tooling
+  'tools/bake-gate.mjs': [
+    ...TEXT_GATE_INPUTS, 'packages/tokens/', 'packages/transitions/', 'packages/sound/', 'packages/image/',
+    'tools/bake-gate', 'tools/lib/bake-gate',
+  ],
+};
+
+/** Folders that hold the checks of several pieces side by side: a change next to them says nothing about them. */
+const GENERIC = new Set(['packages', 'packages/components', 'packages/scenes', 'packages/recipes', 'packages/surfaces', 'packages/templates', 'recipes', 'tools']);
+
+/** Checks that live in a shared folder but cover named registry items. */
+export const COVERS = {
+  'packages/components/overlays.check.mjs': ['popover', 'tooltip', 'action-menu', 'dialog', 'drawer', 'toast'],
+};
+
+/** The library-wide microinteraction check: it presses every interactive component. */
+export const TOUCH_CHECK = 'tools/touch.check.mjs';
+const TOUCH_OWN = 'tools/touch.';
+
+const norm = p => p.replaceAll('\\', '/').replace(/^\.\//, '');
+const dirOf = p => (p.includes('/') ? p.slice(0, p.lastIndexOf('/')) : '');
+const under = (p, dir) => p === dir || p.startsWith(`${dir}/`);
+
+/** The folder an item's manifest lives in. */
+export const itemDir = item => dirOf(norm(item.manifest));
+
+/**
+ * Items that depend on any of `roots`, transitively. Returns name -> { root, via }: the changed item it
+ * ends in and the item it hangs off one step down. Unknown names are ignored; cycles are safe.
+ */
+export function dependentsOf(items, roots) {
+  const users = new Map(); // name -> items that list it as a dependency
+  for (const it of items) for (const d of it.dependencies ?? []) (users.get(d) ?? users.set(d, []).get(d)).push(it.name);
+  const out = new Map();
+  const seen = new Set(roots);
+  const queue = [...roots].map(r => ({ name: r, root: r }));
+  while (queue.length) {
+    const { name, root } = queue.shift();
+    for (const user of users.get(name) ?? []) {
+      if (seen.has(user)) continue;
+      seen.add(user);
+      out.set(user, { root, via: name });
+      queue.push({ name: user, root });
+    }
+  }
+  return out;
+}
+
+const MANIFESTS = new Set(['package.json', 'package-lock.json']);
+const plural = (list, one, many) => (list.length === 1 ? one : many);
+
+/**
+ * Sort the diff's shared-primitive files into: the one that makes everything run (allReason), the
+ * tools/lib files and dependencies to follow check by check (libs, packages), and notes for --dry.
+ * context: see the header. Without one, every shared file makes everything run.
+ */
+export function sharedHits(files, { shared = SHARED, context } = {}) {
+  const isShared = f => !NOT_SHARED.some(n => f.startsWith(n)) && shared.some(s => (s.endsWith('/') ? f.startsWith(s) : f === s));
+  const libs = [], notes = [];
+  let packages = [];
+  for (const f of files.filter(isShared)) {
+    if (context && f.startsWith('tools/lib/')) {
+      if (context.everyAll?.has(f)) return { allReason: `${f} is ${context.everyAll.get(f)}: everything runs`, libs, packages, notes };
+      libs.push(f);
+      continue;
+    }
+    if (context && MANIFESTS.has(f)) {
+      if (!context.changedPackages) return { allReason: `${f} changed and its dependency diff could not be read: everything runs`, libs, packages, notes };
+      const every = context.changedPackages.find(p => context.everyAllPackages?.has(p));
+      if (every) return { allReason: `${f}: ${every} changed, and every browser check loads it: everything runs`, libs, packages, notes };
+      packages = context.changedPackages;
+      continue;
+    }
+    return { allReason: `${f} is a shared primitive: everything runs`, libs, packages, notes };
+  }
+  if (context && files.some(f => MANIFESTS.has(f) && isShared(f))) {
+    if (!packages.length) notes.push('package.json or package-lock.json changed, but no dependency did: no check runs for it');
+    else {
+      const unused = packages.filter(p => !context.browserPackages?.has(p));
+      notes.push(`changed dependencies: ${packages.join(', ')}. The harness, server and runner load none of them, so only the checks that load one run`
+        + (unused.length ? `; no browser check loads ${unused.join(', ')}` : ''));
+    }
+  }
+  return { allReason: null, libs, packages, notes };
+}
+
+/** Why a check loads a changed tools/lib file or package (none: []). loads: context.loads(check). */
+function loadReasons(check, loads, libs, packages) {
+  if (!loads) return [];
+  const out = [];
+  for (const f of libs) {
+    if (!loads.files.has(f)) continue;
+    const from = loads.files.get(f);
+    out.push(`imports ${f}${from && from !== check ? ` (through ${from})` : ''}, which changed`);
+  }
+  for (const p of packages) if (loads.packages.has(p)) out.push(`loads ${p}, which changed in the lockfile`);
+  return out;
+}
+
+/**
+ * @param {{ changed: string[], checks: string[], items: object[], shared?: string[], context?: object }} input
+ *   changed: repo-relative paths in the diff; checks: repo-relative paths of every check;
+ *   items: registry/registry.json items; context: what each check loads (see the header)
+ * @returns {{ all: boolean, allReason: string|null, selected: { check: string, reasons: string[] }[], notes: string[] }}
+ */
+export function selectChecks({ changed, checks, items, shared = SHARED, context }) {
+  const files = [...new Set(changed.map(norm))].filter(Boolean);
+  const { allReason, libs, packages, notes } = sharedHits(files, { shared, context });
+  if (allReason) return { all: true, allReason, selected: checks.map(check => ({ check, reasons: [allReason] })), notes };
+
+  // Which items did the diff touch (a file under the item's folder, or one of its listed files)?
+  const touched = new Map(); // name -> first changed file
+  for (const it of items) {
+    const dir = itemDir(it);
+    const own = new Set((it.files ?? []).map(f => norm(f.path)));
+    const f = files.find(x => (dir && under(x, dir)) || own.has(x));
+    if (f) touched.set(it.name, f);
+  }
+  const dependents = dependentsOf(items, [...touched.keys()]);
+  const byName = new Map(items.map(i => [i.name, i]));
+  const touchedComponent = [...touched].find(([name]) => byName.get(name).type === 'component')
+    ?? files.map(f => [null, f]).find(([, f]) => /^packages\/components\/[^/]+\/./.test(f)); // a component folder not in the registry yet
+
+  const dependencyReason = name => {
+    const { root, via } = dependents.get(name);
+    return `${name} depends on ${root}${via === root ? '' : ` (via ${via})`}, which changed`;
+  };
+
+  const selected = [];
+  for (const check of checks) {
+    const reasons = [];
+    const dir = dirOf(check);
+    if (files.includes(check)) reasons.push('the check itself changed');
+    reasons.push(...loadReasons(check, context?.loads?.(check), libs, packages));
+    if (!GENERIC.has(dir)) {
+      const f = files.find(x => under(x, dir));
+      if (f) reasons.push(`${f} is in ${dir}/`);
+    }
+    for (const it of items) {
+      const idir = itemDir(it);
+      if (!idir || !under(dir, idir)) continue; // the check is not inside this item's folder
+      if (touched.has(it.name) && !reasons.some(r => r.includes(`in ${dir}/`))) reasons.push(`${touched.get(it.name)} changed ${it.name}`);
+      if (dependents.has(it.name)) reasons.push(dependencyReason(it.name));
+    }
+    for (const name of COVERS[check] ?? []) {
+      if (touched.has(name)) reasons.push(`covers ${name}, which changed (${touched.get(name)})`);
+      else if (dependents.has(name)) reasons.push(`covers ${dependencyReason(name)}`);
+    }
+    if (check === TOUCH_CHECK) {
+      if (touchedComponent) reasons.push(`a component changed (${touchedComponent[1]})`);
+      const own = files.find(f => f.startsWith(TOUCH_OWN));
+      if (own) reasons.push(`${own} is the touch check's own code`);
+    }
+    if (reasons.length) selected.push({ check, reasons: [...new Set(reasons)] });
+  }
+  return { all: false, allReason: null, selected, notes };
+}
+
+/**
+ * Which Node-only checks (NODE_CHECKS) does a diff need? Same reasons-first shape as selectChecks.
+ * @returns {{ check: string, reasons: string[] }[]}
+ */
+export function selectNodeChecks({ changed, shared = SHARED, nodeChecks = NODE_CHECKS, context }) {
+  const files = [...new Set(changed.map(norm))].filter(Boolean);
+  const { allReason, libs, packages } = sharedHits(files, { shared, context });
+  const out = [];
+  for (const [check, inputs] of Object.entries(nodeChecks)) {
+    if (allReason) { out.push({ check, reasons: [allReason] }); continue; }
+    const reasons = loadReasons(check, context?.loads?.(check), libs, packages);
+    for (const f of files) {
+      const input = inputs.find(i => f.startsWith(i));
+      if (input) reasons.push(`${f} is an input of ${check} (${input})`);
+    }
+    reasons.splice(0, reasons.length, ...new Set(reasons));
+    if (reasons.length) out.push({ check, reasons: reasons.slice(0, 4).concat(reasons.length > 4 ? [`and ${reasons.length - 4} more`] : []) });
+  }
+  return out;
+}

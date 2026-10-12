@@ -5,7 +5,7 @@
    tokens.test.js checks the two agree and that every text role meets WCAG 2.2 AA.
 
    Selectors, all usable on :root or any element:
-     data-palette="susegad|casa|azulejo"   colour palette (default susegad)
+     data-palette="susegad|casa|azulejo|haldi"   colour palette (default susegad)
      data-theme="light|dark"          absent: follow prefers-color-scheme
      data-register="quiet|warm|playful" (or register="...")  default warm
 
@@ -241,6 +241,51 @@
   --sg-lift: 0 1px 0 color-mix(in oklch, var(--sg-shadow) 12%, transparent), 0 22px 44px -28px var(--sg-shadow);
 }
 
+/* ── palette: Haldi. A kitchen poster: turmeric and marigold fields, curry-leaf green and tomato red for ink and accents, on warm cream. Dark is the same kitchen at night, deep curry-leaf green with the yellows kept as pigment.
+   Source: the bright home-kitchen flyers of a Goa food maker (turmeric, marigold, curry leaf, tomato, cream, coral), adjusted for contrast */
+
+[data-palette="haldi"] {
+  /* pigments: for drawing and decoration, the same in both themes */
+  --sg-turmeric: oklch(84.81% 0.1679 89.08); /* the big field: poster yellow; fills and marks, never text on cream (#F9C61F) */
+  --sg-marigold: oklch(77.25% 0.1617 70.34); /* the warmer field, a flower-stall orange-yellow; fills and marks (#F5A01A) */
+  --sg-curry-leaf: oklch(43.05% 0.1062 138.31); /* the green of the poster ink, as printed (#2F5D1E, 6.9:1 on cream) */
+  --sg-tomato: oklch(50.13% 0.1783 28.7); /* the red of the accents, as printed (#B3261E, 5.8:1 on cream) */
+  --sg-cream: oklch(95.97% 0.0333 88.06); /* the poster paper, as printed (#FBF1D9) */
+  --sg-coral: oklch(81.49% 0.0956 48.16); /* a soft pink-orange for a second field or a wash; never text on cream (#F6B08C) */
+  --sg-leaf-bright: oklch(82.54% 0.1483 128.39); /* curry leaf lifted for a night ground: new shoots, success at night (#A9D86A) */
+
+  /* grounds and inks, light and dark */
+  --sg-paper: light-dark(oklch(95.97% 0.0333 88.06), oklch(29.03% 0.0652 140.06)); /* poster cream; at night, deep curry-leaf green (#FBF1D9 / #183312) */
+  --sg-paper-raised: light-dark(oklch(98% 0.0235 88.23), oklch(35.5% 0.0827 140.56)); /* a card on the poster (#FFF8E7 / #21461A) */
+  --sg-paper-deep: light-dark(oklch(91.44% 0.0572 90.72), oklch(23.59% 0.0519 139.64)); /* a sunk well: inputs, code, table stripes (#F1E2B8 / #10240B) */
+  --sg-rule: light-dark(oklch(87.02% 0.0697 90.01), oklch(42.28% 0.095 139.91)); /* a printed hairline (#E6D3A0 / #2F5A25) */
+  --sg-rule-strong: light-dark(oklch(57.46% 0.0777 90.8), oklch(65.01% 0.0917 127.92)); /* 3:1 or more on every ground: control borders */
+  --sg-ink: light-dark(oklch(31.65% 0.0704 137.58), oklch(95.97% 0.0333 88.06)); /* curry leaf taken darker for text, 9.8:1 or more (#1F3A14); cream at night */
+  --sg-ink-soft: light-dark(oklch(43.3% 0.0794 133.97), oklch(87.32% 0.052 101.34)); /* secondary text, 6:1 or more */
+  --sg-ink-faint: light-dark(oklch(47.02% 0.0585 120.7), oklch(78.31% 0.0607 117.21)); /* captions and labels, 5.2:1 or more on every ground */
+
+  /* roles: what components read */
+  --sg-surface: var(--sg-paper);
+  --sg-surface-raised: var(--sg-paper-raised);
+  --sg-surface-sunk: var(--sg-paper-deep);
+  --sg-text: var(--sg-ink);
+  --sg-text-soft: var(--sg-ink-soft);
+  --sg-text-faint: var(--sg-ink-faint);
+  --sg-accent: light-dark(oklch(50.13% 0.1783 28.7), oklch(84.81% 0.1679 89.08)); /* tomato by day, turmeric at night: the primary act, as a fill */
+  --sg-on-accent: light-dark(oklch(98% 0.0235 88.23), oklch(23.59% 0.0519 139.64)); /* cream on tomato, 6.2:1; deep green on turmeric, 10:1 */
+  --sg-accent-text: light-dark(oklch(50.13% 0.1783 28.7), oklch(84.81% 0.1679 89.08)); /* tomato as text by day (5.1:1 or more); turmeric as text at night */
+  --sg-success: light-dark(oklch(43.05% 0.1062 138.31), oklch(82.54% 0.1483 128.39)); /* curry leaf; lifted to new-shoot green at night */
+  --sg-warning: light-dark(oklch(45.44% 0.0996 68.13), oklch(77.25% 0.1617 70.34)); /* marigold darkened to a burnt mustard by day to read; marigold itself at night */
+  --sg-danger: light-dark(oklch(45.6% 0.1637 28.74), oklch(81.49% 0.0956 48.16)); /* tomato taken deeper by day; coral at night */
+  --sg-info: light-dark(oklch(44.68% 0.0582 182.42), oklch(84.81% 0.1679 89.08)); /* a leaf-teal by day (the poster has no blue); turmeric at night */
+  --sg-focus: light-dark(oklch(43.05% 0.1062 138.31), oklch(84.81% 0.1679 89.08)); /* curry leaf by day, turmeric at night; 3:1 or more on every ground */
+  --sg-selection: light-dark(oklch(90.25% 0.1234 92.92), oklch(45.01% 0.0987 123.98)); /* a turmeric highlighter; a moss wash at night */
+  --sg-pencil: light-dark(oklch(73.76% 0.0852 89.85), oklch(53.22% 0.1048 136.31)); /* drawing only: pencil strokes and construction lines, fainter than any text; never text */
+  --sg-scrim: light-dark(oklch(98% 0.0235 88.23 / 0.9), oklch(35.5% 0.0827 140.56 / 0.9)); /* a cream wash behind text on scenes */
+  --sg-shadow: light-dark(oklch(31.65% 0.0704 137.58 / 0.4), oklch(0% 0 0 / 0.6)); /* the lift shadow colour at full strength: ink by day, near-black at night (ink is light at night and would glow) */
+  --sg-lift: 0 1px 0 color-mix(in oklch, var(--sg-shadow) 12%, transparent), 0 22px 44px -28px var(--sg-shadow);
+}
+
 /* Browsers without light-dark(): the same palettes in hex, on :root only. */
 @supports not (color: light-dark(#000, #fff)) {
   :root {
@@ -332,6 +377,35 @@
     --sg-pencil: #9AA5C8;
     --sg-scrim: rgb(252 250 242 / 0.9);
     --sg-shadow: rgb(20 39 94 / 0.4);
+  }
+  :root[data-palette="haldi"] {
+    --sg-turmeric: #F9C61F;
+    --sg-marigold: #F5A01A;
+    --sg-curry-leaf: #2F5D1E;
+    --sg-tomato: #B3261E;
+    --sg-cream: #FBF1D9;
+    --sg-coral: #F6B08C;
+    --sg-leaf-bright: #A9D86A;
+    --sg-paper: #FBF1D9;
+    --sg-paper-raised: #FFF8E7;
+    --sg-paper-deep: #F1E2B8;
+    --sg-rule: #E6D3A0;
+    --sg-rule-strong: #8A7740;
+    --sg-ink: #1F3A14;
+    --sg-ink-soft: #3E5A2B;
+    --sg-ink-faint: #56603A;
+    --sg-accent: #B3261E;
+    --sg-on-accent: #FFF8E7;
+    --sg-accent-text: #B3261E;
+    --sg-success: #2F5D1E;
+    --sg-warning: #7A4A00;
+    --sg-danger: #9E1F18;
+    --sg-info: #2A5F57;
+    --sg-focus: #2F5D1E;
+    --sg-selection: #FBDD7A;
+    --sg-pencil: #BFA86A;
+    --sg-scrim: rgb(255 248 231 / 0.9);
+    --sg-shadow: rgb(31 58 20 / 0.4);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -515,6 +589,35 @@
     --sg-scrim: rgb(22 38 92 / 0.9);
     --sg-shadow: rgb(0 0 0 / 0.6);
   }
+  :root[data-palette="haldi"][data-theme="dark"] {
+    --sg-turmeric: #F9C61F;
+    --sg-marigold: #F5A01A;
+    --sg-curry-leaf: #2F5D1E;
+    --sg-tomato: #B3261E;
+    --sg-cream: #FBF1D9;
+    --sg-coral: #F6B08C;
+    --sg-leaf-bright: #A9D86A;
+    --sg-paper: #183312;
+    --sg-paper-raised: #21461A;
+    --sg-paper-deep: #10240B;
+    --sg-rule: #2F5A25;
+    --sg-rule-strong: #7F9A5C;
+    --sg-ink: #FBF1D9;
+    --sg-ink-soft: #DCD7B0;
+    --sg-ink-faint: #B5BE92;
+    --sg-accent: #F9C61F;
+    --sg-on-accent: #10240B;
+    --sg-accent-text: #F9C61F;
+    --sg-success: #A9D86A;
+    --sg-warning: #F5A01A;
+    --sg-danger: #F6B08C;
+    --sg-info: #F9C61F;
+    --sg-focus: #F9C61F;
+    --sg-selection: #4A5E16;
+    --sg-pencil: #4F7A3A;
+    --sg-scrim: rgb(33 70 26 / 0.9);
+    --sg-shadow: rgb(0 0 0 / 0.6);
+  }
 }
 
 /* ── the register */
@@ -595,14 +698,14 @@
   }
 }
 
-/* Indic scripts carry matras above and below the line. Konkani in Romi is Latin. */
-:lang(hi), :lang(mr), :lang(kok), :lang(kn), :lang(sa), :lang(ne) {
+/* Indic scripts carry matras above and below the line. Konkani in Romi is Latin. gom (Goan Konkani) and kok are one language here (decision 0025). English inside an Indic page takes Latin leading. */
+:lang(hi), :lang(mr), :lang(kok), :lang(gom), :lang(kn), :lang(sa), :lang(ne) {
   --sg-leading-tight: 1.3;
   --sg-leading-snug: 1.45;
   --sg-leading-body: 1.75;
   --sg-leading-loose: 1.9;
 }
-:lang(kok-Latn) {
+:lang(en), :lang(kok-Latn), :lang(gom-Latn) {
   --sg-leading-tight: 1.12;
   --sg-leading-snug: 1.3;
   --sg-leading-body: 1.6;
