@@ -26,7 +26,7 @@ Rules are in [`docs/ROADMAP.md`](ROADMAP.md#semver-for-a-visual-library):
 
 1. **Everything is green.** `npm test`, `node registry/build.mjs --check`,
    `npm run docs:build` (0 failures; it builds the gallery too), `node tools/cem.mjs --check`,
-   `node tools/check-skill-coverage.mjs`, `node tools/skill-inventory.mjs --check`, `npm run check` (every engine the
+   `node tools/skill-inventory.mjs --check`, `npm run check` (every engine the
    CI runs — see rung 4). If a check is red, the release waits.
 2. **Move Unreleased into a version.** In `CHANGELOG.md`, rename
    `## [Unreleased]` to `## [x.y.z] - YYYY-MM-DD` (today, IST), add a fresh
@@ -57,3 +57,25 @@ Rules are in [`docs/ROADMAP.md`](ROADMAP.md#semver-for-a-visual-library):
   `@susegad/mcp` went out at 0.1.0 on 2026-10-06. Publish the CLI before
   the MCP server, which depends on it:
   `npm publish -w @susegad/cli -w @susegad/mcp --auth-type=web`.
+
+## CI on a private branch
+
+The public repo's CI normally sees only `main`. To run it on any private branch
+(an integration branch, a slice) before it merges, from a clone of the public repo:
+
+1. `git -C <clone> fetch origin` (the new branch starts from `origin/main`).
+2. `node tools/publish/export.mjs --ci-branch <clone>`, on the private branch to be tested. It
+   commits the public tree of HEAD to `ci/<branch>` in the clone (`run/rigour` becomes
+   `ci/run-rigour`) and prints the two commands below. It refuses a clone with uncommitted
+   changes, a clone that is really a checkout of this repo, and a detached HEAD. The private
+   list and the DENY scan apply as for `--out`. It never pushes.
+3. The owner runs what it printed:
+   `git -C <clone> push -u origin ci/<branch>`, then
+   `gh pr create --draft -R sarat-asymmetrica/susegad-ui --base main --head ci/<branch> --title "..." --body "..."`.
+   The workflow runs on `pull_request`; its summary is headed "Private-branch run".
+4. Read the result in the PR's checks, then close the PR and delete the branch.
+
+Pushing and opening the PR are the owner's. A private workflow that runs on this repo itself,
+if it ever gets a GitHub remote, is `tools/publish/private-ci.yml` (its header says how to
+enable it). The test job also runs `npm audit --omit=dev --audit-level=high`: production
+advisories at high or above fail it; advisories in dev tooling do not.

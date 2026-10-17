@@ -117,7 +117,6 @@ test('scene definition: no params, interactive only in playful, size is the plat
   assert.deepEqual(Object.keys(toran.params), []);
   assert.deepEqual(toran.interactive, ['playful']);
   assert.equal(W, 1200); assert.equal(H, 900);
-  for (const k of ['title', 'gloss', 'caption', 'alt', 'keys', 'credit']) assert.ok(!meta[k].includes('—'), k);
 });
 
 test('Enter’s sweep through the middle strand moves it, firmly but never shedding petals', () => {

@@ -25,18 +25,14 @@
 // release only, never when the camera moves (2), a lens that sets the words in chips (3a), a lens button laid over the words (3b), a pot's
 // pane that keeps its blur while the camera moves (4).
 
-import { chromium } from 'playwright';
-import { startServer } from '../../../tools/serve.mjs';
-import { gpuOf } from '../../../tools/lib/gpu.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
 const BREAK = process.argv.includes('--break');
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
-const server = await startServer({ quiet: true });
-const browser = await chromium.launch({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] });
+const h = await harness({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'], axe: 'not axe-checked anywhere yet: this page is not in tools/smoke.mjs (docs/DEBT.md); this check asks about drawing and layout' });
+const { server, browser, check, results } = h;
 // The stall clause (4) measures GPU raster of two backdrop blurs; on a software renderer (a CI runner, or SG_FORCE_SOFTWARE_GL=1)
 // the CPU rasterises them, so a 250 ms ceiling says nothing about the product. It skips (`skip  <clause>  (no GPU: <renderer>)`, tools/lib/gpu.mjs).
-const gate = await gpuOf(browser);
+const gate = await h.gpu();
 
 const BREAKS = {
   ignoresOthers: [/stage-element\.js$/, s => s.replace('#others() { const flow', '#others() { return []; const flow')],
@@ -47,7 +43,7 @@ const BREAKS = {
 };
 
 async function open({ query = 'register=warm', hash = '#notes=window.1,door.3,lamp.2,pillar.0', patches = [], width = 1280 } = {}) {
-  const context = await browser.newContext({ viewport: { width, height: 900 }, deviceScaleFactor: 1 });
+  const context = await h.context({ viewport: { width, height: 900 }, deviceScaleFactor: 1 });
   const errors = [];
   for (const key of BREAK ? patches : []) {
     const [re, fn] = BREAKS[key];
@@ -181,7 +177,5 @@ for (const patches of BREAK ? [['ignoresOthers'], ['loadAndReleaseOnly'], ['chip
   }
 }
 
-await browser.close(); await server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
-process.exit(BREAK ? 0 : failed ? 1 : 0);
+await h.done({ summary: `${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`, expectRed: BREAK });

@@ -25,6 +25,8 @@ sg-action-menu [role="menu"] {
   color: var(--sg-text, CanvasText);
   font: var(--sg-step-0, 1rem) / var(--sg-leading-body, 1.5) var(--sg-font-body, system-ui, sans-serif);
   box-shadow: var(--sg-lift, 0 8px 24px rgb(0 0 0 / 0.2));
+  /* action-menu.js slides an open list back inside the visual viewport by setting --sg-fit-x; 0 when it already fits */
+  transform: translateX(var(--sg-fit-x, 0px));
 }
 
 /* ── placement: below the trigger, flipped above or across when it will not fit.

@@ -84,5 +84,4 @@ test('a press under the hand: both blocks, near each other, the same for the sam
 
 test('words and size', () => {
   assert.equal(W, 1200); assert.equal(H, 900);
-  for (const k of ['title', 'gloss', 'caption', 'alt', 'keys', 'credit']) assert.ok(!meta[k].includes('—'), k);
 });

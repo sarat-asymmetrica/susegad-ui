@@ -1,0 +1,5 @@
+{
+  "note": "Every package name an `npx` command on the site may use. `createOnNpm` is false until the published @susegad/cli has the `create` command (0.2.0); the home page, Start here and the templates page show a note beside the command while it is false. Each one exists on npm. The release step adds a name here when it publishes one (docs/RELEASING.md); the check reads this file and never goes to the network.",
+  "createOnNpm": false,
+  "packages": ["@susegad/cli", "@susegad/mcp", "esbuild", "playwright", "serve", "shadcn"]
+}

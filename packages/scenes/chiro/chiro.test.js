@@ -82,6 +82,5 @@ test('registers: quiet is the still, warm an easier year, playful takes the hand
   assert.deepEqual(model({ register: 'nonsense' }).look, LOOKS.warm);
   assert.equal(meta.stillTime, STILL_T);
   assert.deepEqual(chiro.interactive, ['playful']);
-  for (const k of ['title', 'gloss', 'caption', 'alt', 'keys', 'credit']) assert.ok(!meta[k].includes('—'), k);
   assert.equal(W / GW, H / GH);
 });

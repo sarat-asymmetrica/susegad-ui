@@ -14,11 +14,14 @@
   };
   var DEFAULTS = { register: 'warm', theme: 'auto', palette: 'susegad' };
 
+  // A visitor is not offered a palette (Casa is a sample client's), so a saved one is ignored unless the page
+  // says it has a palette switch: <html data-palette-choice>, set by the few demo pages that need it.
   function read() {
     var out = { register: DEFAULTS.register, theme: DEFAULTS.theme, palette: DEFAULTS.palette };
     try {
       var saved = JSON.parse(localStorage.getItem(KEY) || '{}');
-      for (var k in ALLOWED) if (saved && ALLOWED[k].indexOf(saved[k]) >= 0) out[k] = saved[k];
+      var choosable = document.documentElement.hasAttribute('data-palette-choice');
+      for (var k in ALLOWED) if (saved && ALLOWED[k].indexOf(saved[k]) >= 0 && (k !== 'palette' || choosable)) out[k] = saved[k];
     } catch (e) { /* no storage: defaults */ }
     return out;
   }
@@ -32,8 +35,9 @@
     else root.setAttribute('data-theme', prefs.theme);
   }
 
+  // true when the choice was kept; false when storage is missing or blocked (the choice still applies to this page)
   function save(prefs) {
-    try { localStorage.setItem(KEY, JSON.stringify(prefs)); } catch (e) { /* not persisted, still applied */ }
+    try { localStorage.setItem(KEY, JSON.stringify(prefs)); return true; } catch (e) { return false; }
   }
 
   var prefs = read();

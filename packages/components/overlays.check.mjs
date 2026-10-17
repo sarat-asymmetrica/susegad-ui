@@ -21,15 +21,14 @@
 //
 // Each of these was run against the code before the sweep and failed first.
 
-import { pickEngine, engineName } from '../../tools/lib/engine.mjs';
-import { startServer } from '../../tools/serve.mjs';
+import { harness } from '../../tools/lib/component-check.mjs';
+import { engineName, keyHeldActivates } from '../../tools/lib/engine.mjs';
 import { talaDelay } from '../tokens/tokens.js';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
+const h = await harness({ axe: "tools/smoke.mjs axes the four demo pages this check opens (action-menu, dialog, drawer and popover) once each, at 1280 px in the default register and light theme; the other registers, the dark theme and the open states it measures are not axe-checked (docs/DEBT.md row 48)" });
+const { server, browser, check } = h;
 const engine = engineName();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+let kbNoted = false;
 const url = path => `${server.url}${path}`;
 const REGISTERS = ['quiet', 'warm', 'playful'];
 
@@ -47,7 +46,7 @@ const BODY = `
 
 /** A blank page with all six components and plain triggers, in `register`. */
 async function fixture({ register = 'warm', reduced = false, noAnchors = false, noInvoker = false, viewport } = {}) {
-  const ctx = await browser.newContext({ reducedMotion: reduced ? 'reduce' : 'no-preference', ...(viewport ? { viewport } : {}) });
+  const ctx = await h.context({ reducedMotion: reduced ? 'reduce' : 'no-preference', ...(viewport ? { viewport } : {}) });
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -79,9 +78,9 @@ const settle = p => p.evaluate(() => Promise.all(document.getAnimations().map(a 
 
 // ── anchor positioning, with no script ──────────────────────────────────────
 {
-  const anchored = await (async () => { const c = await browser.newContext(); const p = await c.newPage(); const r = await p.evaluate(() => CSS.supports('anchor-name: --a')); await c.close(); return r; })();
+  const anchored = await (async () => { const c = await h.context(); const p = await c.newPage(); const r = await p.evaluate(() => CSS.supports('anchor-name: --a')); await c.close(); return r; })();
   for (const [name, trigger, panel, demo] of [['popover', 'button[popovertarget="rates"]', '#rates', '/packages/components/popover/demo.html'], ['action-menu', '#account-trigger', '#account-menu', '/packages/components/action-menu/demo.html']]) {
-    const ctx = await browser.newContext({ javaScriptEnabled: false });
+    const ctx = await h.context({ javaScriptEnabled: false });
     const p = await ctx.newPage();
     await p.goto(url(demo));
     await p.click(trigger);
@@ -232,7 +231,7 @@ for (const register of REGISTERS) {
 }
 {
   // and the JS fallback gives the same numbers where sibling-index() is not understood
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   await p.addInitScript(() => { const real = CSS.supports.bind(CSS); CSS.supports = (...a) => (a.join(' ').includes('sibling-index') ? false : real(...a)); });
   await p.goto(url('/tools/harness/blank.html'));
@@ -271,7 +270,7 @@ for (const [name, demo, ids] of [
 ]) {
   // the component script blocked: the native command alone opens it, and Escape gives focus back
   {
-    const ctx = await browser.newContext();
+    const ctx = await h.context();
     const p = await ctx.newPage();
     await p.route(`**/${name}/${name}.js`, r => r.abort());
     await p.goto(url(demo), { waitUntil: 'load' });
@@ -289,7 +288,7 @@ for (const [name, demo, ids] of [
   }
   // the script present: the skin and the events still run when the invoker opened it
   for (const register of ['warm', 'playful']) {
-    const ctx = await browser.newContext();
+    const ctx = await h.context();
     const p = await ctx.newPage();
     await p.goto(url(`${demo}?register=${register}`));
     await p.waitForFunction(() => window.__ready && [...document.querySelectorAll('sg-dialog, sg-drawer')].every(e => e.dataset.skin));
@@ -302,7 +301,7 @@ for (const [name, demo, ids] of [
   }
   // a browser without commandForElement: our click handler opens it
   {
-    const ctx = await browser.newContext();
+    const ctx = await h.context();
     const p = await ctx.newPage();
     await p.addInitScript(() => { delete HTMLButtonElement.prototype.commandForElement; });
     await p.goto(url(`${demo}?register=warm`));
@@ -363,7 +362,9 @@ for (const register of REGISTERS) {
       await p.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
       const k = { down: await p.evaluate(() => { const b = document.activeElement, cs = getComputedStyle(b); return { input: document.documentElement.dataset.sgInput, active: b.matches(':active'), translate: cs.translate, scale: cs.scale }; }) };
       await p.keyboard.up('Space'); await p.keyboard.up('ArrowRight');
-      check(`${tag}, while the keyboard is the input: nothing moves`, k.down.input === 'key' && k.down.active && !moves(k.down) && !gives(k.down), `input ${k.down.input}, active ${k.down.active}, translate ${k.down.translate}, scale ${k.down.scale}`);
+      const keyLit = await keyHeldActivates(browser); // Firefox (as driven here) does not put a key-held button in :active at all; then only what it can answer is asked
+      if (!keyLit && !kbNoted) { kbNoted = true; h.skip(':active while a key is held', 'a bare button with an :active rule stays at rest under a held Space in this engine, so the press itself is not asked; nothing-moves still is'); }
+      check(`${tag}, while the keyboard is the input: nothing moves`, k.down.input === 'key' && (k.down.active || !keyLit) && !moves(k.down) && !gives(k.down), `input ${k.down.input}, active ${k.down.active}, translate ${k.down.translate}, scale ${k.down.scale}`);
     }
     await ctx.close();
   }
@@ -428,8 +429,4 @@ for (const register of REGISTERS) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} of ${results.length} check(s) failed (${engine})` : `\nall ${results.length} checks pass (${engine})`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

@@ -14,6 +14,7 @@
   ],
   "exempt": [
     { "check": "packages/components/bloom/bloom.check.mjs", "needle": "sg-bloom-\\d+", "reason": "not a mutation: norm() renumbers the ids in the bloom's own SVG output before two drawings are compared." },
+    { "check": "packages/components/ticket/ticket.check.mjs", "needle": "<sg-ticket id=\"t\"[\\s\\S]*?<\\/sg-ticket>", "reason": "not a mutation: the check rewrites the live page it just read (page.content()) into a second and a third page of the same site, the event in another language and another event id; the element it swaps is in that HTML, not in a file." },
     { "check": "packages/scenes/veranda/quads.check.mjs", "needle": ";background:Highlight}", "reason": "noSelectionBg's needle is made by harshSelection (the check stacks the two); it occurs in no file by design." }
   ],
   "rotted": []

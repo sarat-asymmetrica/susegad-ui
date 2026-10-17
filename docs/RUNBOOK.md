@@ -2,7 +2,7 @@
 
 *The standing method for every run. A goal file (`docs/GOAL-*.md`) holds only its ladder: what to build, in what order, and each rung's exit gate. Where `GOAL-OCTOBER.md` §1 and §3 to §6 or `GOAL-OCTOBER-RESUME.md` §2 say otherwise, this file holds.*
 
-**The current goal: none named.** The math pass (`docs/GOAL-MATH-PASS.md`, rungs M1 to M5) closed on 10 October 2026; its run stop, its reviews and its one new red are in `docs/LEDGER.md` (entry dated 10 October 23:55) and `docs/runs/2026-10-10-math-pass-close.md`. The text tier and bake-and-reflow closed before it. The conclave run is parked at `run/conclave` a189ca4 with its backlog; the owner names the next goal and the command center changes this line, and only this line.
+**The current goal: `docs/GOAL-RIGOUR.md`** (rigour as machinery, on `run/rigour`, from the rigour audit of 17 October). Deferred verification lives in `docs/DEBT.md`. `docs/GOAL-GRADUATION.md` is built on `run/graduation` (`a9f380b`); its rigour day runs on this goal's machinery. Then `docs/GOAL-GRADUATION-2.md` (the owner's word of 17 October). A fresh Sutradhar picks up from `docs/GOAL-RIGOUR.md`'s "State at handover". The Conclave postcard (`docs/GOAL-POSTCARD.md`) was parked on 14 October 2026; its backlog is `docs/requests/2026-10-14-postcard-parked.md`, and its branch `run/postcard` at a9d2aa5. The next goal comes from the owner's brainstorm on showing the library on screens at the event. The math pass, the text tier and bake-and-reflow are closed (`docs/LEDGER.md`). The conclave run is still parked at `run/conclave` a189ca4.
 
 ## 1. Read first, once
 
@@ -68,35 +68,34 @@ So:
    - a prompt, docs, a registry entry, a budget and a demo page.
 
    A new check goes red against a broken fixture before it counts. A planted fault that patches a file (a `--break` row, a `patch` pair, a `.replace` on a served body) uses a literal needle that the mutant guard (`tools/lib/mutants.test.mjs`, in `npm test`) can find in its target. If it can't use one, it goes on `tools/lib/mutants.allow.json` with a reason.
-3. **The slice gate**, all run by the builder before it reports:
-   - `npm run gates`: unit tests, the registry, CEM and skill-inventory checks;
-   - `npm run check -- --changed` in Chromium, plus `--engine=webkit` when the slice touches anything a person presses;
-   - axe with zero violations, on the open states too;
-   - phone width with no sideways scroll (`tools/lib/overflow.mjs`);
+3. **The slice gate** is `node tools/rigour.mjs --scope=slice`, run by the builder before it reports. It runs `npm run gates:slice`, `npm run check -- --changed`, `npm run smoke -- --changed` (loads with no errors, axe clean, nothing sideways at 390 px) and gate-tier over the diff, and writes one JSON result. Add `--engines chromium,webkit` when the slice touches anything a person presses. On top of it:
+   - axe on the open states (a dialog, drawer, popover or menu open), through the piece's check;
    - `node tools/review-pack.mjs --changed`. The builder looks at its contact sheet and cites the pack's path and commit.
-4. **The review**, at the tier `node tools/gate-tier.mjs` gives (a request marked `gate: full` raises it; nobody lowers it):
+4. **The review**, at the tier `node tools/gate-tier.mjs` gives (a request marked `gate: full` raises it; nobody lowers it). **The tier binds under every goal**, light rigour included: a goal may defer the suites, never a Standard or Full slice's review. `gate-tier --enforce` is the check, and it credits only the canonical line (`.claude/agents/rasika.md` §11): `Rasika: <pass | pass with notes | changes needed | blocked>. Tier: <tier>. Slice: <branch> (<hash>)`, one per unit, in `docs/reviews/`. A direct commit is its own unit (`Slice: <hash>`). `changes needed` never satisfies a tier.
    - **Light**: no review agent. The Sutradhar reads the diff and the pack.
-   - **Standard**: Rasika works from the pack, with one strip if the piece moves and the keyboard if it's interactive.
+   - **Standard**: Rasika works from the pack, with one strip if the piece moves and the keyboard if it's interactive, and reads every new string against the copy standards.
    - **Full**: Rasika does everything in its kernel.
+   - gate-tier rates `tools/` and `*.check.mjs` paths Light. A slice that changes what a check *asserts* (not just its shell) is Standard: the Sutradhar raises it in the brief.
    - **Re-reviews** look at the findings and what their fixes touched, at Standard, unless a fix changed a shared primitive. When every fix is confined to Node-tested pure code (no rendering, styling or shared primitive), the re-review is Light: the Sutradhar reads the diff and the new tests, which went red first. Fixes to a browser lifecycle (loading, teardown, contexts, fonts) keep a Standard re-review: those are where fixes made new defects.
 5. **The words.** Kathakar writes:
    - every string in a Full-tier slice;
    - all text in an Indian language (flagged for a native reader);
    - any page a visitor lands on.
 
-   For Light and Standard slices, the builder's strings pass the copy lint, and Kathakar reads them all in **one pass per rung**, before the rung's exit gate.
-6. **The merge** into the integration branch, by the Sutradhar, after reading the diff, then `npm run gates` on the merged tree. `npm test` alone misses a stale registry: on 12 October a merge that touched `packages/core` passed `npm test` and reached `main` with a stale `registry/registry.json`, and the public snapshot's CI was the first to fail on it. One line per slice goes into the rung's ledger entry (§8).
+   A Light slice's strings pass the copy lint (in `npm run gates`). A Standard slice's strings are read by Rasika in its review. There is no separate per-rung copy pass.
+6. **Deferrals go to `docs/DEBT.md`.** Anything a slice or rung does not verify (a review, a suite, an engine, a ruling) is a row there, with where, since and source. A ledger bullet alone is not a deferral; a gate deferred without a row is a failed gate.
+7. **The merge** into the integration branch, by the Sutradhar, after reading the diff, then `npm run gates` on the merged tree. `npm test` alone misses a stale registry: on 12 October a merge that touched `packages/core` passed `npm test` and reached `main` with a stale `registry/registry.json`, and the public snapshot's CI was the first to fail on it. One line per slice goes into the rung's ledger entry (§8).
 
 ## 6. A rung's exit gate
 
 1. The goal's own exit gate for the rung, item by item.
-2. **The whole suite, once, on the merged integration branch, on a quiet machine**:
-   - `npm run gates`;
-   - `npm run check` in Chromium, WebKit and Firefox.
+2. **The whole suite, once, on the merged integration branch**:
+   - locally, on a quiet machine: `node tools/rigour.mjs --scope=rung --base <the rung's base>` (gates, gate-tier over the merges, smoke, and `npm run check` in Chromium and WebKit);
+   - all three engines through the `ci/` lane, which runs the suite on Linux in about half an hour off this machine's four cores. From a clone of the public repo: `node tools/publish/export.mjs --ci-branch <clone>`, rename the branch to carry the head (`ci/<branch>-<sha>`, so a second push is never a rewrite: DEBT 65), push it and open a draft PR. The owner allows the Sutradhar and the command center to push `ci/*` branches and open draft PRs, and nothing else. Close the PR and delete its branch once the run is recorded.
+   - Compare **per check and engine** against a baseline run of the rung's base (a `ci/` run of the base, never per shard).
 
-   A red listed in the known-flake table of `docs/BROWSERS.md` (the runner marks it `known`) is recorded, not re-run. Any other red is compared with `main` before anyone believes it: a red that is also on `main` goes into that table with its cause; a new red gets fixed. This is the check that catches one slice breaking another through a shared function.
-3. Kathakar's one pass over the rung's Light and Standard strings.
-4. The handover (§8).
+   A red named by a live row of the known-flake table in `docs/BROWSERS.md` (per clause, unexpired; the runner marks it `known`) is recorded, not re-run. Any other red is new: it gets fixed, or it gets a DEBT row and a flake row with its cause (caught failing with `tools/until-fail.mjs`). A red that the baseline run shares is not new, and still gets its row.
+3. The handover (§8).
 
 A gate that did not run is written as "not run". It is never passed.
 
@@ -124,17 +123,26 @@ A gate that did not run is written as "not run". It is never passed.
 
 - **Run start** and **run stop**: one entry each, with the time (run `date`) and the heads of `main` and the integration branch.
 - **One entry per rung**, written at its exit gate:
-  - per slice, one line: the commit, the tier, Rasika's verdict and timings;
-  - the suite's numbers per engine;
-  - the reds that are also on `main`;
+  - per slice, one line: the commit, the tier, Rasika's canonical line and timings;
+  - the suite's numbers per engine, local and `ci/` (with the run IDs);
+  - the reds the baseline shares, and the DEBT rows opened or closed;
   - the owner gates waiting;
   - the residual risks;
   - the next action;
-  - the run's agent cost: the block `node tools/loopcost.mjs --since <run start>` prints (tokens per role, the cache-write share after gaps, polling, browser-check hours, peak context).
+  - the run's agent cost: the block `node tools/loopcost.mjs --since <run start>` prints (tokens per role, the cache-write share after gaps, polling, browser-check hours, peak context);
+  - the Sutradhar's evidence block (below), once per rung.
 
   Add a mid-rung entry only for an incident (lost work, a broken gate, a dropped agent) or when the owner closes a thread.
 - **`docs/runs/<goal>/rung-N.md`** is for the command center: what to look at first, the decisions that depart from the goal, and the merge notes.
-- The Sutradhar's evidence lines (its kernel's §10) go into the rung entry once per rung, not at every checkpoint.
+- **One evidence block, for every seat.** Every report, review and delivery ends with it, and the rung entry carries the Sutradhar's. It is prose, never a JSON block (nothing reads one, so none goes into a review or the ledger):
+
+  ```
+  ran:     each gate or command, the commit it ran at, and its last line (pass counts, axe, perf with its baseline and CPU busy)
+  looked:  what you looked at yourself, by name (cells, pages, files, diffs), and what is in it
+  not run: each gate, engine or path that did not run, and why; a deferral names its DEBT row
+  ```
+
+  A seat's kernel says what its `looked` line must name. A line that can't be filled with evidence makes the gate false: say which and why.
 - The command center merges rung by rung on its own clock. Carry on to the next rung; wait only when a rung depends on the owner.
 
 ## 9. Owner rulings
@@ -155,6 +163,6 @@ These were paid for once. They live here instead of in four kernels.
 - **Ask for positions, not intentions.** "Name the cell", "give me the pixel gap". "Did you look?" gets a yes; "what is in this cell?" gets looked at.
 - **Doubt the instrument first.** Before explaining a surprising number, check that the page loaded and the target and baseline match in size and params. A perf ratio needs Paus measured in the same run.
 - **Consent needs reasoning in every fallback.** "When X fails, do Y" can turn Y into autoplay.
-- **Compare a red with `main`** before believing it, unless the known-flake table in `docs/BROWSERS.md` already lists it. Catch a flake failing with `tools/until-fail.mjs` before adding it there.
+- **A red is new unless a live flake row names its clause.** Comparing every red with `main` found no new red in about 50 tries (rigour audit, 17 October); expiring per-clause rows in `docs/BROWSERS.md` replace it. Catch a flake failing with `tools/until-fail.mjs` before adding its row.
 - **Fix a wrong gate the same day, in the open, with a test.** A known-false gate teaches every agent to route around gates.
 - **Kernels improve after each rung.** Put a lesson that changes how a seat works into that seat's kernel, with a line in `docs/kernels/CHANGELOG.md`. Put one that every seat needs here.

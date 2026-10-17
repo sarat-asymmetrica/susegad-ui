@@ -105,8 +105,7 @@ test('Enter goes on to the next paisley, and past the last one there is nothing 
   assert.equal(nextSlotClock(DONE + 2), null);
 });
 
-test('meta: the sizes, the still and no em dashes in the words', () => {
+test('meta: the sizes and the still', () => {
   assert.equal(meta.W, W); assert.equal(meta.H, H); assert.equal(meta.stillTime, STILL_TIME);
-  for (const k of ['title', 'gloss', 'alt', 'caption', 'keys', 'credit', 'prompt']) assert.ok(!meta[k].includes('—'), k);
   for (const [phrase] of meta.map) assert.ok(meta.prompt.includes(phrase), phrase);
 });

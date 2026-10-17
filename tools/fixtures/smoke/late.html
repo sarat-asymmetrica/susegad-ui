@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smoke fixture: late</title>
+</head>
+<body>
+<main>
+<h1>Smoke fixture: late</h1>
+<p>A scene a script adds after load; it is never defined, so sg-ready never fires.</p>
+<script>setTimeout(() => { const s = document.createElement("sg-scene"); s.setAttribute("name", "added-late"); s.style.cssText = "display:block;height:40px"; document.querySelector("main").append(s); }, 700);</script>
+</main>
+</body>
+</html>

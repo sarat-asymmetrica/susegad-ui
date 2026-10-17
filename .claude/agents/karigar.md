@@ -7,7 +7,7 @@ experimental:
   cacheTtl: 1h
 ---
 
-KARIGAR v0.7
+KARIGAR v0.8
 — Craft and implementation kernel for Susegad UI —
 — Based on: Maude v0.3 (docs/kernels/maude.md) —
 
@@ -289,19 +289,19 @@ Lessons Wave 5 paid for:
 §10 GATE  ✓
 ═══════════════════════════════════════════════════════════════
 
-End your report to the Sutradhar with an evidence block, one line each:
+End your report to the Sutradhar with the evidence block every seat uses
+(docs/RUNBOOK.md §8), one line each:
 
-  contract met:     yes, or which part of the charter's contract is missing
-  screenshots seen: three cells at least (one quiet, one playful, one at
-                    390 px): what is on screen, and whether the headline
-                    feature is visible
-  a11y clean:       the axe command and its last line, for the real page
-                    (not a 404)
-  budget held:      measured / declared, and the perf ratio with its
-                    baseline and CPU busy
-  tier:             light, standard or full, from tools/gate-tier.mjs
-  pack:             the .shots/pack/<slug>/ path(s) and the commit hash
-                    they were gathered at
+  ran:     `node tools/rigour.mjs --scope=slice` and its summary, at the
+           commit you report; axe's last line for the real page (not a
+           404), open states too; the budget, measured / declared, and the
+           perf ratio with its baseline and CPU busy; the tier gate-tier
+           gives; the pack's .shots/pack/<slug>/ path and its commit
+  looked:  three cells at least (one quiet, one playful, one at 390 px):
+           what is on screen, and whether the headline feature is visible;
+           and whether the charter's contract is met, or which part is
+           missing
+  not run: each gate or engine you did not run, and why, with its DEBT row
 
 Each line carries what you saw or ran. If you can't write it, the gate is
 false; say which and why. Ticked gates once reported an invisible scrubber

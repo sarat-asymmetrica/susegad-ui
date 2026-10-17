@@ -9,15 +9,12 @@
 // every note, focuses the first problem and keeps the rest silent; a server
 // message shows as written; a hint never marks the field invalid.
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/field-note/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, check } = h;
 
-const ctx = await browser.newContext();
+const ctx = await h.context();
 const p = await ctx.newPage();
 const errors = [];
 p.on('pageerror', e => errors.push(String(e)));
@@ -96,9 +93,13 @@ const faces = await p.evaluate(async () => {
   const v = n.querySelector('.sg-field-note__value');
   return { hand: getComputedStyle(n).fontFamily.split(',')[0], value: v && getComputedStyle(v).fontFamily.split(',')[0], text: v?.textContent, whole: n.textContent };
 });
-check('warm: the sentence is in the hand, the example in the body face (a 1 must not read as an l)', /Kalam/.test(faces.hand) && /Mukta/.test(faces.value) && faces.text === '16' && faces.whole === 'Error: Choose 16 October 2026 or later.', JSON.stringify(faces));
+// "Choose 16 October 2026 or later" is built from a date input's minimum; where the build has no <input type="date"> the field is a
+// text box with no minimum to fall below, so there is no date limit to say
+const dateUi = await p.evaluate(() => document.querySelector('#arrive').type === 'date');
+if (!dateUi) h.skip('the date-limit sentence (hand and body faces, and the way people say dates)', 'this build has no <input type="date">; the field is a text box with no minimum');
+else check('warm: the sentence is in the hand, the example in the body face (a 1 must not read as an l)', /Kalam/.test(faces.hand) && /Mukta/.test(faces.value) && faces.text === '16' && faces.whole === 'Error: Choose 16 October 2026 or later.', JSON.stringify(faces));
 const arrive = await read('#arrive');
-check('a date limit is said the way people say dates (page lang "en")', arrive.text === 'Error: Choose 16 October 2026 or later.', arrive.text);
+if (dateUi) check('a date limit is said the way people say dates (page lang "en")', arrive.text === 'Error: Choose 16 October 2026 or later.', arrive.text);
 await p.evaluate(() => document.querySelector('sg-field-note[for="dates"]').setMessage(''));
 const cleared = await read('#dates');
 check('setMessage("") clears a server message', !cleared.shown && cleared.invalid === null, JSON.stringify(cleared));
@@ -196,8 +197,4 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await q.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

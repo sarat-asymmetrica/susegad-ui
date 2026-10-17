@@ -57,8 +57,6 @@ node tools/matrix.mjs --scene paus --content        # 15 cells: 3 registers x de
 node tools/axe.mjs --scene paus --content           # WCAG 2.2 AA in every register and theme; exits 1 on any violation
 node tools/matrix.mjs --url /packages/components/toast/demo.html   # a component: every tool takes its demo page
 node tools/perf.mjs --scene tollem                  # mean, p95 and worst frame time and JS bytes, next to the Paus baseline
-node tools/diff.mjs --scene kolam --seed 3 --at 2 --update   # make a visual baseline
-node tools/diff.mjs --scene kolam --seed 3 --at 2            # compare with it
 node registry/build.mjs --check                     # manifests, files, dependencies and budgets; fails if the index is stale
 node packages/cli/e2e.mjs scene-paus                # add to a fresh project outside the repo, load it, pass on sg-ready and a clean console
 node apps/docs/build.mjs && node apps/docs/check.mjs  # build the docs site, then screenshots, axe, overflow and Look closer

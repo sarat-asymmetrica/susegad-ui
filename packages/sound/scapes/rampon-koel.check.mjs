@@ -8,16 +8,15 @@
 // quiet even with the switch on; and once on, in playful, with a bird
 // actually on screen, a call happens within the schedule's own window.
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { pageHas } from '../../../tools/lib/engine.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "this check drives the scene test page tools/harness/scene.html, not a demo page; tools/smoke.mjs axes the registry's demo pages (it lists no paus or rampon page), so no axe check reads it" });
+const { server, browser, check } = h;
+const hasAudio = await pageHas(browser, "typeof AudioContext === 'function'"); // without one every count below is zero and the zeros would pass
 
 async function withScene(register, fn) {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -51,6 +50,12 @@ async function withScene(register, fn) {
   return errs;
 }
 
+if (!hasAudio) h.skip('every koel check (before the gesture, warm and quiet never call, playful calls, a hidden tab stops)', "this build has no AudioContext, so no context can be made, counted or heard; a count of zero would pass for want of one");
+if (!hasAudio) {
+  // what can still be asked without a context: the scene and the attached scape run without throwing
+  const errs = await withScene('playful', async p => { await p.waitForTimeout(2600); });
+  check('no console or page errors with the scape attached (no AudioContext in this engine)', errs.length === 0, errs.join(' | '));
+} else {
 // ── before any gesture: nothing plays, in any register ─────────────────────
 {
   const errs = await withScene('playful', async p => {
@@ -88,7 +93,7 @@ async function withScene(register, fn) {
 
 // ── tab hidden: stops calling ────────────────────────────────────────────
 {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   await p.addInitScript(() => { window.__calls = 0; const AC = window.AudioContext; if (!AC) return; window.AudioContext = new Proxy(AC, { construct(t, a) { const inst = new t(...a); const co = inst.createOscillator.bind(inst); inst.createOscillator = (...x) => { window.__calls++; return co(...x); }; return inst; } }); });
   await p.goto(`${server.url}/tools/harness/scene.html?name=rampon&register=playful&seed=1`);
@@ -104,9 +109,6 @@ async function withScene(register, fn) {
   await p.evaluate(() => window.__detach());
   await ctx.close();
 }
+}
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

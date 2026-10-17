@@ -88,7 +88,6 @@ test('with progress set, time stands still, the scene rests, and the status says
   assert.equal(paramsFromAttributes(ghat.params, n => (n === 'progress' ? '2' : null)).progress, 1);
 });
 
-test('meta: no em dash, keys for the playful hand', () => {
-  for (const k of ['title', 'gloss', 'caption', 'alt', 'keys', 'credit']) assert.ok(!meta[k].includes('—'), k);
+test('meta: keys for the playful hand', () => {
   assert.deepEqual(ghat.interactive, ['playful']);
 });

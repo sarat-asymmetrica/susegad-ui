@@ -10,6 +10,14 @@
 //                 brand-new piece in an existing family can be seen)
 //     gateFullPaths  paths whose own header declares `gate: full`
 //
+// Generated files (the registry index, the two generated references, the custom-elements manifest, the accessibility
+// reference) are neutral: they are rebuilt from other files, so they never raise a tier. The other files in references/
+// are hand-written and are what the shipped skill tells an outside agent, so they are not neutral. Documentation under
+// packages/ (README.md, docs.md, PROVENANCE.md, *.docs.md, *.prompt.md) is Light even inside a shared prefix: it cannot
+// change behaviour. Other markdown there is content a demo renders or a native reader checks (a story, a proposal sample,
+// Konkani for a reader) and takes the tier its item demands. The engine is shared
+// (tools/lib/changed.core.js selects every check for it), so a change there is Standard at least, never Light.
+//
 // The tier is the highest one any rule fires; every rule that fired is reported, so a
 // review can show why. A request can raise a tier and never lower one, which is why the
 // answer only ever climbs.
@@ -24,8 +32,21 @@ const SHARED_PREFIXES = [
   'packages/core-orient/', 'packages/tokens/', 'packages/type/', 'packages/kernels/',
 ];
 
-const LIGHT_PREFIXES = ['packages/engine/', 'tools/', 'docs/', 'tests/', 'sketchbook/'];
+// Rebuilt from other files by registry/build.mjs, tools/cem.mjs and tools/skill-inventory.mjs (which rewrites only
+// references/components.md and references/scenes.md); hand edits to these are overwritten.
+export const GENERATED = [
+  'registry/registry.json', 'custom-elements.json', 'docs/reference/accessibility.md',
+  'references/components.md', 'references/scenes.md',
+];
+const isGenerated = p => GENERATED.some(g => (g.endsWith('/') ? p.startsWith(g) : p === g));
+
+// Documentation beside a piece: it describes behaviour and cannot change it. Not every .md under packages/ is this.
+const DOC_PROSE = /(^|\/)(README|docs|PROVENANCE|CHANGELOG)\.md$|\.(docs|prompt)\.md$/;
+
+const LIGHT_PREFIXES = ['tools/', 'docs/', 'tests/', 'sketchbook/'];
 const LIGHT_SUFFIX = /\.(test|check)\.[cm]?[jt]s$|\.test\.[cm]?[jt]s$|\.prompt\.md$|\.docs\.md$/;
+
+const BINDING = /^tools\/(gate-tier[^/]*|rigour\.mjs|lib\/rigour[^/]*|fixtures\/rigour\/.*)$/;
 
 const RENDERING = /(^|\/)(render\.js|demo\.html)$|\/skins\/|\.css$/;
 const FRONT_DOOR = new Set([
@@ -99,20 +120,31 @@ export function classify(paths, registry, { newPaths = [], gateFullPaths = [] } 
     const p = posix(raw);
     if (gateFull.has(p)) { raise('full', `${p} declares gate: full`); continue; }
 
+    if (isGenerated(p)) { reasons.push(`neutral: ${p} is generated`); continue; }
+
     const item = ownerOf(p, items);
     const itemName = item ? item.name : null;
     const rendering = RENDERING.test(p);
+
+    if (p.startsWith('docs/decisions/')) { raise('full', `${p} is a decision`); continue; }
+    if (p.startsWith('packages/') && DOC_PROSE.test(p)) { reasons.push(`light: ${p} is prose`); continue; }
 
     // Full, in the order the request's table names them
     if (SHARED_PREFIXES.some(pre => p.startsWith(pre))) {
       raise('full', `${p} is a shared primitive (core, tokens, type or kernels)`);
       continue;
     }
+    // The engine is imported by every scene but is Standard, not Full (see the Standard rules below); it is exempt here.
     if (item && itemName !== 'engine' && (deps.get(itemName)?.length ?? 0) > 0 && !LIGHT_PREFIXES.some(pre => p.startsWith(pre)) && !LIGHT_SUFFIX.test(p)) {
-      raise('full', `${p} is ${itemName}, which other pieces import (${deps.get(itemName).join(', ')})`);
+      const importers = deps.get(itemName);
+      // A package born in this diff and imported only by pieces born in it has no other user to break.
+      if (isNewItem(item) && importers.every(n => byName.has(n) && isNewItem(byName.get(n)))) {
+        raise('standard', `${p} is ${itemName}, a new package imported only by new pieces in this diff (${importers.join(', ')})`);
+        continue;
+      }
+      raise('full', `${p} is ${itemName}, which other pieces import (${importers.join(', ')})`);
       continue;
     }
-    if (p.startsWith('docs/decisions/')) { raise('full', `${p} is a decision`); continue; }
     if (item && item.type === 'component' && FULL_COMPONENTS.has(item.name.replace(/^scene-/, '')) && !LIGHT_SUFFIX.test(p)) {
       raise('full', `${p} is a focus-managing overlay or form (${itemName})`);
       continue;
@@ -136,13 +168,16 @@ export function classify(paths, registry, { newPaths = [], gateFullPaths = [] } 
       continue;
     }
 
-    // Light: only engine with tests, tools, docs, tests, copy; nothing that renders
-    if (p.startsWith('packages/engine/')) {
-      const hasTest = [...paths].some(q => posix(q).startsWith('packages/engine/') && LIGHT_SUFFIX.test(posix(q)));
-      if (hasTest) { reasons.push(`light: ${p} is engine, with tests`); continue; }
-      raise('standard', `${p} is engine without a test beside it in the same diff`);
+    // The engine is shared: tools/lib/changed.core.js selects every check for it, so a change that is not a test is Standard at least.
+    if (p.startsWith('packages/engine/') && !LIGHT_SUFFIX.test(p)) {
+      raise('standard', `${p} is engine, which every scene shares`);
       continue;
     }
+
+    // The binding itself: a change to how a review is recognised or the tier is judged cannot show in its own tier, so never Light.
+    if (BINDING.test(p)) { raise('standard', `${p} is the gate binding itself (the tier, the review recognition, the runner)`); continue; }
+
+    // Light: tools, docs, tests, copy, and the engine's own tests; nothing that renders
     if (LIGHT_PREFIXES.some(pre => p.startsWith(pre)) || LIGHT_SUFFIX.test(p)) {
       reasons.push(`light: ${p}`);
       continue;
@@ -152,4 +187,260 @@ export function classify(paths, registry, { newPaths = [], gateFullPaths = [] } 
   }
 
   return { tier, reasons };
+}
+
+// ---- Binding the tier: has a merged slice had the review its tier owes? ----
+//
+// A review counts ONLY through the canonical line, on a line of its own (a list bullet may lead it), in docs/LEDGER.md
+// or any docs/reviews/*.md, outside fenced code blocks, blockquotes, inline code and HTML comments:
+//
+//     Rasika: <pass | pass with notes | changes needed | blocked>. Tier: <Light | Standard | Full>. Slice: <branch> (<hash>)
+//     Rasika: <pass | pass with notes | changes needed | blocked>. Tier: <Light | Standard | Full>. Slice: commit <hash>
+//
+// The verdict, the tier and the slice come from that line alone; no prose anywhere can raise a tier or create a pass.
+// The first form reviews a merged slice (the branch, whole, and a hash of seven or more digits that is the merge or
+// one of its own commits); the second reviews one direct commit, one line per commit (see mergedSlices). Recognition
+// is an allow-list: a near-miss is not a review, so nothing needs to be block-listed.
+//
+// Legacy: reviews dated before LEGACY_BEFORE keep the old pattern recognition (verdictOf, declaredTier, reviewBlocks,
+// LEDGER_OWED), so history still reads. A review file is dated by its name (YYYY-MM-DD-...; the wave-N.md files are
+// history too), a ledger line by the nearest dated heading above it. Anything on or after the cutoff, or with no
+// date, is canonical-only. Only a pass satisfies the requirement; `changes needed` and `blocked` are reviews that
+// were done and did not pass, and the re-review that passes is what satisfies it. A Light slice owes no review
+// agent, so it is always satisfied.
+
+export const TIER_RANK = { light: 0, standard: 1, full: 2 };
+
+const DECLARES = [
+  /\btier\s*[:=]\s*(standard|full)\b/gi,                  // Tier: Full
+  /\b(standard|full)\s+(?:rasika|review|pass)\b/gi,       // Full review, Standard pass, Full Rasika
+  /\brasika\s+(?:pass\s+)?(?:at\s+|:\s*)?(standard|full)\b/gi, // Rasika Full, Rasika at Standard
+  /\b(standard|full)\s*[;,]\s*rasika\b/gi,                // "... Full; Rasika pass with notes"
+];
+
+/** What a tier owes, in the words of docs/RUNBOOK.md section 5. */
+export function reviewOwed(tier) {
+  return {
+    light: 'Light: no review agent. The Sutradhar reads the diff and the review pack.',
+    standard: 'Standard: Rasika works from the review pack (one strip if it moves, the keyboard if it is interactive).',
+    full: 'Full: Rasika does everything in its kernel, and Kathakar writes every string.',
+  }[tier];
+}
+
+/** The tier a unit of text declares for its review, or null. The highest one anywhere in it wins. */
+export function declaredTier(text) {
+  let best = null;
+  for (const re of DECLARES) {
+    for (const m of text.matchAll(re)) {
+      const t = m[1].toLowerCase();
+      if (best === null || TIER_RANK[t] > TIER_RANK[best]) best = t;
+    }
+  }
+  return best;
+}
+
+// ---- The verdict ----
+//
+// Found in a clause (text between . ; or a line end) that holds the word Rasika followed within a few words by a
+// verdict phrase. It is void when a word of doubt or postponement stands before the verdict in that clause
+// ("no Rasika pass", "Rasika has not passed", "Rasika review still owed, nothing passed") or a word of postponement
+// follows it ("Rasika pass pending", "pass to be booked", "pass not run").
+const VERDICT = /\b(pass with notes|pass with findings|changes needed|blocked|approved|passes|passed|pass)\b/i;
+const BEFORE_DOUBT = /\b(not|no|nothing|never|without|none|still|yet|owed|owe|owes|pending|awaiting|awaits|await|booked|book|will|would|should|could|may|might|once|until|unless|if|when|whether|need|needs|expected|expect|tbd|todo|to be|asked for)\b|n't/i;
+const AFTER_DOUBT = /\b(yet|still|owed|owe|owes|pending|booked|book|tbd|todo|to be|not run|not yet|not done|not finished|expected|awaiting|once|until|unless|if|when|will|would)\b/i;
+
+const CLAUSE = /[^.;\n]+/g;
+
+/**
+ * The verdicts Rasika gave in a text, in order: 'pass', 'changes needed' or 'blocked'. A review that has not
+ * happened gives none.
+ */
+export function verdictsOf(text) {
+  const out = [];
+  for (const clause of text.match(CLAUSE) ?? []) {
+    const r = /rasika/i.exec(clause);
+    if (!r) continue;
+    const after = clause.slice(r.index + r[0].length);
+    const v = VERDICT.exec(after);
+    if (!v || v.index > 48) continue;                        // the verdict stands next to the name
+    const before = clause.slice(0, r.index).split(/[:,(]/).pop();      // back to the nearest break
+    const between = after.slice(0, v.index);
+    const tail = after.slice(v.index + v[0].length);
+    if (BEFORE_DOUBT.test(before) || BEFORE_DOUBT.test(between) || AFTER_DOUBT.test(tail)) continue;
+    const word = v[1].toLowerCase();
+    out.push(word === 'changes needed' || word === 'blocked' ? word : 'pass');
+  }
+  return out;
+}
+
+/** The single verdict of a unit: a failing one beats a pass (a review that found changes did not pass); null when none. */
+export function verdictOf(text) {
+  const vs = verdictsOf(text);
+  if (!vs.length) return null;
+  return vs.find(v => v !== 'pass') ?? 'pass';
+}
+
+// A ledger line that carries any of these says some review is still to come: the whole line is void, whatever else it says.
+const LEDGER_OWED = /\b(owed|owes|pending|to be booked|to book|not yet|nothing passed|awaiting)\b/i;
+
+const escapeRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** Does the text name the slice? refs: branch names and commit hashes (any length of 7 or more is matched as a prefix). */
+export function namesSlice(text, refs) {
+  for (const ref of refs) {
+    if (!ref) continue;
+    if (/^[0-9a-f]{7,40}$/i.test(ref)) {
+      for (const m of text.matchAll(/(?<![0-9a-f])[0-9a-f]{7,40}(?![0-9a-f])/gi)) {
+        if (ref.toLowerCase().startsWith(m[0].toLowerCase())) return true;
+      }
+    } else if (new RegExp('(?<![\\w/.-])' + escapeRe(ref) + '(?![\\w/-])').test(text)) return true;
+  }
+  return false;
+}
+
+/**
+ * The blocks of a markdown file: the whole file (level 0) and one per heading, which runs to the next heading of
+ * the same or a shallower level. { level, start, end (line indexes, end exclusive), heading, text }.
+ */
+export function blocksOf(text) {
+  const lines = text.split('\n');
+  const heads = [];
+  lines.forEach((l, i) => { const m = /^(#{1,6})\s+\S/.exec(l); if (m) heads.push({ level: m[1].length, start: i }); });
+  const blocks = [{ level: 0, start: 0, end: lines.length, heading: '', text }];
+  for (const h of heads) {
+    let end = lines.length;
+    for (const o of heads) if (o.start > h.start && o.level <= h.level) { end = o.start; break; }
+    blocks.push({ level: h.level, start: h.start, end, heading: lines[h.start], text: lines.slice(h.start, end).join('\n') });
+  }
+  return blocks;
+}
+
+// a lies within b; two blocks over the same lines (a title that is the whole file) count once, the heading's
+const inside = (a, b) => a !== b && a.start >= b.start && a.end <= b.end && (a.start > b.start || a.end < b.end || a.level < b.level);
+
+/** The blocks of a review file that review a slice: the headings that name it (outermost), else the smallest blocks that do. */
+export function reviewBlocks(text, refs) {
+  const blocks = blocksOf(text);
+  const headed = blocks.filter(b => b.level > 0 && namesSlice(b.heading, refs));
+  if (headed.length) return headed.filter(b => !headed.some(o => inside(b, o)));
+  const naming = blocks.filter(b => namesSlice(b.text, refs));
+  return naming.filter(b => !naming.some(o => inside(o, b)));
+}
+
+function judgeUnit(text, heading) {
+  // The heading is the review's header: its verdict and tier stand for the section when it gives them.
+  const verdict = (heading && verdictOf(heading)) || verdictOf(text);
+  if (!verdict) return null;
+  const tier = (heading && declaredTier(heading)) || declaredTier(text);
+  return tier ? { tier, verdict } : null;
+}
+
+// ---- The canonical line ----
+
+/** Reviews dated on or after this day count only through the canonical line. */
+export const LEGACY_BEFORE = '2026-10-17';
+
+const HASH = /^[0-9a-f]{7,40}$/i;
+const CANON = /^ {0,3}(?:[-*+] +)?Rasika: (pass with notes|pass|changes needed|blocked)\. Tier: (Light|Standard|Full)\. Slice: (?:commit ([0-9a-fA-F]{7,40})|([A-Za-z0-9][A-Za-z0-9_.\/-]*) \(([0-9a-fA-F]{7,40})\))$/;
+
+/** The canonical review line parsed, or null when the text is anything else. { verdict, tier, branch, hash, commit } */
+export function canonicalReviewLine(line) {
+  const m = CANON.exec(line);
+  if (!m) return null;
+  return {
+    verdict: m[1] === 'changes needed' || m[1] === 'blocked' ? m[1] : 'pass',
+    tier: m[2].toLowerCase(), branch: m[4] ?? null, hash: (m[3] ?? m[5]).toLowerCase(), commit: m[3] !== undefined,
+  };
+}
+
+/**
+ * The lines of a markdown text with what a review line cannot be in blanked out, so line numbers still count:
+ * HTML comments, fenced code blocks (an unclosed fence runs to the end), blockquotes (with their lazy continuation
+ * lines, up to a blank line, heading, bullet or fence) and inline code spans.
+ */
+export function proseLines(text) {
+  const bare = text.replace(/<!--[\s\S]*?(?:-->|$)/g, m => m.replace(/[^\n]/g, ''));
+  const out = [];
+  let fence = null, quoting = false;
+  for (const line of bare.split('\n')) {
+    const open = /^ {0,3}(`{3,}|~{3,})/.exec(line);
+    if (fence) {
+      if (open && open[1][0] === fence[0] && open[1].length >= fence.length && /^ {0,3}(`+|~+)\s*$/.test(line)) fence = null;
+      out.push(''); continue;
+    }
+    if (open) { fence = open[1]; quoting = false; out.push(''); continue; }
+    if (/^ {0,3}>/.test(line)) { quoting = true; out.push(''); continue; }
+    if (!line.trim() || /^ {0,3}(#{1,6}\s|[-*+]\s)/.test(line)) quoting = false;
+    if (quoting) { out.push(''); continue; }
+    out.push(line.replace(/(`+)[^\n]*?\1/g, ''));
+  }
+  return out;
+}
+
+// A review file is dated by its name; a ledger line by the nearest dated heading above it.
+const DATED_NAME = /^(\d{4}-\d{2}-\d{2})-/;
+const HEAD_DATE = /^#{1,6}\s+(\d{4}-\d{2}-\d{2})\b/;
+function isLegacyFile(source, before) {
+  const base = source.split('/').pop();
+  const d = DATED_NAME.exec(base);
+  return d ? d[1] < before : /^wave-\d+\.md$/.test(base);
+}
+
+/** Does a canonical line review this unit? A branch line needs the branch and a hash of the slice; a commit line needs a direct commit. */
+function canonicalNames(c, refs, direct) {
+  const hashed = refs.some(r => HASH.test(r || '') && (r.toLowerCase().startsWith(c.hash) || c.hash.startsWith(r.toLowerCase())));
+  if (c.commit) return direct && hashed;
+  return !direct && hashed && refs.some(r => r === c.branch && !HASH.test(r));
+}
+
+/**
+ * The reviews found in documents: [{ source, tier, verdict, canonical? }] for each review of a slice (named by
+ * refs; direct: a single direct commit). Includes verdicts that are not passes; enforce() reads which count.
+ */
+export function findReviews(documents, refs, { direct = false, legacyBefore = LEGACY_BEFORE } = {}) {
+  const found = [];
+  const add = r => { if (!found.some(x => x.source === r.source && x.tier === r.tier && x.verdict === r.verdict)) found.push(r); };
+  for (const doc of documents) {
+    proseLines(doc.text).forEach((line, i) => {
+      const c = canonicalReviewLine(line);
+      if (c && canonicalNames(c, refs, direct)) add({ source: `${doc.source}:${i + 1}`, tier: c.tier, verdict: c.verdict, canonical: true });
+    });
+    if (doc.kind === 'ledger') {
+      let date = null;
+      doc.text.split('\n').forEach((line, i) => {
+        date = HEAD_DATE.exec(line)?.[1] ?? date;
+        if (!date || date >= legacyBefore || !namesSlice(line, refs) || LEDGER_OWED.test(line)) return;
+        const j = judgeUnit(line, '');
+        if (j) add({ source: `${doc.source}:${i + 1}`, ...j });
+      });
+    } else if (isLegacyFile(doc.source, legacyBefore)) {
+      for (const b of reviewBlocks(doc.text, refs)) {
+        const j = judgeUnit(b.text, b.heading);
+        if (j) add({ source: b.level === 0 ? doc.source : `${doc.source}:${b.start + 1}`, ...j });
+      }
+    }
+  }
+  return found;
+}
+
+/**
+ * Judge merged slices. slices: [{ name, refs, tier, reasons, direct? }] (direct: one commit made straight on the branch). Each comes back with `reviews` (those found, with
+ * their verdicts) and `ok`: true when it is Light, or a review that passed at its tier or above was found.
+ * A changes-needed review is listed and does not satisfy it.
+ */
+export function enforce(slices, documents, opts = {}) {
+  return slices.map(s => {
+    const reviews = s.tier === 'light' ? [] : findReviews(documents, s.refs, { ...opts, direct: Boolean(s.direct) });
+    const best = reviews.filter(r => r.verdict === 'pass').reduce((a, r) => Math.max(a, TIER_RANK[r.tier]), -1);
+    return { ...s, reviews, ok: s.tier === 'light' || best >= TIER_RANK[s.tier] };
+  });
+}
+
+/** One printed line for a judged slice (gate-tier --enforce and the rigour runner print the same). */
+export function reviewLine(s) {
+  const found = s.reviews.map(r => `${r.verdict === 'pass' ? '' : `${r.verdict}, `}${r.tier} at ${r.source}`).join('; ');
+  const why = s.tier === 'light' ? 'no review owed'
+    : s.ok ? found
+    : found ? `${found}; owes a passing review at ${s.tier}` : 'no Rasika review in the ledger or docs/reviews';
+  return `${s.ok ? 'ok     ' : 'MISSING'} ${s.tier.padEnd(8)} ${s.name}${s.merge ? ` (${s.merge})` : ''}: ${why}`;
 }

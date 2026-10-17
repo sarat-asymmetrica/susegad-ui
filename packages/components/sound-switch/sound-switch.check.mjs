@@ -9,19 +9,18 @@
 // page follows without a reload; the drawing follows in warm and playful;
 // reduced motion holds it still; forced colours bring back the native control.
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { pageHas } from '../../../tools/lib/engine.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/sound-switch/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, browser, check } = h;
+const hasAudio = await pageHas(browser, "typeof AudioContext === 'function'"); // a count of zero contexts passes for want of an AudioContext, so ask first
 const demo = `${server.url}/packages/components/sound-switch/demo.html`;
 const sw = 'sg-sound-switch input[type="checkbox"]';
 
 // ── no JavaScript ───────────────────────────────────────────────────────────
 {
-  const ctx = await browser.newContext({ javaScriptEnabled: false });
+  const ctx = await h.context({ javaScriptEnabled: false });
   const p = await ctx.newPage();
   await p.goto(demo);
   const defined = await p.evaluate(() => typeof customElements.get('sg-sound-switch'));
@@ -34,8 +33,9 @@ const sw = 'sg-sound-switch input[type="checkbox"]';
 }
 
 // ── nothing plays before a gesture, even the first click on the switch itself ──
-{
-  const ctx = await browser.newContext();
+if (!hasAudio) h.skip('the AudioContext count before and after the first click', "this build has no AudioContext, so no context can be made, counted or heard; a count of zero would pass for want of one");
+else {
+  const ctx = await h.context();
   const p = await ctx.newPage();
   // count every AudioContext ever constructed, and every resume() call, before the module even loads
   await p.addInitScript(() => {
@@ -59,7 +59,7 @@ const sw = 'sg-sound-switch input[type="checkbox"]';
 
 // ── with JavaScript, every register ─────────────────────────────────────────
 for (const register of ['quiet', 'warm', 'playful']) {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -99,7 +99,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 
 // ── playful: the arcs pause off screen and hold still under reduced motion ──
 {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=playful`);
   await p.waitForFunction(() => window.__ready && [...document.querySelectorAll('sg-sound-switch')].every(e => e.dataset.skin));
@@ -110,7 +110,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 {
-  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  const ctx = await h.context({ reducedMotion: 'reduce' });
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=playful`);
   await p.waitForFunction(() => window.__ready && [...document.querySelectorAll('sg-sound-switch')].every(e => e.dataset.skin));
@@ -123,7 +123,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 
 // ── forced colours ──────────────────────────────────────────────────────────
 for (const register of ['quiet', 'playful']) {
-  const ctx = await browser.newContext({ forcedColors: 'active' });
+  const ctx = await h.context({ forcedColors: 'active' });
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=${register}`);
   await p.waitForFunction(() => window.__ready);
@@ -136,8 +136,4 @@ for (const register of ['quiet', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

@@ -18,18 +18,14 @@
 //
 // --break: a flow that ignores the pot (1), a layout redone every frame (2), the pre-rung 1/16 grid (6).
 
-import { chromium } from 'playwright';
-import { startServer } from '../../../tools/serve.mjs';
-import { gpuOf } from '../../../tools/lib/gpu.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
 const BREAK = process.argv.includes('--break');
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
-const server = await startServer({ quiet: true });
-const browser = await chromium.launch({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] });
+const h = await harness({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'], axe: 'not axe-checked anywhere yet: this page is not in tools/smoke.mjs (docs/DEBT.md); this check asks about drawing and layout' });
+const { server, browser, check, results } = h;
 // On a software renderer (a CI runner, or SG_FORCE_SOFTWARE_GL=1) the pot is drawn once in 2D and never turns: the clauses about the
 // turning pot three draws (1, 1b, 2, 5, and the live part of 3) skip (`skip  <clause>  (no GPU: <renderer>)`, tools/lib/gpu.mjs).
-const gate = await gpuOf(browser);
+const gate = await h.gpu();
 const THREE = /node_modules\/three\/|three\.named\.js|three(\.module|\.core)?\.js/;
 const TEXT = 'The clay pot on the seat is where the water is kept cool. It has stood there since before the roof was retiled, and it turns, slowly, when nobody is looking, so that every side of it gets the same share of the evening light.';
 
@@ -40,7 +36,7 @@ const BREAKS = {
   oldWiring: [/matka-view\.js$/, s => s.replace('      const step = breaks ? breaks.quantize(th) : quantise(th, STEPS);', '      const step = quantise(th, STEPS);').replace('        lay(s, f, breaks ? step : quantise(th, STEPS));', '        lay(s, f, quantise(th, STEPS));')],
 };
 async function open({ query = 'register=warm', reduced = false, noGL = false, patches = [] } = {}) {
-  const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: reduced ? 'reduce' : 'no-preference', deviceScaleFactor: 1 });
+  const context = await h.context({ viewport: { width: 1280, height: 900 }, reducedMotion: reduced ? 'reduce' : 'no-preference', deviceScaleFactor: 1 });
   const requests = [], errors = [];
   context.on('request', r => requests.push(r.url()));
   if (noGL) await context.addInitScript("const g = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function (t, ...a) { return /webgl/.test(t) ? null : g.call(this, t, ...a); };");
@@ -200,7 +196,5 @@ if (!gate.skip('what three drew is the silhouette the layout used: its projected
   await p.context.close();
 }
 
-await browser.close(); await server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
-process.exit(BREAK ? 0 : failed ? 1 : 0);
+await h.done({ summary: `${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`, expectRed: BREAK });

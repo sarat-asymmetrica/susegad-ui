@@ -15,6 +15,9 @@
 
 import { trim } from './gallery.core.js';
 import { posterPicture } from '../../packages/core/lazy.core.js';
+import { W, inline } from './words.core.js';
+import { tr, LANG_NAME, HOME_PATH } from './konkani.core.js';
+import { accessibilitySection, headings } from './a11y.core.js';
 
 export const KINDS = {
   scene: { key: 'scenes', title: 'Scenes', one: 'scene', blurb: 'Drawings that do a job: they hold your words, show something real, or answer the person using them. Each runs in <sg-scene>, comes in three registers and ships with the prompt that made it.' },
@@ -27,14 +30,14 @@ export const KINDS = {
 // their own content; it lives with the foundations it stands on.
 KINDS.surface = KINDS.package;
 
-/** The top navigation, in order. The brand is the way home. */
+/** The top navigation, in order, for the site's three readers (front door 4): someone who wants a page, someone with an agent, an engineer. The brand is the way home; the other indexes are one click on, from /developers. */
 export const NAV = [
-  { key: 'start', label: 'Start here' },
+  { key: 'showcase', label: W.audience.nav.showcase },
   { key: 'scenes', label: 'Scenes' },
-  { key: 'components', label: 'Components' },
-  { key: 'recipes', label: 'Recipes' },
-  { key: 'foundations', label: 'Foundations' },
-  { key: 'pencil-box', label: 'Pencil box' },
+  { key: 'start', label: W.audience.nav.start },
+  { key: 'for-teams', label: W.audience.nav.teams },
+  { key: 'developers', label: W.audience.nav.developers },
+  { key: 'accessibility', label: 'Accessibility' },
 ];
 
 export const REGISTERS = ['quiet', 'warm', 'playful'];
@@ -138,46 +141,113 @@ export function neighbours(list, i) {
 
 // ── the shell every page shares ─────────────────────────────────────
 
-const PREFS = `
-      <form class="prefs" id="prefs" aria-label="How this page looks">
-        <fieldset class="seg seg-register" data-pref="register">
-          <legend>Register</legend>
-          <div class="seg-row">
-            <label><input type="radio" name="register" value="quiet"><span>Quiet</span></label>
-            <label><input type="radio" name="register" value="warm"><span>Warm</span></label>
-            <label><input type="radio" name="register" value="playful"><span>Playful</span></label>
-          </div>
-        </fieldset>
-        <fieldset class="seg" data-pref="theme">
-          <legend>Theme</legend>
-          <div class="seg-row">
-            <label><input type="radio" name="theme" value="auto"><span>Auto</span></label>
-            <label><input type="radio" name="theme" value="light"><span>Light</span></label>
-            <label><input type="radio" name="theme" value="dark"><span>Dark</span></label>
-          </div>
-        </fieldset>
-        <fieldset class="seg" data-pref="palette">
-          <legend>Palette</legend>
-          <div class="seg-row">
-            <label><input type="radio" name="palette" value="susegad"><span>Susegad</span></label>
-            <label><input type="radio" name="palette" value="casa"><span>Casa</span></label>
-          </div>
-        </fieldset>
-      </form>`;
+/** Where the Konkani pages a visitor can see live: the event template's, made at build time under /templates/event/site/. */
+export const KONKANI = [
+  { tag: 'gom-Deva', name: 'कोंकणी', href: 'templates/event/site/gom-deva/' },
+  { tag: 'gom-Latn', name: 'Konknni', href: 'templates/event/site/gom-latn/' },
+];
 
-/** The top navigation's links, `active` marked as the current page. */
-export function navLinks(active, depth) {
-  return NAV.map(n => `<a href="${up(depth)}${n.key}"${n.key === active ? ' aria-current="page"' : ''}>${esc(n.label)}</a>`).join('\n        ');
+const optionRows = (name, rows) => rows.map(([value, label, hint]) => `
+            <label class="view-opt"><input type="radio" name="${name}" value="${value}"><span class="view-opt-name">${esc(label)}</span>${hint ? `<span class="view-opt-hint">${esc(hint)}</span>` : ''}</label>`).join('');
+
+/** The View control's words in `lang` (English when none). Konkani is the deck's draft; the no-script and storage lines stay English. */
+export function viewStrings(lang) {
+  if (!lang) return { ...W.view, registerNames: Object.fromEntries(REGISTERS.map(r => [r, W.view.registers[r][0]])), themeNames: W.view.themes };
+  const registerNames = { quiet: tr(lang, 'view.quiet'), warm: tr(lang, 'view.warm'), playful: tr(lang, 'view.playful') };
+  const themeNames = { auto: tr(lang, 'view.auto'), light: tr(lang, 'view.light'), dark: tr(lang, 'view.dark') };
+  return {
+    ...W.view,
+    button: tr(lang, 'view.button'), title: tr(lang, 'view.title'), registerLegend: tr(lang, 'view.register'), registerIntro: tr(lang, 'view.intro'),
+    registers: { quiet: [registerNames.quiet, tr(lang, 'view.quiet.hint')], warm: [registerNames.warm, tr(lang, 'view.warm.hint')], playful: [registerNames.playful, tr(lang, 'view.playful.hint')] },
+    registerNames, themeNames, themes: themeNames, themeLegend: tr(lang, 'view.theme'), close: tr(lang, 'view.close'),
+    langLegend: tr(lang, 'lang.label'), langDraft: tr(lang, 'draft.short'),
+    name: (register, theme) => `${tr(lang, 'view.name')}: ${registerNames[register]}, ${themeNames[theme]}`,
+  };
 }
 
-export function bar(active, depth) {
+/** The language links of a page that has alternates: the page's own language is `aria-current`. Each language is named in its own script. */
+export function altLinks(depth, current) {
+  const u = up(depth);
+  return ['en-IN', 'gom-Deva', 'gom-Latn'].map(tag => {
+    const href = tag === current ? './' : (`${u}${HOME_PATH[tag]}` || './');
+    return `<li><a href="${esc(href)}" hreflang="${tag}" lang="${tag}"${tag === current ? ' aria-current="page"' : ''}>${LANG_NAME[tag]}</a></li>`;
+  }).join('\n                  ');
+}
+
+/**
+ * The View control: one button in the header that opens our own sg-popover, holding the register, the theme
+ * and (on a page that asks for it) the palette, and, on a page that has other languages, the language links.
+ * Without JavaScript the panel says the settings need it; the pages read well without them.
+ * @param {{ depth: number, palette?: boolean, lang?: string, alts?: string }} o
+ *   `lang` is the page's Konkani language, if it is one; `alts` is the page's own language tag when the page has
+ *   alternates (only then is the language group shown: a page with no Konkani twin offers none)
+ */
+export function viewControl({ depth, palette = false, lang, alts }) {
+  const v = viewStrings(lang);
+  const reg = optionRows('register', REGISTERS.map(r => [r, v.registers[r][0], v.registers[r][1]]));
+  const theme = optionRows('theme', ['auto', 'light', 'dark'].map(t => [t, v.themes[t]]));
+  const en = lang ? ' lang="en-IN"' : '';
+  return `<sg-popover class="view">
+        <button type="button" class="view-btn" id="view-btn" popovertarget="view-panel" aria-label="${esc(v.name('warm', 'auto'))}">${esc(v.button)}</button>
+        <div id="view-panel" class="view-panel" popover aria-labelledby="view-title">
+          <div class="view-head">
+            <h2 id="view-title" class="view-title">${esc(v.title)}</h2>
+            <button type="button" class="view-close" popovertarget="view-panel" popovertargetaction="hide">${esc(v.close)}</button>
+          </div>
+          <p class="view-nojs"${en}>${esc(W.view.nojs)}</p>
+          <form class="prefs" id="prefs" aria-label="${esc(v.title)}">
+            <fieldset class="view-group" data-pref="register">
+              <legend>${esc(v.registerLegend)}</legend>
+              <p class="view-intro">${esc(v.registerIntro)}</p>${reg}
+            </fieldset>
+            <fieldset class="view-group" data-pref="theme">
+              <legend>${esc(v.themeLegend)}</legend>${theme}
+            </fieldset>${palette ? `
+            <fieldset class="view-group" data-pref="palette">
+              <legend>${esc(v.paletteLegend)}</legend>${optionRows('palette', [['susegad', 'Susegad'], ['casa', 'Casa']])}
+            </fieldset>` : ''}
+          </form>
+          <p class="view-store" id="view-store" role="status" hidden${en}>${esc(W.view.storageOff)}</p>${alts ? `
+          <div class="view-group view-lang">
+            <h3 class="view-legend" id="view-lang-h">${esc(v.langLegend)}</h3>
+            <sg-lang>
+              <nav aria-labelledby="view-lang-h">
+                <ul>
+                  ${altLinks(depth, alts)}
+                </ul>
+              </nav>
+            </sg-lang>
+            <p class="view-draft">${esc(v.langDraft)}</p>
+          </div>` : ''}
+        </div>
+      </sg-popover>`;
+}
+
+/** The top navigation's links, `active` marked as the current page. On a Konkani page the words are Konkani and each link says the page it opens is English. */
+export function navLinks(active, depth, lang) {
+  // the indexes the nav does not name (components, recipes, foundations, the pencil box) are the developer's door
+  const section = active && !NAV.some(n => n.key === active) && DEVELOPER_SECTIONS.has(active) ? 'developers' : null;
+  return NAV.map(n => {
+    const label = lang ? tr(lang, `nav.${n.key}`) : n.label;
+    const current = n.key === active ? ' aria-current="page"' : n.key === section ? ' aria-current="true"' : '';
+    return `<a href="${up(depth)}${n.key}"${lang ? ' hreflang="en"' : ''}${current}>${esc(label)}</a>`;
+  }).join('\n        ');
+}
+
+/** The pages that sit behind /developers, so the nav marks Developers while one is open. */
+export const DEVELOPER_SECTIONS = new Set(['components', 'recipes', 'templates', 'foundations', 'pencil-box', 'handoff', 'browsers']);
+
+export function bar(active, depth, { path = '', palette = false, lang, alts } = {}) {
+  const home = lang ? './' : (up(depth) || './');
   return `  <header class="bar">
     <div class="bar-in">
-      <a class="brand" href="${up(depth) || './'}" aria-label="Susegad UI, home">Susegad <span>UI</span></a>
-      <nav class="nav" aria-label="Sections">
-        ${navLinks(active, depth)}
+      <a class="brand" href="${home}" aria-label="${lang ? esc(tr(lang, 'brand')) : 'Susegad UI, home'}">Susegad <span>UI</span></a>
+      <nav class="nav" aria-label="${lang ? esc(tr(lang, 'navLabel')) : 'Sections'}">
+        ${navLinks(active, depth, lang)}
       </nav>
-      <a class="src" href="https://github.com/sarat-asymmetrica/susegad-ui" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>${PREFS}
+      <a class="bar-trust" href="${up(depth)}accessibility"${lang ? ' hreflang="en"' : ''}>${lang ? esc(tr(lang, 'nav.accessibility')) : esc(W.trust.nav)}</a>
+      <a class="src" href="https://github.com/sarat-asymmetrica/susegad-ui" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
+      ${viewControl({ depth, palette, lang, alts })}
     </div>
     <div class="toran" aria-hidden="true"></div>
   </header>`;
@@ -188,44 +258,55 @@ export function foot(depth) {
     <p class="sig">made by Claude with Sarat, Asymmetrica, Goa, 2026</p>
     <p class="for"><a href="${up(depth)}for-rafe">For Rafe</a>, who lent us his Activa and went fishing.</p>
     <p class="src-line">The code, the prompts and the drawings are open on <a href="https://github.com/sarat-asymmetrica/susegad-ui" rel="noopener">GitHub</a>. Take what you like.</p>
+    <p class="foot-links"><a href="${up(depth)}accessibility">${esc(W.trust.foot)}</a> <span aria-hidden="true">·</span> <a href="${up(depth)}handoff">Handoff</a></p>
     <p>MIT licensed code; documentation under CC BY 4.0. This page makes no requests to anyone else's servers and keeps your settings only in your own browser.</p>
   </footer>`;
 }
+
+/** The other languages of a page that has them, in the head (decision 0025): each one, itself included, and x-default for a visitor whose language matches none. */
+export const hreflangLinks = () => ['en-IN', 'gom-Deva', 'gom-Latn'].map(t => `  <link rel="alternate" hreflang="${t}" href="${SITE}/${HOME_PATH[t]}">`).concat(`  <link rel="alternate" hreflang="x-default" href="${SITE}/">`).join('\n');
 
 /**
  * A whole page.
  * @param {{ title: string, description: string, depth: number, active?: string, main: string, scripts?: string[], after?: string }} p
  *   `scripts` are module paths relative to the site root.
  */
-export function page({ title, description, depth, active = '', main, scripts = [], after = '', readyLater = false, path = '', image }) {
+export function page({ title, description, depth, active = '', main, scripts = [], after = '', readyLater = false, path = '', image, palette = false, styles = [], lang, alts, footer }) {
   const u = up(depth);
+  const docTitle = title === 'Susegad UI' ? title : `${title} · Susegad UI`;
   return `<!doctype html>
-<html lang="en" data-register="warm" data-palette="susegad">
+<html lang="${lang || 'en'}" data-register="warm" data-palette="susegad"${palette ? ' data-palette-choice' : ''}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${esc(title)} · Susegad UI</title>
+  <title>${esc(docTitle)}</title>
   <meta name="description" content="${esc(description)}">
-${social({ title: `${title} · Susegad UI`, description, path, image })}
+${social({ title: docTitle, description, path, image })}${alts ? `
+${hreflangLinks()}` : ''}
   <meta name="color-scheme" content="light dark">
   <script src="${u}prefs.js"></script>
   <link rel="stylesheet" href="${u}packages/tokens/fonts.css">
   <link rel="stylesheet" href="${u}packages/tokens/tokens.css">
   <link rel="stylesheet" href="${u}docs.css">
   <link rel="stylesheet" href="${u}site.css">
-  <script type="module" src="${u}shell.js"></script>
+  <link rel="stylesheet" href="${u}door.css">
+  <link rel="stylesheet" href="${u}audience.css">
+  <link rel="stylesheet" href="${u}packages/components/popover/popover.css">
+  <link rel="stylesheet" href="${u}packages/components/lang/lang.css">
+${styles.map(s => `  <link rel="stylesheet" href="${u}${s}">
+`).join('')}  <script type="module" src="${u}shell.js"></script>
 ${scripts.map(s => `  <script type="module" src="${u}${s}"></script>`).join('\n')}
 </head>
 <body${readyLater ? ' data-ready-later' : ''}>
-  <a class="skip" href="#main">Skip to main content</a>
+  <a class="skip" href="#main">${lang ? esc(tr(lang, 'skip')) : 'Skip to main content'}</a>
 
-${bar(active, depth)}
+${bar(active, depth, { path, palette, lang, alts })}
 
   <main class="wrap" id="main" tabindex="-1">
 ${main}
   </main>
 
-${foot(depth)}
+${footer ?? foot(depth)}
 ${after}
   <p class="sr-only" id="announce" aria-live="polite"></p>
 </body>
@@ -267,7 +348,7 @@ const searchBox = (kind, count) => `
       <p class="g-count" id="s-count" role="status">${count} ${count === 1 ? 'piece' : 'pieces'}</p>
     </div>`;
 
-const head = (kicker, title, lede, extra = '') => `    <section class="s-head" aria-labelledby="s-title">
+export const head = (kicker, title, lede, extra = '') => `    <section class="s-head" aria-labelledby="s-title">
       <p class="kicker">${esc(kicker)}</p>
       <h1 id="s-title" class="s-title">${esc(title)}</h1>
       <p class="lede">${esc(lede)}</p>${extra}
@@ -277,7 +358,7 @@ const head = (kicker, title, lede, extra = '') => `    <section class="s-head" a
  * An index page for one kind. Scenes come grouped (see sceneGroups); other
  * kinds come as one alphabetical grid with a search box.
  */
-export function indexPage(type, { items, groups, posters, lines = {} }) {
+export function indexPage(type, { items, groups, posters, lines = {}, extra = '', scripts = [], styles = [] }) {
   const k = KINDS[type];
   const depth = 0;
   let body;
@@ -302,9 +383,10 @@ export function indexPage(type, { items, groups, posters, lines = {} }) {
     depth,
     path: k.key,
     active: k.key,
-    main: `${head(`${count} ${count === 1 ? k.one : k.key}`, k.title, k.blurb, groups ? '' : searchBox(type, count))}
-${body}`,
-    scripts: groups ? [] : ['index-page.js'],
+    main: `${head(`${count} ${count === 1 ? k.one : k.key}`, k.title, k.blurb, groups || type === 'template' ? '' : searchBox(type, count))}
+${body}${extra}`,
+    scripts: groups ? [] : [...(type === 'template' ? [] : ['index-page.js']), ...scripts],
+    styles,
   });
 }
 
@@ -447,25 +529,42 @@ export function itemPage(item, ctx) {
   const deps = ctx.deps.length
     ? `<p class="deps"><b>Stands on:</b> ${ctx.deps.map(d => `<a href="${u}${pathOf(d)}">${esc(d.title)}</a>`).join(', ')}</p>`
     : '';
+  const a11y = accessibilitySection(ctx.docsHtml || '', { tables: ctx.a11yTables ?? 0, depth });
+  const docs = a11y.html;
+  const toc = [...(ctx.promptHtml ? [{ id: 'prompt', text: W.item.prompt }] : []), ...headings(docs)];
+  const demoWord = item.type === 'template' ? W.item.demoTemplate : W.item.demo;
   const main = `    <article class="item-page" aria-labelledby="item-title">
-      <header class="item-head">
-        <div class="item-intro">
+      <div class="item-grid">
+        <header class="item-head">
           ${crumbs(k, '', depth)}
           <h1 id="item-title" class="item-title">${esc(item.title)}</h1>
           <p class="lede">${esc(sentences(item.description, 320))}</p>
           ${facts ? `<p class="facts">${facts}</p>` : ''}
-          <p class="item-actions">${ctx.demo ? `<a class="btn btn-solid" href="${esc(ctx.demo)}">${item.type === 'template' ? 'See it working' : 'Open the live demo'}</a>` : ''}
+          <p class="item-actions">${ctx.demo ? `<a class="btn btn-solid" href="${esc(ctx.demo)}">${esc(demoWord)}</a>` : ''}
             <span class="install"><code>${esc(installCommand(item))}</code> <button class="copy" type="button" data-copy-text="${esc(installCommand(item))}">Copy</button></span></p>
           ${deps}
+        </header>
+        <aside class="item-side" aria-label="${esc(item.title)}, at a glance">
+          <div class="item-side-in">
+            ${ctx.poster ? `<a class="item-poster" href="${esc(ctx.demo || '#')}" tabindex="-1" aria-hidden="true">${posterImg(item.name, ctx.poster, depth, { eager: true })}</a>` : ''}
+            ${tocNavHtml(toc)}
+          </div>
+        </aside>
+        <div class="item-body">
+          ${ctx.promptHtml ? letter('prompt', ctx.promptHtml) : ''}
+          ${docs ? `<div class="item-docs prose">${docs}</div>` : `<p class="note">This piece has no written docs yet. Its demo and its source are the reference for now.</p>`}
         </div>
-        ${ctx.poster ? `<a class="item-poster" href="${esc(ctx.demo || '#')}" tabindex="-1" aria-hidden="true">${posterImg(item.name, ctx.poster, depth, { eager: true })}</a>` : ''}
-      </header>
-      ${ctx.promptHtml ? letter('prompt', ctx.promptHtml) : ''}
-      ${ctx.docsHtml ? `<div class="item-docs prose">${ctx.docsHtml}</div>` : `<p class="note">This piece has no written docs yet. Its demo and its source are the reference for now.</p>`}
+      </div>
     </article>
 ${prevNext(ctx.list, ctx.index, depth, `More ${k.key}`)}`;
   return page({ title: item.title, description: trim(item.description, 160), depth, active: k.key, main, path: pathOf(item), image: posterImage(item, ctx.poster) });
 }
+
+/** An "On this page" list: links to the ids on the page (none when there is nothing to jump between). */
+export const tocNavHtml = items => items.length < 2 ? '' : `<nav class="toc" aria-labelledby="toc-title">
+              <h2 class="toc-title" id="toc-title">${esc(W.item.tocTitle)}</h2>
+              <ul>${items.map(i => `<li><a href="#${esc(i.id)}">${esc(i.text)}</a></li>`).join('')}</ul>
+            </nav>`;
 
 // ── the pencil box ──────────────────────────────────────────────────
 
@@ -498,39 +597,34 @@ export function pencilBoxPage(techniques, scenes) {
 // ── the home page's doors ───────────────────────────────────────────
 
 /**
- * The doors into each kind, for the home page. `samples` are a few items of
- * the kind whose posters show on the door.
- * @param {Array<{ type: string, count: number, samples: object[] }>} doors
+ * The doors into each kind, for the home page: one signature picture each, big enough to read as a picture, a title
+ * that is the link, the count, and a line. `art` names the poster each door shows (a scene's own still, or a
+ * signature the poster step took); a door whose picture is missing shows its words alone.
+ * @param {Array<{ type: string, count: number }>} doors
+ * @param {Record<string, {w: number, h: number}>} posters
+ * @param {{ art: Record<string, string>, toy?: boolean }} o
  */
-export function homeDoors(doors, posters, techniqueCount) {
+export function homeDoors(doors, posters, techniqueCount, { art = {}, toy = true, pencil = true } = {}) {
+  const line = { scene: W.inside.scenes, component: W.inside.components, recipe: W.inside.recipes, package: W.inside.foundations };
   const door = d => {
     const k = KINDS[d.type];
-    const imgs = d.samples.filter(s => posters[s.name]).slice(0, 3);
-    return `<li class="door">
-          <div class="door-art${imgs.length ? '' : ' door-art-plain'}" aria-hidden="true">${imgs.map(s => posterImg(s.name, posters[s.name], 0)).join('')}</div>
+    const pic = art[d.type];
+    const has = pic && posters[pic];
+    return `<li class="door door-${d.type}">
+          <div class="door-art${has ? '' : ' door-art-plain'}" aria-hidden="true">${has ? posterImg(pic, posters[pic], 0) : ''}</div>
           <h3 class="door-title"><a href="${k.key}">${esc(k.title)}</a> <span class="door-count">${d.count}</span></h3>
-          <p class="door-line">${esc(sentences(k.blurb, 90))}</p>
+          <p class="door-line">${esc(line[d.type] ?? sentences(k.blurb, 90))}</p>${d.type === 'package' && toy ? `
+          <p class="door-toy"><a href="templates#bloom">${esc(W.inside.toy)}</a></p>` : ''}
         </li>`;
   };
   return `<ul class="doors" role="list">
-        ${doors.map(door).join('\n        ')}
+        ${doors.map(door).join('\n        ')}${pencil ? `
         <li class="door door-small">
           <div class="door-art door-art-plain" aria-hidden="true"></div>
           <h3 class="door-title"><a href="pencil-box">The pencil box</a> <span class="door-count">${techniqueCount}</span></h3>
           <p class="door-line">The handful of techniques that do nearly all the work, each with the scenes that use it.</p>
-        </li>
+        </li>` : ''}
       </ul>`;
 }
 
-/** Old home-page anchors -> where that thing lives now (index.html's redirect script uses the same rule). */
-export function redirectFor(hash, sceneSlugs) {
-  const h = decodeURIComponent(String(hash || '').replace(/^#/, ''));
-  if (!h) return null;
-  if (sceneSlugs.includes(h)) return `scenes/${h}`;
-  if (h === 'pencil-box') return 'pencil-box';
-  if (h === 'scenes') return 'scenes';
-  if (h.startsWith('t-')) return `pencil-box#${h}`;
-  const m = /^(.+)-(prompt|map)$/.exec(h);
-  if (m && sceneSlugs.includes(m[1])) return `scenes/${m[1]}#${m[2]}`;
-  return null;
-}
+export { redirectFor } from './redirect.core.js';

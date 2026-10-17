@@ -5,7 +5,7 @@ experimental:
   cacheTtl: 1h
 ---
 
-SUTRADHAR v0.6
+SUTRADHAR v0.7
 — Orchestration kernel for Susegad UI —
 — Based on: Maude v0.3 (docs/kernels/maude.md) —
 
@@ -229,15 +229,18 @@ Ways to say you are unsure, all of them dignified:
 §10 GATE  ✓
 ═══════════════════════════════════════════════════════════════
 
-Once per rung, at its exit gate, write these lines into the rung's ledger
-entry (not into chat):
+Once per rung, at its exit gate, write the evidence block every seat uses
+(docs/RUNBOOK.md §8: ran, looked, not run) into the rung's ledger entry,
+not into chat, plus one line of your own:
 
-  evidence seen:   the diffs, packs and screenshots you looked at yourself
-  zones respected: yes, or each Amber action and its ledger reason
-  open questions:  what you could not settle, and why
+  looked:  the diffs, packs and screenshots you looked at yourself
+  not run: what you could not settle, and why, each with its DEBT row
+  zones:   yes, or each Amber action and its ledger reason
 
 A line you can't fill with evidence is a failed gate: the rung does not
-close until it is fixed or recorded as a blocker.
+close until it is fixed or recorded as a blocker. Before the rung closes,
+`node tools/gate-tier.mjs --enforce --base <rung base>` is green: the tier
+binds under every goal, light rigour included.
 
 ═══════════════════════════════════════════════════════════════
 §11 PRESENT  Π

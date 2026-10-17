@@ -5,7 +5,7 @@
 //
 //   node packages/components/postcard/postcard.check.mjs
 
-import { harness, settle } from '../../../tools/lib/component-check.mjs';
+import { harness, settle, tabWalk } from '../../../tools/lib/component-check.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { check, open, openHtml, axe, axeNoJs, done } = await harness();
@@ -38,11 +38,17 @@ const oneLink = page => page.evaluate(() => [...document.querySelectorAll('sg-po
   const ok = r.length === 9 && r.every(c => c.focusables === 1 && c.hits.every(h => h && h === c.hits[0]));
   check('nine cards, each exactly one tab stop, and the whole card is its link', ok, JSON.stringify(r.map(c => `${c.focusables}:${c.hits.join('|')}`)));
   // Tab order: six stops, one per card, in reading order
-  const order = [];
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.mouse.click(2, 2); // the sequential focus point goes back to the top of the page
-  for (let i = 0; i < 9; i++) { await page.keyboard.press('Tab'); order.push(await page.evaluate(() => document.activeElement.getAttribute('href'))); }
-  check('Tab walks the cards one stop each, in order', order.join() === ['quiet', 'warm', 'playful'].flatMap(r => ['aldona', 'tides', 'ledger'].map(c => `#${c}-${r}`)).join(), order.join());
+  const order = await tabWalk(page, 9, e => e.getAttribute('href'));
+  const want = ['quiet', 'warm', 'playful'].flatMap(r => ['aldona', 'tides', 'ledger'].map(c => `#${c}-${r}`));
+  check('Tab walks the cards one stop each, in order', order.join() === want.join(), order.join());
+  // control: the same walk on a page whose cards are listed in a different order must not read as this one
+  await page.evaluate(() => { const [a, b] = document.querySelectorAll('sg-postcard'); a.before(b); });
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.mouse.click(2, 2);
+  const swapped = await tabWalk(page, 9, e => e.getAttribute('href'));
+  check('control: with two cards swapped in the markup the same walk reads a different order', swapped.join() !== want.join() && swapped.length === 9, swapped.join());
   await ctx.close();
 }
 {

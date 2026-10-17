@@ -10,19 +10,16 @@
 // autofill-style value setting and an SMS-keyboard insert all end up as digits
 // in the one input, and the boxes show them.
 
-import { contextOptions, engineName, grantsPermission, pickEngine, unsupportedIn } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { grantsPermission } from '../../../tools/lib/engine.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const engine = engineName();
-const browser = await pickEngine(engine).launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/otp/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, check, engine } = h;
 const url = `${server.url}/packages/components/otp/demo.html`;
 
 // ── without JavaScript ──
 {
-  const ctx = await browser.newContext({ javaScriptEnabled: false });
+  const ctx = await h.context({ javaScriptEnabled: false });
   const p = await ctx.newPage();
   await p.goto(`${url}?register=quiet`);
   const input = p.locator('#code');
@@ -46,7 +43,7 @@ const url = `${server.url}/packages/components/otp/demo.html`;
 }
 
 // ── with JavaScript ──
-const ctx = await browser.newContext(contextOptions(engine, { viewport: { width: 900, height: 900 }, permissions: ['clipboard-read', 'clipboard-write'] }));
+const ctx = await h.context({ viewport: { width: 900, height: 900 }, permissions: ['clipboard-read', 'clipboard-write'] });
 const p = await ctx.newPage();
 const errors = [];
 p.on('pageerror', e => errors.push(String(e)));
@@ -121,7 +118,7 @@ if (grantsPermission(engine, 'clipboard-write')) {
   s = await read();
   check('pasting a whole message keeps just the code and fills every box', s.value === '118204' && s.boxes === '118204', JSON.stringify(s));
 } else {
-  unsupportedIn(engine, 'navigator.clipboard.writeText() from an automated context', 'no clipboard-write grant');
+  h.skip('navigator.clipboard.writeText() from an automated context', 'no clipboard-write grant');
 }
 
 // autofill and SMS keyboards set the value their own way
@@ -151,7 +148,7 @@ await p.evaluate(`window.__landings = ${landings}`);
 const settled = await p.evaluate(() => window.__landings(document.getElementById('code').closest('sg-otp')).length);
 check('landing animations are cleaned up once they finish', settled === 0, `${settled} left`);
 {
-  const rctx = await browser.newContext({ reducedMotion: 'reduce' });
+  const rctx = await h.context({ reducedMotion: 'reduce' });
   const r = await rctx.newPage();
   await r.goto(`${url}?register=playful`);
   await r.waitForFunction(() => window.__ready && document.querySelector('#code').closest('sg-otp').dataset.skin);
@@ -174,7 +171,7 @@ check('no console or page errors', errors.length === 0, errors.join(' | '));
 {
   const lum = ([r, g, b]) => [r, g, b].map(v => { const s = v / 255; return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4; }).reduce((a, v, i) => a + v * [0.2126, 0.7152, 0.0722][i], 0);
   const ratio = (a, b) => { const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
-  const ctx = await browser.newContext(contextOptions(engine, { viewport: { width: 1000, height: 800 } }));
+  const ctx = await h.context({ viewport: { width: 1000, height: 800 } });
   const q = await ctx.newPage();
   const cells = [], low = [];
   for (const palette of ['susegad', 'casa', 'azulejo', 'haldi']) for (const theme of ['light', 'dark']) for (const register of ['quiet', 'warm', 'playful']) {
@@ -201,7 +198,7 @@ check('no console or page errors', errors.length === 0, errors.join(' | '));
 // ── 2.1.2: Tab leaves the code and Shift+Tab comes back, with the code empty, part filled and full ──
 {
   const tabsOut = async (trap) => {
-    const ctx = await browser.newContext(contextOptions(engine, { viewport: { width: 1000, height: 800 } }));
+    const ctx = await h.context({ viewport: { width: 1000, height: 800 } });
     const q = await ctx.newPage();
     await q.goto(`${url}?register=warm`);
     await q.waitForFunction(() => window.__ready === true && document.querySelector('sg-otp')?.dataset.skin);
@@ -225,8 +222,4 @@ check('no console or page errors', errors.length === 0, errors.join(' | '));
   check('2.1.2 control: the same probe on a code that swallows Tab reports a trap', trapped.some(x => !x), JSON.stringify(trapped));
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

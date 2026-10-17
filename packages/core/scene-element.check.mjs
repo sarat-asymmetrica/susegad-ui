@@ -6,13 +6,10 @@
 // name that arrives before the scene module loads mounts when it loads; a name
 // change swaps the scene; a scene with no name ever stays quiet.
 
-import { pickEngine } from '../../tools/lib/engine.mjs';
-import { startServer } from '../../tools/serve.mjs';
+import { harness } from '../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "this check drives bare test pages (tools/harness/blank.html with routed-in fixtures) for the element base class, not demo pages; tools/smoke.mjs axes only the registry's demo pages, so no axe check reads them" });
+const { server, browser, check } = h;
 
 const p = await browser.newPage();
 const errors = [];
@@ -65,6 +62,4 @@ check('changing the name swaps the scene', out.swapped);
 check('the swap leaves one canvas', out.swappedOneCanvas === 1, `canvases: ${out.swappedOneCanvas}`);
 check('no console errors', errors.length === 0, errors.join(' | '));
 
-await browser.close();
-await server.close();
-if (results.some(r => !r.ok)) process.exit(1);
+await h.done();

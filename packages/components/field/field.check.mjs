@@ -3,14 +3,11 @@
 //
 //   node packages/components/field/field.check.mjs
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/field/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked, and the pages it builds itself are in no axe check (docs/DEBT.md row 48)" });
+const { server, check } = h;
 
 const PAGE = `
   <form id="f" action="/tools/harness/blank.html" method="get">
@@ -29,7 +26,7 @@ const SELECT_PAGE = `
   </form>`;
 
 async function open({ register = 'warm', js = true, reduced = false, html = PAGE } = {}) {
-  const ctx = await browser.newContext({ javaScriptEnabled: js, reducedMotion: reduced ? 'reduce' : 'no-preference' });
+  const ctx = await h.context({ javaScriptEnabled: js, reducedMotion: reduced ? 'reduce' : 'no-preference' });
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -107,7 +104,7 @@ const inkOf = (p, sel) => p.evaluate(s => {
 
 // ── a select inside sg-field: every register, no page error, the native select stays the control ──
 for (const register of ['quiet', 'warm', 'playful']) for (const width of [1280, 390]) {
-  const ctx = await browser.newContext({ viewport: { width, height: 800 } });
+  const ctx = await h.context({ viewport: { width, height: 800 } });
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -156,7 +153,7 @@ const inkPixels = async (p, box) => {
   }, png.toString('base64'));
 };
 for (const register of ['quiet', 'warm', 'playful']) for (const forced of [false, true]) {
-  const ctx = await browser.newContext({ viewport: { width: 700, height: 500 }, forcedColors: forced ? 'active' : 'none' });
+  const ctx = await h.context({ viewport: { width: 700, height: 500 }, forcedColors: forced ? 'active' : 'none' });
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -183,7 +180,7 @@ for (const register of ['quiet', 'warm', 'playful']) for (const forced of [false
 
 // ── the demo: every note wraps, nothing is clipped, in every register, wide and narrow ──
 for (const register of ['quiet', 'warm', 'playful']) for (const width of [1280, 390]) {
-  const ctx = await browser.newContext({ viewport: { width, height: 900 } });
+  const ctx = await h.context({ viewport: { width, height: 900 } });
   const p = await ctx.newPage();
   await p.goto(`${server.url}/packages/components/field/demo.html?register=${register}`);
   await p.waitForFunction(() => window.__ready === true);
@@ -238,8 +235,4 @@ for (const reduced of [false, true]) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

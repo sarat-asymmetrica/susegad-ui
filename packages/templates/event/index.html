@@ -13,7 +13,13 @@
 <link rel="stylesheet" href="susegad/tokens/fonts.css">
 <link rel="stylesheet" href="susegad/tokens/tokens.css">
 <link rel="stylesheet" href="susegad/core/lazy.css">
+<link rel="stylesheet" href="susegad/components/banner/banner.css">
 <link rel="stylesheet" href="susegad/components/lang/lang.css">
+<link rel="stylesheet" href="susegad/components/check/check.css">
+<link rel="stylesheet" href="susegad/components/field-note/field-note.css">
+<link rel="stylesheet" href="susegad/components/consent/consent.css">
+<link rel="stylesheet" href="susegad/components/qr/qr.css">
+<link rel="stylesheet" href="susegad/components/ticket/ticket.css">
 <link rel="stylesheet" href="susegad/components/person-card/person-card.css">
 <link rel="stylesheet" href="susegad/components/site-footer/site-footer.css">
 <link rel="stylesheet" href="susegad/recipes/agenda/recipe.css">
@@ -25,11 +31,14 @@
 <body>
 <a class="skip" href="#main">Skip to the content</a>
 
+<sg-banner id="doors" until="2026-11-21">Doors open at 9:30 am on Saturday 21 November. Please bring your ticket, on your phone or on paper.</sg-banner>
+
 <header class="bar">
   <p class="brand"><a href="index.html">Mandovi Conclave</a></p>
   <nav class="bar-links" aria-label="Main navigation">
     <a href="#agenda">Agenda</a>
     <a href="#speakers">Speakers</a>
+    <a href="#register">Register</a>
     <a href="#venue">The venue</a>
   </nav>
   <sg-lang>
@@ -182,6 +191,32 @@
   </section>
 
   <!-- data-lat, data-lng and data-name are written once; the page's script makes the two map links from them -->
+  <!-- Registration. A valid send fires sg-register ({ name, email }) and never leaves the page; page.js answers it by making the ticket on this device; the consent notice is the library's, and a legal read of it is yours to get before going live -->
+  <section class="sg-register" id="register" aria-labelledby="register-h">
+    <h2 id="register-h">Register</h2>
+    <p class="lede">Tell us who is coming and we will keep a place for you.</p>
+    <sg-ticket id="ticket" event="Mandovi Conclave" event-id="mandovi-conclave" at="2026-11-21T09:30"></sg-ticket>
+    <form class="sg-register-form" action="#" method="post" data-sample="This sample form does not send anything.">
+      <p class="sg-register-field"><label for="reg-name">Name</label> <input id="reg-name" name="name" autocomplete="name" required></p>
+      <p class="sg-register-field"><label for="reg-email">Email address</label> <input id="reg-email" name="email" type="email" autocomplete="email" required></p>
+      <sg-consent id="register-consent" role="group" aria-labelledby="register-consent-h">
+      <h3 class="sg-consent-heading" id="register-consent-h">What we do with your details</h3>
+      <p class="sg-consent-line" data-part="collect">We ask for your name and your email address.</p>
+      <p class="sg-consent-line" data-part="why">We use them to confirm your place and send you the ticket and any change to this event, and for nothing else.</p>
+      <p class="sg-consent-line" data-part="howLong">We keep them until 30 days after the event, then we delete them.</p>
+      <p class="sg-consent-line" data-part="ask">To ask what we hold, to correct it, or to have it deleted, write to <span class="sg-consent-blank" lang="en">[contact: the site fills in a real address]</span>.</p>
+      <p class="sg-consent-line" data-part="withdraw">You can take back your consent at any time by writing to the same address. Taking it back will not undo anything we did before you wrote, and we will tell you if it changes what we can do for you.</p>
+      <p class="sg-consent-line" data-part="complain"><span class="sg-consent-blank" lang="en">[complaint line: the site fills this in, naming where a visitor can complain if they are not satisfied]</span></p>
+      <div class="sg-consent-tick">
+        <sg-check><label><input type="checkbox" id="register-consent-box" name="consent" value="yes" required> <span class="sg-consent-words">I have read this, and I agree that <span class="sg-consent-blank" lang="en">[site name]</span> may use my details in this way.</span></label></sg-check>
+        <sg-field-note for="register-consent-box" validate data-value-missing="Please tick the box if you are happy to go on. We cannot use your details without it."></sg-field-note>
+      </div>
+      </sg-consent>
+      <p><button class="button" type="submit" disabled>Register</button></p>
+      <noscript><p class="sg-register-noscript">Registering needs JavaScript. Please turn it on and reload this page.</p></noscript>
+      <p class="sg-register-status" role="status"></p>
+    </form>
+  </section>
   <section class="sg-venue" id="venue" aria-labelledby="venue-h" data-lat="15.4989" data-lng="73.8278" data-name="Mandovi Riverside Hall">
     <h2 id="venue-h">The venue</h2>
     <div class="sg-venue-top">

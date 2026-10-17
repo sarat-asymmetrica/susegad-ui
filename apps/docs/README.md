@@ -25,6 +25,10 @@ node tools/serve.mjs --root=out/docs   # then open http://127.0.0.1:5173/
 node apps/docs/build.mjs               # the same, then checks the copy loads (under /docs/, and at the root)
 node apps/docs/site.check.mjs          # the site map's gates: lengths, nothing live on indexes, every item reachable, Look closer, axe
 node apps/docs/check.mjs               # the home page across registers, themes and widths; reduced motion; the switches persisting
+node apps/docs/door.check.mjs          # the front door's gates (add --engine=webkit)
+node apps/docs/header.check.mjs        # one storey of header at 390 px
+node apps/docs/npx.check.mjs           # every npx command on the built site names a package on npm
+node apps/docs/pointers.check.mjs      # no pointer a reader cannot follow
 ```
 
 The generated pages exist only in `out/docs`; `node tools/serve.mjs` from the repo root still shows the home page at `/apps/docs/`, with its doors unfilled.
@@ -48,6 +52,18 @@ The first build shoots every poster (a few minutes); later builds re-shoot only 
 | `gallery.core.js` | Pure: a registry item's card facts (its demo, docs and prompt paths). |
 | `techniques.js` | The pencil box table, ported from the Susegad sketchbook's `TOOLS`. |
 | `manifest.js` | Scene order and groups. `built` is `null` in development; the build writes the list it copied. |
+| `door.css` | The front door's styles: the header's View control and its one storey on a phone, the hero's call to action, the home page's pictures, an item page's side list, the conformance table, the pages with a side list, Start here's three ways in, the templates page. |
+| `words.core.js` | Every string the new parts show, keyed as in `words/front-door-3.md` (Kathakar's file). |
+| `door.core.js` | Pure: the accessibility page (the Trust door, read from `docs/reference/accessibility.md`), the handoff and browsers pages, the templates page's live event frame and bloom toy, Newest. |
+| `a11y.core.js` | Pure: lifts the conformance table out of a component's docs into its own Accessibility section, with a mark in every status cell. |
+| `links.core.js` | Pure: where a link in a rendered Markdown file goes on the site (a page, a shipped demo, GitHub, or nowhere when it is private). |
+| `joined.mjs`, `joined.json` | When each item joined the library, from git at build time, with a snapshot for a build that has no history. `node apps/docs/joined.mjs --write` refreshes it. |
+| `templates-page.js` | The templates page: the event frame follows the register switch, the marigold toy draws and saves a PNG on the device. |
+| `npx.core.js`, `npx.check.mjs`, `npx-packages.json` | Every `npx` command on the built site names a package on npm, read from a pinned list (no network). The release step updates the list and flips `createOnNpm`. |
+| `pointers.core.js`, `pointers.check.mjs` | No page sends a reader to a private path (the export's own PRIVATE list) or to an agent's own report. The build runs it first. |
+| `header.check.mjs` | One storey: at 390 px the header is under 15 percent of the screen, in every register and theme. |
+| `door.check.mjs` | The front door's gates (View control, hero, pictures, Newest, item page, Trust door, Start here, templates page), in any engine with `--engine=`. |
+| `door-shots.mjs` | The before-and-after shots: five pages, 390 and 1440, every register and theme, with a contact sheet each. |
 | `llms.core.js` | `llms.txt` and `llms-full.txt`, from the registry. |
 | `for-rafe.html`, `rafe.svg`, `404.html` | The dedication and the not-found page (see `DEDICATION.md`). |
 

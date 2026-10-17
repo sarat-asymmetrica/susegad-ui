@@ -12,16 +12,13 @@
 //   no-press    the submit button has no press state                -> "submit"
 
 import fs from 'node:fs';
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
 const BREAK = process.argv.find(a => a.startsWith('--break='))?.slice('--break='.length) ?? '';
 const shots = process.argv.includes('--shots');
 if (shots) fs.mkdirSync('.shots/grow-press', { recursive: true });
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/field/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, browser, check, results } = h;
 
 const BREAKS = {
   'no-grow': ['field.css', 'field-sizing: content;', 'field-sizing: fixed;'],
@@ -31,7 +28,7 @@ const BREAKS = {
 if (BREAK && !BREAKS[BREAK]) { console.error(`unknown --break mode "${BREAK}"`); process.exit(2); }
 let broke = false;
 async function ctxFor(opts = {}) {
-  const ctx = await browser.newContext(opts);
+  const ctx = await h.context(opts);
   if (BREAK) {
     const [file, from, to] = BREAKS[BREAK];
     await ctx.route(u => u.pathname.endsWith(`/${file}`), async route => {
@@ -153,9 +150,8 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`${results.length - failed}/${results.length} grow-press checks pass${BREAK ? ` (--break=${BREAK}: ${broke ? 'the break was served' : 'THE BREAK WAS NEVER SERVED'})` : ''}`);
-if (BREAK && !broke) process.exit(2);
-process.exit(failed ? 1 : 0);
+await h.done({
+  summary: `${results.length - failed}/${results.length} grow-press checks pass${BREAK ? ` (--break=${BREAK}: ${broke ? 'the break was served' : 'THE BREAK WAS NEVER SERVED'})` : ''}`,
+  exit: BREAK && !broke ? 2 : undefined,
+});

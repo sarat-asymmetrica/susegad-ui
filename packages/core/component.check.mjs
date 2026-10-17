@@ -5,13 +5,10 @@
 // Checks: `hidden` hides every component even when its own CSS sets a display,
 // and showing it again restores that display.
 
-import { pickEngine } from '../../tools/lib/engine.mjs';
-import { startServer } from '../../tools/serve.mjs';
+import { harness } from '../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "this check drives bare test pages (tools/harness/blank.html with routed-in fixtures) for the element base class, not demo pages; tools/smoke.mjs axes only the registry's demo pages, so no axe check reads them" });
+const { server, browser, check } = h;
 
 const p = await browser.newPage();
 const errors = [];
@@ -42,6 +39,4 @@ for (const [tag, d] of out.after) check(`${tag} shows again when hidden is remov
 check('one rule per component, no duplicates', new Set(out.rules).size === out.rules.length, out.rules.join(', '));
 check('no console errors', errors.length === 0, errors.join(' | '));
 
-await browser.close();
-await server.close();
-if (results.some(r => !r.ok)) process.exit(1);
+await h.done();

@@ -4,6 +4,7 @@
 
 ```html
 <link rel="stylesheet" href="susegad/transitions/page.css">
+<script>getComputedStyle(document.documentElement).color</script>
 <header data-vt="header">…</header>
 <sg-scene data-vt="scene" name="paus">…</sg-scene>
 ```

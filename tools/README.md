@@ -70,7 +70,7 @@ node tools/perf.mjs --scene kolam
 node tools/perf.mjs --scene tollem --uncapped --json
 ```
 
-Runs the target and the Paus baseline in turn, twice each (`--rounds`), for 6 s in total each (`--seconds`). Reports mean, p95 and worst frame time, dropped frames, long tasks, and the JS bytes the page loaded, grouped by folder so each piece's own weight shows. It prints the ratio to Paus, the machine and how busy its CPU was. If Paus does not exist yet, it says so. `--baseline none` skips it.
+Before anything, it samples the CPU for a second. Above 30% busy it measures nothing: it prints `not measured: the machine is N% busy` and exits 3 (neither pass nor fail); `--force` measures anyway and stamps the result `under load`. The run's own busy figure (the browser's work included) over 30% also stamps `under load`; it never refuses, because the margin for the browser's own share has not been measured on a quiet machine (owed). Then it runs the target and the Paus baseline in turn, four times each by default (`--rounds`), for 12 s in total each (`--seconds`). Reports mean, p95 and worst frame time, dropped frames, long tasks, and the JS bytes the page loaded, grouped by folder so each piece's own weight shows. It prints the ratio to Paus for each round, a bootstrap 95% interval of those ratios, and the verdict against the 10% budget: `WITHIN` only when the interval's upper bound is under the budget, `OVER` only when its lower bound is over it, otherwise `INCONCLUSIVE` (measure again on a quieter machine). It also prints the machine and how busy its CPU was. review-pack shows this line as advisory. If Paus does not exist yet, it says so. `--baseline none` skips it.
 
 Headless Chromium caps frames at 60 Hz, so anything that fits in a frame reads 16.7 ms. `--uncapped` lifts the cap and shows the cost of a frame instead. WebGL runs on the CPU in headless Chromium, so read the ratio, not the absolute numbers.
 
@@ -83,15 +83,6 @@ node tools/perf.mjs --scene abri --register playful --content --at 18 --settle 1
 ```
 
 Without `--at`, the window opens at the first frame after ready, so a cost that lands later (abri's drift, about 33 s in, with words slotted) is never seen. `--at S` brings the scene (and the Paus control, so the load matches) to S seconds of its own clock first. The scene element has no seek, so the page's `requestAnimationFrame` is wrapped (`tools/warp.core.js`): every frame still plays, back to back with a stepped timestamp and no vsync wait, then the real clock carries on from there. The output prints the moment at the window's start and end (the scene's stage and `u`, if it exposes them, as abri does) and the frame mean by second. `--content` slots words (the calm zone only costs anything with words). `--quality low` warps in 34 ms frames so the governor steps down to its floor first (it cannot be pinned from outside, and a fast machine climbs back after about 4 s). `--settle S` plays S more real seconds before the window, and `--throttle N` slows Chromium's CPU N times, for both the scene and the control. The scene's clock keeps running during a settle, so count it into `--at`.
-
-## diff
-
-```
-node tools/diff.mjs --scene kolam --seed 3 --at 2 --update   # make the baseline
-node tools/diff.mjs --scene kolam --seed 3 --at 2            # compare with it
-```
-
-Shoots the scene with its clock frozen at `--at` seconds and compares it pixel by pixel with `tools/baselines/<scene>-<register>-<theme>.png`, in the browser, with no image library. A pixel counts as changed when its colour moves more than `--threshold` (0.02 on a 0 to 1 scale), and the check fails when more than `--max-ratio` of pixels change (0.001). The actual image and a diff image, with changes in vermilion over a faded copy, go to `.shots/diff/`. The JSON beside each baseline records the seed, params and size it was made with, and the tool tells you if they differ.
 
 ## contact-sheet
 
@@ -121,7 +112,7 @@ node tools/onion.mjs vad --from 0 --to 45 -n 8 --diff
 
 **The clock.** A scene runs on the harness's frozen clock, played by hand a 1/60 s tick at a time, so the same seed gives byte-identical frames and a frame at 40 s costs the time to draw it, not 40 s of waiting. The page loads as it normally would and the tool takes over at the scene's own `sg-ready` (holding every `requestAnimationFrame` loop from the first script instead changed the order of a scene's real events and frame callbacks; Tinto's glass then settled a few pixels apart from load to load). It then waits for the network and fonts to go quiet with the clock standing still, and steps. Times are the scene's clock, counted from when it mounted, and a cell asked for before the scene was ready shows the first moment it can be seen and says so. A stepped frame equals what `?freeze=<t>` draws in the harness (checked pixel for pixel on the fixture, Tinto and Vad). Web Animations and CSS animations run on the real clock, so a scene made of them will not repeat; the tool notes when any were running. A page (`--url`) has no harness clock, so it is taken in real time, and `--real` does the same for a scene; the header says `real clock`, and two real strips are never the same twice.
 
-**`--json`** prints JSON alone on stdout (everything else goes to stderr): per cell its requested time, its actual clock time and frame, whether the piece was `playing`, mean luminance (0 to 1), and the changed-pixel share, count and bounding box against the cell before. A pixel counts as changed when its colour moves more than `--threshold` (0.02), the same rule as `diff.mjs`. An agent can then say "motion stops between 4 s and 6 s" from numbers.
+**`--json`** prints JSON alone on stdout (everything else goes to stderr): per cell its requested time, its actual clock time and frame, whether the piece was `playing`, mean luminance (0 to 1), and the changed-pixel share, count and bounding box against the cell before. A pixel counts as changed when its colour moves more than `--threshold` (0.02, a redmean distance, the rule in `tools/lib/pixeldiff.mjs`). An agent can then say "motion stops between 4 s and 6 s" from numbers.
 
 **`--facts`** prints where motion happens (the bounding box of the changed pixels for each step, and their union) and flags two failures:
 
@@ -145,6 +136,7 @@ Both are sampled at the strip's spacing, and `--facts` says how long that is: a 
 - every check in a folder the diff touches (a check in a shared folder such as `packages/components/overlays.check.mjs` is chosen only by the pieces it covers, listed in `COVERS`, or by its own edit);
 - the checks of every registry item that depends on a changed item, at any depth (the `dependencies` of `registry/registry.json` are item names, mapped to the folder of the item's manifest);
 - `tools/touch.check.mjs` when a component changed;
+- `apps/docs/site.check.mjs` (its all-pages loop: every item reachable, one live drawing per scene page) when `registry/registry.json` changed, which is what a new or removed piece does. The docs checks that name a piece (`door`, `embed`, `hero` and so on) follow that piece's folder and its dependents; an edit inside an existing piece does not select the site loop, since it cannot change which pages exist, and the rung's whole suite runs it once;
 - everything, when the diff touches a shared primitive: `packages/core/`, `packages/engine/`, `packages/tokens/`, `tools/lib/`, `package.json`, and also `package-lock.json`, `tools/serve.mjs` and `tools/harness/`, which every check goes through. A changed signature in a shared function once broke a stage that only the whole suite saw, so there is no cleverness here.
 
 `--dry` prints the selection and stops (on its own it lists every check). A full run stays the gate before a merge. The choosing is `tools/lib/changed.core.js` (pure, tested in `changed.core.test.mjs`); the git and registry reading is `tools/lib/changed.mjs`.
@@ -158,6 +150,91 @@ Both are sampled at the strip's spacing, and `--facts` says how long that is: a 
 | `SG_SLOT_HELD=1` | set by `runCheck` for its child; do not set it by hand |
 
 Known limits: a check or tool that calls `chromium.launch` itself, outside `runCheck` and the two helpers (`lib/scene-probe.mjs` and a few older checks), is not limited when run by hand; a pid reused by an unrelated process keeps a dead slot looking alive; the slot is released on exit and on SIGINT, and a hard kill is cleaned up by the next taker through the stale check.
+
+## Smoke tier
+
+```
+npm run smoke                       every demo page the registry lists
+npm run smoke -- --changed          only the items the diff against main reaches (a shared primitive reaches all)
+npm run smoke -- --only menu --json .shots/smoke.json
+npm run smoke -- --engine=webkit    or --reduced for a third, reduced-motion pass; --jobs n for parallelism
+```
+
+Between `npm run gates` (seconds, no browser) and `npm run check` (an hour or more). One browser through a slot (`tools/lib/slots.mjs`), one dev server, a fresh context per pass of each page. The pages are every `.html` file an item lists plus its `demo.html` and `index.html` (the rule `apps/docs/build.mjs` ships demos by), so a new item is covered the day it has a demo. Per page:
+
+- it loads with no console error, page error, failed request (a cancelled media or fetch request is the page going away, not a failure) or third-party request;
+- every visible `<sg-scene>` on the page (a recipe or a component demo too) paints its first frame (`sg-ready`), counted scene by scene, so one painted scene does not vouch for a blank neighbour. Scenes a script adds after load are caught by a second look after axe, and a scene inside a closed `<details>` is held to the same rule once smoke opens it. A scene hidden by design is not waited for and is printed as `not checked: hidden  <page>  (<scene names>)`, with the count in the summary line, never passed in silence;
+- axe is clean for WCAG 2.2 AA, once, at 1280 px in the page's default theme and register (`tools/matrix.mjs` and `tools/axe.mjs` do the other cells, so a dark-theme fault passes smoke);
+- nothing scrolls sideways at 390 px (`tools/lib/overflow.mjs`).
+
+It prints a table of failures with the page, the kind (`error`, `axe`, `viewport`, `sideways`, `not-ready`, `timeout`) and the message, ends with the time and the machine's CPU busy before and during the run, writes the full result with `--json`, and exits 1 on any failure. A time taken while other agents hold the CPU is a guess; the run says how busy the machine was.
+
+`node tools/smoke.mjs --page /tools/fixtures/smoke/wide.html` runs exactly the pages named. `node tools/smoke.check.mjs` is the red proof (a page that throws, an axe violation, a 420 px element, a missing script, a missing viewport meta, a scene that never fires `sg-ready` (also one added late, one inside a closed `<details>`, and one painted scene beside a blank one), a hidden scene that must be listed and a page that never finishes each turn it red in its own kind, and the clean page stays green; the last two run with `SG_SMOKE_SCENE_MS` and `SG_SMOKE_PAGE_MS` shortening the 15 s and 60 s waits); it launches Chromium, so it runs by hand, not under `npm test`. The decisions are pure and tested in `tools/lib/smoke.core.test.mjs`.
+
+## Soak and kiosk
+
+```
+npm run soak -- kolam                                   a scene at 1080p, quick (2 minutes)
+npm run soak -- /apps/docs/index.html --mode rung       a page by path, 30 minutes
+npm run soak -- kolam --profile 4k --mode release --json .shots/soak-kolam.json
+npm run soak -- --playlist paus,tollem,kolam --dwell 20 --mode rung      cycle scenes
+```
+
+For a screen that runs for hours with nobody touching it (an event kiosk, a lobby TV): does anything grow, and do frames get slower? One browser through a slot, held for the whole run (two hours holds it two hours, so `release` belongs to a quiet machine; a run that has to queue for a slot starts its clock only when it gets one). Chromium only, because the counters and the forced collection are CDP.
+
+- Profiles: `1080p` (1920x1080) and `4k` (3840x2160), one device pixel per CSS pixel, headless so no devtools or browser chrome.
+- Modes (run, sample every, warm-up ignored): `quick` 2 min, 5 s, 20 s (tests and slices; catches a leak of megabytes a minute); `rung` 30 min, 30 s, 3 min (the rigour rung); `release` 2 h, 60 s, 10 min (the length of an evening event). `--duration`, `--interval` and `--warmup` (seconds) override a mode.
+- `--playlist a,b,c --dwell S` replaces one iframe with the next scene every S seconds (`tools/fixtures/soak/playlist.html`), so a scene that does not clean up on unmount shows as growth across mounts. Each comparison window should span a whole pass of the playlist (the third of the run after warm-up, at least scenes x dwell), or the first and last windows hold different scenes; the tool says so when it does not.
+- Each sample: JS heap after two forced collections, DOM nodes (detached ones included), documents, JS event listeners, live canvases and their megapixels (through shadow roots and same-origin frames), frame time mean and p95 since the last sample, long tasks (over 50 ms), and how busy the whole machine was.
+- The verdict compares the median of the first third of the samples after warm-up with the median of the last third. A growth budget fails only when its percentage and its absolute floor are both exceeded: heap 10% and 1 MB, DOM nodes 5% and 50, documents 2, listeners 10% and 50, canvas 5% and 0.5 Mpx. Frame p95 fails at x1.15 and 2 ms together (one vsync step is noise). Long tasks fail past twice the first window plus 3. Errors (console, page, failed request, crash): none allowed. Each budget's reason is in `tools/lib/soak.core.js`. The report also gives the Theil-Sen slope of heap and nodes per hour.
+- A number under load is a guess. Above 60% machine CPU busy (median over the run) a frame drift reads "inconclusive (machine busy)" and does not fail the run; the counts of things (heap, nodes, listeners) are still judged. The CPU stamp is always printed.
+- Under 8 samples after warm-up reads `NOT-JUDGED`, never pass. Exit 0 for pass or not-judged, 1 for fail, 2 for bad usage.
+
+What it cannot see: memory outside the JS heap. A retained typed array, a decoded bitmap or a WebGL buffer is not in the heap number (the planted leak keeps plain arrays for that reason); canvas megapixels cover canvases, and nothing covers the rest. Headless Chromium draws WebGL on the CPU, so a 4K frame time says little about a real GPU.
+
+`node tools/soak.check.mjs` is the red proof, run by hand (it launches Chromium and waits for a slot): `tools/fixtures/soak/leak.html` (keeps arrays, detached nodes with listeners and a canvas a second) must fail on heap, nodes, listeners and canvases, and `steady.html` (the same drawing, garbage and churn, all freed) must pass, on a 30 s clock. The verdict maths is tested on synthetic samples in `tools/lib/soak.core.test.mjs`, which runs under `npm test`.
+
+## Rigour runner
+
+```
+npm run rigour -- --scope=slice                     before reporting a slice
+npm run rigour -- --scope=rung --base run/start     at a rung's exit gate, after the merges since that ref
+npm run rigour -- --scope=rung --engines=chromium,webkit,firefox
+npm run rigour -- --scope=debt                      the debt register, grouped
+npm run rigour -- --scope=slice --dry               print the plan, run nothing
+node tools/gate-tier.mjs --enforce --base <ref>     the tier, binding
+```
+
+One command for what a scope owes. The steps run one after another, and browsers go through the existing runners, which hold the machine's slots.
+
+- **slice**: `npm run gates:slice`, `npm run check -- --changed`, `npm run smoke -- --changed` (each in every engine of `--engines`, default Chromium), then gate-tier over the working diff (committed, staged, unstaged and untracked since the merge-base with the base) and the review that tier owes.
+- **rung**: `npm run gates`, gate-tier over every merge since `--base` (default `main`), then `npm run smoke` and `npm run check` in each engine (default Chromium and WebKit). The tier step is red when a merged Standard or Full slice has no review (below); it does not stop the suite.
+- **debt**: parses `docs/DEBT.md` and prints the open rows by Where and then Kind, oldest first, with counts and the cap verdict (more than 20 open is over; it warns, and `--strict` makes it exit 1).
+
+Every scope writes a JSON result (`--json FILE`; by default `out/rigour/<scope>-<time>.json`, which is gitignored; a `--dry` run writes nothing unless you name a file). Each step carries `status`, `exitCode`, `durationMs` and `cpuBusyPct`, the machine's CPU while it ran, and the result carries the load before the run. A status is `passed`, `failed`, `not run`, `owed` or `empty`: after a failed step the rest are `not run` (`--keep-going` runs them anyway), and a dry run marks every step `not run`. `owed` is the slice's tier step when the tier owes a review that is not on file yet (`tier full: Rasika review owed, not yet checked`); `empty` is a `check` or `smoke` step that exited 0 but ran nothing (`No checks needed`, `nothing to run`, or 0 of 0), which is a failure in a rung's whole-suite run. An exit 0 whose summary line cannot be read at all (the tool's output drifted) is `failed` in every scope, not `empty`: it confirms nothing, and the run is red. Those two are never counted as passed: the summary says `ok` (nothing failed or left unrun) and `complete` (every step passed outright) separately, and prints `Not complete: ...` when they differ. A `check` or `smoke` step also records what its output said in `counts` (`ran`, `knownFlakes`, `skipped`) and in `note` (`130 of 132 checks pass; 2 known flakes red, recorded not counted; 4 clauses skipped`); `checks.mjs` has no JSON output, so its summary lines are read. Exit 0 when nothing failed or was left unrun, 1 otherwise, 2 on bad usage. A time taken above about 30% CPU busy is a guess; the output says so.
+
+### `gate-tier --enforce`: how a review is recognised
+
+`--enforce` lists every unit merged on `HEAD`'s first-parent line since `--base` (`--head REF` judges another branch), each with the tier its own diff gives (the registry as it stood at the merge), and exits 1 when a Standard or Full unit has no review at its tier. A merge of `main` into the branch is not a slice. A unit is a merged slice, or **one commit made straight on the branch** (`commit 0479f4f: ...`): each direct commit has its own tier and its own review, so a review of one is never a review of the others. Light needs no review agent, so it always passes.
+
+A review counts **only through the canonical line**: on a line of its own (a list bullet may lead it, up to three spaces of indent), in `docs/LEDGER.md` or a file in `docs/reviews/`, outside fenced code blocks, blockquotes (`>`, including lazy continuation lines), inline code and HTML comments. The grammar is exact (capitalisation, full stops, nothing after it):
+
+```
+Rasika: <pass | pass with notes | changes needed | blocked>. Tier: <Light | Standard | Full>. Slice: <branch> (<hash>)
+Rasika: <pass | pass with notes | changes needed | blocked>. Tier: <Light | Standard | Full>. Slice: commit <hash>
+```
+
+The verdict, tier and slice come from that line alone; no prose anywhere can raise a tier or create a pass, so nothing needs to be block-listed ("still owed", "dropped", "unverified" and the next phrasing nobody thought of all fail the same way: they are not the line). The first form reviews a merged slice: the branch name must be the slice's (a whole token) and the hash (seven or more hex digits) must be the merge or one of the slice's own commits. The second reviews one direct commit; write one line per commit. A bare hash (`Slice: 0479f4f`) is neither form. Only a **pass** (pass, pass with notes) satisfies the requirement. `changes needed` and `blocked` are reviews that were done and did not pass: they are listed beside the unit (`changes needed, standard at ...`), and the re-review that passes is what clears it. A review at a higher tier satisfies a lower one, not the reverse.
+
+**Legacy.** Reviews dated before 2026-10-17 (`LEGACY_BEFORE` in `gate-tier.core.js`) keep the older pattern reading, so history still reads: a heading naming the slice with `Rasika, pass. Tier: Standard`, a ledger bullet such as `slice/palm: Full; Rasika pass with notes.`, with the old vetoes for "still owed". A review file is dated by its name (`YYYY-MM-DD-...md`; the historical `wave-N.md` files count as old), a ledger bullet by the nearest `## YYYY-MM-DD ...` heading above it. Anything dated on or after the cutoff, or with no date, is canonical-only. The cutoff is a fixed day, not "today", so a review written in the old words today does not start to count tomorrow.
+
+### Where the tier is calibrated (`tools/gate-tier.core.js`)
+
+- Generated files (`registry/registry.json`, `references/components.md`, `references/scenes.md`, `custom-elements.json`, `docs/reference/accessibility.md`) are neutral: they never raise a tier. The other files in `references/` are hand-written and are what the shipped skill tells an outside agent, so they are Standard.
+- Documentation under `packages/` (`README.md`, `docs.md`, `PROVENANCE.md`, `CHANGELOG.md`, `*.docs.md`, `*.prompt.md`) is Light, even inside a shared prefix. Other markdown there (a story, a proposal sample, Konkani for a reader) is words a demo renders or a native reader checks, and takes the tier its item demands. A decision record and a file that declares `gate: full` stay Full.
+- The engine is shared: `tools/lib/changed.core.js` selects every check for it, so a change to it that is not a test or prose is Standard, never Light. A test beside it no longer makes it Light. It is not Full: that stays for core, tokens, type and kernels. A test in `gate-tier.test.mjs` fails if a package that `--changed` treats as shared is Light here.
+- The binding itself is at least Standard, never Light: `tools/gate-tier*` (the tier, the review recognition and their tests), `tools/rigour.mjs`, `tools/lib/rigour*` and `tools/fixtures/rigour/`. A change to how a review is recognised cannot show in its own tier, so the floor does it.
+- A new package imported only by new pieces in the same diff is Standard; once an older piece imports it, it is Full.
 
 ## No JavaScript
 

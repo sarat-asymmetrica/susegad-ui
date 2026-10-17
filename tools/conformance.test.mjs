@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkFile, checkLibrary, exemptList, componentNames } from './conformance.mjs';
+import { checkFile, exemptList, componentNames } from './conformance.mjs';
 import { parseDocs, validate, required, renderSummary, filesNamed, isManual, WCAG, KINDS, TRAITS, BASE, INFORMATIVE } from './conformance.core.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -115,19 +115,8 @@ test('a table outside ## Accessibility is misplaced', () => {
   assert.ok(p.problems.some(x => x.rule === 'misplaced'));
 });
 
-test('the library: every component not on the exempt list has a valid table', () => {
-  const lib = checkLibrary();
-  assert.deepEqual(lib.failing.map(r => `${r.name}: ${r.findings[0].message}`), []);
-});
-
-test('the library: the two worked examples are valid even with no exemption', () => {
-  const lib = checkLibrary({ strict: true });
-  for (const n of ['toggle', 'menu']) {
-    const r = lib.results.find(x => x.name === n);
-    assert.deepEqual(r.findings, [], n);
-  }
-});
-
+// The whole-library cases (every component not on the exempt list has a valid table, the two worked examples valid with no
+// exemption) run once in tools/repo-check.mjs, through `node tools/conformance.mjs`: it fails on any component with a finding.
 test('the exempt list names no component that has a valid table and is not exempt-ready, and every component has a kind', () => {
   for (const n of componentNames()) assert.ok(KINDS[n], `${n} has no entry in KINDS (tools/conformance.core.js)`);
   assert.ok(Array.isArray(exemptList()));

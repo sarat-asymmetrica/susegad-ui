@@ -12,10 +12,11 @@
 //
 // Each was watched failing first on a broken build (see the report).
 
-import { session, openScene } from '../../../tools/lib/scene-probe.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { openScene } from '../../../tools/lib/scene-probe.mjs';
 import { WIN } from './model.js';
 
-const s = await session();
+const s = await harness({ axe: 'tools/smoke.mjs axes the scene page once, in its default register and theme; the other registers are not axe-checked yet (docs/DEBT.md)' });
 const { check } = s;
 const pct = v => `${(v * 100).toFixed(1)}%`;
 const SKYBOX = { x: WIN.x0 + 10, y: WIN.top + 6, w: 90, h: 50 };

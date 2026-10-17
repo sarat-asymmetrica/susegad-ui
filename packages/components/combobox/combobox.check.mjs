@@ -4,18 +4,15 @@
 //
 //   node packages/components/combobox/combobox.check.mjs
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/combobox/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, browser, check } = h;
 const url = `${server.url}/packages/components/combobox/demo.html`;
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
 async function open({ js = true, register = 'warm', reduced = false } = {}) {
-  const ctx = await browser.newContext({ javaScriptEnabled: js, reducedMotion: reduced ? 'reduce' : 'no-preference' });
+  const ctx = await h.context({ javaScriptEnabled: js, reducedMotion: reduced ? 'reduce' : 'no-preference' });
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(String(e)));
@@ -149,7 +146,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 // ── 1.4.4 and 2.4.7: at a 200 percent root font size on 1280 by 800, the list fits the viewport and the
 //    active option is on screen at every step, in every register (it ran past the bottom in quiet and warm).
 for (const register of ['quiet', 'warm', 'playful']) {
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const ctx = await h.context({ viewport: { width: 1280, height: 800 } });
   const page = await ctx.newPage();
   await page.goto(`${url}?register=${register}`);
   await page.waitForFunction(() => window.__ready === true && document.querySelector('sg-combobox')?.dataset.skin);
@@ -180,6 +177,4 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-if (results.some(r => !r.ok)) process.exit(1);
+await h.done();
