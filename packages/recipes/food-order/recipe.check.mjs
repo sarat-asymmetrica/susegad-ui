@@ -15,7 +15,8 @@
 
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
-import { localeEnv, pickEngine } from '../../../tools/lib/engine.mjs';
+import { engineName, localeEnv, pickEngine, unsupportedIn } from '../../../tools/lib/engine.mjs';
+import { tab } from '../../../tools/lib/tab.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 import { contrastReport } from '../../../tools/lib/contrast.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
@@ -167,7 +168,7 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   const ctx = await ctxFor({ viewport: { width: 1280, height: 900 } });
   const p = await open(ctx, 'warm');
   const active = () => p.evaluate(() => { const a = document.activeElement; return a.getAttribute('aria-label') || a.name || a.className || a.localName; });
-  const tabTo = async (want, max = 40) => { for (let i = 0; i < max; i++) { await p.keyboard.press('Tab'); if ((await active()) === want) return true; } return false; };
+  const tabTo = async (want, max = 40) => { for (let i = 0; i < max; i++) { await tab(p); if ((await active()) === want) return true; } return false; };
   await p.evaluate(() => document.querySelector('.food-order__how').scrollIntoView());
   const reached = await tabTo('Add one Fresh fettuccine');
   await p.keyboard.press('Enter');
@@ -180,7 +181,11 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   await p.waitForTimeout(150);
   check('keyboard: Tab reaches the way on, Enter takes you to the order', onward && (await p.evaluate(() => location.hash)) === '#order', '');
   const gotDate = await tabTo('date');
-  await p.keyboard.type('04102026');
+  if (await p.evaluate(() => document.activeElement.type === 'date')) await p.keyboard.type('04102026');
+  else { // no <input type="date"> in this build: it is a text field with no day, month and year parts to type into
+    unsupportedIn(engineName(), 'typing a date by hand', 'this build has no date input, so the day is filled in as text and the rest of the walk is still pressed with Tab');
+    await p.keyboard.type('2026-10-04');
+  }
   const gotSlot = await tabTo('slot');
   await p.keyboard.press('A'); // Afternoon
   const how = await p.evaluate(() => document.querySelector('#order input[type=radio]:checked').name);

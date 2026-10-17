@@ -10,10 +10,10 @@ import { order } from './manifest.js';
 // ── old links ───────────────────────────────────────────────────────
 // The home page used to hold every scene as a plate (#paus, #paus-prompt),
 // the pencil box (#pencil-box, #t-wobble) and the scenes (#scenes). Those
-// live on their own pages now; the rule is site.core.js's redirectFor, loaded
+// live on their own pages now; the rule is redirect.core.js's redirectFor, loaded
 // only when there is a hash to read.
 if (location.hash.length > 1) {
-  const { redirectFor } = await import('./site.core.js');
+  const { redirectFor } = await import('./redirect.core.js');
   const to = redirectFor(location.hash, order);
   if (to) location.replace(new URL(to, location.href).href);
 }

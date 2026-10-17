@@ -21,7 +21,7 @@ surface is drawn, not photographed, and it draws a window, not that one.
 Ported by copying from the sketchbook's Carepa plate
 (`C:\Projects\asymmetrica-web\explorations\susegad\pieces\carepa.js`, read
 only, commit `06ec47e` on `explore/susegad`), per
-`docs/requests/2026-09-25-volume-iii-harvest.md`. The plate's second round
+the Volume III harvest. The plate's second round
 fixed a fault it called "too see-through"; this port keeps that fix by
 painting the room opaque first (`room()` in `render.js`), so nothing of the
 real page ever shows through the surface, only the drawn, blurred world

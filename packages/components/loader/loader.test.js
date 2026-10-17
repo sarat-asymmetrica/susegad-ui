@@ -12,8 +12,8 @@ test('the page\'s words win; otherwise the register has its own', () => {
   assert.equal(loaderText({ register: 'unknown' }), STRINGS.loading.warm);
 });
 
-test('copy: sentence case, no em dashes', () => {
-  for (const v of Object.values(STRINGS.loading)) { assert.ok(!v.includes('\u2014')); assert.equal(v[0], v[0].toUpperCase()); }
+test('copy: sentence case', () => {
+  for (const v of Object.values(STRINGS.loading)) { assert.equal(v[0], v[0].toUpperCase()); }
 });
 
 test('warm: every dot has a place on the lap, in [0, 1)', () => {

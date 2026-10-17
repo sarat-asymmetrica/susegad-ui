@@ -31,7 +31,7 @@
 
 import { readFileSync } from 'node:fs';
 import { harness } from '../../../tools/lib/component-check.mjs';
-import { contextOptions } from '../../../tools/lib/engine.mjs';
+import { contextOptions, grantsPermission, unsupportedIn } from '../../../tools/lib/engine.mjs';
 import { room, offsetOf, placeOf, STEP, BIG_STEP } from '../../core/movable.core.js';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
@@ -436,7 +436,9 @@ async function postcard(patch = {}) {
   check('postcard: nothing is announced while the words are dragged, one sg-words-moved when they are let go', p.duringDrag === 0 && p.afterDrop.length === 1 && typeof p.afterDrop[0].x === 'number' && p.afterDrop[0].home === false, `${p.duringDrag} during, ${p.afterDrop.length} after: ${JSON.stringify(p.afterDrop)}`);
   const m = /[?&]words=([\d.]+),([\d.]+)/.exec(p.url);
   check('postcard: the address follows the drop (?words=x,y, comma kept), and matches where the words are', !!m && near(p.dropped, +m[1], +m[2]) && p.afterDrop[0] && Math.abs(p.afterDrop[0].x - +m[1]) < 0.001, `${p.url.replace(/^https?:\/\/[^/]+/, '')} vs ${JSON.stringify(p.dropped)}`);
-  check('postcard: "Copy this view" copies the address as it stands, and says Link copied', p.clip === p.url && p.copied === 'Link copied' && p.href === p.url, `clipboard ${p.clip === p.url ? 'equals the address' : p.clip}; says "${p.copied}"`);
+  const canRead = grantsPermission(engine, 'clipboard-read'); // WebKit and Firefox cannot be granted clipboard-read, so the copy is asked about without reading it back
+  if (!canRead) unsupportedIn(engine, 'reading the clipboard back after "Copy this view"', 'no clipboard-read grant in this engine; the words and the link are still asked'); 
+  check(`postcard: "Copy this view" ${canRead ? 'copies the address as it stands, and' : ''} says Link copied`, (!canRead || p.clip === p.url) && p.copied === 'Link copied' && p.href === p.url, `clipboard ${p.clip === p.url ? 'equals the address' : p.clip}; says "${p.copied}"`);
   check('postcard: a shared link opens with the words where the sender left them, at another width', m && near(p.sharedAt, +m[1], +m[2]), `at ${JSON.stringify(p.sharedAt)} in a 1000 px window`);
   check('postcard: Home takes the place out of the address', !/words=/.test(p.homeUrl), p.homeUrl.replace(/^https?:\/\/[^/]+/, ''));
   check('no console errors (postcard)', !p.errors.length, p.errors.join(' | '));

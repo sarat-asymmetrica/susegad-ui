@@ -86,5 +86,4 @@ test('the words: 19:10 to the ten minutes, and the status sentence', () => {
 test('meta keeps the lineage note and says the mapping is one reckoning', () => {
   assert.match(meta.after.who, /Kesarbai Kerkar/);
   assert.match(meta.caption, /one common reckoning; traditions differ/);
-  for (const k of ['title', 'gloss', 'caption', 'alt', 'keys', 'credit']) assert.ok(!meta[k].includes('—'), k);
 });

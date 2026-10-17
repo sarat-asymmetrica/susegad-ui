@@ -4,8 +4,8 @@
 //   node apps/docs/check.mjs --built    out/docs, served under a /docs/ base path
 //
 // For each register × theme × width: a screenshot, axe, console errors and
-// horizontal overflow. Then reduced motion and the switches persisting across
-// a reload. (Every other page, and Look closer, is site.check.mjs's.)
+// horizontal overflow. Then reduced motion.
+// a reload. (Every other page, and Look closer, is site.check.mjs's; the View control is door.check.mjs's.)
 // Screenshots go to .shots/docs/ (or .shots/docs-built/).
 
 import fs from 'node:fs';
@@ -120,35 +120,10 @@ for (const register of ['quiet', 'warm', 'playful']) {
 
 // Look closer lives on a scene page now; site.check.mjs checks it there (focus in, Escape, focus back, the same canvas).
 
-// ── the switches persist ─────────────────────────────────────────────
-{
-  const { context, page, errors } = await openPage({ prefs: {} });
-  await page.getByRole('radio', { name: 'Playful' }).check();
-  await page.getByRole('radio', { name: 'Dark' }).check();
-  await page.getByRole('radio', { name: 'Casa' }).check();
-  await page.reload();
-  await page.waitForFunction(() => window.__ready === true);
-  const attrs = await page.evaluate(() => ({ ...document.documentElement.dataset, checked: [...document.querySelectorAll('.prefs input:checked')].map(i => i.value) }));
-  console.log(`persist: register=${attrs.register} theme=${attrs.theme} palette=${attrs.palette} checked=${attrs.checked.join(',')}`);
-  await page.screenshot({ path: path.join(outDir, 'casa-playful-dark-1280-top.png') });
-  if (attrs.register !== 'playful' || attrs.theme !== 'dark' || attrs.palette !== 'casa') problem('switches did not persist across reload');
-  errors.forEach(e => problem(`persist console: ${e}`));
-  await context.close();
-
-  // no storage at all: the page still renders with the defaults
-  const ctx2 = await browser.newContext();
-  await ctx2.addInitScript(() => { Object.defineProperty(window, 'localStorage', { get() { throw new Error('blocked'); } }); });
-  const p2 = await ctx2.newPage();
-  const errs2 = [];
-  p2.on('pageerror', e => errs2.push(String(e)));
-  await p2.goto(pageUrl);
-  await p2.waitForFunction(() => window.__ready === true, null, { timeout: 15000 });
-  await p2.getByRole('radio', { name: 'Quiet' }).check();
-  const reg = await p2.evaluate(() => document.documentElement.dataset.register);
-  console.log(`no storage: renders, switch sets register=${reg}, page errors=${errs2.length}`);
-  if (reg !== 'quiet' || errs2.length) problem(`storage blocked: register=${reg} errors=${errs2.join('; ')}`);
-  await ctx2.close();
-}
+// ── the switches ─────────────────────────────────────────────────────
+// The header, with the View control that holds the switches, is written by the build (site.core.js, bar), so the
+// source tree has none. door.check.mjs holds them: it opens View, sets the register and theme, reloads, and runs
+// the page with storage blocked.
 
 fs.writeFileSync(path.join(outDir, 'report.json'), JSON.stringify(results, null, 2));
 await browser.close();

@@ -59,3 +59,105 @@ export function baselineRatio(target, baseline, slack = 0.10) {
 
 export const fmtMs = v => Number.isFinite(v) ? `${v.toFixed(1)} ms` : 'n/a';
 export const fmtKB = b => `${(b / 1024).toFixed(1)} KB`;
+
+/** Seeded generator (mulberry32), so a bootstrap interval is the same on every run of the same rounds. */
+function rng(seed) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/**
+ * Bootstrap interval of the mean of per-round ratios. The round is the unit that is resampled, not the
+ * frame: a burst of machine load lands on a whole round, so frames inside it are not independent.
+ * @param {number[]} ratios one target/baseline ratio per round
+ * @param {{ level?: number, resamples?: number, seed?: number }} [o]
+ * @returns {{ mean: number, lo: number, hi: number }}
+ */
+export function bootstrapRatio(ratios, { level = 0.95, resamples = 2000, seed = 1 } = {}) {
+  const r = ratios.filter(Number.isFinite);
+  if (!r.length) return { mean: NaN, lo: NaN, hi: NaN };
+  const mean = r.reduce((a, b) => a + b, 0) / r.length;
+  const next = rng(seed), means = [];
+  for (let i = 0; i < resamples; i++) {
+    let s = 0;
+    for (let j = 0; j < r.length; j++) s += r[Math.floor(next() * r.length)];
+    means.push(s / r.length);
+  }
+  const tail = (1 - level) / 2;
+  return { mean, lo: percentile(means, 100 * tail), hi: percentile(means, 100 * (1 - tail)) };
+}
+
+/**
+ * The perf verdict from the rounds' ratios against a budget (slack 0.10 = 10% over the baseline).
+ * within: the interval's upper bound is under the budget. over: its lower bound is over it.
+ * Anything else, including too few rounds to say, is inconclusive.
+ * @param {number[]} ratios
+ */
+export function perfVerdict(ratios, slack = 0.10, opts = {}) {
+  const budget = 1 + slack;
+  const { capped = false, ...boot } = opts;
+  const ci = bootstrapRatio(ratios, boot);
+  let verdict = 'inconclusive';
+  if (Number.isFinite(ci.lo) && Number.isFinite(ci.hi) && ratios.length >= 2) {
+    if (ci.hi < budget) verdict = 'within';
+    else if (ci.lo > budget) verdict = 'over';
+  }
+  // Both sides pinned to the display interval: every round's ratio is 1.00 whatever the piece costs, so
+  // a zero-width interval is not evidence of headroom. It is not "within" either.
+  if (capped && verdict !== 'over') return { verdict: 'capped', budget, rounds: ratios.length, ...ci, note: CAPPED_NOTE };
+  return { verdict, budget, rounds: ratios.length, ...ci };
+}
+
+export const CAPPED_NOTE = 'capped: both at vsync, no headroom measured (run with --uncapped to compare the cost per frame)';
+
+/**
+ * Are both sides sitting at the vsync cap? Each side's frames must average at the display interval (not
+ * under it, which would be uncapped, and not over it, which is dropping frames) with little spread.
+ * @param {number[]} target frame intervals (ms)
+ * @param {number[]} baseline frame intervals (ms)
+ */
+export function vsyncCapped(target, baseline, vsync = 1000 / 60) {
+  const atCap = frames => {
+    if (frames.length < 10) return false;
+    const mean = frames.reduce((a, b) => a + b, 0) / frames.length;
+    const sd = Math.sqrt(frames.reduce((a, f) => a + (f - mean) ** 2, 0) / frames.length);
+    return mean >= 0.9 * vsync && mean <= 1.05 * vsync && sd / mean <= 0.2;
+  };
+  return atCap(target) && atCap(baseline);
+}
+
+export const BUSY_MARGIN = 20;
+
+/**
+ * Was the run itself under load? `during` is the CPU busy percent across the whole measurement (the
+ * browser's own work is in it, which is why the margin sits above the limit): over the limit it is
+ * stamped "under load"; over limit + margin the result is refused unless forced, because the
+ * pre-run sample can read quiet and the machine still be busy for the minutes that matter.
+ */
+export function runLoad({ during, limit = BUSY_LIMIT, margin = BUSY_MARGIN, force = false }) {
+  const stamp = during > limit;
+  const refuse = during > limit + margin && !force;
+  return { stamp, refuse, message: refuse ? `not measured: the run itself was under load (${during}% busy during it, limit ${limit}% plus ${margin} for the browser's own work); run again when it is quiet, or --force to keep the result` : null };
+}
+
+export const BUSY_LIMIT = 30;
+
+/**
+ * The load gate. `sample` is async and returns the CPU busy percent over a short window (injected, so
+ * the rule is testable without a machine). Above the limit the run is "not measured" unless forced,
+ * and a forced run is stamped "under load".
+ * @returns {Promise<{ measure: boolean, busy: number, underLoad: boolean, message: string|null }>}
+ */
+export async function loadGate({ sample, limit = BUSY_LIMIT, force = false }) {
+  const busy = await sample();
+  const underLoad = busy > limit;
+  if (!underLoad) return { measure: true, busy, underLoad: false, message: null };
+  if (force) return { measure: true, busy, underLoad: true, message: `under load: the machine was ${busy}% busy before the run (--force)` };
+  return { measure: false, busy, underLoad: true, message: `not measured: the machine is ${busy}% busy (limit ${limit}%); run again when it is quiet, or --force to measure anyway` };
+}

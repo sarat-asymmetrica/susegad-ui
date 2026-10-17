@@ -88,3 +88,13 @@ test('a template is listed under Templates, after the scenes and before the pack
   assert.ok(at > txt.indexOf('## Scenes') && at < txt.indexOf('## Packages'), 'between scenes and packages');
   assert.match(txt, /- \[Event page \(template-event, experimental\)\]\(packages\/templates\/event\/README\.md\): A starter site\./);
 });
+
+test('a start section goes under the summary in both files, before the first group', () => {
+  const index = { name: 'susegad-ui', items: [{ name: 'badge', type: 'component', title: 'Badge', docs: 'packages/components/badge/badge.docs.md' }] };
+  const { txt, full } = buildLlms(index, () => ({}), { start: '## Start here\n\n1. Choose a register.\n' });
+  for (const f of [txt, full]) {
+    assert.ok(f.indexOf('## Start here') > f.indexOf('> '), 'after the summary');
+    assert.ok(f.indexOf('## Start here') < f.indexOf('## Components'), 'before the first group');
+  }
+  assert.doesNotMatch(buildLlms(index, () => ({})).txt, /Start here/, 'nothing without one');
+});

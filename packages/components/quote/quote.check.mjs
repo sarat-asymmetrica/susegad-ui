@@ -39,7 +39,7 @@ const spoken = page => page.evaluate(() => [...document.querySelectorAll('sg-quo
 }
 {
   // broken on purpose: a quotation mark written as text, not hidden
-  const { ctx, page } = await openHtml('mark-as-text', `<!doctype html><html lang="en"><head><title>t</title></head><body>
+  const { ctx, page } = await openHtml('mark-as-text', `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>t</title></head><body>
     <sg-quote><figure><span class="sg-quote-mark">“</span><blockquote><p>Words.</p></blockquote><figcaption>Someone</figcaption></figure></sg-quote></body></html>`);
   const t = await spoken(page);
   check('control: a quotation mark drawn as text shows up in the same probe', t[0].includes('“'), t[0]);

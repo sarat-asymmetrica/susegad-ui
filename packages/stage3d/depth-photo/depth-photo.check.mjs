@@ -38,7 +38,7 @@ const sharpness = page => page.evaluate(async () => {
   const c = dp.canvas, k = c.width / dp.clientWidth;
   const [ax, ay] = dp.place(0.33, 0.54, 0.874), [bx, by] = dp.place(0.58, 0.66, 0.874);
   const x = Math.round(ax * k), y = Math.round(ay * k), w = Math.round((bx - ax) * k), h = Math.round((by - ay) * k);
-  const g = new OffscreenCanvas(w, h).getContext('2d');
+  const g = (typeof OffscreenCanvas === 'function' ? new OffscreenCanvas(w, h) : Object.assign(document.createElement('canvas'), { width: w, height: h })).getContext('2d');
   g.drawImage(c, x, y, w, h, 0, 0, w, h);
   const d = g.getImageData(0, 0, w, h).data, L = j => 0.2126 * d[j] + 0.7152 * d[j + 1] + 0.0722 * d[j + 2];
   let s = 0, s2 = 0, n = 0;
@@ -51,7 +51,7 @@ const sharpness = page => page.evaluate(async () => {
 const hashFrame = (page, t) => page.evaluate(async t => {
   const dp = document.getElementById('dp');
   const c = await dp.renderFrame(t);
-  const g = new OffscreenCanvas(c.width, c.height).getContext('2d');
+  const g = (typeof OffscreenCanvas === 'function' ? new OffscreenCanvas(c.width, c.height) : Object.assign(document.createElement('canvas'), { width: c.width, height: c.height })).getContext('2d');
   g.drawImage(c, 0, 0);
   const d = g.getImageData(0, 0, c.width, c.height).data;
   let h = 2166136261;

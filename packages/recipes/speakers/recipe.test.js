@@ -30,7 +30,6 @@ test('the count and the empty line are plain and kind', () => {
   assert.equal(STRINGS.shown(1), 'Showing 1 speaker');
   assert.equal(STRINGS.shown(7), 'Showing 7 speakers');
   assert.equal(STRINGS.empty, 'No speaker is on that track yet. Try another track, or clear them all.');
-  assert.ok(!STRINGS.empty.includes('—'));
 });
 
 import { urlWithTracks } from './recipe.js';

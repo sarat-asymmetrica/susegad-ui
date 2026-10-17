@@ -8,13 +8,14 @@
 // AudioContext exists and the oscillator pool never grows past its cap even
 // under playful's heaviest rain; turning the switch off stops new voices.
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
+import { engineName, pageHas, pickEngine, unsupportedIn } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
 const browser = await pickEngine().launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const hasAudio = await pageHas(browser, "typeof AudioContext === 'function'"); // without one every count below is zero and the zeros would pass
 const page = `${server.url}/tools/harness/scene.html?name=paus&register=playful&intensity=1`;
 
 const ctx = await browser.newContext();
@@ -62,6 +63,8 @@ await p.waitForTimeout(600);
 const dropsFired = await p.evaluate(() => window.__drops);
 check('the drops event fires as Paus animates', dropsFired > 0, `${dropsFired} events`);
 
+if (!hasAudio) unsupportedIn(engineName(), 'the AudioContext, oscillator-pool and switch-off checks', "this build has no AudioContext, so no context can be made, counted or heard; a count of zero would pass for want of one");
+else {
 const before = await p.evaluate(() => window.__acCount);
 check('before any gesture, with the switch off: no AudioContext', before === 0, `${before} contexts`);
 
@@ -88,6 +91,7 @@ await p.evaluate(async () => {
 await p.waitForTimeout(400);
 const stillOne = await p.evaluate(() => window.__acCount);
 check('turning the switch off reuses the same context (no leak of a second one)', stillOne === after.contexts, `${stillOne} contexts`);
+}
 
 await p.evaluate(() => window.__detach());
 check('destroy() runs cleanly', true);

@@ -13,6 +13,7 @@
 
 import { engineName, pickEngine, unsupportedIn } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
+import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const server = await startServer({ quiet: true });
 const browser = await pickEngine().launch();
@@ -273,6 +274,67 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await p.waitForTimeout(60);
   const border = await p.evaluate(() => getComputedStyle(document.getElementById('account-menu')).borderStyle);
   check('forced colours: a real border on the list', border === 'solid', border);
+  await ctx.close();
+}
+
+// ── a phone, a trigger at the right edge: the open list stays inside the visual viewport ──
+// Mobile Chromium widens innerWidth (and a fixed box's containing block with it) to fit overflowing content, so a
+// placement measured against innerWidth lets the list spill past the phone. Four phones: a clean page and one
+// that something else has widened to 700 px, each with the browser's anchor positioning and with it switched off
+// (the JS fallback, with the stylesheet's @supports block stripped too). The yardstick is the visual viewport, and tools/lib/overflow.mjs for the page.
+for (const scenario of [
+  { name: 'clean page', wide: false, anchors: true }, { name: 'widened page', wide: true, anchors: true },
+  { name: 'clean page, JS fallback', wide: false, anchors: false }, { name: 'widened page, JS fallback', wide: true, anchors: false },
+]) for (const register of ['quiet', 'playful']) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
+  const p = await ctx.newPage();
+  // a browser with no anchor positioning has neither the API nor the stylesheet's @supports block: strip both (the shim alone leaves the CSS anchoring under the JS placement, a state no browser is in)
+  if (!scenario.anchors) await p.route('**/*.css', async route => { const r = await route.fetch(); await route.fulfill({ response: r, body: (await r.text()).replaceAll('@supports (anchor-name: --a)', '@supports not (display: block)') }); });
+  if (!scenario.anchors) await p.addInitScript(() => { const s = CSS.supports.bind(CSS); CSS.supports = (...a) => (String(a[0]).includes('anchor-name') ? false : s(...a)); });
+  await p.goto(`${demo}?register=${register}`);
+  await p.waitForFunction(() => window.__ready && [...document.querySelectorAll('sg-action-menu')].every(e => e.dataset.skin));
+  await p.evaluate(wide => {
+    document.body.insertAdjacentHTML('beforeend', `<div id="edge-host" style="position:absolute;top:120px;right:0"><sg-action-menu><button type="button" popovertarget="edge" style="min-height:44px">View</button><ul id="edge" popover role="menu"><li role="none"><a href="#quiet" role="menuitem">Quiet</a></li><li role="none"><a href="#warm" role="menuitem">Warm, with a longer label</a></li><li role="none"><a href="#playful" role="menuitem">Playful</a></li></ul></sg-action-menu></div>`);
+    if (wide) document.body.insertAdjacentHTML('beforeend', '<div style="width:700px;height:1px"></div>');
+  }, scenario.wide);
+  await p.waitForFunction(() => document.querySelector('#edge-host sg-action-menu')?.dataset.skin);
+  const before = await sidewaysScroll(p, 390);
+  await p.evaluate(() => document.querySelector('button[popovertarget="edge"]').click());
+  await p.waitForFunction(() => document.getElementById('edge').matches(':popover-open'));
+  await p.evaluate(() => Promise.all(document.getElementById('edge').getAnimations().map(a => a.finished.catch(() => {}))));
+  const m = await p.evaluate(() => { const r = document.getElementById('edge').getBoundingClientRect(), v = window.visualViewport;
+    const t = document.querySelector('button[popovertarget="edge"]').getBoundingClientRect();
+    return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, vl: v.offsetLeft, vr: v.offsetLeft + v.width, vt: v.offsetTop, vb: v.offsetTop + v.height, tTop: t.top, tBottom: t.bottom, inner: innerWidth, innerH: innerHeight }; });
+  const after = await sidewaysScroll(p, 390);
+  // on screen up and down too, and still against its trigger (a panel that drops off the top reads fine sideways)
+  const apart = Math.min(Math.abs(m.top - m.tBottom), Math.abs(m.tTop - m.bottom));
+  check(`${register}, phone, ${scenario.name}: it is on screen vertically and within 14 px of its trigger`, m.top >= m.vt - 0.5 && m.bottom <= m.vb + 0.5 && apart <= 14,
+    `top ${m.top.toFixed(1)}, bottom ${m.bottom.toFixed(1)} in 0..${m.vb}; trigger ${m.tTop.toFixed(1)}..${m.tBottom.toFixed(1)}; apart ${apart.toFixed(1)} px, innerHeight ${m.innerH}`);
+  const tag = `${register}, phone, ${scenario.name}:`;
+  check(`${tag} a list opened from the right edge stays inside the visual viewport`, m.left >= m.vl - 0.5 && m.right <= m.vr + 0.5,
+    `list ${m.left.toFixed(1)}..${m.right.toFixed(1)}, visual viewport ${m.vl}..${m.vr} (right-edge gap ${(m.vr - m.right).toFixed(1)} px), innerWidth ${m.inner}`);
+  // a top-layer fixed panel never scrolls the page by itself, so on a popover or a menu this cell cannot go red; it stays as a guard that nothing else opening with it (a scrollbar, a lock) widens the page
+  check(`${tag} opening it adds no sideways scroll to the page`, after.overflow <= before.overflow, `overflow ${before.overflow} px before, ${after.overflow} px after (scrollWidth ${after.scrollWidth}, view ${after.viewWidth})`);
+  await ctx.close();
+}
+
+// ── the first painted frame is already fitted (reduced motion: no fade to hide an unfitted frame behind) ──
+// Sampled with rAF from the click, on a page something else has widened to 700 px: before the fix frame 0 sat at the old place, 300 px past the screen.
+for (const register of ['quiet', 'playful']) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true, reducedMotion: 'reduce' });
+  const p = await ctx.newPage();
+  await p.goto(`${demo}?register=${register}`);
+  await p.waitForFunction(() => window.__ready && [...document.querySelectorAll('sg-action-menu')].every(e => e.dataset.skin));
+  await p.evaluate(h => { document.body.insertAdjacentHTML('beforeend', h); document.body.insertAdjacentHTML('beforeend', '<div style="width:700px;height:1px"></div>'); }, `<div style="position:absolute;top:120px;right:0"><sg-action-menu><button type="button" popovertarget="edge" style="min-height:44px">View</button><ul id="edge" popover role="menu"><li role="none"><a href="#a" role="menuitem">Quiet</a></li><li role="none"><a href="#b" role="menuitem">Warm, with a longer label</a></li></ul></sg-action-menu></div>`);
+  await p.waitForFunction(() => document.getElementById('edge').closest('sg-action-menu')?.dataset.skin);
+  const frames = await p.evaluate(() => new Promise(res => {
+    const out = [], el = document.getElementById('edge'); let n = 0;
+    const tick = () => { const r = el.getBoundingClientRect(); out.push({ open: el.matches(':popover-open'), left: r.left, right: r.right }); if (++n < 4) requestAnimationFrame(tick); else res(out); };
+    document.querySelector('button[popovertarget="edge"]').click(); requestAnimationFrame(tick);
+  }));
+  const bad = frames.filter(f => f.open && (f.left < -0.5 || f.right > 390.5));
+  check(`${register}, reduced motion, widened phone: no open frame is outside the screen, the first included`, frames[0].open && !bad.length,
+    frames.map(f => `${f.open ? '' : 'closed '}${f.left.toFixed(1)}..${f.right.toFixed(1)}`).join(' | '));
   await ctx.close();
 }
 

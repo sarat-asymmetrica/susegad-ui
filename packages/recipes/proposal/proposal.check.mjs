@@ -40,7 +40,7 @@ const browser = await pickEngine(engine).launch();
 const open = async (opts = {}) => {
   const ctx = await browser.newContext(contextOptions(engine, { viewport: { width: 1100, height: 900 }, ...opts }));
   const requests = [], errors = [];
-  await ctx.route('**/*', route => { if (route.request().url() === url) return route.continue(); requests.push(route.request().url()); return route.abort(); });
+  await ctx.route('**/*', route => { if (route.request().url() === url) return route.continue(); if (/^(blob|data):/.test(route.request().url())) return route.continue(); /* WebKit routes the page's own blob: URLs; they never leave the machine */ requests.push(route.request().url()); return route.abort(); });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(String(e)));
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });

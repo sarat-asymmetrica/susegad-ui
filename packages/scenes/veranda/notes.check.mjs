@@ -18,20 +18,16 @@
 // --break patches the served build once per family: notes that do not follow the camera (1), a drop that ignores the depth map
 // (2), a grip with no arrows (3), a walk that ignores the scroll (4), a page that puts words in the hash (5).
 
-import { chromium } from 'playwright';
-import { startServer } from '../../../tools/serve.mjs';
-import { gpuOf } from '../../../tools/lib/gpu.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 import { ANCHORS, anchorPoint, projectM } from './world.js';
 
 const BREAK = process.argv.includes('--break');
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
-const server = await startServer({ quiet: true });
-const browser = await chromium.launch({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] });
+const h = await harness({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'], axe: 'not axe-checked anywhere yet: this page is not in tools/smoke.mjs (docs/DEBT.md); this check asks about drawing and layout' });
+const { server, browser, check, results } = h;
 // On a software renderer (a CI runner, or SG_FORCE_SOFTWARE_GL=1) the stage draws in 2D, which steps between stills even with motion on,
 // and the CPU rasterises the picture: the reduced-motion comparison (needs a free-running camera) and the stall clause (4b) skip
 // (`skip  <clause>  (no GPU: <renderer>)`, tools/lib/gpu.mjs).
-const gate = await gpuOf(browser);
+const gate = await h.gpu();
 
 const BREAKS = {
   noFollow: [/stage-element\.js$/, s => s.replace("if (key === this.#noteKey && !this.#drag) return;", "if (this.#noteKey && !this.#drag) return;")],
@@ -44,7 +40,7 @@ const BREAKS = {
   wordsInHash: [/words\.html$/, s => s.replace("const h = encodeNotes(st.notes);", "const h = encodeNotes(st.notes) + (st.notes.length ? '&text=' + encodeURIComponent(st.noteTexts[st.notes[0].text]) : '');")],
 };
 async function open({ path = 'words.html', query = 'register=warm', hash = '', reduced = false, width = 1280, height = 900, patches = [], noGL = false } = {}) {
-  const context = await browser.newContext({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference', deviceScaleFactor: 1 });
+  const context = await h.context({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference', deviceScaleFactor: 1 });
   const errors = [];
   if (noGL) await context.addInitScript("const g = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function (t, ...a) { return /webgl/.test(t) ? null : g.call(this, t, ...a); };");
   for (const key of BREAK ? patches : []) {
@@ -189,7 +185,5 @@ if (!gate.skip('the walk does not stall: scrolling through every stop, no main-t
     `hash "${hash}", reopened with ${second.length} notes, the bad hash kept ${kept.length}`);
 }
 
-await browser.close(); await server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
-process.exit(BREAK ? 0 : failed ? 1 : 0);
+await h.done({ summary: `${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`, expectRed: BREAK });

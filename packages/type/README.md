@@ -1,6 +1,6 @@
 # Type tier
 
-Words that live in a scene, on a surface the scene draws (a chalkboard, a window's arch, a painted sign), and stay real text: selectable, translatable, read in order, and pressable where they act. Decision 0019; the request that asked for it is `docs/requests/2026-09-28-words-in-the-world.md`.
+Words that live in a scene, on a surface the scene draws (a chalkboard, a window's arch, a painted sign), and stay real text: selectable, translatable, read in order, and pressable where they act. Decision 0019.
 
 The tier is loaded lazily. A scene imports it with `import('../../type/index.js')` only when words are about to be placed (Tinto: `words="world"`, in warm or playful, with something slotted). Core, the engine, tokens and components never import it.
 

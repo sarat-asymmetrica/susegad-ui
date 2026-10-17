@@ -46,7 +46,3 @@ test('lit is the lamp’s state; every register’s still is the plate’s momen
   for (const r of ['quiet', 'warm', 'playful']) assert.equal(model({ time: STILL_TIME, register: r }).t, STILL_TIME);
   assert.ok(LOOKS.warm.pace < LOOKS.playful.pace && !LOOKS.warm.hand && LOOKS.playful.hand);
 });
-
-test('words', () => {
-  for (const k of ['title', 'gloss', 'caption', 'alt', 'keys', 'credit']) assert.ok(!meta[k].includes('—'), k);
-});

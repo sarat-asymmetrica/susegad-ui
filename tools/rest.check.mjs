@@ -12,7 +12,8 @@
 //   --settle S   seconds past the scene's own rest before the idle two-moment read (default 2)
 //   --gap S      seconds between the two read moments (default 3)
 
-import { session, openScene } from './lib/scene-probe.mjs';
+import { harness } from './lib/component-check.mjs';
+import { openScene } from './lib/scene-probe.mjs';
 import { stillAfterReady, restBetweenMoments } from './rest.core.js';
 
 const arg = (name, dflt) => {
@@ -24,7 +25,7 @@ const GAP = (arg('gap', 3)) * 1000;
 // The clean fixture's warm show is 8 s; 11 s past ready is the show plus a margin.
 const SETTLE_MS = arg('settle-clean', 11) * 1000;
 
-const s = await session();
+const s = await harness({ axe: 'tools/smoke.mjs axes each scene demo once, in its default register; this check reads pixels at rest' });
 
 // --- part 1: the red proof, on the fixture that plays forever -----------------
 {

@@ -140,13 +140,18 @@ check('axe without JavaScript: 0 violations', !(await axeNoJs(DEMO)).length);
   await page.waitForFunction(() => document.querySelector('sg-tumble').dataset.state === 'done', null, { timeout: 9000 });
   const trace = await page.evaluate(async () => {
     const t = document.querySelector('#manual'); const p = t.play(); const ys = [], rots = []; let letter = null; for (let i = 0; i < 100 && !t.querySelector('.sg-tumble-letter'); i++) await new Promise(r => setTimeout(r, 20));
-    for (let i = 0; i < 60; i++) {
-      await new Promise(r => requestAnimationFrame(r));
-      letter ??= t.querySelector('.sg-tumble-letter');
-      if (!letter) continue;
-      const m = new DOMMatrix(getComputedStyle(letter).transform), cs = getComputedStyle(letter);
+    // the first letter's animations, stepped by hand at 60 Hz: reading the frames the engine happens to draw would miss the touchdown
+    // when frames are slow (headless WebKit under load drew four frames across the whole fall)
+    letter = t.querySelector('.sg-tumble-letter');
+    const anims = letter.getAnimations();
+    for (const a of anims) a.pause();
+    const end = Math.min(1000, Math.max(...anims.map(a => a.effect.getComputedTiming().endTime)));
+    for (let ms = 0; ms < end + 1e-6 && ys.length < 60; ms += 1000 / 60) {
+      for (const a of anims) a.currentTime = ms;
+      const m = new DOMMatrix(getComputedStyle(letter).transform);
       ys.push(+m.m42.toFixed(1)); rots.push(+(Math.atan2(m.b, m.a) * 180 / Math.PI).toFixed(1));
     }
+    for (const a of anims) a.finish();
     await p; return { ys, rots, doneState: t.dataset.state, layer: !!t.querySelector('.sg-tumble-layer') };
   });
   const ys = trace.ys, firstY = ys[0], touch = ys.findIndex(y => y >= -1);
@@ -192,7 +197,7 @@ for (const register of ['warm', 'playful']) {
   await page.goto(`${server.url}/__check/slowfont.html`, { waitUntil: 'commit' });
   await page.waitForFunction(() => document.querySelector('sg-tumble')?.dataset.skin, null, { timeout: 6000 });
   await page.waitForTimeout(250);
-  const early = await page.evaluate(() => ({ layer: !!document.querySelector('.sg-tumble-layer'), state: document.querySelector('sg-tumble').dataset.state ?? null, loaded: document.fonts.check('56px Slow') }));
+  const early = await page.evaluate(() => ({ layer: !!document.querySelector('.sg-tumble-layer'), state: document.querySelector('sg-tumble').dataset.state ?? null, loaded: document.fonts.status === 'loaded' })); // the set's status: in WebKit check() says true, and the face reads "error", while the font is still on its way
   await page.waitForFunction(() => document.querySelector('sg-tumble').dataset.state === 'playing', null, { timeout: 6000 });
   const startedAfterFont = Date.now() >= served;
   const at = await page.evaluate(() => {

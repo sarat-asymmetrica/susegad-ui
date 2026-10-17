@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Banner</title>
+<link rel="stylesheet" href="./banner.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 64rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-top: var(--sg-space-3); }
+  .frame { border: var(--sg-hairline) solid var(--sg-rule); border-radius: var(--sg-radius-3); overflow: clip; background: var(--sg-surface); }
+  .frame .page { padding: var(--sg-space-3) 16px var(--sg-space-4); color: var(--sg-text-soft); }
+  .frame .page p { margin: 0; }
+  .frame + .frame { margin-top: var(--sg-space-3); }
+  .grounds { display: grid; gap: var(--sg-space-3); }
+  .grounds > * { min-width: 0; }
+  .tag { display: block; font-size: var(--sg-step--1); color: var(--sg-text-soft); margin: 0 0 var(--sg-space-1); }
+  button.again { min-height: 2.75rem; padding: 0 var(--sg-space-4); font: inherit; color: var(--sg-text); background: var(--sg-surface); border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-pill); cursor: pointer; margin-top: var(--sg-space-3); }
+  button.again:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+  #log { min-height: 1.5em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Banner</h1>
+  <p class="lede">A line across the top of a page, for news a visitor should see once: closed for the monsoon, doors open at nine. Send it away with the cross and it stays away on this browser. The first banners follow the page's register (add <code>?register=warm</code>); the last three show all three at once. Every banner here has an <code>until</code> date far ahead, so the demo always shows; a real one carries its own.</p>
+
+  <h2>Four sample sites</h2>
+  <p class="note">Made-up words for made-up places: a shop, the conclave from the event template, a parish feast and a tiatr night. A site brings its own. The dates in a banner can be left empty in a <code>&lt;time&gt;</code>, and are written in words, in IST, in the page's language.</p>
+  <div class="grounds">
+    <div class="frame" id="g-shop">
+      <sg-banner id="shop" until="2099-12-31" back="2027-10-01">Closed for the monsoon.</sg-banner>
+      <div class="page"><span class="tag">A shop. The <code>back</code> attribute adds the date.</span></div>
+    </div>
+    <div class="frame" id="g-event">
+      <sg-banner id="event" until="2099-12-31">Doors open at 9:30 am on Saturday 21 November. Please bring your ticket, on your phone or on paper.</sg-banner>
+      <div class="page"><span class="tag">The conclave.</span></div>
+    </div>
+    <div class="frame" id="g-feast">
+      <sg-banner id="feast" until="2099-12-31">The feast mass is at 10 am on Sunday 15 November. The lane by the chapel is closed to cars from 8 am.</sg-banner>
+      <div class="page"><span class="tag">A parish feast, Santa Cruz chapel, Sample Vaddo.</span></div>
+    </div>
+    <div class="frame" id="g-tiatr">
+      <sg-banner id="tiatr" until="2099-12-31">The tiatr on Friday 20 November begins at 7:30 pm. Doors open at 6:45 pm, and the hall is step-free.</sg-banner>
+      <div class="page"><span class="tag">A tiatr night, Sample Tiatr Night, Kala Hall.</span></div>
+    </div>
+  </div>
+
+  <h2>In Konkani</h2>
+  <p class="note">Draft Konkani, for a native reader. The label, the cross's name and the announcement follow the page's language.</p>
+  <div class="grounds">
+    <div class="frame" id="g-deva" lang="gom-Deva">
+      <sg-banner id="event-deva" until="2099-12-31">शेनवार 21 नोव्हेंबर, सकाळीं 9:30 वरांचेर दारां उगडटात. तुमचें तिकीट, फोनार वा कागदार, हाडात.</sg-banner>
+      <div class="page"><span class="tag" lang="en-IN">The conclave, in Devanagari.</span></div>
+    </div>
+    <div class="frame" id="g-latn" lang="gom-Latn">
+      <sg-banner id="shop-latn" until="2099-12-31" back="2027-10-01">Pausallea khatir bond.</sg-banner>
+      <div class="page"><span class="tag" lang="en-IN">A shop, in Romi, with the date added in Konkani.</span></div>
+    </div>
+  </div>
+
+  <h2>The three registers, side by side</h2>
+  <section data-register="quiet" aria-label="Quiet">
+    <div class="frame">
+      <sg-banner id="demo-quiet" until="2099-12-31">Doors open at 9:30 am on <time datetime="2026-11-21"></time>. Please bring your ticket, on your phone or on paper.</sg-banner>
+      <div class="page"><p>The page it sits on.</p></div>
+    </div>
+  </section>
+  <section data-register="warm" aria-label="Warm">
+    <div class="frame">
+      <sg-banner id="demo-warm" until="2099-12-31">Doors open at 9:30 am on Saturday. Please bring your ticket, on your phone or on paper.</sg-banner>
+      <div class="page"><p>The page it sits on.</p></div>
+    </div>
+  </section>
+  <section data-register="playful" aria-label="Playful">
+    <div class="frame">
+      <sg-banner id="demo-playful" until="2099-12-31">Doors open at 9:30 am on Saturday. Please bring your ticket, on your phone or on paper.</sg-banner>
+      <div class="page"><p>The page it sits on.</p></div>
+    </div>
+  </section>
+
+  <p><button type="button" class="again" id="again">Show them all again</button></p>
+  <p class="note" id="log" role="status"></p>
+</main>
+
+<script type="module">
+  import './banner.js';
+  await customElements.whenDefined('sg-banner');
+  const all = () => [...document.querySelectorAll('sg-banner')];
+  document.getElementById('again').addEventListener('click', () => all().forEach(b => b.reset()));
+  addEventListener('sg-banner-dismiss', e => { document.getElementById('log').textContent = `Dismissed ${e.detail.id}${e.detail.remembered ? ', and remembered' : ', but this browser did not keep it'}.`; });
+  window.__demoReady?.();
+</script>
+</body>
+</html>

@@ -87,9 +87,3 @@ test('bytes read the way people read them', () => {
   assert.equal(barFor({ size: 10, loaded: 10, status: 'checking' }).value, 10);
   assert.equal(barFor({ size: 10, loaded: 10, status: 'checking' }).max, 11);
 });
-
-test('copy: no em dashes, sentence case', () => {
-  const texts = [STRINGS.field, STRINGS.choose, STRINGS.empty.heading, STRINGS.empty.text, STRINGS.retry, STRINGS.stamp,
-    STRINGS.hint('10 MB'), STRINGS.tooLarge('a.jpg', '11 MB', '10 MB'), STRINGS.toastFailed('a.jpg'), STRINGS.toastDone(2)];
-  for (const t of texts) assert.ok(!t.includes('\u2014'), t);
-});

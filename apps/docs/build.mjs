@@ -25,8 +25,9 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../..');
 const PACKAGES = path.join(ROOT, 'packages');
 const TOOLS_HARNESS = path.join(ROOT, 'tools', 'harness');
-const OUT = path.join(ROOT, 'out', 'docs');
-const SKIP = new Set(['build.mjs', 'check.mjs', 'site.check.mjs', 'hero.check.mjs', 'embed.check.mjs', 'pages.mjs', 'posters.mjs', 'posters.test.mjs', 'README.md']);
+// SG_DOCS_OUT builds somewhere else (a reviewer may be serving out/docs while a builder checks its own work)
+const OUT = process.env.SG_DOCS_OUT ? path.resolve(process.env.SG_DOCS_OUT) : path.join(ROOT, 'out', 'docs');
+const SKIP = new Set(['words', 'build.mjs', 'check.mjs', 'site.check.mjs', 'hero.check.mjs', 'embed.check.mjs', 'door-shots.mjs', 'joined.mjs', 'door.check.mjs', 'door.core.test.js', 'npx.check.mjs', 'npx.core.test.js', 'pointers.check.mjs', 'pointers.core.test.js', 'header.check.mjs', 'ideas.html', 'pages.mjs', 'posters.mjs', 'posters.test.mjs', 'README.md']);
 const rel = p => path.relative(ROOT, p).split(path.sep).join('/');
 
 // ── what a file refers to ────────────────────────────────────────────
@@ -117,7 +118,8 @@ const siteFiles = [];
 (function walk(dir) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     const p = path.join(dir, e.name);
-    if (e.isDirectory()) walk(p);
+    // the words deck (words/) is for the people who write the site and names private paths: it is never published
+    if (e.isDirectory()) { if (!(dir === HERE && SKIP.has(e.name))) walk(p); }
     else if (!(dir === HERE && SKIP.has(e.name))) siteFiles.push(p);
   }
 })(HERE);
@@ -138,6 +140,17 @@ const { checkTree } = await import(pathToFileURL(path.join(ROOT, 'tools', 'image
     console.error(['images: ' + errors.length + ' error(s) in the poster step', ...lines].join('\n'));
     process.exit(1);
   }
+}
+// No pointers a reader cannot follow: a page that sends people to a private path, or to an agent's own report, fails the build
+{
+  const { checkPointers } = await import(pathToFileURL(path.join(HERE, 'pointers.check.mjs')).href);
+  const { found, read } = await checkPointers(ROOT);
+  if (found.length) {
+    console.error(`pointers: ${found.length} reference(s) a reader cannot follow, in ${read} texts`);
+    for (const f of found.slice(0, 20)) console.error(`  ${f.file}:${f.line}  ${f.what}  (${f.why})`);
+    process.exit(1);
+  }
+  console.log(`pointers: ${read} texts read, nothing a reader cannot follow`);
 }
 const { writePages } = await import(pathToFileURL(path.join(HERE, 'pages.mjs')).href);
 const generated = await writePages({
@@ -266,11 +279,18 @@ for (const item of registry.items) {
       const code = await susegad(['create', 'site', '--template', name, '--yes'], { cwd: scratch, out: () => {}, err: e => problems.push(e) });
       if (code !== 0) throw new Error(`susegad create --template ${name} failed: ${problems.join(' ')}`);
       const made = path.join(scratch, 'site');
+      // A made site lives at its domain's root, so its offline pages (served by the worker at any depth) load from "/".
+      // Shown here under a folder, those root paths are moved under it.
+      const base = `/templates/${name}/site/`;
+      const rebase = html => html.replace(/\b(src|href)="\/(?!\/)/g, `$1="${base}`);
       (function copy(dir) {
         for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
           const from = path.join(dir, e.name);
+          const rel = path.relative(made, from);
           if (e.isDirectory()) copy(from);
-          else if (!MAKER_FILES.test(path.relative(made, from).replaceAll('\\', '/'))) write(from, path.join(OUT, 'templates', name, 'site', path.relative(made, from)));
+          else if (MAKER_FILES.test(rel.replaceAll('\\', '/'))) continue;
+          else if (from.endsWith('.html')) write(null, path.join(OUT, 'templates', name, 'site', rel), rebase(fs.readFileSync(from, 'utf8')));
+          else write(from, path.join(OUT, 'templates', name, 'site', rel));
         }
       })(made);
       console.log(`template ${name}: the made site is at /templates/${name}/site/`);
@@ -286,6 +306,14 @@ for (const item of registry.items) {
   const line = 'Disallow: /packages/templates/';
   let text = fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : 'User-agent: *\nAllow: /\n';
   if (!text.includes(line)) text = text.replace(/\s*$/, '\n') + line + '\n';
+  // sitemap.xml: the generated pages, the hand-written ones and the made event site (front door 4: a public site is found)
+  const { sitemapXml } = await import(pathToFileURL(path.join(HERE, 'sitemap.core.js')).href);
+  const made = [];
+  (function walk(dir) { if (!fs.existsSync(dir)) return; for (const e of fs.readdirSync(dir, { withFileTypes: true })) { const p = path.join(dir, e.name); if (e.isDirectory()) walk(p); else if (e.name.endsWith('.html')) made.push(path.relative(OUT, p)); } })(path.join(OUT, 'templates'));
+  const pages = [...generated.pages.map(p => path.relative(OUT, p)), 'index.html', 'start.html', 'for-rafe.html', ...made];
+  write(null, path.join(OUT, 'sitemap.xml'), sitemapXml(pages));
+  const map = 'Sitemap: https://susegad.asymmetrica.ai/sitemap.xml';
+  if (!text.includes(map)) text = text.replace(/\s*$/, '\n') + map + '\n';
   write(null, f, text);
 }
 
@@ -298,6 +326,8 @@ for (const item of registry.items) {
     prompt: item.prompt && fs.existsSync(path.join(ROOT, item.prompt)) ? fs.readFileSync(path.join(ROOT, item.prompt), 'utf8') : undefined,
   });
   const { txt, full } = buildLlms(registry, readTexts, {
+    // how an agent makes a page, first, for the prompts the site hands visitors (front door 4)
+    start: fs.readFileSync(path.join(HERE, 'words', 'llms-start.md'), 'utf8'),
     // The machine-readable files an agent can fetch straight from the site:
     // the element manifest (mirrored above) and the registry over HTTP.
     machineFiles: [
@@ -357,6 +387,32 @@ for (const f of siteFiles) {
       ${generated.doorsHtml}
       ${text.slice(b)}`;
   }
+  // `create` is not on npm until the release step says so (npx-packages.json): until then a note stands beside the command
+  if (JSON.parse(fs.readFileSync(path.join(HERE, 'npx-packages.json'), 'utf8')).createOnNpm) text = text.replace(/ *<p class="npm-note" data-npm-note>[\s\S]*?<\/p>\n?/g, '');
+  // the header is one piece of code (site.core.js's bar), so the hand-written pages get it from the build too
+  if (['index.html', 'start.html'].includes(relToSite)) {
+    const { bar, hreflangLinks } = await import(pathToFileURL(path.join(HERE, 'site.core.js')).href);
+    const here = { 'index.html': ['', '', 'en-IN'], 'start.html': ['start', 'start'] }[relToSite] ?? ['', ''];
+    if (relToSite === 'index.html') text = text.replace('  <!-- site:hreflang -->', hreflangLinks());
+    text = text.replace(/ *<header class="bar">[\s\S]*?<\/header>/, () => bar(here[0], 0, { path: here[1], alts: here[2] }));
+  }
+  if (relToSite === 'index.html') {
+    const a = text.indexOf('<!-- site:newest:start -->'), b = text.indexOf('<!-- site:newest:end -->');
+    if (a < 0 || b < a) throw new Error('index.html: the site:newest markers are missing');
+    text = `${text.slice(0, a)}<!-- site:newest:start -->
+      ${generated.newestHtml}
+      ${text.slice(b)}`;
+  }
+  if (relToSite === 'index.html') {
+    // front door 4: the showcase strip and the strip of scenes (audience.core.js)
+    for (const [key, html] of [['showcase', generated.showcaseHtml], ['scenes', generated.scenesHtml]]) {
+      const a = text.indexOf(`<!-- site:${key}:start -->`), z = text.indexOf(`<!-- site:${key}:end -->`);
+      if (a < 0 || z < a) throw new Error(`index.html: the site:${key} markers are missing`);
+      text = `${text.slice(0, a)}<!-- site:${key}:start -->
+      ${html}
+      ${text.slice(z)}`;
+    }
+  }
   if (relToSite === '404.html') {
     // Workers' not_found_handling: "404-page" serves this file's body AT the
     // missing URL itself (e.g. /a/b/c), so its own relative links and
@@ -396,6 +452,26 @@ const broken = [];
   }
 })(OUT);
 
+{
+  const { checkBuiltNpx } = await import(pathToFileURL(path.join(HERE, 'npx.check.mjs')).href);
+  const { bad, read } = checkBuiltNpx(OUT);
+  if (bad.length) {
+    for (const b of bad.slice(0, 20)) console.error(`  ${b.file}: "${b.snippet}" (${b.notItem ? `${b.name} is not an item in the registry` : `${b.name} is not a package on npm`})`);
+    console.error(`npx: ${bad.length} command(s) name a package that is not on the pinned list (apps/docs/npx-packages.json)`);
+    process.exit(1);
+  }
+  console.log(`npx: ${read} files read, every command names a package on npm`);
+}
+{
+  const { checkBuiltPointers } = await import(pathToFileURL(path.join(HERE, 'pointers.check.mjs')).href);
+  const { found, read } = checkBuiltPointers(OUT);
+  if (found.length) {
+    for (const f of found.slice(0, 20)) console.error(`  ${f.file}:${f.line}  ${f.what}  (${f.why})`);
+    console.error(`pointers: ${found.length} reference(s) a reader cannot follow in the built site`);
+    process.exit(1);
+  }
+  console.log(`pointers: ${read} built pages read, nothing a reader cannot follow`);
+}
 console.log(`built ${rel(OUT)}: ${siteFiles.length} site files, ${seen.size} package files, ${registryOnly.size} more for the registry over HTTP, ${(bytes / 1024).toFixed(1)} KB`);
 console.log(`scenes: ${scenes.join(', ') || 'none'}${missing.length ? ` (not found, skipped: ${missing.join(', ')})` : ''}; core: ${hasCore ? 'yes' : 'no'}`);
 console.log(`registry: ${registry.items.length} items, ${demoEntries.length} demo/entry pages shipped`);
@@ -432,7 +508,8 @@ if (!process.argv.includes('--no-verify')) {
     }));
     console.log(`verify ${url}: doors=${got.doors} drawn=${got.drawn} castoro=${got.castoro} errors=${errors.length}`);
     errors.forEach(e => console.error(`  ${e}`));
-    if (errors.length || got.doors < 5 || got.drawn !== 1 || !got.castoro) throw new Error('the built copy did not load cleanly');
+    // four doors since front door 4: the home page's shelf under For developers has no pencil box row (it is on /developers)
+    if (errors.length || got.doors < 4 || got.drawn !== 1 || !got.castoro) throw new Error('the built copy did not load cleanly');
     console.log('the built copy loads');
   } catch (err) {
     console.error(String(err.message || err));
@@ -461,8 +538,10 @@ if (!process.argv.includes('--no-verify')) {
         const why = r.failure()?.errorText ?? 'no reason given';
         // <audio preload="metadata"> takes the 206's header for the duration and then
         // cancels the rest itself: ERR_ABORTED on media is the browser's choice, not a
-        // broken file (a missing one still fails below as a 404)
-        if (r.resourceType() === 'media' && why === 'net::ERR_ABORTED') return;
+        // broken file (a missing one still fails below as a 404). The image tier's probe
+        // (packages/image/measure.js) does the same with fetch: it reads a picture's
+        // header for its size, then aborts the rest.
+        if ((r.resourceType() === 'media' || r.resourceType() === 'fetch') && why === 'net::ERR_ABORTED') return;
         errors.push(`request failed ${r.url()} (${why})`);
       });
       page.on('response', r => { if (r.status() >= 400 && r.url() !== `${deployServer.url}${urlPath}`) errors.push(`${r.status()} ${r.url()}`); });

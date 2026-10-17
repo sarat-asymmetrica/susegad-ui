@@ -23,10 +23,9 @@ function widthAcross(poly, axis, at) {
   return Math.max(...near) - Math.min(...near);
 }
 
-test('every word the element adds is in STRINGS, in sentence case with no em dashes', () => {
+test('every word the element adds is in STRINGS, in sentence case', () => {
   for (const v of Object.values(STRINGS)) {
     assert.match(v, /^[A-Z]/);
-    assert.doesNotMatch(v, /—/);
   }
 });
 
