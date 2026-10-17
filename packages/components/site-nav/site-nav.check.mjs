@@ -5,7 +5,7 @@
 //
 //   node packages/components/site-nav/site-nav.check.mjs
 
-import { harness, settle } from '../../../tools/lib/component-check.mjs';
+import { harness, settle, tab } from '../../../tools/lib/component-check.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { check, open, openHtml, axe, axeNoJs, done } = await harness();
@@ -74,7 +74,8 @@ for (const width of [1280, 390]) {
   const { ctx, page } = await open(DEMO, { width: 390 });
   const nav = '[data-register="quiet"] .panel:not(.narrow) sg-site-nav';
   await page.click(`${nav} summary`);
-  await page.keyboard.press('Tab');
+  await page.focus(`${nav} summary`); // a mouse click gives a button no focus in WebKit; Tab then starts from the summary in every engine
+  await tab(page);
   const inMenu = await page.evaluate(() => document.activeElement.textContent.trim());
   await page.keyboard.press('Escape');
   const r = await page.evaluate(n => ({ open: document.querySelector(`${n} details`).open, focus: document.activeElement.localName }), nav);
@@ -83,6 +84,18 @@ for (const width of [1280, 390]) {
   check('Menu buttons are at least 24 px tall', sizes.every(h => h >= 24), sizes.join(','));
   const { scrollWidth: w } = await sidewaysScroll(page, 390);
   check('at 390 px the page does not scroll sideways', w <= 390, `${w}`);
+  await ctx.close();
+}
+{
+  // control: with the menu's links out of the tab order, Tab must not read as going into the menu
+  const { ctx, page } = await open(DEMO, { width: 390 });
+  const nav = '[data-register="quiet"] .panel:not(.narrow) sg-site-nav';
+  await page.click(`${nav} summary`);
+  await page.focus(`${nav} summary`);
+  await page.evaluate(n => document.querySelectorAll(`${n} ul a`).forEach(a => { a.tabIndex = -1; }), nav);
+  await tab(page);
+  const landed = await page.evaluate(() => document.activeElement.textContent.trim());
+  check('control: with the menu links out of the tab order, Tab does not land on Home', landed !== 'Home', landed);
   await ctx.close();
 }
 {

@@ -11,6 +11,8 @@ import path from 'node:path';
 import { contextOptions, engineName, pickEngine } from './engine.mjs';
 import { acquireSlot } from './slots.mjs';
 
+export { tab, tabTo, tabWalk, tabsToLinks } from './tab.mjs'; // Tab as far as the engine can press it (WebKit leaves links out of the tab order)
+
 export const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 const AXE = await readFile(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
 
@@ -90,7 +92,8 @@ export async function harness() {
  */
 export async function finish(results, closers, { closeMs = 20000, log = console.log } = {}) {
   const failed = results.filter(r => !r.ok).length;
-  log(failed ? `${failed} of ${results.length} checks failed` : `all ${results.length} checks pass`);
+  // a file that skipped everything asked nothing: "all 0 checks pass" would read as a pass
+  log(failed ? `${failed} of ${results.length} checks failed` : results.length ? `all ${results.length} checks pass` : 'no check ran (everything was skipped)');
   for (const close of closers) {
     let timer;
     const late = new Promise(resolve => { timer = setTimeout(() => resolve('late'), closeMs); });

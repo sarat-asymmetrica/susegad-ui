@@ -9,7 +9,7 @@
 // every note, focuses the first problem and keeps the rest silent; a server
 // message shows as written; a hint never marks the field invalid.
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
+import { engineName, pickEngine, unsupportedIn } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
@@ -96,9 +96,13 @@ const faces = await p.evaluate(async () => {
   const v = n.querySelector('.sg-field-note__value');
   return { hand: getComputedStyle(n).fontFamily.split(',')[0], value: v && getComputedStyle(v).fontFamily.split(',')[0], text: v?.textContent, whole: n.textContent };
 });
-check('warm: the sentence is in the hand, the example in the body face (a 1 must not read as an l)', /Kalam/.test(faces.hand) && /Mukta/.test(faces.value) && faces.text === '16' && faces.whole === 'Error: Choose 16 October 2026 or later.', JSON.stringify(faces));
+// "Choose 16 October 2026 or later" is built from a date input's minimum; where the build has no <input type="date"> the field is a
+// text box with no minimum to fall below, so there is no date limit to say
+const dateUi = await p.evaluate(() => document.querySelector('#arrive').type === 'date');
+if (!dateUi) unsupportedIn(engineName(), 'the date-limit sentence (hand and body faces, and the way people say dates)', 'this build has no <input type="date">; the field is a text box with no minimum');
+else check('warm: the sentence is in the hand, the example in the body face (a 1 must not read as an l)', /Kalam/.test(faces.hand) && /Mukta/.test(faces.value) && faces.text === '16' && faces.whole === 'Error: Choose 16 October 2026 or later.', JSON.stringify(faces));
 const arrive = await read('#arrive');
-check('a date limit is said the way people say dates (page lang "en")', arrive.text === 'Error: Choose 16 October 2026 or later.', arrive.text);
+if (dateUi) check('a date limit is said the way people say dates (page lang "en")', arrive.text === 'Error: Choose 16 October 2026 or later.', arrive.text);
 await p.evaluate(() => document.querySelector('sg-field-note[for="dates"]').setMessage(''));
 const cleared = await read('#dates');
 check('setMessage("") clears a server message', !cleared.shown && cleared.invalid === null, JSON.stringify(cleared));

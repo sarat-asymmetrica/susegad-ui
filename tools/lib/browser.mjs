@@ -11,6 +11,15 @@ export const PHONE = { width: 390, height: 844, dpr: 3, touch: true };
 export const DESKTOP = { width: 1280, height: 900, dpr: 1, touch: false };
 
 /**
+ * A page that closes while an audio or video file is still preloading cancels the request: Chromium reports net::ERR_ABORTED on a
+ * 'media' resource. That is the page going away, not a broken file, so it is not counted. The same text on a script, stylesheet or
+ * fetch is kept (a 404 module import fires it too), and so is every other failure of a media request.
+ */
+export function isCancelledMedia(errorText, resourceType) {
+  return resourceType === 'media' && /^net::ERR_ABORTED$/.test(errorText);
+}
+
+/**
  * Start the server and the browser together; `done()` closes both. Takes a machine-wide browser slot
  * first (slots.mjs; waits when they are all taken, skips when runCheck already holds one for this
  * process) and gives it back in `done()`.
@@ -80,7 +89,7 @@ export async function openTarget(s, t, view = {}) {
     log.failedRequests.push(`${what} ${p}`);
   };
   page.on('response', r => { if (r.status() >= 400) fail(r.status(), r.url()); });
-  page.on('requestfailed', r => fail(r.failure()?.errorText || 'failed', r.url()));
+  page.on('requestfailed', r => { const text = r.failure()?.errorText || 'failed'; if (!isCancelledMedia(text, r.resourceType())) fail(text, r.url()); });
   const path = targetPath(t);
   const url = s.base + path;
   await page.goto(url, { waitUntil: 'load' });

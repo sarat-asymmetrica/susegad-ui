@@ -160,32 +160,30 @@ code { font-family: var(--mono); font-size: 0.88em; }
 /* ── header bar and the switches ───────────────────────────────────── */
 .bar { position: relative; z-index: 2; border-bottom: var(--r-rule) solid var(--ink); overflow-x: clip; }
 .bar-in {
-  max-width: 1240px; margin: 0 auto; padding: 12px clamp(16px, 4vw, 56px);
-  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 28px;
+  max-width: 1240px; margin: 0 auto; padding: 10px clamp(16px, 4vw, 56px);
+  display: flex; align-items: center; gap: 8px 24px;
 }
 .brand { font-family: var(--display); font-size: 26px; line-height: 1; text-decoration: none; white-space: nowrap; }
 .brand span { font-family: var(--body); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; vertical-align: 0.5em; color: var(--r-kicker); }
-.nav { display: flex; gap: 4px 18px; flex-wrap: wrap; }
-.nav a { font-size: 15px; text-decoration: none; color: var(--ink-2); border-bottom: 1px solid transparent; padding-block: 2px; }
+.nav { display: flex; gap: 4px 18px; flex: 1 1 auto; min-width: 0; }
+.nav a { font-size: 15px; text-decoration: none; color: var(--ink-2); border-bottom: 1px solid transparent; padding-block: 2px; white-space: nowrap; }
 .nav a:hover { color: var(--ink); border-bottom-color: currentColor; }
 .bar .src { font-size: 14px; text-decoration: none; color: var(--ink-2); border: 1px solid var(--rule-strong); border-radius: var(--r-pill); padding: 3px 11px; white-space: nowrap; }
 .bar .src:hover { color: var(--ink); border-color: var(--ink); }
-.prefs { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-left: auto; align-items: end; }
-html:not(.js) .prefs { display: none; }
+/* the switch the templates page uses to pick the event page's register: a small segmented row */
 .seg { border: 0; margin: 0; padding: 0; min-width: 0; }
 .seg legend { padding: 0; margin-bottom: 3px; font-size: 11.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
 .seg-row { display: inline-flex; border: 1px solid var(--rule-strong); border-radius: var(--r-pill); padding: 2px; gap: 2px; }
 .seg label { position: relative; cursor: pointer; }
 .seg input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
 .seg span {
-  display: block; font-size: 13.5px; font-weight: 500; line-height: 1; padding: 7px 11px 6px;
+  display: block; font-size: 14px; font-weight: 500; line-height: 1; padding: 13px 14px 12px;
   border-radius: var(--r-pill); color: var(--ink-2);
   transition: background-color var(--r-dur) var(--r-ease), color var(--r-dur), transform var(--r-dur) var(--r-ease);
 }
 .seg label:hover span { color: var(--ink); background: color-mix(in oklab, var(--ink) 8%, transparent); }
 .seg input:checked + span { background: var(--ink); color: var(--paper); }
 .seg input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
-[data-register="playful"] .seg-register input:checked + span { background: var(--accent-fill); color: var(--on-accent); }
 
 /* bunting under the header in the playful register: a row of CSS pennants */
 .toran {
@@ -220,12 +218,18 @@ h1 { font-family: var(--display); font-size: clamp(56px, 8.6vw, 124px); line-hei
 .mast-line { font-family: var(--r-hand); font-weight: var(--r-hand-weight); font-size: calc(19px * var(--r-hand-scale)); line-height: 1.35; color: var(--ink-2); text-align: center; margin: 10px 0 0; }
 [data-register="quiet"] .mast-line { font-size: 15px; letter-spacing: 0.01em; }
 [data-register="quiet"] .mast-frame { border: 1px solid var(--rule); }
-/* the line lights up word by word once, as the curtain rises: a marker stroke grows under each word, so the text colour never changes and contrast holds at every moment; quiet and reduced motion show the line plain */
-.mast-line span { background: linear-gradient(var(--mark), var(--mark)) no-repeat 0 88% / 0 0.34em; --mark: color-mix(in oklab, var(--r-kicker) 34%, transparent); }
-@media (prefers-reduced-motion: no-preference) {
-  :root:not([data-register="quiet"]) .mast-line span { animation: line-lit 0.6s var(--ease-settle, ease-out) both; animation-delay: calc(1.1s + var(--i, 0) * 0.14s); }
+/* one hand-drawn underline under the caption, the whole way along and line by line when it wraps: a single wavering
+   stroke repeated under the text, so there are no gaps between words. A drawing cannot read a custom property, so the
+   stroke is the register's accent in four fixed shades. Quiet keeps the line plain. */
+.mast-ul { padding-bottom: 0.22em; -webkit-box-decoration-break: clone; box-decoration-break: clone; background: none repeat-x 0 100% / 120px 8px; }
+:root[data-register="warm"] .mast-ul { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='8' viewBox='0 0 120 8'%3E%3Cpath d='M0 4.6 C10 2.2 18 6.4 30 4.2 S50 2.4 62 4.8 S86 6.2 98 3.8 S114 3.4 120 4.4' fill='none' stroke='%239a4a2c' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E"); }
+:root[data-register="playful"] .mast-ul { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='8' viewBox='0 0 120 8'%3E%3Cpath d='M0 4.6 C10 2.2 18 6.4 30 4.2 S50 2.4 62 4.8 S86 6.2 98 3.8 S114 3.4 120 4.4' fill='none' stroke='%23b32463' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E"); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-register="warm"] .mast-ul { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='8' viewBox='0 0 120 8'%3E%3Cpath d='M0 4.6 C10 2.2 18 6.4 30 4.2 S50 2.4 62 4.8 S86 6.2 98 3.8 S114 3.4 120 4.4' fill='none' stroke='%23e0906f' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E"); }
+  :root:not([data-theme="light"])[data-register="playful"] .mast-ul { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='8' viewBox='0 0 120 8'%3E%3Cpath d='M0 4.6 C10 2.2 18 6.4 30 4.2 S50 2.4 62 4.8 S86 6.2 98 3.8 S114 3.4 120 4.4' fill='none' stroke='%23f09aa6' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E"); }
 }
-@keyframes line-lit { to { background-size: 100% 0.34em; } }
+:root[data-theme="dark"][data-register="warm"] .mast-ul { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='8' viewBox='0 0 120 8'%3E%3Cpath d='M0 4.6 C10 2.2 18 6.4 30 4.2 S50 2.4 62 4.8 S86 6.2 98 3.8 S114 3.4 120 4.4' fill='none' stroke='%23e0906f' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E"); }
+:root[data-theme="dark"][data-register="playful"] .mast-ul { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='8' viewBox='0 0 120 8'%3E%3Cpath d='M0 4.6 C10 2.2 18 6.4 30 4.2 S50 2.4 62 4.8 S86 6.2 98 3.8 S114 3.4 120 4.4' fill='none' stroke='%23f09aa6' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E"); }
 
 /* ── section heads ─────────────────────────────────────────────────── */
 .ideas, .scenes, .box { border-top: var(--r-rule) solid var(--ink); padding-block: 28px 8px; }
@@ -430,7 +434,6 @@ h1 { font-family: var(--display); font-size: clamp(56px, 8.6vw, 124px); line-hei
   .plate, .plate.flip { grid-template-columns: 1fr; }
   .plate.flip .art { order: 0; }
   .art { position: static; }
-  .prefs { margin-left: 0; width: 100%; }
 }
 @media (max-width: 620px) {
   .idea-list { grid-template-columns: 1fr; }
@@ -439,9 +442,6 @@ h1 { font-family: var(--display); font-size: clamp(56px, 8.6vw, 124px); line-hei
   .spec figcaption { grid-row: span 2; }
   .spec-bar { margin-block: 4px 4px; }
   .spec[data-register="quiet"] .spec-bar { margin-block: 8px 8px; }
-  .bar-in { gap: 10px 18px; }
-  .prefs { gap: 8px 12px; }
-  .seg span { padding-inline: 9px; }
   .brand { font-size: 23px; }
 }
 

@@ -48,6 +48,18 @@ import { spawnSync } from 'node:child_process';
 import { parseSkips } from './lib/gpu.core.js';
 import { drivesChromium } from './lib/chromium-only.core.js';
 
+// Only these flags exist. A file name is not one: this runs the whole suite (or --changed's choice), so a stray argument is an error, not a quiet "run everything".
+const USAGE = `usage: node tools/checks.mjs [--engine=chromium|webkit|firefox] [--changed[=<ref>]] [--shard=<i>/<n>] [--dry]
+
+  Runs every *.check.mjs under packages/ and recipes/, plus tools/touch.check.mjs and tools/lib/tab.check.mjs,
+  after the Node-only checks (the text and bake gates).
+  To run ONE check, run its file directly:   node packages/components/menu/menu.check.mjs
+  (SG_ENGINE=webkit node packages/components/menu/menu.check.mjs for another engine.)`;
+const FLAGS = process.argv.slice(2);
+if (FLAGS.includes('--help') || FLAGS.includes('-h')) { console.log(USAGE); process.exit(0); }
+const unknown = FLAGS.filter(a => !/^--(engine=.+|changed(=.+)?|shard=.+|dry)$/.test(a));
+if (unknown.length) { console.error(`unknown argument${unknown.length === 1 ? '' : 's'}: ${unknown.join(' ')}\n\n${USAGE}`); process.exit(2); }
+
 const engineFlag = process.argv.find(a => a.startsWith('--engine='))?.slice('--engine='.length);
 const engineName = (engineFlag ?? process.env.SG_ENGINE ?? 'chromium').trim().toLowerCase();
 if (!ENGINE_NAMES.includes(engineName)) {
@@ -75,7 +87,7 @@ const walk = dir => {
 for (const d of ['packages', 'recipes']) if (fs.existsSync(path.join(root, d))) walk(path.join(root, d));
 // Library-wide checks that live in tools/ (the rest of tools/*.check.mjs are run by hand, with their own gates).
 const NODE = Object.keys(NODE_CHECKS); // Node-only checks: no browser, no slot (tools/lib/changed.core.js says what selects each)
-const EXTRA = ['tools/touch.check.mjs']; // the microinteraction check: press, focus and reduced-motion, per interactive component
+const EXTRA = ['tools/touch.check.mjs', 'tools/lib/tab.check.mjs']; // the microinteraction check (press, focus and reduced-motion, per interactive component), and the Tab helpers the other checks lean on
 for (const e of EXTRA) found.push(path.join(root, e));
 found.sort();
 
@@ -142,6 +154,7 @@ for (const rel of chosenNode) {
   if (!ok) console.log(out.split('\n').slice(-40).join('\n'));
 }
 console.log(`Running ${toRun.length} check${toRun.length === 1 ? '' : 's'} in ${engineName}.\n`);
+let withSkips = 0; // files that passed but printed a skip line: they did not ask everything
 const timeoutS = defaultTimeoutS();
 const LONG = { 'tools/touch.check.mjs': 4 }; // whole-library checks get a multiple of the limit (the probe presses every demo in three registers) // SG_CHECK_TIMEOUT_S to change; a hung check is killed and reported, never waited on
 for (const f of toRun) {
@@ -153,7 +166,9 @@ for (const f of toRun) {
   const noGpu = parseSkips(r.out);
   if (noGpu.length) skipped.push({ check: rel, clauses: noGpu });
   const tail = r.out.trim().split('\n').slice(-1)[0] || '';
-  console.log(`${ok ? 'pass' : mark(rel)}  ${rel}  ${r.timedOut ? `(timed out after ${timeoutS * (LONG[rel] ?? 1)} s)` : tail}`);
+  const withSkip = ok && /^skip /m.test(r.out); // passed, but printed a skip line (a GPU skip or an engine skip)
+  if (withSkip) withSkips++;
+  console.log(`${ok ? (withSkip ? 'pass*' : 'pass') : mark(rel)}  ${rel}  ${r.timedOut ? `(timed out after ${timeoutS * (LONG[rel] ?? 1)} s)` : tail}`);
   if (!ok) console.log(r.out.trim().split('\n').slice(-15).join('\n'));
 }
 // Konkani strings no native reader has checked yet: a warning, never a failure (decision 0025; --strict on the tool fails).
@@ -161,7 +176,8 @@ const { report, format } = await import('./strings-review.mjs');
 console.log(`\nKonkani strings awaiting a native reader (warn only)\n${format(report())}`);
 const total = toRun.length + chosenNode.length;
 const v = verdict(results, flakes, engineName);
-console.log(`\n${total - failed.length} of ${total} checks pass (${engineName}${chosenNode.length ? `; ${chosenNode.length} Node-only` : ''}${shard ? `; shard ${shard.index}/${shard.count}` : ''})`);
+console.log(`\n${total - failed.length} of ${total} checks pass (${engineName}${chosenNode.length ? `; ${chosenNode.length} Node-only` : ''}${shard ? `; shard ${shard.index}/${shard.count}` : ''})`
+  + (withSkips ? `; ${withSkips} of those passed with skips (pass*: part of the file did not run in this engine, and said why)` : ''));
 // A skip is a clause that did not run (no GPU: the live tier is not there to test). It is not a pass of that clause and not a red.
 const nSkipped = skipped.reduce((n, k) => n + k.clauses.length, 0);
 console.log(`Skipped, no GPU: ${nSkipped} clause${nSkipped === 1 ? '' : 's'} in ${skipped.length} check${skipped.length === 1 ? '' : 's'}${skipped.map(k => `\n  ${k.check}${failed.includes(k.check) ? ' (FAILED)' : ''}${k.clauses.map(c => `\n    ${c}`).join('')}`).join('')}`);

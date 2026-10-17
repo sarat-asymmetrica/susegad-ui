@@ -6,7 +6,7 @@
 //
 //   node packages/components/site-footer/site-footer.check.mjs
 
-import { harness, settle } from '../../../tools/lib/component-check.mjs';
+import { harness, settle, tabTo } from '../../../tools/lib/component-check.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { check, open, openHtml, axe, axeNoJs, done } = await harness();
@@ -106,19 +106,20 @@ const read = page => page.evaluate(() => {
 }
 
 // ── the keyboard ────────────────────────────────────────────────────────
-async function tabTo(page, sel, max = 8) {
-  for (let i = 0; i < max; i++) {
-    await page.keyboard.press('Tab');
-    if (await page.evaluate(s => document.activeElement?.matches(s), sel)) return i + 1;
-  }
-  return 0;
-}
+// tabTo: Tab as far as the engine can press it (tools/lib/tab.mjs; WebKit leaves links out of the tab order)
 for (const register of ['quiet', 'warm', 'playful']) {
   const { ctx, page } = await footerPage(PAGE(FOOTER(), { register }));
   const presses = await tabTo(page, '.sg-site-footer-links a');
   const ring = await page.evaluate(() => { const s = getComputedStyle(document.activeElement); return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) >= 2; });
   const box = await page.evaluate(() => document.activeElement.getBoundingClientRect().height);
   check(`${register}: Tab reaches the first link (${presses} presses), a ${Math.round(box)} px target with a focus ring`, presses > 0 && ring && box >= 40, `presses ${presses}, ring ${ring}, height ${box}`);
+  await ctx.close();
+}
+{
+  const { ctx, page } = await footerPage(PAGE(FOOTER(), { register: 'warm' }));
+  await page.evaluate(() => document.querySelectorAll('.sg-site-footer-links a').forEach(a => { a.tabIndex = -1; }));
+  const presses = await tabTo(page, '.sg-site-footer-links a');
+  check('control: footer links taken out of the tab order are not reached by the keyboard probe', presses === 0, `${presses} presses`);
   await ctx.close();
 }
 {

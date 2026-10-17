@@ -15,7 +15,7 @@
 //   no-press    the playful press does not give                     -> "press"
 
 import fs from 'node:fs';
-import { pickEngine } from '../../../tools/lib/engine.mjs';
+import { engineName, keyHeldActivates, pickEngine, unsupportedIn } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 import { arrivalDelay } from '../../core/arrive.js';
 
@@ -242,7 +242,9 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   await kp.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
   const k = await kp.evaluate(() => { const b = document.activeElement, cs = getComputedStyle(b); return { input: document.documentElement.dataset.sgInput, active: b.matches(':active'), translate: cs.translate, scale: cs.scale }; });
   await kp.keyboard.up('Space'); await kp.keyboard.up('ArrowRight');
-  check('data-table playful: with an arrow held (data-sg-input=key) a press does not move', k.input === 'key' && k.active && k.translate === 'none' && k.scale === 'none', JSON.stringify(k));
+  const keyLit = await keyHeldActivates(browser); // Firefox (as driven here) does not put a key-held button in :active at all
+  if (!keyLit) unsupportedIn(engineName(), ':active while a key is held', 'a bare button with an :active rule stays at rest under a held Space in this engine, so the press itself is not asked; nothing-moves still is');
+  check('data-table playful: with an arrow held (data-sg-input=key) a press does not move', k.input === 'key' && (k.active || !keyLit) && k.translate === 'none' && k.scale === 'none', JSON.stringify(k));
   await kctx.close();
 }
 

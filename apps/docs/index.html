@@ -4,78 +4,51 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Susegad UI</title>
-  <meta name="description" content="A front-end library for interfaces and documents that are beautiful and comfortable at the same time. Every piece has three registers and ships with its prompt.">
+  <meta name="description" content="Web pages that are beautiful and comfortable at the same time, drawn in code in Goa. Free, open, and ready for you, your developer or your AI agent to build with.">
   <link rel="canonical" href="https://susegad.asymmetrica.ai/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Susegad UI">
   <meta property="og:title" content="Susegad UI">
-  <meta property="og:description" content="A front-end library for interfaces and documents that are beautiful and comfortable at the same time. Every piece has three registers and ships with its prompt.">
+  <meta property="og:description" content="Web pages that are beautiful and comfortable at the same time, drawn in code in Goa. Free, open, and ready for you, your developer or your AI agent to build with.">
   <meta property="og:url" content="https://susegad.asymmetrica.ai/">
   <meta property="og:image" content="https://susegad.asymmetrica.ai/og.jpg?v=2">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Susegad UI: the title above a tiatr stage drawn in code, its curtain risen on a Goan church square, between a banyan and a tiled pool.">
   <meta name="twitter:card" content="summary_large_image">
+  <!-- site:hreflang -->
   <meta name="color-scheme" content="light dark">
   <script src="./prefs.js"></script>
   <link rel="stylesheet" href="../../packages/tokens/fonts.css">
   <link rel="stylesheet" href="../../packages/tokens/tokens.css">
   <link rel="stylesheet" href="./docs.css">
   <link rel="stylesheet" href="./site.css">
+  <link rel="stylesheet" href="./door.css">
+  <link rel="stylesheet" href="./audience.css">
+  <link rel="stylesheet" href="../../packages/components/popover/popover.css">
+  <link rel="stylesheet" href="../../packages/components/lang/lang.css">
   <script type="module" src="./shell.js"></script>
   <script type="module" src="./docs.js"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
 
-  <header class="bar">
-    <div class="bar-in">
-      <a class="brand" href="./" aria-label="Susegad UI, home">Susegad <span>UI</span></a>
-      <nav class="nav" aria-label="Sections">
-        <a href="start">Start here</a>
-        <a href="scenes">Scenes</a>
-        <a href="components">Components</a>
-        <a href="recipes">Recipes</a>
-        <a href="foundations">Foundations</a>
-        <a href="pencil-box">Pencil box</a>
-      </nav>
-      <a class="src" href="https://github.com/sarat-asymmetrica/susegad-ui" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
-      <form class="prefs" id="prefs" aria-label="How this page looks">
-        <fieldset class="seg seg-register" data-pref="register">
-          <legend>Register</legend>
-          <div class="seg-row">
-            <label><input type="radio" name="register" value="quiet"><span>Quiet</span></label>
-            <label><input type="radio" name="register" value="warm"><span>Warm</span></label>
-            <label><input type="radio" name="register" value="playful"><span>Playful</span></label>
-          </div>
-        </fieldset>
-        <fieldset class="seg" data-pref="theme">
-          <legend>Theme</legend>
-          <div class="seg-row">
-            <label><input type="radio" name="theme" value="auto"><span>Auto</span></label>
-            <label><input type="radio" name="theme" value="light"><span>Light</span></label>
-            <label><input type="radio" name="theme" value="dark"><span>Dark</span></label>
-          </div>
-        </fieldset>
-        <fieldset class="seg" data-pref="palette">
-          <legend>Palette</legend>
-          <div class="seg-row">
-            <label><input type="radio" name="palette" value="susegad"><span>Susegad</span></label>
-            <label><input type="radio" name="palette" value="casa"><span>Casa</span></label>
-          </div>
-        </fieldset>
-      </form>
-    </div>
-    <div class="toran" aria-hidden="true"></div>
-  </header>
+  <header class="bar"><!-- the build writes the header: site.core.js, bar() --></header>
 
   <main class="wrap" id="main" tabindex="-1">
+    <!-- The order follows the site's three readers (request front-door-4): someone who wants a page, someone with an agent, then an engineer. -->
     <section class="mast" aria-labelledby="title">
       <div class="mast-text">
-        <p class="kicker">a front-end library, drawn in code in Goa</p>
+        <p class="kicker">drawn in code in Goa</p>
         <h1 id="title">Susegad <span class="h1-ui">UI</span></h1>
-        <p class="gloss">Konkani, from the Portuguese <i>sossegado</i>.</p>
-        <p class="lede">Susegad UI is a library for interfaces and documents that are beautiful and comfortable at the same time. It grew out of a sketchbook of code-drawn studies of Goa and India, and it keeps their craft: drawings that host your words, show something real and answer the person using them. Every piece comes in three registers, ships with the prompt you could give an AI agent to make it, and keeps its keyboard and screen reader support in a plain core underneath.</p>
+        <p class="gloss">Konkani, from the Portuguese <i>sossegado</i>: unhurried, at ease.</p>
+        <p class="lede">Web pages that are beautiful and comfortable at the same time. A homestay's booking page, a festival's programme, a café's menu, a proposal for a client: each one drawn with the care of a Goan afternoon, and easy for everyone to use, on any phone.</p>
+        <p class="lede lede-2">It is free. You can ask an AI agent to build your page with it, or ask your developer.</p>
+        <p class="cta">
+          <a class="btn btn-solid btn-lg" href="showcase">See what it makes</a>
+          <a class="btn btn-lg" href="start#path-agent">Build it with your agent</a>
+        </p>
+        <p class="dev-line">Writing the code yourself? <a href="developers">The developer's door</a></p>
       </div>
       <figure class="mast-art" id="mast-art">
         <!-- The frame is a seam: a later border (a kaavi, scraped laterite) mounts into .mast-border and sets --mast-frame-pad; the stage inside does not change. -->
@@ -83,14 +56,90 @@
           <div class="mast-border" data-slot="border" aria-hidden="true"></div>
           <sg-scene class="mast-stage" id="mast-stage" name="kantar" hero="true" label="A tiatr stage: a painted proscenium, footlights, the band in the pit and a red velvet curtain"></sg-scene>
         </div>
-        <figcaption class="mast-line" id="mast-line"><span style="--i:0">Susegad:</span> <span style="--i:1">the</span> <span style="--i:2">unhurried</span> <span style="--i:3">contentment</span> <span style="--i:4">of</span> <span style="--i:5">a</span> <span style="--i:6">Goan</span> <span style="--i:7">afternoon.</span></figcaption>
+        <figcaption class="mast-line" id="mast-line"><span class="mast-ul">Susegad: the unhurried contentment of a Goan afternoon.</span></figcaption>
       </figure>
     </section>
 
-    <section class="library" id="library" aria-labelledby="library-title">
+    <section class="band show-home" id="showcase" aria-labelledby="show-title">
       <div class="section-head">
-        <h2 id="library-title" class="section-title">What is inside</h2>
-        <p class="section-intro">Every piece has a page of its own, with its prompt and its install line. The indexes show a still of each; the drawing runs when you open it.</p>
+        <h2 id="show-title" class="section-title">See it working</h2>
+        <p class="section-intro">Whole pages made with Susegad UI. Open one and try it. The names and details are samples.</p>
+      </div>
+      <!-- site:showcase:start -->
+      <!-- site:showcase:end -->
+    </section>
+
+    <section class="band moods" aria-labelledby="moods-title">
+      <div class="moods-text">
+        <h2 id="moods-title" class="section-title">One look, three moods</h2>
+        <p>Every piece comes quiet, warm or playful. Quiet suits a bank or a clinic, warm suits a homestay, and playful suits a festival. Pick one for the whole site, and every button, form and drawing follows. Try it with the View button at the top of this page.</p>
+      </div>
+      <div class="specimens" role="group" aria-label="The same upload progress in each mood">
+        <figure class="spec" data-register="quiet">
+          <figcaption>quiet</figcaption>
+          <div class="spec-bar" aria-hidden="true"><i></i></div>
+          <p class="spec-text">3 of 5 photos uploaded</p>
+        </figure>
+        <figure class="spec" data-register="warm">
+          <figcaption>warm</figcaption>
+          <div class="spec-bar" aria-hidden="true"><i></i></div>
+          <p class="spec-text">3 of 5 photos uploaded</p>
+        </figure>
+        <figure class="spec" data-register="playful">
+          <figcaption>playful</figcaption>
+          <div class="spec-bar" aria-hidden="true"><i></i></div>
+          <p class="spec-text">3 of 5 photos uploaded</p>
+        </figure>
+      </div>
+    </section>
+
+    <section class="band ways" id="ways" aria-labelledby="ways-title">
+      <h2 id="ways-title" class="section-title">Three ways to use it</h2>
+      <ol class="way-list" role="list">
+        <li class="way way-agent">
+          <h3>With your AI agent</h3>
+          <p>Paste this into Claude, ChatGPT, Cursor or any agent that can read a web page. Change the words in brackets.</p>
+          <div class="note-card">
+            <p class="note-text" id="agent-words">Make me a one-page website for [my homestay in Aldona] using Susegad UI. First read https://susegad.asymmetrica.ai/llms.txt and follow its "Start here" section. Use the warm look and a drawn scene that fits the place, and keep it easy to use on a phone. Ask me for anything you need. When it is ready, explain in plain words how I can put it online.</p>
+            <p class="note-acts"><button class="copy btn" type="button" data-copy="agent-words" data-announce="Copied. Paste it into your agent.">Copy this request</button></p>
+          </div>
+        </li>
+        <li class="way">
+          <h3>Ask your developer</h3>
+          <p>If someone builds your site for you, send them a short note with everything they need.</p>
+          <p class="way-link"><a href="for-teams#developer">The note for your developer</a></p>
+        </li>
+        <li class="way">
+          <h3>Build it yourself</h3>
+          <p>Copy the pieces you want into a project you already have, or make a whole site from a template. Both use a terminal.</p>
+          <p class="way-link"><a href="start">Get started</a></p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="band goa" aria-labelledby="goa-title">
+      <div class="section-head">
+        <h2 id="goa-title" class="section-title">Drawn in Goa</h2>
+        <p class="section-intro">The pictures are drawn in code, not photographed: rain on a window in the monsoon, a paddy field through the year, the ferry crossing the river, a kolam at the threshold. They move gently, rest when nobody is looking, and hold your words.</p>
+      </div>
+      <!-- site:scenes:start -->
+      <!-- site:scenes:end -->
+    </section>
+
+    <section class="band count-on" aria-labelledby="count-title">
+      <h2 id="count-title" class="section-title">What you can count on</h2>
+      <ul class="facts facts-grid" role="list">
+        <li><strong>Free and open.</strong> The code is MIT licensed. Use it for any site, including one you are paid to make.</li>
+        <li><strong>Made for phones.</strong> Pages load only what they need, the drawings rest when they are off screen, and the words still read with JavaScript off.</li>
+        <li><strong>Easy for everyone to use.</strong> Built to WCAG 2.2 AA. Buttons, forms and menus are tested for keyboard use and for what a screen reader announces. <a href="accessibility">How we check accessibility</a></li>
+        <li><strong>Made for India.</strong> Konkani in Devanagari and Romi, lakh and crore, the rupee, and time in IST. The Konkani is a first draft until a Goan reader has checked it.</li>
+      </ul>
+    </section>
+
+    <section class="library devs-home" id="library" aria-labelledby="library-title">
+      <div class="section-head">
+        <h2 id="library-title" class="section-title">For developers</h2>
+        <p class="section-intro">Plain HTML, CSS and JavaScript that you copy into your project and own. No framework, and no build step unless you want one. <a href="developers">The developer's door</a> <span aria-hidden="true">·</span> <a href="developers#ideas">How it is built</a></p>
       </div>
       <!-- site:doors:start -->
       <ul class="doors" role="list">
@@ -101,60 +150,19 @@
         <li class="door door-small"><h3 class="door-title"><a href="pencil-box">The pencil box</a></h3></li>
       </ul>
       <!-- site:doors:end -->
+      <div class="hero-install">
+        <p class="hero-install-lead" id="install-lead">Make a whole site from the command line:</p>
+        <p class="install"><code id="hero-cmd">npx @susegad/cli create my-site</code> <button class="copy" type="button" data-copy-text="npx @susegad/cli create my-site" data-announce="Copied the command" aria-label="Copy the command">Copy</button></p>
+        <p class="npm-note" data-npm-note><code>create</code> arrives on npm with version 0.2.0. Until then, <a href="start">Get started</a> shows how to run it from a clone.</p>
+      </div>
     </section>
 
     <section class="newest" aria-labelledby="newest-title">
       <h2 id="newest-title" class="section-title">Newest</h2>
-      <ul class="new-list" role="list">
-        <li class="new-item">
-          <h3 class="new-title"><a href="scenes/veranda">The veranda, in depth</a></h3>
-          <p>A Goan veranda drawn with exact depth: words on glass slide behind its pillars and settle where they can be read, and notes stay pinned to the door and the lamp as the camera walks.</p>
-        </li>
-        <li class="new-item">
-          <h3 class="new-title"><a href="../../packages/scenes/tinto/world.html">Words on glass</a></h3>
-          <p>Put a scene's words on frosted glass and move them by a grip or the arrow keys; the people in the square step round them. Try it in Tinto's square.</p>
-        </li>
-        <li class="new-item">
-          <h3 class="new-title"><a href="scenes/shet">A year of paddy</a></h3>
-          <p>Shet, the first scape: one Goan field from cracked April mud to the harvest, loading its first sight in under 64 KB.</p>
-        </li>
-      </ul>
+      <!-- site:newest:start -->
+      <!-- site:newest:end -->
     </section>
 
-    <section class="ideas" id="ideas" aria-labelledby="ideas-title">
-      <h2 id="ideas-title" class="section-title">Three ideas</h2>
-      <ol class="idea-list">
-        <li class="idea">
-          <h3>One component, three registers</h3>
-          <p>Every piece has a quiet, warm and playful register, set for the whole page the way colour mode is. The same progress bar is a pencil hairline for an ERP buyer, a kolam that closes for a homestay, and a string of bunting that fills up for a festival. Try the register switch at the top of this page. The whole page changes, not just the drawings.</p>
-          <div class="specimens" role="group" aria-label="The same upload progress in each register">
-            <figure class="spec" data-register="quiet">
-              <figcaption>quiet</figcaption>
-              <div class="spec-bar" aria-hidden="true"><i></i></div>
-              <p class="spec-text">3 of 5 photos uploaded</p>
-            </figure>
-            <figure class="spec" data-register="warm">
-              <figcaption>warm</figcaption>
-              <div class="spec-bar" aria-hidden="true"><i></i></div>
-              <p class="spec-text">3 of 5 photos uploaded</p>
-            </figure>
-            <figure class="spec" data-register="playful">
-              <figcaption>playful</figcaption>
-              <div class="spec-bar" aria-hidden="true"><i></i></div>
-              <p class="spec-text">3 of 5 photos uploaded</p>
-            </figure>
-          </div>
-        </li>
-        <li class="idea">
-          <h3>Every component ships with its prompt</h3>
-          <p>Next to the code sits the prompt you could give an AI agent to make it, and a map from the words in that prompt to the techniques in the code. The library teaches as it serves. Each scene's page carries its prompt on a blue inland letter you can copy, with the map folded away just after it.</p>
-        </li>
-        <li class="idea">
-          <h3>Behaviour and skin are separate</h3>
-          <p>Keyboard, focus and screen reader support live in a headless core that is boringly correct. The theatre is a skin on top. The quiet skin has to pass an accessibility audit without a single flourish, and every drawing also says what it shows in text.</p>
-        </li>
-      </ol>
-    </section>
 
   </main>
 
@@ -162,6 +170,7 @@
     <p class="sig">made by Claude with Sarat, Asymmetrica, Goa, 2026</p>
     <p class="for"><a href="./for-rafe.html">For Rafe</a>, who lent us his Activa and went fishing.</p>
     <p class="src-line">The code, the prompts and the drawings are open on <a href="https://github.com/sarat-asymmetrica/susegad-ui" rel="noopener">GitHub</a>. Take what you like.</p>
+    <p class="foot-links"><a href="showcase">Showcase</a> <span aria-hidden="true">·</span> <a href="for-teams">For teams</a> <span aria-hidden="true">·</span> <a href="developers">Developers</a> <span aria-hidden="true">·</span> <a href="accessibility">Accessibility and browsers</a> <span aria-hidden="true">·</span> <a href="handoff">Handoff</a></p>
     <p>MIT licensed code; documentation under CC BY 4.0. This page makes no requests to anyone else's servers and keeps your settings only in your own browser. The prompt cards borrow their blue from the India Post inland letter.</p>
   </footer>
 

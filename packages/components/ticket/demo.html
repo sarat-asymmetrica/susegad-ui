@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ticket</title>
+<link rel="stylesheet" href="../qr/qr.css">
+<link rel="stylesheet" href="./ticket.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 64rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-bottom: var(--sg-space-3); }
+  .stack { display: grid; gap: var(--sg-space-4); }
+  .stack > * { min-width: 0; }
+  form { display: grid; gap: var(--sg-space-2); max-width: 24rem; margin-bottom: var(--sg-space-4); }
+  label.t { font-weight: 500; }
+  input { font: 400 1rem/1.4 var(--sg-font-body); color: var(--sg-text); background: var(--sg-surface-raised); border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-2); padding: 0.55em 0.7em; box-sizing: border-box; inline-size: 100%; }
+  input:focus-visible, button:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--sg-space-2); }
+  button.plain { min-height: 2.75rem; padding: 0 var(--sg-space-4); font: inherit; color: var(--sg-text); background: var(--sg-surface); border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-pill); cursor: pointer; }
+  button.go { justify-self: start; min-height: 2.75rem; padding: 0 var(--sg-space-4); font: 500 1rem/1 var(--sg-font-body); color: var(--sg-on-accent); background: var(--sg-accent); border: 0; border-radius: var(--sg-radius-pill); cursor: pointer; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Ticket</h1>
+  <p class="lede">What a visitor is given when they register: their name, the event, the time in IST, an id made on their own device, and the id as a QR code with its text beside it. It can be saved as a picture, it is kept only on this device, and it opens again later, offline too. Made-up names and events; a site brings its own.</p>
+
+  <h2>Make one</h2>
+  <p class="note">The id is made here, in the browser, and kept in this browser's own storage. Nothing is sent anywhere. Reload the page and it is still here.</p>
+  <form id="make" action="#">
+    <label class="t" for="who">Name</label>
+    <input id="who" name="who" autocomplete="name" value="Maria Fernandes" required>
+    <div class="row">
+      <button class="go" type="submit">Register</button>
+      <button class="plain" type="button" id="forget">Forget this ticket</button>
+    </div>
+  </form>
+  <sg-ticket id="t-main" event="Mandovi Conclave" at="2026-11-21T09:30"></sg-ticket>
+
+  <h2>Three sample sites</h2>
+  <p class="note">The conclave, a parish feast and a tiatr night.</p>
+  <div class="stack">
+    <sg-ticket id="t-event" event="Mandovi Conclave" at="2026-11-21T09:30" data-demo="K7QD-M3PX|Maria Fernandes"></sg-ticket>
+    <sg-ticket id="t-feast" event="Feast of the Santa Cruz chapel, Sample Vaddo" at="2026-11-15T10:00" data-demo="F4ST-2N8W|Joaquim D'Souza"></sg-ticket>
+    <sg-ticket id="t-tiatr" event="Sample Tiatr Night, Kala Hall" at="2026-11-20T19:30" data-demo="T7AT-R9XB|Anita Naik"></sg-ticket>
+  </div>
+
+  <h2>In Konkani</h2>
+  <p class="note">Draft Konkani, for a native reader. The time and the labels follow the page's language.</p>
+  <div class="stack">
+    <div lang="gom-Deva"><sg-ticket id="t-deva" event="मांडवी कॉन्क्लेव्ह" at="2026-11-21T09:30" data-demo="K7QD-M3PX|मारिया फर्नांडिस"></sg-ticket></div>
+    <div lang="gom-Latn"><sg-ticket id="t-latn" event="Mandovi Conclave" at="2026-11-21T09:30" data-demo="K7QD-M3PX|Maria Fernandes"></sg-ticket></div>
+  </div>
+
+  <h2>The three registers, side by side</h2>
+  <div class="stack">
+    <section data-register="quiet" aria-label="Quiet"><sg-ticket id="r-quiet" event="Mandovi Conclave" at="2026-11-21T09:30" data-demo="K7QD-M3PX|Maria Fernandes"></sg-ticket></section>
+    <section data-register="warm" aria-label="Warm"><sg-ticket id="r-warm" event="Mandovi Conclave" at="2026-11-21T09:30" data-demo="K7QD-M3PX|Maria Fernandes"></sg-ticket></section>
+    <section data-register="playful" aria-label="Playful"><sg-ticket id="r-playful" event="Mandovi Conclave" at="2026-11-21T09:30" data-demo="K7QD-M3PX|Maria Fernandes"></sg-ticket></section>
+  </div>
+</main>
+
+<script type="module">
+  import './ticket.js';
+  import { makeTicket } from './ticket.core.js';
+  await customElements.whenDefined('sg-ticket');
+  // the fixed tickets: shown as they are, with no finishing moment, and kept nowhere (show() does not keep)
+  for (const el of document.querySelectorAll('sg-ticket[data-demo]')) {
+    const [id, name] = el.dataset.demo.split('|');
+    el.show(makeTicket({ id, name, event: el.getAttribute('event'), at: el.getAttribute('at') }));
+  }
+  const main = document.getElementById('t-main');
+  document.getElementById('make').addEventListener('submit', e => { e.preventDefault(); main.issue(document.getElementById('who').value); });
+  document.getElementById('forget').addEventListener('click', () => main.forget());
+  window.__demoReady?.();
+</script>
+</body>
+</html>
