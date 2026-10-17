@@ -178,6 +178,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 // ── reduced motion: still ───────────────────────────────────────────────
 {
   const { ctx, page } = await open(`${DEMO}?register=playful`, { reduced: true });
+  await page.waitForFunction(() => document.querySelector('sg-data-table')?.dataset.skin, null, { timeout: 8000 }).catch(() => {}); // the skin is a dynamic import: wait for it, not for a guess
   await settle(page);
   const r = await page.evaluate(() => ({ anims: document.getAnimations().length, skin: document.querySelector('sg-data-table').dataset.skin }));
   check('reduced motion: nothing animates, and the playful skin still loads', r.anims === 0 && r.skin === 'playful', JSON.stringify(r));

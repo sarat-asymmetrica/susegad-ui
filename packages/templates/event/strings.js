@@ -29,6 +29,24 @@ export const VENUE = { lat: 15.4989, lng: 73.8278 };
 /** The day, as it is on the clock in Panjim. Times are IST, 24-hour. */
 export const DAY = '2026-11-21';
 
+/** The announcement at the top of every page. It goes by itself after its last day (an IST date), so it cannot outlive the event. */
+export const BANNER = { id: 'doors', until: DAY };
+
+/** The ticket's time: the day, and when the doors open (the first session on the schedule below), as the clock reads in Panjim. */
+export const TICKET_AT = `${DAY}T09:30`;
+
+/**
+ * The folder the site is served from, ending in a slash. The offline worker covers it, and the offline pages address
+ * their files from it, because the worker shows them at whatever address was asked for. Change it if the site lives
+ * in a folder, then run node pages.mjs. The worker's version is not set by hand: pages.mjs makes it from a hash of every
+ * file the worker keeps, so any change to a page, a style, a script, a font or a picture gives visitors the new files on
+ * their next visit after the worker has updated.
+ */
+export const SCOPE = '/';
+
+/** The event in no language: a ticket belongs to it by this, so it is still the visitor's ticket on every language's page. */
+export const EVENT_ID = 'mandovi-conclave';
+
 /** The sessions, in order. Their words are in COPY[tag].sessions[id]; `speaker` points at COPY[tag].speakers. */
 export const SCHEDULE = [
   { id: 'doors', start: '09:30', end: '10:00', kind: 'break', room: 'foyer' },
@@ -53,6 +71,9 @@ export const COPY = {
       description: 'One day in Panjim for people who build, run and rely on public services. The agenda, the speakers and the venue. This is a sample page, so change every word.',
     },
     skip: 'Skip to the content',
+    banner: {
+      text: 'Doors open at 9:30 am on Saturday 21 November. Please bring your ticket, on your phone or on paper.',
+    },
     site: {
       name: 'Mandovi Conclave',
     },
@@ -128,6 +149,23 @@ export const COPY = {
         line: 'Counts the words and spellings that tools still get wrong.',
       },
     },
+    // The registration form. The notice beside it is the consent notice's own words.
+    register: {
+      heading: 'Register',
+      lede: 'Tell us who is coming and we will keep a place for you.',
+      name: 'Name',
+      email: 'Email address',
+      submit: 'Register',
+      sample: 'This sample form does not send anything.',
+      // shown only where JavaScript is off, because the form does nothing without it (written by the builder, for Kathakar; the Konkani pages read it in English until it has Konkani)
+      noscript: 'Registering needs JavaScript. Please turn it on and reload this page.',
+      // what the consent notice says; the contact, the site name and the complaint line are left for the site, and show as [placeholders]
+      consent: {
+        fields: 'your name and your email address',
+        purpose: 'confirm your place and send you the ticket and any change to this event',
+        period: '30 days after the event',
+      },
+    },
     venue: {
       heading: 'The venue',
       name: 'Mandovi Riverside Hall',
@@ -164,11 +202,14 @@ export const COPY = {
       description: 'पणजींत एक दीस, सरकारी सेवा घडोवपी, चलोवपी आनी तांचेर अवलंबून आशिल्ल्या लोकांखातीर. वेळापत्रक, उलोवपी आनी थळ. हें एक नमुनो पान, देखून सगळीं उतरां बदला.', // One day in Panjim for people who build, run and rely on public services. The agenda, the speakers and the venue. This is a sample page, so change every word.
     },
     skip: 'थेट मजकुराक वचचें', // Skip to the content
+    banner: {
+      text: 'शेनवार 21 नोव्हेंबर, सकाळीं 9:30 वरांचेर दारां उगडटात. तुमचें तिकीट, फोनार वा कागदार, हाडात.', // Doors open at 9:30 am on Saturday 21 November. Please bring your ticket, on your phone or on paper.
+    },
     site: {
       name: 'मांडवी कॉन्क्लेव्ह', // Mandovi Conclave
     },
     hero: {
-      eyebrow: 'शनिवार 21 नोव्हेंबर 2026 · पणजी, गोंय', // Saturday 21 November 2026 · Panjim, Goa
+      eyebrow: 'शेनवार 21 नोव्हेंबर 2026 · पणजी, गोंय', // Saturday 21 November 2026 · Panjim, Goa
       title: 'सरकारी सेवांखातीर एआय, प्रत्यक्ष वापरांत', // AI for public services, in practice
       lede: 'सरकारी सेवा घडोवपी, चलोवपी आनी तांचेर अवलंबून आशिल्ल्या लोकांखातीर एका दिसाचीं ल्हान भाशणां. कितें चलता, कितें चलना आनी कितें मनशानूच सदांच थारावपाक जाय, तें आमी पळयतात.', // One day of short talks for the people who build, run and rely on public services. We look at what works, what does not, and what a person should always still decide.
       posterAlt: 'गोंयांतल्या पहांटेचो एक टेबल: लोखणाच्या सळ्यांच्या खिडकेच्या सकयल एक लॅपटॉप आनी चाहाचो स्टीलाचो ग्लास, भायर माडां आनी कवलां घातिल्लें घर.', // A desk at dawn in Goa: a laptop and a steel tumbler of tea below a barred window, with palms and a red-tiled house outside.
@@ -176,9 +217,8 @@ export const COPY = {
       seeAgenda: 'वेळापत्रक पळोवचें', // See the agenda
       findVenue: 'थळ सोदचें', // Find the venue
     },
+    // No am or pm here: a Konkani clock says the part of the day (सकाळीं, दनपारां, सांजे, राती), which pages.mjs takes from susegad/core/intl.kok.js.
     time: {
-      am: 'सकाळीं', // am
-      pm: 'दनपारां', // pm
       to: 'ते', // to
       ist: 'IST', // IST
       istFull: 'भारतीय प्रमाण वेळ', // India Standard Time
@@ -186,7 +226,7 @@ export const COPY = {
     agenda: {
       heading: 'वेळापत्रक', // Agenda
       zone: 'हांगा दिल्ल्यो सगळ्यो वेळो भारतीय प्रमाण वेळेंत (IST) आसात: पणजींतल्या घड्याळाची वेळ.', // Every time here is India Standard Time (IST), the clock in Panjim.
-      day: 'शनिवार 21 नोव्हेंबर', // Saturday 21 November
+      day: 'शेनवार 21 नोव्हेंबर', // Saturday 21 November
     },
     rooms: {
       main: 'मुखेल सभागृह', // Main hall
@@ -239,6 +279,20 @@ export const COPY = {
         line: 'साधनां अजून चुकीचीं बरयतात तीं उतरां आनी स्पेलिंग मोजता.', // Counts the words and spellings that tools still get wrong.
       },
     },
+    // The registration form. Draft, for a native reader: see KONKANI-FOR-READER.md.
+    register: {
+      heading: 'नांव नोंद', // Register
+      lede: 'कोण कोण येता तें आमकां सांगात, आमी तुमच्या खातीर एक जागो दवरतले.', // Tell us who is coming and we will keep a place for you.
+      name: 'नांव', // Name
+      email: 'ई-मेल पत्तो', // Email address
+      submit: 'नोंद करात', // Register
+      sample: 'हो नमुनो अर्ज कांयच धाडिना.', // This sample form does not send anything.
+      consent: {
+        fields: 'तुमचें नांव आनी ई-मेल पत्तो', // your name and your email address
+        purpose: 'तुमच्या जागेची पक्कायकी करप आनी तिकीट तशेंच ह्या कार्यक्रमांतले बदल धाडप', // confirm your place and send you the ticket and any change to this event
+        period: 'कार्यक्रमा उपरांत 30 दिसां', // 30 days after the event
+      },
+    },
     venue: {
       heading: 'थळ', // The venue
       name: 'मांडवी रिव्हरसाईड हॉल', // Mandovi Riverside Hall
@@ -276,11 +330,14 @@ export const COPY = {
       description: 'Panjimta ek dis, sorkari sevam ghodovpi, chalovpi ani tancher avolombun asllea lokankhatir. Velapotrok, ulovpi ani thol. Hem ek namunno pan, dekhun sogllim utram bodla.', // One day in Panjim for people who build, run and rely on public services. The agenda, the speakers and the venue. This is a sample page, so change every word.
     },
     skip: 'Thet mojkurak vochem', // Skip to the content
+    banner: {
+      text: 'Sonvar 21 Novembr, sokallim 9:30 vorancher daram ugdat. Tumchem tikit, fonar va kagdar, hadat.', // Doors open at 9:30 am on Saturday 21 November. Please bring your ticket, on your phone or on paper.
+    },
     site: {
       name: 'Mandovi Conclave', // Mandovi Conclave
     },
     hero: {
-      eyebrow: 'Xonivar 21 Novembor 2026 · Panjim, Goem', // Saturday 21 November 2026 · Panjim, Goa
+      eyebrow: 'Sonvar 21 Novembr 2026 · Panjim, Goem', // Saturday 21 November 2026 · Panjim, Goa
       title: 'Sorkari sevankhatir AI, protyoksh vaparant', // AI for public services, in practice
       lede: 'Sorkari sevam ghodovpi, chalovpi ani tancher avolombun asllea lokankhatir eka disachim lhan bhaxonnam. Kitem chalta, kitem chalna ani kitem monxanuch sodanch tharavpak zai, tem ami polloitat.', // One day of short talks for the people who build, run and rely on public services. We look at what works, what does not, and what a person should always still decide.
       posterAlt: 'Goemchea pahantecho ek table: lokhnnachea sollyanchea khidkechea sokoil ek laptop ani chahacho stilacho glas, bhayr madam ani kavlam ghatillem ghor.', // A desk at dawn in Goa: a laptop and a steel tumbler of tea below a barred window, with palms and a red-tiled house outside.
@@ -288,9 +345,8 @@ export const COPY = {
       seeAgenda: 'Velapotrok pollovchem', // See the agenda
       findVenue: 'Thol sodchem', // Find the venue
     },
+    // No am or pm here: a Konkani clock says the part of the day (sokallim, donparam, sanje, rati), which pages.mjs takes from susegad/core/intl.kok.js.
     time: {
-      am: 'sokallim', // am
-      pm: 'danparam', // pm
       to: 'te', // to
       ist: 'IST', // IST
       istFull: 'Bharotiy pramann vel', // India Standard Time
@@ -298,7 +354,7 @@ export const COPY = {
     agenda: {
       heading: 'Velapotrok', // Agenda
       zone: 'Hanga dillyo sogllyo velo Bharotiy pramann velent (IST) asat: Panjimchea ghodyalachi vel.', // Every time here is India Standard Time (IST), the clock in Panjim.
-      day: 'Xonivar 21 Novembor', // Saturday 21 November
+      day: 'Sonvar 21 Novembr', // Saturday 21 November
     },
     rooms: {
       main: 'Mukhel sobhagruh', // Main hall
@@ -349,6 +405,20 @@ export const COPY = {
         name: 'Maria D’Costa', // Maria D’Costa
         role: 'Bhaxa abhyasak, Konknni bhas proklop', // Linguist, a Konkani language project
         line: 'Sadhnam azun chukichim borotat tim utram ani spelling mojta.', // Counts the words and spellings that tools still get wrong.
+      },
+    },
+    // The registration form. Draft, for a native reader: see KONKANI-FOR-READER.md.
+    register: {
+      heading: 'Nanv nond', // Register
+      lede: 'Kon kon yeta tem amkam sangat, ami tumchea khatir ek zago dovortole.', // Tell us who is coming and we will keep a place for you.
+      name: 'Nanv', // Name
+      email: 'E-mel patto', // Email address
+      submit: 'Nond korat', // Register
+      sample: 'Ho namunno arz kainch dhadina.', // This sample form does not send anything.
+      consent: {
+        fields: 'tumchem nanv ani e-mel patto', // your name and your email address
+        purpose: 'tumchea zagechi pakkaikee korop ani tikit toxem hya karyokramantle bodol dhadop', // confirm your place and send you the ticket and any change to this event
+        period: 'karyokrama uprant 30 disam', // 30 days after the event
       },
     },
     venue: {

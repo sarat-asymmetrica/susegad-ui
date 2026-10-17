@@ -222,10 +222,12 @@ async function contentShots({ slug, dir }) {
 async function tileSheet({ slug, dir, cells }) {
   const { session, shoot } = await import('./lib/browser.mjs');
   const s = await session();
+  let png;
+  try {
   const work = await s.browser.newContext();
   const wp = await work.newPage();
   await wp.goto(`${s.base}/tools/harness/blank.html`);
-  const png = await wp.evaluate(async ({ cells, title, dir }) => {
+  png = await wp.evaluate(async ({ cells, title, dir }) => {
     const COLS = 5, BOX = { w: 380, h: 280 }, GAP = 12, LABEL = 34, HEAD = 30;
     const rows = Math.ceil(cells.length / COLS);
     const W = GAP + COLS * (BOX.w + GAP) + GAP, H = HEAD + rows * (BOX.h + LABEL + GAP) + GAP;
@@ -265,6 +267,7 @@ async function tileSheet({ slug, dir, cells }) {
     }
   }, { cells: cells.map(c => ({ ...c, pngB64: fs.existsSync(path.join(REPO, dir, 'matrix', c.shot)) ? fs.readFileSync(path.join(REPO, dir, 'matrix', c.shot)).toString('base64') : null })), title: `${slug}   the full matrix, one picture   ${new Date().toISOString().slice(0, 10)}`, dir });
   await work.close();
+  } finally { await s.done(); } // give the browser slot back: the pack runs axe and other checks after this, and they need it
   const sheet = path.join(REPO, dir, `${slug}-sheet.png`);
   fs.writeFileSync(sheet, Buffer.from(png, 'base64'));
   console.log(`ok   sheet ${path.relative(REPO, sheet).replaceAll('\\', '/')}`);

@@ -1,0 +1,89 @@
+/* Ticket. The base rules are the quiet look: a card with a hairline border, the facts on the left, the QR stub
+   on the right (below on a phone), a hairline between them where a ticket would tear. The element sets
+   data-skin when a skin is mounted; it is hidden when there is no ticket. Tokens only. */
+
+sg-ticket { display: block; box-sizing: border-box; max-inline-size: 44rem; color: var(--sg-text); font: 400 var(--sg-step-0)/1.5 var(--sg-font-body); }
+sg-ticket[hidden] { display: none; }
+sg-ticket > * { min-width: 0; }
+
+.sg-ticket-card {
+  position: relative; box-sizing: border-box; display: grid; gap: var(--sg-space-3);
+  padding: var(--sg-space-4);
+  border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-3);
+  background: var(--sg-surface-raised); overflow-wrap: anywhere;
+}
+.sg-ticket-card > * { position: relative; min-width: 0; margin: 0; }
+.sg-ticket-heading { font: 400 var(--sg-step-2)/1.15 var(--sg-font-display); outline: none; }
+.sg-ticket-heading:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); border-radius: var(--sg-radius-1); }
+.sg-ticket-done { color: color-mix(in oklab, var(--sg-accent-text) 55%, var(--sg-text)); font-weight: var(--sg-weight-medium); } /* the accent, pulled toward the ink so it holds 4.5:1 on every card, dark playful included */
+
+@media (min-width: 38rem) {
+  .sg-ticket-card { grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--sg-space-5); grid-template-rows: repeat(5, auto) 1fr; }
+  .sg-ticket-card > :not(.sg-ticket-stub):not(.sg-ticket-deco) { grid-column: 1; }
+  .sg-ticket-card > .sg-ticket-stub { grid-column: 2; grid-row: 1 / span 6; align-self: stretch; }
+}
+.sg-ticket-facts { margin: 0; display: grid; gap: var(--sg-space-3); }
+.sg-ticket-fact { display: grid; gap: 0.1rem; }
+.sg-ticket-fact dt { color: var(--sg-text-soft); font-size: var(--sg-step--1); }
+.sg-ticket-fact dd { margin: 0; font-size: var(--sg-step-1); font-weight: var(--sg-weight-medium); line-height: 1.3; }
+.sg-ticket-fact time { font: inherit; }
+
+/* the stub: the code, and the id beside it as real text */
+.sg-ticket-stub { padding-block-start: var(--sg-space-4); border-block-start: var(--sg-hairline) dashed var(--sg-rule-strong); }
+@media (min-width: 38rem) { .sg-ticket-stub { padding: 0 0 0 var(--sg-space-5); border-block-start: 0; border-inline-start: var(--sg-hairline) dashed var(--sg-rule-strong); } }
+.sg-ticket-stub sg-qr { --sg-qr-size: 10.5rem; display: grid; justify-items: start; justify-content: start; grid-template-columns: minmax(0, max-content); max-inline-size: 100%; gap: var(--sg-space-3); }
+.sg-ticket-stub sg-qr .sg-qr-text { display: grid; gap: var(--sg-space-2); max-inline-size: 14rem; }
+.sg-ticket-stub sg-qr .sg-qr-text p { margin: 0; }
+.sg-ticket-label { color: var(--sg-text-soft); font-size: var(--sg-step--1); }
+.sg-ticket-id { display: block; font: 600 var(--sg-step-1)/1.2 var(--sg-font-mono); letter-spacing: 0.04em; }
+.sg-ticket-beside { color: var(--sg-text-soft); font-size: var(--sg-step--1); }
+
+.sg-ticket-notes { display: grid; gap: var(--sg-space-1); color: var(--sg-text-soft); font-size: var(--sg-step--1); }
+.sg-ticket-notes p { margin: 0; }
+.sg-ticket-actions { display: flex; flex-wrap: wrap; gap: var(--sg-space-2) var(--sg-space-3); align-items: center; }
+.sg-ticket-save {
+  justify-self: start; box-sizing: border-box; min-height: 2.75rem; padding-inline: var(--sg-space-4); font: inherit; font-weight: var(--sg-weight-medium);
+  color: var(--sg-on-accent); background: var(--sg-accent); border: var(--sg-stroke) solid var(--sg-accent); border-radius: var(--sg-radius-2); cursor: pointer;
+}
+.sg-ticket-forget { box-sizing: border-box; min-height: 2.75rem; padding-inline: var(--sg-space-3); font: inherit; color: var(--sg-accent-text); background: transparent; border: var(--sg-stroke) solid var(--sg-accent-text); border-radius: var(--sg-radius-2); cursor: pointer; }
+.sg-ticket-save:disabled { cursor: progress; opacity: 0.7; }
+.sg-ticket-save:focus-visible, .sg-ticket-forget:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+.sg-ticket-status { min-height: 1.5em; color: var(--sg-text-soft); font-size: var(--sg-step--1); }
+.sg-ticket-deco { position: absolute !important; inset: calc(var(--sg-hairline, 1px) * -1); pointer-events: none; overflow: visible; }
+.sg-ticket-deco > * { pointer-events: none; }
+
+/* ── warm: a paper ticket ruled in pencil, torn along a pencil line ── */
+sg-ticket[data-skin="warm"] .sg-ticket-card { border-color: transparent; background: var(--sg-paper-deep, var(--sg-surface-raised)); border-radius: var(--sg-radius-2); }
+sg-ticket[data-skin="warm"] .sg-ticket-heading { font-family: var(--sg-font-hand); font-weight: 400; font-size: calc(var(--sg-step-2) * 1.05); }
+sg-ticket[data-skin="warm"] .sg-ticket-stub { border-color: transparent; }
+sg-ticket[data-skin="warm"] .sg-ticket-pencil { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; color: var(--sg-pencil, var(--sg-text-soft)); }
+sg-ticket[data-skin="warm"] .sg-ticket-pencil path { fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+sg-ticket[data-skin="warm"] .sg-ticket-pencil .tear { stroke-dasharray: 5 6; }
+
+/* ── playful: a ticket with bites where it tears, perforated ── */
+sg-ticket[data-skin="playful"] .sg-ticket-card { border-color: transparent; background: color-mix(in oklab, var(--sg-mango, var(--sg-accent)) 12%, var(--sg-surface-raised)); border-radius: var(--sg-radius-2); }
+sg-ticket[data-skin="playful"] .sg-ticket-heading { font-weight: 600; font-family: var(--sg-font-body); font-size: var(--sg-step-1); }
+sg-ticket[data-skin="playful"] .sg-ticket-stub { border-color: transparent; }
+sg-ticket[data-skin="playful"] .sg-ticket-shape { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
+sg-ticket[data-skin="playful"] .sg-ticket-shape .edge { fill: none; stroke: var(--sg-ink-soft, currentColor); stroke-width: 1.3; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+sg-ticket[data-skin="playful"] .sg-ticket-shape .perf { fill: none; stroke: var(--sg-ink-soft, currentColor); stroke-width: 1.6; stroke-dasharray: 0.1 7; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+
+/* ── the save button, pressed (the touch contract) ──────────────────────────
+   Down answers in the same frame with no transition; letting go eases back in under 150 ms. Quiet settles 1 px, warm
+   shades the colour toward the ink, playful gives a little. The keyboard never moves it. */
+sg-ticket :is(.sg-ticket-save, .sg-ticket-forget) { transition: translate 120ms var(--sg-ease-out, ease-out), scale 120ms var(--sg-ease-out, ease-out), box-shadow 100ms ease-out; }
+sg-ticket :is(.sg-ticket-save, .sg-ticket-forget):active { transition: none; translate: 0 1px; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text, CanvasText) 12%, transparent); }
+sg-ticket[data-skin="warm"] :is(.sg-ticket-save, .sg-ticket-forget):active { translate: none; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text) 22%, transparent); }
+sg-ticket[data-skin="playful"] :is(.sg-ticket-save, .sg-ticket-forget) { transition-timing-function: ease-out, var(--sg-ease-spring, ease-out), ease-out; }
+sg-ticket[data-skin="playful"] :is(.sg-ticket-save, .sg-ticket-forget):active { translate: none; scale: 0.97; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text) 14%, transparent); }
+@media (prefers-reduced-motion: reduce) {
+  sg-ticket, sg-ticket * { transition: none !important; }
+  sg-ticket :is(.sg-ticket-save, .sg-ticket-forget):active { translate: none !important; scale: none !important; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text) 22%, transparent); }
+}
+:root[data-sg-input="key"] sg-ticket :is(.sg-ticket-save, .sg-ticket-forget):active { translate: none !important; scale: none !important; }
+
+@media (forced-colors: active) {
+  .sg-ticket-card { border: 1px solid CanvasText; }
+  .sg-ticket-deco { display: none; }
+}
+@media print { sg-ticket :is(.sg-ticket-save, .sg-ticket-forget), sg-ticket .sg-ticket-status { display: none; } }

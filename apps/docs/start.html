@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Start here · Susegad UI</title>
-  <meta name="description" content="From an empty folder to a page with a scene, a card and a footer: three ways, by hand, with the CLI and with an agent.">
+  <title>Get started · Susegad UI</title>
+  <meta name="description" content="Three ways in: work with an AI agent, build a site from a template, or add pieces to a project. Each ends with a page that works.">
   <link rel="canonical" href="https://susegad.asymmetrica.ai/start">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Susegad UI">
-  <meta property="og:title" content="Start here · Susegad UI">
-  <meta property="og:description" content="From an empty folder to a page with a scene, a card and a footer: three ways, by hand, with the CLI and with an agent.">
+  <meta property="og:title" content="Get started · Susegad UI">
+  <meta property="og:description" content="Three ways in: ask an AI agent, build a site from a template, or add pieces to a project you have. Each ends with a page that works.">
   <meta property="og:url" content="https://susegad.asymmetrica.ai/start">
   <meta property="og:image" content="https://susegad.asymmetrica.ai/og.jpg?v=2">
   <meta property="og:image:width" content="1200">
@@ -22,70 +22,69 @@
   <link rel="stylesheet" href="../../packages/tokens/tokens.css">
   <link rel="stylesheet" href="./docs.css">
   <link rel="stylesheet" href="./site.css">
+  <link rel="stylesheet" href="./door.css">
+  <link rel="stylesheet" href="./audience.css">
+  <link rel="stylesheet" href="../../packages/components/popover/popover.css">
+  <link rel="stylesheet" href="../../packages/components/lang/lang.css">
   <script type="module" src="./shell.js"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
 
-  <header class="bar">
-    <div class="bar-in">
-      <a class="brand" href="./" aria-label="Susegad UI, home">Susegad <span>UI</span></a>
-      <nav class="nav" aria-label="Sections">
-        <a href="start" aria-current="page">Start here</a>
-        <a href="scenes">Scenes</a>
-        <a href="components">Components</a>
-        <a href="recipes">Recipes</a>
-        <a href="foundations">Foundations</a>
-        <a href="pencil-box">Pencil box</a>
-      </nav>
-      <a class="src" href="https://github.com/sarat-asymmetrica/susegad-ui" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
-      <form class="prefs" id="prefs" aria-label="How this page looks">
-        <fieldset class="seg seg-register" data-pref="register">
-          <legend>Register</legend>
-          <div class="seg-row">
-            <label><input type="radio" name="register" value="quiet"><span>Quiet</span></label>
-            <label><input type="radio" name="register" value="warm"><span>Warm</span></label>
-            <label><input type="radio" name="register" value="playful"><span>Playful</span></label>
-          </div>
-        </fieldset>
-        <fieldset class="seg" data-pref="theme">
-          <legend>Theme</legend>
-          <div class="seg-row">
-            <label><input type="radio" name="theme" value="auto"><span>Auto</span></label>
-            <label><input type="radio" name="theme" value="light"><span>Light</span></label>
-            <label><input type="radio" name="theme" value="dark"><span>Dark</span></label>
-          </div>
-        </fieldset>
-        <fieldset class="seg" data-pref="palette">
-          <legend>Palette</legend>
-          <div class="seg-row">
-            <label><input type="radio" name="palette" value="susegad"><span>Susegad</span></label>
-            <label><input type="radio" name="palette" value="casa"><span>Casa</span></label>
-          </div>
-        </fieldset>
-      </form>
-    </div>
-    <div class="toran" aria-hidden="true"></div>
-  </header>
+  <header class="bar"><!-- the build writes the header: site.core.js, bar() --></header>
 
   <main class="wrap" id="main" tabindex="-1">
     <section class="s-head" aria-labelledby="s-title">
-      <p class="kicker">one page, three ways</p>
-      <h1 id="s-title" class="s-title">Start here</h1>
-      <p class="lede">From an empty folder to one page with a drawing, a card and a footer. Pick whichever of the three ways suits you; they all arrive at the same place. The sample here is a homestay in Aldona, but any page of yours will do.</p>
+      <p class="kicker">three ways in</p>
+      <h1 id="s-title" class="s-title">Get started</h1>
+      <p class="lede">Pick the path that sounds like you. Each one ends with a page that works.</p>
     </section>
 
-    <section class="prose" aria-labelledby="goal-title">
-      <h2 id="goal-title">The goal</h2>
+    <ul class="paths" role="list">
+      <li class="path" id="path-agent">
+        <h2 class="path-title">I'm working with an AI agent</h2>
+        <p>No terminal needed: paste this into Claude, ChatGPT, Cursor or any agent that can read a web page, and change the words in brackets.</p>
+        <div class="note-card">
+          <p class="note-text" id="agent-words">Make me a one-page website for [my homestay in Aldona] using Susegad UI. First read https://susegad.asymmetrica.ai/llms.txt and follow its "Start here" section. Use the warm look and a drawn scene that fits the place, and keep it easy to use on a phone. Ask me for anything you need. When it is ready, explain in plain words how I can put it online.</p>
+          <p class="note-acts"><button class="copy btn" type="button" data-copy="agent-words" data-announce="Copied. Paste it into your agent.">Copy this request</button></p>
+        </div>
+        <p class="path-lead">If your agent can run commands on your computer, you can give it more to work with:</p>
+        <p>Give your agent the library's <code>SKILL.md</code> and say what you want, the way you would say it to a person. The skill teaches it the three looks, how to install each piece and how the scenes work. The MCP server lets it search the shelf, read a piece's prompt and add pieces itself.</p>
+        <p class="install"><code id="cmd-skill">npx @susegad/cli skill --harness claude --global</code> <button class="copy" type="button" data-copy-text="npx @susegad/cli skill --harness claude --global" aria-label="Copy the command">Copy</button></p>
+        <p class="path-lead">To add the MCP server to Claude Code:</p>
+        <p class="install"><code id="cmd-mcp">claude mcp add --transport stdio susegad -- npx -y @susegad/mcp</code> <button class="copy" type="button" data-copy-text="claude mcp add --transport stdio susegad -- npx -y @susegad/mcp" aria-label="Copy the MCP command">Copy</button></p>
+        <p class="path-note">It needs Node 22 or later. Run it from the project it should add pieces to.</p>
+        <p class="path-links"><a href="https://github.com/sarat-asymmetrica/susegad-ui/blob/main/SKILL.md" rel="noopener">Read SKILL.md</a> <a href="https://github.com/sarat-asymmetrica/susegad-ui/tree/main/packages/mcp" rel="noopener">Set up the MCP server</a></p>
+      </li>
+      <li class="path" id="path-site">
+        <h2 class="path-title">I'm building a site</h2>
+        <p>One command makes a whole site from a template: an event page in English and in Konkani, with the pieces it uses copied in beside it. Change every word; the files are yours.</p>
+        <p class="install"><code id="cmd-create">npx @susegad/cli create my-site</code> <button class="copy" type="button" data-copy-text="npx @susegad/cli create my-site" aria-label="Copy the command">Copy</button></p>
+        <p class="npm-note" data-npm-note><code>create</code> arrives on npm with version 0.2.0. Until then, run it from a clone, as the handoff shows.</p>
+        <p class="path-links"><a href="handoff">Read the handoff</a> <a href="templates#event">The event page, running</a></p>
+      </li>
+      <li class="path" id="path-add">
+        <h2 class="path-title">I'm adding pieces to a project</h2>
+        <p>Copy just the pieces you want into your own code with <code>add</code>, and everything they stand on comes too. Already using shadcn? The same pieces are served for it at <code>/r/</code>.</p>
+        <p class="install"><code id="cmd-add">npx @susegad/cli add scene-paus badge</code> <button class="copy" type="button" data-copy-text="npx @susegad/cli add scene-paus badge" aria-label="Copy the command">Copy</button></p>
+        <p class="install"><code id="cmd-shadcn">npx shadcn@latest add https://susegad.asymmetrica.ai/r/button.json</code> <button class="copy" type="button" data-copy-text="npx shadcn@latest add https://susegad.asymmetrica.ai/r/button.json" aria-label="Copy the shadcn command">Copy</button></p>
+        <p class="path-links"><a href="#walk">Follow a first page, step by step</a> <a href="r/registry.json">The shadcn index, /r/registry.json</a></p>
+      </li>
+    </ul>
+
+    <section class="prose" id="walk" aria-labelledby="walk-title">
+      <h2 id="walk-title">A first page, step by step</h2>
+      <p class="walk-lede">A homestay in Aldona: one page with a drawing, a badge and a footer. Do it by hand, with the CLI, or with an agent; each way arrives at the same page.</p>
       <p>One file, <code>index.html</code>, in a folder with nothing else in it. When you are done, opening it shows the Paus drawing (rain on a window, drawn live), a small card of status, and a footer that says who made the page.</p>
 
-      <h2>Way 1: by hand</h2>
+      <h3>Way 1: by hand</h3>
       <p>Make an <code>index.html</code> and paste these lines into it:</p>
       <pre class="use-code" tabindex="0" role="region" aria-label="The whole page, way one" id="by-hand"><code>&lt;!doctype html&gt;
 &lt;html lang="en" data-register="warm"&gt;
 &lt;head&gt;
   &lt;meta charset="utf-8"&gt;
   &lt;title&gt;A homestay in Aldona&lt;/title&gt;
+  &lt;link rel="stylesheet" href="https://susegad.asymmetrica.ai/packages/tokens/fonts.css"&gt;
   &lt;link rel="stylesheet" href="https://susegad.asymmetrica.ai/packages/tokens/tokens.css"&gt;
 &lt;/head&gt;
 &lt;body&gt;
@@ -107,9 +106,9 @@
       <p><button class="copy" type="button" data-copy="by-hand">Copy</button></p>
       <p>Save, open the file in a browser, and the rain falls. The <code>data-register</code> on <code>&lt;html&gt;</code> sets the mood for the whole page; change <code>warm</code> to <code>quiet</code> and the drawing stills into a frame.</p>
 
-      <h2>Way 2: with the CLI</h2>
+      <h3>Way 2: with the CLI</h3>
       <p>The command line copies the pieces into your project, where they become your code. Change anything you like afterwards.</p>
-      <pre class="use-code" tabindex="0" role="region" aria-label="The install command, way two" id="way-cli"><code>npx @susegad/cli add scene-paus sg-badge --dir src/lib</code></pre>
+      <pre class="use-code" tabindex="0" role="region" aria-label="The install command, way two" id="way-cli"><code>npx @susegad/cli add scene-paus badge --dir src/lib</code></pre>
       <p><button class="copy" type="button" data-copy="way-cli">Copy</button></p>
       <p>Your folder now holds <code>src/lib/susegad/</code> with the scene, the badge and everything they stand on. The same page then reads:</p>
       <pre class="use-code" tabindex="0" role="region" aria-label="The imports for your page, way two" id="way-cli-page"><code>&lt;script type="module"&gt;
@@ -120,15 +119,16 @@
       <p><button class="copy" type="button" data-copy="way-cli-page">Copy</button></p>
       <p><code>susegad list</code> shows everything on the shelf, and <code>susegad info scene-paus</code> explains one piece before you take it.</p>
 
-      <h2>Way 3: with an agent</h2>
+      <h3>Way 3: with an agent</h3>
       <p>Give your coding agent the library's <code>SKILL.md</code> from the top of the repository and say what you want, the way you would say it to a person. The skill carries the register, the install lines and the scene contract, so the agent lands on the same page this walkthrough does. A prompt that works:</p>
       <blockquote class="letter-body">
         <p>Build me a single page for a homestay in Aldona. Use Susegad UI: the paus scene over the top, a badge for room availability, and a quiet footer. The register is warm.</p>
       </blockquote>
-      <p>The <code>susegad skill</code> command installs that skill into your agent's folder for you: <code>npx @susegad/cli skill --harness claude --global</code>. An MCP server that speaks the registry directly is on its way.</p>
+      <p>The <code>susegad skill</code> command installs that skill into your agent's folder for you: <code>npx @susegad/cli skill --harness claude --global</code>. The MCP server lets your agent search the shelf and add pieces itself; its page says how to set it up.</p>
 
-      <h2>What you should see</h2>
+      <h3>What you should see</h3>
       <p>A page where rain runs down a window and your words sit calm inside it. A badge that says what is still happening. A footer with your name on it. From there: every piece has its own page on this site, with its prompt, its demo and its install line. Start with <a href="scenes">Scenes</a>, or look the techniques up in the <a href="pencil-box">pencil box</a>.</p>
+
     </section>
   </main>
 
@@ -136,6 +136,7 @@
     <p class="sig">made by Claude with Sarat, Asymmetrica, Goa, 2026</p>
     <p class="for"><a href="for-rafe.html">For Rafe</a>, who lent us his Activa and went fishing.</p>
     <p class="src-line">The code, the prompts and the drawings are open on <a href="https://github.com/sarat-asymmetrica/susegad-ui" rel="noopener">GitHub</a>. Take what you like.</p>
+    <p class="foot-links"><a href="accessibility">Accessibility and browsers</a> <span aria-hidden="true">·</span> <a href="handoff">Handoff</a></p>
     <p>MIT licensed code; documentation under CC BY 4.0. This page makes no requests to anyone else's servers and keeps your settings only in your own browser.</p>
   </footer>
 

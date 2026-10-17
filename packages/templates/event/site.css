@@ -45,4 +45,13 @@ h1 { font-size: var(--sg-step-4); margin: 0 0 var(--sg-space-3); }
 .sg-speakers-list > li > sg-person-card { display: flex; flex: 1; min-width: 0; }
 .sg-speakers-list > li > sg-person-card > article { flex: 1; }
 
+/* the registration form: a column, with the consent notice between the fields and the button */
+.sg-register-form { display: grid; gap: var(--sg-space-3); max-width: var(--sg-measure); }
+.sg-register-form > * { min-width: 0; margin: 0; }
+.sg-register-field { display: grid; gap: var(--sg-space-1); }
+.sg-register-field label { font-weight: var(--sg-weight-medium); }
+.sg-register-field input { box-sizing: border-box; inline-size: 100%; max-inline-size: 24rem; min-height: 2.75rem; padding: 0 var(--sg-space-2); font: inherit; color: var(--sg-text); background: var(--sg-surface-raised); border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-2); }
+.sg-register-field input:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+.sg-register-status { min-height: 1.5em; color: var(--sg-text-soft); }
+
 sg-site-footer { margin-block-start: var(--sg-space-6); }

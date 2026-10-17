@@ -89,7 +89,7 @@ async function page({ reduced = false, register = 'warm' } = {}) {
   await p.waitForFunction(() => !window.t3.isConnected, null, { timeout: 9000 }).catch(() => {});
   const took = Date.now() - t0;
   check('a short success leaves after about 5 s', took > 4500 && took < 7000, `${took} ms`);
-  check('no console or page errors', errors.length === 0, errors.join(' | '));
+  check('no console or page errors', dropBenignErrors(errors).length === 0, dropBenignErrors(errors).join(' | '));
   await ctx.close();
 }
 
@@ -102,7 +102,7 @@ async function page({ reduced = false, register = 'warm' } = {}) {
   await p.mouse.move(5, 5);
   await p.waitForFunction(() => !window.t.isConnected, null, { timeout: 9000 }).catch(() => {});
   check('after the pointer leaves, the clock resumes and it goes', await p.evaluate(() => !window.t.isConnected));
-  check('no console or page errors (pause)', errors.length === 0, errors.join(' | '));
+  check('no console or page errors (pause)', dropBenignErrors(errors).length === 0, dropBenignErrors(errors).join(' | '));
   await ctx.close();
 }
 

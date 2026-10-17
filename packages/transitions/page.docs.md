@@ -8,7 +8,12 @@ Link `page.css`. Nothing else is required:
 
 ```html
 <link rel="stylesheet" href="src/lib/susegad/transitions/page.css">
+<script>getComputedStyle(document.documentElement).color</script>
 ```
+
+The one-line inline script after the link is not decoration. On a page that is ready to show very early (parsing done, nothing else holding the first paint), Chromium can reveal it without the transition: the navigation then lands as an ordinary instant one, and the console shows an uncaught `InvalidStateError: Transition was aborted because of invalid state. ViewTransition opt-in disabled`. We think the cause is that Chromium reads the `@view-transition` opt-in from the page's resolved styles and the reveal came before they had been resolved once; that is our reading of the pattern (the failing runs revealed the page earlier than the passing ones), not something we have confirmed in Chromium's source. Asking for one computed style resolves the styles first, and in our measurements it removed the error: on the demo pages in Chromium with the machine busy, 11 of 150 navigations failed without it and 0 of 150 with it (then 0 of 450 with three runs in parallel).
+
+Two details matter. The script must be a classic inline script, placed after the stylesheet link: not `defer`, not `type="module"` and not `async`, because those run after the first chance to reveal. And a strict Content-Security-Policy that blocks inline scripts needs either a hash for this line (`script-src 'sha256-...'`) or the same line in a small external classic file (`<script src="/susegad/transitions/resolve-styles.js"></script>`, also without `defer`).
 
 `@view-transition { navigation: auto; }` turns on a View Transition for every same-origin navigation the browser initiates, in browsers that support it (Chromium today); everywhere else, navigation is the ordinary instant kind it has always been. Nothing else needs to change.
 

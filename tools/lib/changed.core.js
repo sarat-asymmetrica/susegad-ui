@@ -20,6 +20,9 @@
 //     theirs: context.everyAllPackages). Any other changed dependency selects the checks that load it,
 //     browser or Node-only, and a note names what no browser check loads.
 // Without a context both still select everything, as before.
+//
+// Prose (.md) is the exception to all of this: it selects its own folder's checks and the docs site's, never
+// everything and never an item's dependents; the run's private records select nothing.
 
 /** A change under any of these selects every check. Entries ending in "/" are folders; the others are exact files. */
 export const SHARED = [
@@ -71,6 +74,12 @@ export const COVERS = {
 export const TOUCH_CHECK = 'tools/touch.check.mjs';
 const TOUCH_OWN = 'tools/touch.';
 
+/** The docs site: it renders the repo's prose, so its checks run when any .md file changes. */
+const DOCS_SITE = 'apps/docs';
+/** Prose the site never renders (the run's own records and the agents' kernels): a change there selects nothing. */
+const PRIVATE_PROSE = ['docs/LEDGER.md', 'docs/GOAL', 'docs/RUNBOOK.md', 'docs/runs/', 'docs/reviews/', 'docs/requests/', 'docs/briefs/', '.claude/'];
+
+const isProse = f => f.endsWith('.md');
 const norm = p => p.replaceAll('\\', '/').replace(/^\.\//, '');
 const dirOf = p => (p.includes('/') ? p.slice(0, p.lastIndexOf('/')) : '');
 const under = (p, dir) => p === dir || p.startsWith(`${dir}/`);
@@ -159,7 +168,12 @@ function loadReasons(check, loads, libs, packages) {
  */
 export function selectChecks({ changed, checks, items, shared = SHARED, context }) {
   const files = [...new Set(changed.map(norm))].filter(Boolean);
-  const { allReason, libs, packages, notes } = sharedHits(files, { shared, context });
+  // Prose is read by people, not imported by a page: it never selects everything and never reaches an item's
+  // dependents. It selects the checks in its own folder (a sample document a check builds) and the docs site's
+  // checks, which render it; the run's private records (PRIVATE_PROSE) never select the docs site.
+  const code = files.filter(f => !isProse(f));
+  const prose = files.filter(f => isProse(f) && !PRIVATE_PROSE.some(p => f.startsWith(p)));
+  const { allReason, libs, packages, notes } = sharedHits(code, { shared, context });
   if (allReason) return { all: true, allReason, selected: checks.map(check => ({ check, reasons: [allReason] })), notes };
 
   // Which items did the diff touch (a file under the item's folder, or one of its listed files)?
@@ -167,13 +181,13 @@ export function selectChecks({ changed, checks, items, shared = SHARED, context 
   for (const it of items) {
     const dir = itemDir(it);
     const own = new Set((it.files ?? []).map(f => norm(f.path)));
-    const f = files.find(x => (dir && under(x, dir)) || own.has(x));
+    const f = code.find(x => (dir && under(x, dir)) || own.has(x));
     if (f) touched.set(it.name, f);
   }
   const dependents = dependentsOf(items, [...touched.keys()]);
   const byName = new Map(items.map(i => [i.name, i]));
   const touchedComponent = [...touched].find(([name]) => byName.get(name).type === 'component')
-    ?? files.map(f => [null, f]).find(([, f]) => /^packages\/components\/[^/]+\/./.test(f)); // a component folder not in the registry yet
+    ?? code.map(f => [null, f]).find(([, f]) => /^packages\/components\/[^/]+\/./.test(f)); // a component folder not in the registry yet
 
   const dependencyReason = name => {
     const { root, via } = dependents.get(name);
@@ -196,6 +210,7 @@ export function selectChecks({ changed, checks, items, shared = SHARED, context 
       if (touched.has(it.name) && !reasons.some(r => r.includes(`in ${dir}/`))) reasons.push(`${touched.get(it.name)} changed ${it.name}`);
       if (dependents.has(it.name)) reasons.push(dependencyReason(it.name));
     }
+    if (prose.length && under(dir, DOCS_SITE)) reasons.push(`${prose[0]} is prose the docs site renders`);
     for (const name of COVERS[check] ?? []) {
       if (touched.has(name)) reasons.push(`covers ${name}, which changed (${touched.get(name)})`);
       else if (dependents.has(name)) reasons.push(`covers ${dependencyReason(name)}`);
@@ -215,7 +230,7 @@ export function selectChecks({ changed, checks, items, shared = SHARED, context 
  * @returns {{ check: string, reasons: string[] }[]}
  */
 export function selectNodeChecks({ changed, shared = SHARED, nodeChecks = NODE_CHECKS, context }) {
-  const files = [...new Set(changed.map(norm))].filter(Boolean);
+  const files = [...new Set(changed.map(norm))].filter(f => f && !isProse(f)); // prose is no gate's input (see selectChecks)
   const { allReason, libs, packages } = sharedHits(files, { shared, context });
   const out = [];
   for (const [check, inputs] of Object.entries(nodeChecks)) {

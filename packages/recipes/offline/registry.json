@@ -1,0 +1,40 @@
+{
+  "name": "offline",
+  "type": "recipe",
+  "stability": "experimental",
+  "title": "Offline",
+  "description": "A small service worker for a static site and the page that registers it, so after one visit the site's pages open again with no connection and a page never opened shows a kind 'no connection' page in the visitor's language. It keeps only the site's own pages and the files they need (styles, scripts, fonts, pictures), fetched with GET from its own address, and never a response marked no-store or private; no response to a form, nothing from another address, and no personal data: a ticket is made on the device and drawn from the device's own storage, never cached (decision 0028). The worker is one classic script made from a pure, tested file of rules; the first visit is enough because the page tells the worker what it used. English and Konkani in both scripts.",
+  "version": "0.1.0",
+  "files": [
+    "offline.core.js",
+    "offline.js",
+    "offline.page.js",
+    "build.mjs",
+    "sw.template.js",
+    "retry.js",
+    "recipe.strings.js",
+    "recipe.css",
+    "README.md",
+    "recipe.prompt.md"
+  ],
+  "dependencies": [
+    "core-strings",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "recipe.prompt.md",
+  "docs": "README.md",
+  "budget": {
+    "jsBytes": 24576,
+    "reason": "Decision 0028: the rules (offline.core.js), the worker handlers and the builder (sw.template.js, build.mjs), the page script and the offline page with its words in three languages (Devanagari costs three bytes a letter). 20.6 KB today with comments, about 16% to spare."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+  }
+}

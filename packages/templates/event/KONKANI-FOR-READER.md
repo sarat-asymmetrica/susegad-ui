@@ -1,6 +1,6 @@
 # Konkani for a native reader: the event template
 
-*Written by Kathakar, 7 October 2026, for the event page that `npx @susegad/cli create` makes. The writer is not a native Konkani reader. Every line below is a first draft. About half an hour of a Goan reader's time settles it.*
+*Written on 7 October 2026, for the event page that `npx @susegad/cli create` makes. The writer is not a native Konkani reader. Every line below is a first draft. About half an hour of a Goan reader's time settles it.*
 
 **What we need from you.** For each row, tell us "fine", or give the word you would use. The page shows these words as they are written now. Once a row is fine, add `'gom-Deva:<key>'` and `'gom-Latn:<key>'` to `REVIEWED` in `strings.js`; `unreviewed()` in the same file lists what is left.
 
@@ -8,7 +8,7 @@
 
 ## Orthography followed
 
-The same choices as the language switcher's draft (docs/reviews/2026-10-06-konkani-for-reader.md in the library repository).
+The same choices as the language switcher's draft (see the language switcher's Konkani strings).
 
 - **Devanagari (`gom-Deva`):** the usage of the Goa Konkani Akademi, as I remember it: the neuter ending -चें (वचचें), the nasal marks as dots (कोंकणी). Not checked against a dictionary.
 - **Romi (`gom-Latn`):** the common Roman-script spelling of Goa: x for श (Xonivar), nn for ण and in Konknni, -em for the neuter ending (vochem), no diacritics. Not checked against the Romi Konkani dictionary. Romi is not written to a strict rule of one letter per letter, so where I was unsure of the letters (a retroflex d or t), I wrote the plain one.
@@ -16,7 +16,7 @@ The same choices as the language switcher's draft (docs/reviews/2026-10-06-konka
 ## What stays English, on purpose
 
 - Proper nouns: Mandovi Conclave (written in Devanagari on the Devanagari page), Mandovi Riverside Hall, Riverfront Road, Kadamba, Ribandar, Susegad UI, and the names of people (each in its own script).
-- Dates and times: the template formats them (IST, 24-hour in the data, 12-hour on the page) and writes only the words around them. Digits stay western.
+- Digits stay western. Dates and times are written by the library from the data (IST, 24-hour in the data), in the words below.
 - "IST".
 
 ## The words
@@ -26,22 +26,21 @@ The same choices as the language switcher's draft (docs/reviews/2026-10-06-konka
 | `meta.title` | Mandovi Conclave 2026: AI for public services, Panjim | मांडवी कॉन्क्लेव्ह 2026: सरकारी सेवांखातीर एआय, पणजी | Mandovi Conclave 2026: sorkari sevankhatir AI, Panjim |  |
 | `meta.description` | One day in Panjim for people who build, run and rely on public services. The agenda, the speakers and the venue. This is a sample page, so change every word. | पणजींत एक दीस, सरकारी सेवा घडोवपी, चलोवपी आनी तांचेर अवलंबून आशिल्ल्या लोकांखातीर. वेळापत्रक, उलोवपी आनी थळ. हें एक नमुनो पान, देखून सगळीं उतरां बदला. | Panjimta ek dis, sorkari sevam ghodovpi, chalovpi ani tancher avolombun asllea lokankhatir. Velapotrok, ulovpi ani thol. Hem ek namunno pan, dekhun sogllim utram bodla. | सरकारी सेवा / sorkari sevam is my word for "public services"; see hero.title. "नमुनो पान" is "sample page". |
 | `skip` | Skip to the content | थेट मजकुराक वचचें | Thet mojkurak vochem | Read by a screen reader as the first link. "थेट" is "straight". Is there a shorter, more usual phrase? |
+| `banner.text` | Doors open at 9:30 am on Saturday 21 November. Please bring your ticket, on your phone or on paper. | शेनवार 21 नोव्हेंबर, सकाळीं 9:30 वरांचेर दारां उगडटात. तुमचें तिकीट, फोनार वा कागदार, हाडात. | Sonvar 21 Novembr, sokallim 9:30 vorancher daram ugdat. Tumchem tikit, fonar va kagdar, hadat. | The line across the top of every page. The day and month are the library's (see "Days, months and the hours"). "वरांचेर" (at, for a time) is borrowed from ICU's own pattern and the writer is not sure of it; वाजतां is the other candidate. "हाडात" is "please bring" (polite). The banner goes by itself after 21 November. Its label ("सूचना") and the cross's name ("ही सूचना बंद करचीं") are in `susegad/components/banner/banner.strings.js`, with the same doubts: is सूचना the word on a Goan notice board, and is बंद करचीं the right verb? |
 | `site.name` | Mandovi Conclave | मांडवी कॉन्क्लेव्ह | Mandovi Conclave |  |
-| `hero.eyebrow` | Saturday 21 November 2026 · Panjim, Goa | शनिवार 21 नोव्हेंबर 2026 · पणजी, गोंय | Xonivar 21 Novembor 2026 · Panjim, Goem |  |
+| `hero.eyebrow` | Saturday 21 November 2026 · Panjim, Goa | शेनवार 21 नोव्हेंबर 2026 · पणजी, गोंय | Sonvar 21 Novembr 2026 · Panjim, Goem | The day and month are ICU's own forms (see "Days, months and the hours" below). They changed from शनिवार / Xonivar and Novembor, so that the page agrees with the dates the library prints. |
 | `hero.title` | AI for public services, in practice | सरकारी सेवांखातीर एआय, प्रत्यक्ष वापरांत | Sorkari sevankhatir AI, protyoksh vaparant | Least sure. "Public services" as सरकारी सेवा (government services) is plainer than सार्वजनिक सेवा but narrower. "प्रत्यक्ष वापरांत" is "in actual use"; is there a more natural way to say "in practice"? |
 | `hero.lede` | One day of short talks for the people who build, run and rely on public services. We look at what works, what does not, and what a person should always still decide. | सरकारी सेवा घडोवपी, चलोवपी आनी तांचेर अवलंबून आशिल्ल्या लोकांखातीर एका दिसाचीं ल्हान भाशणां. कितें चलता, कितें चलना आनी कितें मनशानूच सदांच थारावपाक जाय, तें आमी पळयतात. | Sorkari sevam ghodovpi, chalovpi ani tancher avolombun asllea lokankhatir eka disachim lhan bhaxonnam. Kitem chalta, kitem chalna ani kitem monxanuch sodanch tharavpak zai, tem ami polloitat. | "अवलंबून आशिल्ल्या" is "who depend on". "भाशणां" is "talks" (literally speeches); is there a lighter word for a short talk? "आमी पळयतात" is "we look at": is the verb form right? |
 | `hero.posterAlt` | A desk at dawn in Goa: a laptop and a steel tumbler of tea below a barred window, with palms and a red-tiled house outside. | गोंयांतल्या पहांटेचो एक टेबल: लोखणाच्या सळ्यांच्या खिडकेच्या सकयल एक लॅपटॉप आनी चाहाचो स्टीलाचो ग्लास, भायर माडां आनी कवलां घातिल्लें घर. | Goemchea pahantecho ek table: lokhnnachea sollyanchea khidkechea sokoil ek laptop ani chahacho stilacho glas, bhayr madam ani kavlam ghatillem ghor. | Read aloud by a screen reader. Check every noun: लोखणाच्या सळ्यांची खिडकी (barred window), चाहाचो ग्लास (a tumbler of tea), कवलां (red clay tiles). |
 | `hero.play` | Play the picture | चित्र चलोवचें | Chitr chalovchem | The button that makes the picture move. Is "चलोवचें" (make it run) natural for a picture, or would another verb do? |
 | `hero.seeAgenda` | See the agenda | वेळापत्रक पळोवचें | Velapotrok pollovchem | वेळापत्रक is "timetable". The English "agenda" is a day plan, so I chose a timetable word. |
 | `hero.findVenue` | Find the venue | थळ सोदचें | Thol sodchem | थळ is "place". Is it the word a Goan would use for where an event is held? |
-| `time.am` | am | सकाळीं | sokallim | Printed after the time: "10:30 सकाळीं". The page only has times before 4 pm. For a site with evening sessions, the pm word needs to be "सांजे" after about 5 pm. |
-| `time.pm` | pm | दनपारां | danparam | दनपारां is "in the afternoon". See time.am. |
-| `time.to` | to | ते | te | Sits between two times: "10:30 सकाळीं ते 11:15 सकाळीं". Is "ते" right for "to" in Goan Konkani, or "पर्यंत / मेरेन" after the second time? If the last, the template needs a change in pages.mjs, tell me. |
+| `time.to` | to | ते | te | Sits between two times: "सकाळीं 10:30 ते सकाळीं 11:15". Is "ते" right for "to" in Goan Konkani, or "पर्यंत / मेरेन" after the second time? If the last, the template needs a change in pages.mjs, tell me. |
 | `time.ist` | IST | IST | IST | Kept as IST, which is how it is written on Indian timetables. Say if a Konkani abbreviation is used. |
 | `time.istFull` | India Standard Time | भारतीय प्रमाण वेळ | Bharotiy pramann vel |  |
 | `agenda.heading` | Agenda | वेळापत्रक | Velapotrok |  |
 | `agenda.zone` | Every time here is India Standard Time (IST), the clock in Panjim. | हांगा दिल्ल्यो सगळ्यो वेळो भारतीय प्रमाण वेळेंत (IST) आसात: पणजींतल्या घड्याळाची वेळ. | Hanga dillyo sogllyo velo Bharotiy pramann velent (IST) asat: Panjimchea ghodyalachi vel. | Check "दिल्ल्यो" agrees with "वेळो" (plural). |
-| `agenda.day` | Saturday 21 November | शनिवार 21 नोव्हेंबर | Xonivar 21 Novembor |  |
+| `agenda.day` | Saturday 21 November | शेनवार 21 नोव्हेंबर | Sonvar 21 Novembr | See "Days, months and the hours" below. |
 | `rooms.main` | Main hall | मुखेल सभागृह | Mukhel sobhagruh |  |
 | `rooms.studio` | Studio room | स्टुडिओ खोली | Studio kholi | खोली (room) may be Hindi-leaning; कुडको is the other candidate. Which does a Goan say? |
 | `rooms.foyer` | Foyer | लॉबी | Lobi | Borrowed "lobby". There may be no common Konkani word. |
@@ -75,6 +74,15 @@ The same choices as the language switcher's draft (docs/reviews/2026-10-06-konka
 | `speakers.maria.name` | Maria D’Costa | मारिया डिकॉस्ता | Maria D’Costa | Name, in each script. D'Costa in Devanagari is written differently by different families. Ask the person. |
 | `speakers.maria.role` | Linguist, a Konkani language project | भाशा अभ्यासक, कोंकणी भास प्रकल्प | Bhaxa abhyasak, Konknni bhas proklop | The English is "linguist". I chose "भाशा अभ्यासक" (language scholar) because I do not know a plain word for linguist. |
 | `speakers.maria.line` | Counts the words and spellings that tools still get wrong. | साधनां अजून चुकीचीं बरयतात तीं उतरां आनी स्पेलिंग मोजता. | Sadhnam azun chukichim borotat tim utram ani spelling mojta. | The sentence says: tools still write wrongly, the words and spellings she counts. Check the order. |
+| `register.heading` | Register | नांव नोंद | Nanv nond | The heading of the registration form, and the link to it in the header. "नांव नोंद" is "name entry" (registering). Is there a more usual word for "register" for an event? |
+| `register.lede` | Tell us who is coming and we will keep a place for you. | कोण कोण येता तें आमकां सांगात, आमी तुमच्या खातीर एक जागो दवरतले. | Kon kon yeta tem amkam sangat, ami tumchea khatir ek zago dovortole. | One line under the heading. "आमकां सांगात" is "tell us"; "एक जागो दवरतले" is "will keep a place". Check the future ending and whether "जागो" is the word for a seat. |
+| `register.name` | Name | नांव | Nanv | The deck's word for "name" (the ticket's label). |
+| `register.email` | Email address | ई-मेल पत्तो | E-mel patto | "पत्तो" for "address". Do Goans say "ई-मेल पत्तो", or "ई-मेल आयडी"? |
+| `register.submit` | Register | नोंद करात | Nond korat | The button. "करात" is the polite command, as the deck uses it. Same worry as the heading. |
+| `register.sample` | This sample form does not send anything. | हो नमुनो अर्ज कांयच धाडिना. | Ho namunno arz kainch dhadina. | Said under the form after a send. Not for a visitor to a finished site. "धाडिना" is "does not send"; is the negative form right? |
+| `register.consent.fields` | your name and your email address | तुमचें नांव आनी ई-मेल पत्तो | tumchem nanv ani e-mel patto | What the form asks for, as it reads in "आमी … विचारतात".  |
+| `register.consent.purpose` | confirm your place and send you the ticket and any change to this event | तुमच्या जागेची पक्कायकी करप आनी तिकीट तशेंच ह्या कार्यक्रमांतले बदल धाडप | tumchea zagechi pakkaikee korop ani tikit toxem hya karyokramantle bodol dhadop | Why, as it reads in "तीं आमी … खातीर वापरतात, आनी हेर कशाखातीरूय ना". The verb nouns (करप, धाडप) are written to fit before खातीर. "पक्कायकी" for "confirm" is a guess. |
+| `register.consent.period` | 30 days after the event | कार्यक्रमा उपरांत 30 दिसां | karyokrama uprant 30 disam | How long, as it reads in "तीं … मेरेन दवरतात". "उपरांत" is "after". A placeholder: the site decides. |
 | `venue.heading` | The venue | थळ | Thol | थळ, the same word as in hero.findVenue. |
 | `venue.name` | Mandovi Riverside Hall | मांडवी रिव्हरसाईड हॉल | Mandovi Riverside Hall |  |
 | `venue.address` | Riverfront Road, Panjim (Panaji), Goa 403001 | रिव्हरफ्रंट रोड, पणजी (पांजिम), गोंय 403001 | Riverfront Road, Panjim (Panaji), Goem 403001 | Panjim is written पणजी on the Devanagari page and Panjim on the Romi page, each with the other name beside it where the English gives two. |
@@ -104,6 +112,79 @@ The same choices as the language switcher's draft (docs/reviews/2026-10-06-konka
 | `footer.links` | On this page | ह्या पानांत | Hea panant |  |
 | `footer.top` | Back to the top | वयर वचचें | Voir vochem | Link at the bottom that goes to the top. Check "वयर वचचें". |
 | `footer.small` | Mandovi Conclave is a made-up event, so no real person or organisation is meant. | मांडवी कॉन्क्लेव्ह हो एक कल्पीत कार्यक्रम, देखून खंयच्याय खऱ्या मनशाक वा संस्थेक उद्देशून न्हय. | Mandovi Conclave ho ek kolpit karyakram, dekhun khoinchyay khorya monxak va sansthek uddexun nhoi. | Check "कल्पीत" (made-up), "संस्थेक" (organisation) and "उद्देशून" (meant for). |
+
+## The consent notice
+
+The registration form carries the library's consent notice (`susegad/components/consent/consent.strings.js`): a heading, six short lines and a box. Its Konkani is a first draft by the same writer. The doubts for the notice are the long line on withdrawing consent, which a reader may want split in two, and "ताचेवयचिना" for "without it". The banner's own doubts are the verb in "ही सूचना बंद करचीं" and the order of "{date} परत". The notice's three values (`register.consent.*` above) are the site's own words and are the rows above. Its contact, site name and complaint line are left as visible [placeholders] on purpose: a site fills them in, and a legal reader reads the notice before the site goes live. The notice names no law and no body.
+
+## Days, months and the hours
+
+The library prints the day, the month and the part of the day itself (`susegad/core/intl.kok.js`), so there is one set of words for the whole page. They are ICU's own forms, read on 8 October 2026, except the four parts of the day. **Draft, for a native reader; change a word in the table at the top of that file.** There is no ending on a date (not 21 नोव्हेंबराक): the sentence around it does the work.
+
+A time is written as the part of the day, then the clock: **सांजे 7:00** (Romi **sanje 7:00**). A date is **शेनवार 21 नोव्हेंबर** (**Sonvar 21 Novembr**). The agenda's times and the page's date use these, so `time.am` and `time.pm` are no longer keys.
+
+| Day | Devanagari | Romi | Notes |
+|---|---|---|---|
+| Sunday | आयतार | Aitar | |
+| Monday | सोमार | Somar | |
+| Tuesday | मंगळार | Mongllar | The double l is ICU's way of writing ळ. Mongllar or Mongolar? |
+| Wednesday | बुधवार | Budhvar | |
+| Thursday | बिरेस्तार | Birestar | भीरेस्तार in Goan speech? |
+| Friday | शुक्रार | Sukrar | |
+| Saturday | शेनवार | Sonvar | Was शनिवार / Xonivar. शनिवार is the Marathi and Hindi word; ICU has शेनवार. Which does a Goan write? |
+
+| Month | Devanagari | Romi | Notes |
+|---|---|---|---|
+| January | जानेवारी | Janer | |
+| February | फेब्रुवारी | Febrer | |
+| March | मार्च | Mars | |
+| April | एप्रील | Abril | |
+| May | मे | Mai | |
+| June | जून | Jun | |
+| July | जुलय | Julai | जुलै (Marathi, Hindi) reads more familiar. Which? |
+| August | ऑगस्ट | Agost | |
+| September | सप्टेंबर | Setembr | |
+| October | ऑक्टोबर | Otubr | |
+| November | नोव्हेंबर | Novembr | Was Novembor in Romi. |
+| December | डिसेंबर | Dezembr | |
+
+| Part of the day | Hours | Devanagari | Romi | Notes |
+|---|---|---|---|---|
+| Morning | 4:00 to 11:59 | सकाळीं | sokallim | |
+| Afternoon | 12:00 to 15:59 | दनपारां | donparam | Was danparam in Romi. |
+| Evening | 16:00 to 19:59 | सांजे | sanje | |
+| Night | 20:00 to 3:59 | राती | rati | These four bands are ICU's. A Goan reader may draw them differently: many would call 5 pm सांजे, and 12:30 दनपार. |
+
+## The ticket and the offline page
+
+Both are in the library, not in `strings.js` (`susegad/components/ticket/ticket.strings.js` and `susegad/recipes/offline/recipe.strings.js`), and both are a first draft for a native reader. `ticket.local` is the newest line. {id} is the ticket's eight-character id.
+
+| Key | English | Devanagari | Romi | Notes |
+|---|---|---|---|---|
+| `ticket.heading` | Your ticket | तुमचें तिकीट | Tumchem tikit |  |
+| `ticket.name` | Name | नांव | Nanv |  |
+| `ticket.event` | Event | कार्यक्रम | Karyokrom | A feast might say फेस्त and a tiatr तियात्र; a site can set its own word. |
+| `ticket.time` | Time (IST) | वेळ (IST) | Vel (IST) |  |
+| `ticket.id` | Ticket id | तिकिटाचो क्रमांक | Tikitacho kromank | क्रमांक (number) rather than आयडी. Which do Goans say? |
+| `ticket.qrAlt` | QR code for ticket {id}. It holds the ticket id and nothing else. | तिकीट {id} खातीर क्यूआर कोड. ताका तिकिटाचो क्रमांक सोडल्यार कांयच ना. | Tikit {id} khatir kyuar kod. Taka tikitacho kromank sodlear kainch na. |  |
+| `ticket.qrBeside` | Show this code at the door. If it will not scan, read out the ticket id beside it. | दारांत हो कोड दाखयात. स्कॅन जालो ना जाल्यार, वयलो क्रमांक वाचून सांगात. | Daranty ho kod dakhoyat. Skan zalo na zalear, voilo kromank vachun sangat. | "वयलो" is "above": write the word that fits where the number sits (above or beside the code). |
+| `ticket.save` | Save as picture | चित्र म्हणून सांबाळचें | Chitr mhunn sambollchem | "सांबाळचें" is "to keep". "जतन करप" is the other candidate. |
+| `ticket.saved` | Saved. Look for it in your downloads or photos. | सांबाळ्ळें. डाउनलोड वा फोटोंत पळयात. | Sambollem. Download va fotont polloyat. | The ending is the polite "पळयात"; the deck had the plain one. |
+| `ticket.saveFailed` | The picture did not save. Try again, or take a screenshot of this page. | चित्र सांबाळूक जालें ना. परत यत्न करात, वा ह्या पानाचो स्क्रीनशॉट काडात. | Chitr sambolk zalem na. Porot yatn korat, va hya panacho skrinxot kadat. |  |
+| `ticket.offline` | After you have opened this page once, it opens again without a connection. | हें पान एकदां उगडल्यार, परत जोडणी बगर उगडटलें. | Hem pan ekdam ugdolear, porot jodonni bogor ugdotlem. | "जोडणी" for "connection" is a guess. |
+| `ticket.done` | You are on the list. See you there. | तुमचें नांव यादींत आसा. थंय भेटूंया. | Tumchem nanv yadint asa. Thoim bhetum ya. | "भेटूंया" is a guess at the friendly "see you there". |
+| `ticket.local` | This ticket is kept on this device only. Nothing was sent to a server. | हें तिकीट फकत ह्याच उपकरणार सांबाळ्ळां. सर्व्हराक कांयच धाडलें ना. | Hem tikit phokot hyach upkoronar sambollam. Serverak kainch dhadlem na. | NEW. "उपकरण" for "device" may be heavy: would Goans say "फोन" or "मोबाईल"? "फकत" is "only". |
+| `offline.title` | No connection right now | सध्या जोडणी ना | Sodhya jodonni na |  |
+| `offline.lede` | We cannot reach the internet from here. Nothing you did caused this, and it often passes on its own. | हांगासकयल्यान इंटरनेट पावना. तुमच्या हातांतल्यान कांयच चुकलें ना; तें आपशीच सुदारता. | Hangasokoylean internet pavna. Tumchea hatantlean kainch chukllem na; tem apxich sudharta. | The first half is the least sure line: a reader might simply say "इंटरनेट मेळना". |
+| `offline.worksHeading` | Still here for you | अजून तुमच्या खातीर आसा | Ajun tumchea khatir asa |  |
+| `offline.works1` | The event page, if you have opened it before. | कार्यक्रमाचें पान, तुमी आदीं उगडिल्लें आसल्यार. | Karyokromachem pan, tumi adim ugdillem asalear. |  |
+| `offline.works2` | Your ticket, if you have opened it before. | तुमचें तिकीट, तुमी आदीं उगडिल्लें आसल्यार. | Tumchem tikit, tumi adim ugdillem asalear. |  |
+| `offline.notHeading` | Waiting for a connection | जोडणीची वाट पळयतां | Jodonnichi vat polloitat | "वाट पळयतां" is "are waiting". |
+| `offline.not1` | Pages you have not opened yet. | तुमी अजून उगडून पळयल्लीं ना तीं पानां. | Tumi ajun ugdun pollyalim na tim panam. |  |
+| `offline.not2` | Registering, and anything that needs us to answer. | नांव नोंद, आनी आमी जाप दिवपाक जाय तें सगळें. | Nanv nond, ani ami zap divpak zai tem sogllem. |  |
+| `offline.not3` | Maps, and live updates. | नकाशे, आनी थेट खबरो. | Nokaxe, ani thet khobro. |  |
+| `offline.retry` | Try again | परत यत्न करात | Porot yatn korat |  |
+| `offline.back` | Back | फाटीं | Phatim |  |
 
 ## What I changed in the English
 

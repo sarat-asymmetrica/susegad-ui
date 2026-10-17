@@ -19,7 +19,7 @@ const csp = [
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
-  "frame-ancestors 'none'", // no page of this site is somebody else's iframe
+  "frame-ancestors 'self'", // no page of this site is somebody else's iframe; its own pages may frame each other (the templates page shows the event template running)
 ].join('; ');
 
 /** The exact Content-Security-Policy the site has always served. */
