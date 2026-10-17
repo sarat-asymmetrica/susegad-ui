@@ -68,6 +68,4 @@ test('words', () => {
   assert.equal(STRINGS.cue(true), 'Drop files here, or choose them');
   assert.equal(STRINGS.cue(false), 'Drop a file here, or choose one');
   assert.equal(STRINGS.remove('plan.pdf'), 'Remove plan.pdf');
-  const all = [STRINGS.type('a', 'b'), STRINGS.size('a', 'b'), STRINGS.count(), STRINGS.removed('a')].join(' ');
-  assert.ok(!all.includes('—'));
 });

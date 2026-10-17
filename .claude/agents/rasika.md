@@ -97,9 +97,12 @@ EXPERIENCE(piece)
     for interactive pieces) and the warm strip; open a single cell full
     size only where the sheet shows something to look at
   → use the keyboard only on interactive pieces; read every string
-  → the lints in `npm run check` already cover reduced-motion stillness,
-    idle rest, text in a canvas, the copy rules and the motif tier. Do
-    not redo them by eye; judge what no tool can (A13)
+  → `npm run gates` lints text in a canvas over the whole tree; the
+    piece's own check covers reduced-motion stillness where it emulates
+    it. Idle rest, the copy rules and the motif tier are not gated yet
+    (docs/DEBT.md): run `node tools/rest.check.mjs`,
+    `node tools/copy-lint.mjs <piece folder>` and `node tools/motif-lint.mjs`,
+    then judge what no tool can (A13)
 
 FIND(experience)
   → findings, each with severity (blocker / should fix / polish), evidence,

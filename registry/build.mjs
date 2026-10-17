@@ -24,6 +24,7 @@ import { checkGraph, resolveOrder } from '../packages/cli/src/graph.js';
 import { absoluteRefs, relativeRefs } from '../packages/cli/src/imports.js';
 import { hashContent, hashParts } from '../packages/cli/src/hash.js';
 import { stripComments } from '../packages/cli/src/strip.js';
+import { deriveEdges } from './edges.mjs';
 import { shadcnView, validateView, DEFAULT_BASE_URL } from './shadcn.mjs';
 import { insidePackages, resolveManifestPath, templateRefTarget, toPosix, TEMPLATE_FILE } from '../packages/cli/src/paths.js';
 
@@ -266,6 +267,10 @@ export function buildRegistry({ root, out = join(root, 'registry', 'registry.jso
     soft.push(`${stray} is outside packages/, so the CLI cannot copy it. Move its folder to packages/${stray.slice(0, stray.lastIndexOf('/'))}/ and change "../../packages/" to "../../" in its imports`);
   }
   if (errors.length) return { index: null, errors, warnings, notes };
+
+  // Edges only the checks need: a demo, page or check of one item loading another item's files (registry/edges.mjs).
+  const edges = deriveEdges(root, items, names => resolveOrder(items, names));
+  for (const [name, list] of edges) items.get(name).checkDeps = [...new Set(list.map(e => e.to))].sort();
 
   const sorted = [...items.values()].sort((a, b) => a.name.localeCompare(b.name));
   for (const item of sorted) {

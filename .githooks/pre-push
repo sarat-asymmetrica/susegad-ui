@@ -1,0 +1,6 @@
+#!/bin/sh
+# only a push of main to a remote (stdin lists the refs)
+while read local_ref local_sha remote_ref remote_sha; do
+  case "$local_ref" in refs/heads/main) exec sh "$(dirname "$0")/gates.sh" push ;; esac
+done
+exit 0

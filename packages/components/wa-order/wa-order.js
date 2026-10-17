@@ -247,11 +247,11 @@ export class SgWaOrder extends SgElement {
     if (r.ok) {
       link.href = r.href;
       link.removeAttribute('aria-disabled'); link.removeAttribute('role'); link.removeAttribute('tabindex');
-      link.textContent = STRINGS.send;
+      if (link.textContent !== STRINGS.send) link.textContent = STRINGS.send; // not rewritten when unchanged: WebKit drops the click if the text node under the mouse-down is replaced before the mouse-up
     } else {
       link.removeAttribute('href');
       link.setAttribute('role', 'link'); link.setAttribute('tabindex', '0'); link.setAttribute('aria-disabled', 'true');
-      link.textContent = STRINGS.sendWaiting;
+      if (link.textContent !== STRINGS.sendWaiting) link.textContent = STRINGS.sendWaiting;
     }
     this.#reason.textContent = r.ok ? '' : r.reason;
     this.#menuLink.hidden = !!r.text || !this.getAttribute('for');

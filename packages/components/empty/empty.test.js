@@ -1,10 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { sceneName, sceneParams, illustration, DEFAULT_SCENE, STRINGS } from './empty.core.js';
+import { sceneName, sceneParams, illustration, DEFAULT_SCENE } from './empty.core.js';
 
 test('runs in Node with no DOM', () => {
   assert.equal(typeof document, 'undefined');
-  assert.equal(typeof STRINGS, 'object');
 });
 
 test('scene names are folder names, or the default', () => {

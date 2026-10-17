@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { existsSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { checkSkill, checkRepoSkills, parseSkill, LIMITS, ROOT_SKILL_NAME } from './skill-spec.mjs';
@@ -18,7 +19,12 @@ test('a skill with a name and a description meets the spec', () => {
 test('the repo\'s own skills meet the spec (green on the repo)', () => {
   const { problems, checked } = checkRepoSkills();
   assert.deepEqual(problems, []);
-  assert.deepEqual(checked, ['SKILL.md', 'skills/susegad-scene/SKILL.md']);
+  // every skill on disk is checked and every one checked is on disk (no exact list to keep in step)
+  const repo = join(here, '..');
+  const onDisk = [existsSync(join(repo, 'SKILL.md')) && 'SKILL.md',
+    ...(existsSync(join(repo, 'skills')) ? readdirSync(join(repo, 'skills')).filter(d => existsSync(join(repo, 'skills', d, 'SKILL.md'))).map(d => `skills/${d}/SKILL.md`) : [])].filter(Boolean);
+  assert.ok(onDisk.length > 0, 'the repo has a skill');
+  assert.deepEqual([...checked].sort(), onDisk.sort());
 });
 
 test('the good fixture is green and the bad fixture goes red on each of its seven faults (fail first)', () => {

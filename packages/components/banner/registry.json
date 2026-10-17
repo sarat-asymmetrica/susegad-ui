@@ -1,0 +1,44 @@
+{
+  "name": "banner",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Banner",
+  "description": "An announcement across the top of a page: 'Closed for the monsoon, back 1 October'. The words are the site's own and sit in the element, so the page reads without script. A cross dismisses it, and the dismissal is remembered for that visitor in localStorage with a try/catch around every read and write, so it still renders and dismisses with no storage. Said once through announce(), never for a banner that arrives dismissed or out of date. An optional until date is read in IST (a date alone is through the end of that day) and after it the banner shows nothing; an empty <time datetime> is filled with the date in words in the page's language, in English or in Konkani through core-intl. Quiet is a strip with one hairline, warm a sheet with a seeded pencil rule, playful bunting strung along the bottom.",
+  "version": "0.1.0",
+  "files": [
+    "banner.js",
+    "banner.core.js",
+    "banner.strings.js",
+    "banner.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "banner.prompt.md",
+    "banner.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "core-intl",
+    "core-announce",
+    "core-intl-kok",
+    "core-strings",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "banner.prompt.md",
+  "docs": "banner.docs.md",
+  "budget": {
+    "jsBytes": 24576,
+    "reason": "Decision 0009: the element and its pure core (the phases, a store that never throws, IST expiry, the dates in words, focus after a dismissal) with the strings in three languages (Devanagari costs three bytes a letter), and a skin per register, the largest being the seeded bunting. 21.3 KB today with comments, about 13% to spare."
+  },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "Paper bunting strung over a lane for a feast, the flags of a village festa; drawn in the playful register only, with no figure and no ritual."
+  }
+}

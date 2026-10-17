@@ -116,9 +116,8 @@ test('a session with a date nobody can read is left out of the story', () => {
   assert.equal(agendaState([], at('2026-11-14T10:40')).overall, 'empty');
 });
 
-test('no word of the agenda uses an em dash or hurries anyone', () => {
+test('no word of the agenda hurries anyone', () => {
   const words = [STRINGS.now('11 am'), STRINGS.next('at 2 pm'), STRINGS.finished, STRINGS.before('on Sat 14 Nov'), STRINGS.on(1), STRINGS.on(3), STRINGS.between, STRINGS.after].join(' ');
-  assert.ok(!words.includes('—'));
   assert.ok(!/hurry|last chance|don't miss|only \d/i.test(words));
 });
 

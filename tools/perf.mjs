@@ -3,9 +3,16 @@
 //   node tools/perf.mjs --scene kolam [--seconds 6] [--register warm] [--seed 3] [--param k=v]
 //   node tools/perf.mjs --url /apps/docs/index.html
 //
-//   --seconds N       measuring time per target (default 6), split across --rounds
-//   --rounds N        the target and the baseline alternate this many times (default 2),
-//                     so a burst of machine load lands on both rather than one
+//   --seconds N       measuring time per target (default 12), split across --rounds
+//   --rounds N        the target and the baseline alternate this many times (default 4),
+//                     so a burst of machine load lands on both rather than one. Each round gives
+//                     a ratio; the verdict comes from a bootstrap 95% interval of those ratios:
+//                     "within" only when its upper bound is under the budget, "over" only when its
+//                     lower bound is over, otherwise "inconclusive"
+//   --force           measure even when the machine is busy. Without it, above 30% CPU busy
+//                     before the run, nothing is measured: "not measured: the machine is N% busy",
+//                     exit code 3 (neither pass nor fail). A forced result is stamped "under load";
+//                     so is any run whose own busy figure reads over 30% (stamped, never refused)
 //   --baseline NAME   baseline scene (default paus once packages/scenes/paus exists); "none" to skip
 //   --phone           390 px, 3x, touch (default 1280 px desktop at 1x)
 //   --uncapped        launch Chromium without the vsync frame cap, so frame time is the cost of
@@ -39,13 +46,13 @@ import path from 'node:path';
 import { parseArgs } from './lib/args.mjs';
 import { TARGET_SPEC, FIXTURES, targetFrom } from './lib/target.mjs';
 import { session, openTarget, waitReady, errorCount, PHONE, DESKTOP } from './lib/browser.mjs';
-import { frameStats, bytesByFolder, baselineRatio, fmtMs, fmtKB } from './lib/stats.mjs';
+import { frameStats, bytesByFolder, baselineRatio, perfVerdict, vsyncCapped, runLoad, loadGate, BUSY_LIMIT, fmtMs, fmtKB } from './lib/stats.mjs';
 import { REPO_ROOT } from './serve.mjs';
 import { WARP_SCRIPT, LOW_QUALITY_FRAME_MS } from './warp.core.js';
 
-const SPEC = { ...TARGET_SPEC, seconds: 'number', rounds: 'number', baseline: 'string', phone: 'bool', uncapped: 'bool', json: 'bool', at: 'number', quality: 'string', settle: 'number', throttle: 'number' };
+const SPEC = { ...TARGET_SPEC, seconds: 'number', rounds: 'number', force: 'bool', baseline: 'string', phone: 'bool', uncapped: 'bool', json: 'bool', at: 'number', quality: 'string', settle: 'number', throttle: 'number' };
 let parsed;
-try { parsed = parseArgs(process.argv.slice(2), SPEC, { seconds: 6, rounds: 2, settle: 0 }); }
+try { parsed = parseArgs(process.argv.slice(2), SPEC, { seconds: 12, rounds: 4, settle: 0 }); }
 catch (e) { console.error(e.message); process.exit(2); }
 const { opts, positional } = parsed;
 let target;
@@ -156,6 +163,20 @@ function summarise(runs) {
   };
 }
 
+// CPU busy over a short window, from the same counters smoke.mjs reads
+async function sampleBusy(ms = 1000) {
+  const a = cpuTimes();
+  await new Promise(r => setTimeout(r, ms));
+  const b = cpuTimes();
+  return Math.round((100 * (b.busy - a.busy)) / Math.max(1, b.total - a.total));
+}
+const gate = await loadGate({ sample: sampleBusy, force: opts.force });
+if (!gate.measure) {
+  if (opts.json) console.log(JSON.stringify({ measured: false, reason: gate.message, busyBefore: gate.busy, limit: BUSY_LIMIT }, null, 2));
+  else console.log(gate.message);
+  process.exit(3);
+}
+
 const s = await session({ args: launchArgs });
 const cpu0 = cpuTimes();
 const tRuns = [], bRuns = [];
@@ -172,10 +193,17 @@ const cpu1 = cpuTimes();
 const machine = {
   cpus: os.cpus().length,
   cpuModel: os.cpus()[0]?.model?.trim(),
+  busyBefore: gate.busy,
+  underLoad: gate.underLoad || undefined,
   busyPercent: Math.round((100 * (cpu1.busy - cpu0.busy)) / Math.max(1, cpu1.total - cpu0.total)),
   freeMemGB: +(os.freemem() / 2 ** 30).toFixed(1),
   platform: `${os.platform()} ${os.release()}`,
 };
+
+// The pre-run sample can read quiet while the run itself is not: the run's own busy figure stamps it "under load" too (it does not refuse; see runLoad).
+const load = runLoad({ during: machine.busyPercent });
+const underLoad = gate.underLoad || load.stamp;
+machine.underLoad = underLoad || undefined;
 
 const result = {
   target: target.scene ? { scene: target.scene, register: target.register ?? 'warm', seed: target.seed ?? null, params: target.params } : { url: target.url },
@@ -189,6 +217,11 @@ const result = {
 if (baseline) {
   const b = result.baseline, m = result.measured;
   result.ratio = { mean: baselineRatio(m.frames.mean, b.frames.mean), p95: baselineRatio(m.frames.p95, b.frames.p95) };
+  // One ratio per alternating round, and what they say together
+  result.roundRatios = tRuns.map((t, i) => bRuns[i] ? frameStats(t.frames).mean / frameStats(bRuns[i].frames).mean : NaN).filter(Number.isFinite);
+  const capped = !opts.uncapped && vsyncCapped(tRuns.flatMap(r => r.frames), bRuns.flatMap(r => r.frames));
+  result.verdict = perfVerdict(result.roundRatios, 0.10, { capped });
+  result.verdict.stamp = underLoad ? 'under load' : null;
 }
 
 if (opts.json) {
@@ -211,8 +244,12 @@ if (opts.json) {
     line(`${baseline.scene} (base)`, result.baseline);
     if (result.baseline.perSecond?.length) console.log(`  frame mean by second (ms): ${result.baseline.perSecond.join(' ')}`);
     const { mean, p95 } = result.ratio;
-    console.log(`\nratio to baseline: mean ${mean.ratio.toFixed(2)}x, p95 ${p95.ratio.toFixed(2)}x  ${mean.within ? 'within' : 'OVER'} the 10% budget`);
-    if (!opts.uncapped && result.measured.frames.mean < 17.5 && result.baseline.frames.mean < 17.5) {
+    const v = result.verdict;
+    console.log(`\nratio to baseline (pooled): mean ${mean.ratio.toFixed(2)}x, p95 ${p95.ratio.toFixed(2)}x`);
+    console.log(`per-round ratios: ${result.roundRatios.map(r => r.toFixed(2)).join(' ')}`);
+    console.log(`95% interval of the ratio: ${v.lo.toFixed(2)} to ${v.hi.toFixed(2)} (mean ${v.mean.toFixed(2)}, ${v.rounds} rounds), budget ${v.budget.toFixed(2)}x: ${v.verdict.toUpperCase()}${v.verdict === 'inconclusive' ? ' (the interval straddles the budget, or there are too few rounds; measure longer or on a quieter machine)' : ''}${v.stamp ? '  [under load]' : ''}`);
+    if (v.verdict === 'capped') console.log(`${v.note}: the ratio only says neither drops frames`);
+    else if (!opts.uncapped && result.measured.frames.mean < 17.5 && result.baseline.frames.mean < 17.5) {
       console.log('both hold 60 fps under the vsync cap, so the ratio only says neither drops frames; --uncapped compares the cost per frame');
     }
   } else {

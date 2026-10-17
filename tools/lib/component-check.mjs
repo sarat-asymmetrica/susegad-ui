@@ -8,23 +8,81 @@ import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { startServer } from '../serve.mjs';
 import path from 'node:path';
-import { contextOptions, engineName, pickEngine } from './engine.mjs';
+import { contextOptions, engineName, launchArgs, pickEngine, unsupportedIn } from './engine.mjs';
+import { gpuGate } from './gpu.core.js';
+import { gpuOf } from './gpu.mjs';
+import { openScene } from './scene-probe.mjs';
 import { acquireSlot } from './slots.mjs';
+
+export { tab, tabTo, tabWalk, tabsToLinks } from './tab.mjs'; // Tab as far as the engine can press it (WebKit leaves links out of the tab order)
 
 export const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 const AXE = await readFile(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
 
-export async function harness() {
+/**
+ * The one entry for a browser check (*.check.mjs). It owns the dev server, the machine-wide browser slot
+ * (slots.mjs; skipped when runCheck already holds one), the engine (`--engine=` / SG_ENGINE through
+ * pickEngine), the pass/fail printer, axe, and a `done()` whose closes cannot hang. A check never calls
+ * `chromium.launch()` itself: it would run Chromium whatever engine the run asked for
+ * (tools/lib/chromium-only.core.test.mjs fails the build if one does).
+ *
+ *   const h = await harness();                                   // a plain DOM page
+ *   const h = await harness({ args: GPU_FLAGS, axe: 'why axe is not run here' });
+ *   const ctx = await h.context({ viewport: { width: 1000, height: 800 }, reducedMotion: 'reduce' });
+ *   const probe = await h.scene('vahi', { register: 'warm' });   // a scene in tools/harness/scene.html (scene-probe.mjs)
+ *   if (h.skip('WebGL readback', 'Chromium only')) {} else { ... }  // a printed, counted skip, never a silent pass
+ *   await h.done();                                              // verdict, guarded closes, the slot back, process.exit
+ *
+ * options
+ *   args  Chromium launch flags (GPU switches and the like); other engines get none (launchArgs)
+ *   axe   true (default): the check is expected to call h.axe(page). A string opts out and says why. A check that
+ *         neither ran axe nor opted out gets a `note` line at the end
+ */
+export async function harness({ args = [], axe: axePolicy = true } = {}) {
   // One machine-wide browser slot for the life of this check (skipped when runCheck holds one for it); freed in done() or at exit.
   const release = await acquireSlot({ label: path.basename(process.argv[1] ?? 'check') });
-  const server = await startServer({ quiet: true });
   const engine = engineName();
-  const browser = await pickEngine(engine).launch().catch(e => { release(); throw e; });
+  let server, browser;
+  const extra = []; // browsers from h.launch(), closed in done()
+  try {
+    server = await startServer({ quiet: true });
+    browser = await pickEngine(engine).launch({ args: launchArgs(engine, args) });
+  } catch (e) {
+    try { await browser?.close(); } catch { /* never launched */ }
+    try { await server?.close?.(); } catch { /* never started */ }
+    release();
+    throw e;
+  }
   const results = [];
+  const skipped = [];
+  let axeRuns = 0;
   const check = (name, ok, detail = '') => {
     results.push({ name, ok: !!ok });
     console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`);
   };
+  /**
+   * A clause this engine cannot answer: prints `skip  <thing> is not measurable in <engine>  (<reason>)`, counts it
+   * in the closing line, and returns true so a caller can write `if (h.skip(...)) {} else { ... }`. Neither a pass nor a red.
+   */
+  const skip = (thing, reason) => { skipped.push(thing); return unsupportedIn(engine, thing, reason); };
+  /**
+   * The GPU gate (tools/lib/gpu.mjs) for a check with live-tier (WebGL) clauses. In Chromium it reads the renderer, as before.
+   * In another engine the live tier is not read back at all, so each `gate.skip(clause)` prints and counts a skip with that reason.
+   */
+  async function gpu() {
+    if (engine === 'chromium') return gpuOf(browser);
+    const seen = { available: false, renderer: '', software: true, forced: false, label: `${engine}: the live WebGL tier is read back in Chromium only` };
+    console.log(`GPU: ${seen.label} (the live-tier clauses will skip)`);
+    return gpuGate(seen);
+  }
+  /** A second browser of the same engine (other flags, say an uncapped frame rate), closed with the first in done(). */
+  async function launch(opts = {}) {
+    const b = await pickEngine(engine).launch({ ...opts, args: launchArgs(engine, opts.args ?? []) });
+    extra.push(b);
+    return b;
+  }
+  /** browser.newContext() with the options made safe for this engine (contextOptions). */
+  const context = (opts = {}, b = browser) => b.newContext(contextOptions(engine, opts));
   /** A page at `path` (query string allowed), waited on window.__ready when it declares one. */
   async function open(path, { width = 1280, height = 900, js = true, reduced = false, touch = false, errors = [] } = {}) {
     const ctx = await browser.newContext(contextOptions(engine, {
@@ -56,6 +114,7 @@ export async function harness() {
   }
   /** axe violations on the page as it stands, as "rule (n)" strings. */
   async function axe(page) {
+    axeRuns++;
     await page.addScriptTag({ content: AXE });
     return page.evaluate(async tags => (await window.axe.run(document, { runOnly: { type: 'tag', values: tags } })).violations.map(v => `${v.id} (${v.nodes.length}: ${v.nodes.slice(0, 2).map(n => n.target.join(' ')).join(', ')})`), WCAG);
   }
@@ -74,12 +133,17 @@ export async function harness() {
     await copy.ctx.close();
     return v;
   }
-  async function done() {
-    const code = await finish(results, [() => browser.close(), () => server.close?.()]);
+  /**
+   * The verdict, the guarded closes, the slot back, and the exit. `summary` replaces the closing line (a gate's own
+   * "17 of 17 pass, 5 skipped"); `expectRed` is a fail-first run (`--break`) whose reds are the point, so it exits 0.
+   */
+  async function done({ summary, expectRed = false } = {}) {
+    if (axePolicy === true && !axeRuns) console.log("note  axe never ran in this check; run h.axe(page) on the page, or opt out with harness({ axe: '<reason>' })");
+    const code = await finish(results, [...extra.map(b => () => b.close()), () => browser.close(), () => server.close?.()], { summary, skipped: skipped.length });
     release();
-    process.exit(code);
+    process.exit(expectRed ? 0 : code);
   }
-  return { server, browser, engine, check, open, openHtml, axe, axeNoJs, done };
+  return { server, browser, engine, results, check, skip, gpu, launch, context, open, openHtml, scene: (name, opts) => openScene({ browser, server }, name, opts), axe, axeNoJs, done };
 }
 
 /** Every animation on the page, settled. */
@@ -88,9 +152,11 @@ export async function harness() {
  * `closeMs`: under load Playwright's close can block for good, and a check that
  * has already decided must not hang the suite waiting for it. Returns the exit code.
  */
-export async function finish(results, closers, { closeMs = 20000, log = console.log } = {}) {
+export async function finish(results, closers, { closeMs = 20000, log = console.log, summary, skipped = 0 } = {}) {
   const failed = results.filter(r => !r.ok).length;
-  log(failed ? `${failed} of ${results.length} checks failed` : `all ${results.length} checks pass`);
+  // a file that skipped everything asked nothing: "all 0 checks pass" would read as a pass
+  const more = skipped ? `, ${skipped} skipped (not run in this engine)` : '';
+  log(summary ?? (failed ? `${failed} of ${results.length} checks failed${more}` : results.length ? `all ${results.length} checks pass${more}` : 'no check ran (everything was skipped)'));
   for (const close of closers) {
     let timer;
     const late = new Promise(resolve => { timer = setTimeout(() => resolve('late'), closeMs); });

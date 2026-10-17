@@ -2,7 +2,7 @@
 
 The Susegad UI MCP server. It gives an agent harness five tools over stdio: search the shelf, read one piece in full (including the prompt that teaches an agent how to use it), show its posters, and add pieces into a project or diff what it has copied. The add and diff tools run the susegad CLI's own code (`@susegad/cli`, installed alongside it), so what the server writes is exactly what `susegad add` writes, hashes and lockfile included.
 
-Node 22 or later, no dependencies. The server must run from the Susegad UI repo (it imports the CLI beside it), and its working directory should be the project it adds into.
+Node 22 or later. Its one dependency is `@susegad/cli`, which it imports for `add` and `diff`. Run it with `npx @susegad/mcp` (version 0.1.0 is on npm), or from a clone of the repo. Its working directory should be the project it adds into.
 
 ## Running it by hand
 
@@ -90,7 +90,7 @@ Source: OpenCode docs, "MCP servers" (https://opencode.ai/docs/mcp-servers/), th
 The MCP configuration formats above were checked against each harness's docs on 3 October 2026, and each line cites its page. Two things were not verified and say so:
 
 - The `cwd` key works in Hermes's documented schema (cited above) and in OpenCode's (same page, the options table). Claude Code and Codex document `cwd` for MCP servers too, but adding into a project other than the server's working directory is not covered by those pages' examples, so prefer setting the server entry's working directory, or pass `cwd` in the `add` tool call itself, which needs no config support anywhere.
-- Nothing here is published to npm yet, so every install line runs the server straight from the clone. When `@susegad/mcp` is published (see packages/cli/README.md on why it is not published by an agent), `npx @susegad/mcp` should work the same way the CLI's docs describe.
+- `@susegad/mcp` 0.1.0 is on npm, so `npx @susegad/mcp` works in place of `node <repo>/packages/mcp/bin/susegad-mcp.mjs` in every line above. The lines use the clone so a reader working on the library runs the code in front of them.
 
 ## Tests
 

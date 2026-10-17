@@ -20,20 +20,16 @@
 // --break patches the served build once per family: the words drawn into a canvas only (1), a mask that ignores depth (2), no
 // settle on release (3), a 20% tint (4), a page that awaits three before it draws (5), a grip that ignores PageUp and PageDown (6).
 
-import { chromium } from 'playwright';
-import { startServer } from '../../../tools/serve.mjs';
-import { gpuOf } from '../../../tools/lib/gpu.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 import { TURN } from '../../core/orient.core.js';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const BREAK = process.argv.includes('--break');
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
-const server = await startServer({ quiet: true });
-const browser = await chromium.launch({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] });
+const h = await harness({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'], axe: 'not axe-checked anywhere yet: this page is not in tools/smoke.mjs (docs/DEBT.md); this check asks about drawing and layout' });
+const { server, browser, check, results } = h;
 // On a software renderer (a CI runner, or SG_FORCE_SOFTWARE_GL=1) the stage rightly draws in 2D: the live-tier readings skip
 // (`skip  <clause>  (no GPU: <renderer>)`, tools/lib/gpu.mjs) and the 2D and quiet readings still run, as their own clauses.
-const gate = await gpuOf(browser);
+const gate = await h.gpu();
 const THREE = /node_modules\/three\/|three\.named\.js|three(\.module|\.core)?\.js/;
 
 /** Patches by file, applied to the served text when --break asks for one. */
@@ -49,7 +45,7 @@ const BREAKS = {
 };
 
 async function open({ query = 'register=warm', theme = 'light', reduced = false, noGL = false, blockThree = false, holdThree = 0, width = 1280, height = 900, patches = [], always = false } = {}) {
-  const context = await browser.newContext({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference', colorScheme: theme, deviceScaleFactor: 1 });
+  const context = await h.context({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference', colorScheme: theme, deviceScaleFactor: 1 });
   const requests = [], errors = [];
   context.on('request', r => requests.push(r.url()));
   if (noGL) await context.addInitScript("const g = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function (t, ...a) { return /webgl/.test(t) ? null : g.call(this, t, ...a); };");
@@ -396,7 +392,5 @@ async function seen(p) {
   }
 }
 
-await browser.close(); await server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
-process.exit(BREAK ? 0 : failed ? 1 : 0);
+await h.done({ summary: `${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`, expectRed: BREAK });

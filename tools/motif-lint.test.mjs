@@ -46,13 +46,13 @@ test('the hero is read from the front door markup', () => {
 test('the CLI exits non-zero on the broken fixture, zero on the clean one', () => {
   const red = (() => {
     try {
-      execFileSync(process.execPath, ['tools/motif-lint.mjs', 'tools/fixtures/motif/registry-broken.json'], { cwd: path.join(HERE, '..'), encoding: 'utf8' });
+      execFileSync(process.execPath, ['tools/motif-lint.mjs', 'tools/fixtures/motif/registry-broken.json', '--hero=hero-item'], { cwd: path.join(HERE, '..'), encoding: 'utf8' });
       return null;
     } catch (e) { return e; }
   })();
   assert.ok(red, 'the CLI should have failed on the broken fixture');
   assert.ok(red.stdout.includes('sacred needs a lead'));
   assert.ok(red.stdout.includes('the hero must be goa'));
-  const green = execFileSync(process.execPath, ['tools/motif-lint.mjs', 'tools/fixtures/motif/registry-clean.json'], { cwd: path.join(HERE, '..'), encoding: 'utf8' });
+  const green = execFileSync(process.execPath, ['tools/motif-lint.mjs', 'tools/fixtures/motif/registry-clean.json', '--hero=hero-item'], { cwd: path.join(HERE, '..'), encoding: 'utf8' });
   assert.ok(green.includes('0 finding(s)'));
 });

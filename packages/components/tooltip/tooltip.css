@@ -14,7 +14,7 @@ sg-tooltip[hidden] { display: none; } /* our display rule would otherwise beat t
 sg-tooltip {
   display: inline-block;
   position: relative;
-  --sg-tooltip-gap: 8px; /* trigger to panel; the hover bands below are exactly this tall (tooltip.js's fallback placement uses 8 too) */
+  --sg-tooltip-gap: 8px; /* trigger to panel; the hover bands below are exactly this tall, and tooltip.js's fallback placement reads it from here */
 }
 
 sg-tooltip [role="tooltip"] {
@@ -24,7 +24,8 @@ sg-tooltip [role="tooltip"] {
   transform: translateX(-50%);
   z-index: 10;
   box-sizing: border-box;
-  max-width: 22em;
+  border: 0; /* the popover UA sheet draws a 3px border in the text colour, which on this panel is the page colour: it ate 3px of the fill and made the gap read 11px not the token's 8 */
+  max-width: min(22em, var(--sg-fit-max, 22em)); /* tooltip.js caps it to the visible box less 16px */
   width: max-content;
   padding: 0.35em 0.7em;
   border-radius: var(--sg-radius-2, 4px);
@@ -41,11 +42,11 @@ sg-tooltip:is(:hover, :focus-within) [role="tooltip"]:not([popover]) { opacity: 
 
 /* 1.4.13 hoverable: shown, the panel takes the pointer. The gap between trigger and panel belongs to the tooltip too:
    while it is open, an invisible bridge on the element itself (not on the panel, whose overflow would clip it) is two
-   bands as tall as the gap, one above and one below the trigger and 1.5rem wider than it each side, whichever side the
+   bands as tall as the gap, one above and one below the trigger and 1.5rem wider than it each side (less where the page edge is nearer: tooltip.js sets --sg-bridge-l and -r, because a band past the edge is sideways scroll on a phone), whichever side the
    panel took, so the pointer can cross onto the text without the panel closing under it. Each band stops where the
    gap stops: it never covers the trigger, and never a neighbour that starts a gap's width away or further, so a
    click on either lands on it. */
-sg-tooltip[data-open]::before, sg-tooltip[data-open]::after { content: ""; position: absolute; inset-inline: -1.5rem; height: var(--sg-tooltip-gap); }
+sg-tooltip[data-open]::before, sg-tooltip[data-open]::after { content: ""; position: absolute; left: calc(-1 * min(1.5rem, var(--sg-bridge-l, 1.5rem))); right: calc(-1 * min(1.5rem, var(--sg-bridge-r, 1.5rem))); height: var(--sg-tooltip-gap); }
 sg-tooltip[data-open]::before { bottom: 100%; }
 sg-tooltip[data-open]::after { top: 100%; }
 
@@ -54,7 +55,8 @@ sg-tooltip [role="tooltip"][popover] {
   position: fixed;
   inset: auto;
   margin: 0;
-  transform: none;
+  /* tooltip.js slides an open panel back inside the visual viewport by setting --sg-fit-x; 0 when it already fits */
+  transform: translateX(var(--sg-fit-x, 0px));
   --_dur: 120ms; --_ease: var(--sg-ease-out, ease-out); --_rise: 0px;
   translate: 0 var(--_rise);
   transition: opacity var(--_dur) var(--_ease), translate var(--_dur) var(--_ease), overlay var(--_dur) allow-discrete, display var(--_dur) allow-discrete;
@@ -86,12 +88,18 @@ sg-tooltip[data-skin="warm"] [role="tooltip"] {
   background: var(--sg-accent-text, var(--sg-text, CanvasText));
 }
 
+/* the popover UA sheet gives the panel overflow: auto, which clips the line (it sits below the panel's own box) inside a scroll
+   container: clip instead, and let the line show for the margin it needs */
+sg-tooltip[data-skin="playful"] [role="tooltip"][popover] { overflow: clip; overflow-clip-margin: 10px; }
+
 /* ── playful: a pencil leader line between the panel and the trigger ────── */
 /* by default the panel sits above the trigger, so the leader points down */
 sg-tooltip[data-skin="playful"] [role="tooltip"]::after {
   content: "";
   position: absolute;
-  left: 50%;
+  /* tooltip.js sets --sg-lead-x, the trigger's middle measured from the panel's left edge: the line stays under the trigger
+     however the panel was placed or slid */
+  left: var(--sg-lead-x, 50%);
   top: 100%;
   width: 2px;
   height: 9px;

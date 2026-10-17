@@ -5,9 +5,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { relativeRefs } from '../../packages/cli/src/imports.js';
 import { changedFiles } from './changed.mjs';
 import { selectChecks, selectNodeChecks } from './changed.core.js';
-import { parseSpecifiers, resolveRelative, importClosure, packageClosure, lockChanges, manifestChanges } from './deps.core.js';
+import { parseSpecifiers, resolveRelative, importClosure, packageClosure, lockChanges, manifestChanges, rootPaths, sceneNamePaths, pieceFiles } from './deps.core.js';
 
 /**
  * What every check runs inside of, so a change to any file these load runs everything. Named by
@@ -24,13 +25,26 @@ export const EVERY_ALL_ROOTS = [
 /** Read a file's edges: the repo files it imports (that exist) and the packages it names. */
 export function edgeReader(root) {
   const cache = new Map();
+  // tools/fixtures/<name> (a folder) or tools/fixtures/<name>.mjs (a loose file), by the name a check writes
+  const fixtureDir = path.join(root, 'tools', 'fixtures');
+  const fixtures = fs.existsSync(fixtureDir) ? fs.readdirSync(fixtureDir).map(n => n.replace(/.mjs$/, '')) : [];
   return file => {
     if (cache.has(file)) return cache.get(file);
     let e = null;
-    if (/\.(m?js|cjs)$/.test(file)) {
+    if (/\.(html|css)$/.test(file)) {
+      // a page a check serves: what it loads by path (src, href, url()) and the scenes it names
       try {
-        const { relative, bare, repoPaths } = parseSpecifiers(fs.readFileSync(path.join(root, file), 'utf8'));
-        const files = [...relative.map(s => resolveRelative(file, s)), ...repoPaths].filter(f => f !== file && fs.existsSync(path.join(root, f)));
+        const text = fs.readFileSync(path.join(root, file), 'utf8');
+        const files = [...rootPaths(text), ...sceneNamePaths(text), ...relativeRefs(file, text).map(r => r.target)].filter(f => f !== file && fs.existsSync(path.join(root, f)));
+        e = { files: [...new Set(files)], packages: [] };
+      } catch { e = null; }
+    } else if (/\.(m?js|cjs)$/.test(file)) {
+      try {
+        const { relative, bare, repoPaths } = parseSpecifiers(fs.readFileSync(path.join(root, file), 'utf8'), { fixtures });
+        const text = fs.readFileSync(path.join(root, file), 'utf8');
+        // a check also loads by path: import('/packages/scenes/kolam/index.js'), a demo page it serves, a stylesheet it links
+        const files = [...relative.map(s => resolveRelative(file, s)), ...repoPaths, ...rootPaths(text), ...sceneNamePaths(text), ...(file.startsWith('apps/docs/') ? pieceFiles(text, f => fs.existsSync(path.join(root, f))) : [])].map(f => (f.startsWith('tools/fixtures/') && !fs.existsSync(path.join(root, f)) && fs.existsSync(path.join(root, `${f}.mjs`)) ? `${f}.mjs` : f))
+          .filter(f => f !== file && fs.existsSync(path.join(root, f)));
         e = { files: [...new Set(files)], packages: bare };
       } catch { e = null; }
     }

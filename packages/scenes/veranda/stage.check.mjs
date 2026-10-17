@@ -26,25 +26,21 @@
 // --break: the page awaits three.js before drawing anything (6 must fail), and the page's own depth map
 // is written blurred (the two depth checks must fail).
 
-import { chromium } from 'playwright';
-import { startServer } from '../../../tools/serve.mjs';
-import { gpuOf } from '../../../tools/lib/gpu.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 import { projectM, depthByte, S, gbuffer, SOLIDS, GW, GH } from './world.js';
 
 const BREAK = process.argv.includes('--break');
 const GPU = ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'];
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
-const server = await startServer({ quiet: true });
-const browser = await chromium.launch({ args: GPU });
+const h = await harness({ args: GPU, axe: 'not axe-checked anywhere yet: this page is not in tools/smoke.mjs (docs/DEBT.md); this check asks about drawing and layout' });
+const { server, browser, check, results } = h;
 // On a software renderer (a CI runner, or SG_FORCE_SOFTWARE_GL=1) the stage rightly draws in 2D: the live-tier clauses (1, 3, 6, 9, 10) skip.
-const gate = await gpuOf(browser);
+const gate = await h.gpu();
 const WORLD_JS = new RegExp('veranda/world' + String.fromCharCode(92) + '.js');
 const THREE = /\/node_modules\/three\/|three\.named\.js|\/three(\.module|\.core)?\.js/;
 const PILLAR = projectM(1.5, 1.2, 3.22).slice(0, 2);
 
 async function open({ register = 'warm', reduced = false, noGL = false, blockThree = false, holdThree = 0, patch = null, assetsPatch = null, worldPatch = null, dpPatch = null, spyReads = false } = {}) {
-  const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: reduced ? 'reduce' : 'no-preference', deviceScaleFactor: 1 });
+  const context = await h.context({ viewport: { width: 1280, height: 900 }, reducedMotion: reduced ? 'reduce' : 'no-preference', deviceScaleFactor: 1 });
   const requests = [], errors = [], warnings = [];
   context.on('request', r => requests.push(r.url()));
   if (noGL) await context.addInitScript("const g = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function (t, ...a) { return /webgl/.test(t) ? null : g.call(this, t, ...a); };");
@@ -217,7 +213,5 @@ if (!gate.skip('no GPU stall per frame: sixty frames of a moving camera on the l
   await p.context.close();
 }
 
-await browser.close(); await server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the still-before-three check and the depth check should FAIL)' : ''}`);
-process.exit(BREAK ? 0 : failed ? 1 : 0);
+await h.done({ summary: `${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the still-before-three check and the depth check should FAIL)' : ''}`, expectRed: BREAK });

@@ -105,11 +105,6 @@ test('view: the skeleton stays until the details arrive, and never claims an arr
   assert.equal(v.error, null);
 });
 
-test('copy has no em dashes', () => {
-  const all = JSON.stringify(STRINGS) + STRINGS.sleeps(2) + STRINGS.left(2);
-  assert.ok(!all.includes('—'));
-});
-
 test('the whole house is available or fully booked, never "1 room left"', () => {
   assert.deepEqual(availability(1, { whole: true }), { text: 'Available', tone: 'success', bookable: true });
   assert.equal(availability(0, { whole: true }).text, 'Fully booked');

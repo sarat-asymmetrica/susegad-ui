@@ -1,0 +1,85 @@
+/* Banner. The base rules are the quiet look and the no-JavaScript look: a plain strip across the top,
+   one hairline under it. The element sets data-phase (shown, leaving, dismissed, expired) and data-skin
+   when a skin is mounted; `hidden` takes a dismissed or expired banner out of the page. Tokens only. */
+
+sg-banner {
+  --banner-ink: var(--sg-text);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sg-space-2);
+  box-sizing: border-box;
+  padding-block: var(--sg-space-2);
+  padding-inline: var(--sg-space-3) var(--sg-space-2);
+  background: var(--sg-surface-raised);
+  color: var(--banner-ink);
+  border-block-end: var(--sg-hairline) solid var(--sg-rule-strong);
+  font: 400 var(--sg-step-0)/1.5 var(--sg-font-body);
+}
+sg-banner[hidden] { display: none; }
+.sg-banner-body { flex: 1; min-width: 0; margin-block: 0.5rem; text-wrap: pretty; overflow-wrap: anywhere; }
+.sg-banner-body :where(p) { margin: 0; }
+.sg-banner-body :where(p + p) { margin-block-start: 0.35rem; }
+.sg-banner-body a { color: inherit; text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+.sg-banner-body a:active { text-decoration-thickness: 0.2em; }
+.sg-banner-body a:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+.sg-banner-deco { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.sg-banner-deco > * { pointer-events: none; }
+sg-banner > .sg-banner-body, sg-banner > .sg-banner-dismiss { position: relative; }
+
+/* the dismiss button: a cross, and a hit area a thumb can find */
+.sg-banner-dismiss {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--sg-radius-pill);
+  background: transparent;
+  color: var(--sg-text-soft);
+  font: inherit;
+  cursor: pointer;
+}
+.sg-banner-dismiss:hover { color: var(--sg-text); background: color-mix(in oklch, var(--sg-text) 8%, transparent); }
+.sg-banner-dismiss:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+
+/* ── warm: a sheet of paper with a pencil rule under it ── */
+sg-banner[data-skin="warm"] { background: var(--sg-paper-deep, var(--sg-surface-raised)); border-block-end-color: transparent; padding-block-end: calc(var(--sg-space-2) + 0.35rem); }
+sg-banner[data-skin="warm"] .sg-banner-rule { position: absolute; inset-inline: 0; inset-block-end: 0; inline-size: 100%; block-size: 0.6rem; overflow: visible; color: var(--sg-pencil, var(--sg-text-soft)); }
+sg-banner[data-skin="warm"] .sg-banner-rule path { fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+
+/* ── playful: bunting strung along the bottom edge ── */
+sg-banner[data-skin="playful"] { background: color-mix(in oklab, var(--sg-mango, var(--sg-accent)) 16%, var(--sg-surface-raised)); border-block-end-color: transparent; padding-block-end: calc(var(--sg-space-2) + 1.4rem); }
+sg-banner[data-skin="playful"] .sg-banner-bunting { position: absolute; inset-inline: 0; inset-block-end: 0; inline-size: 100%; block-size: 1.6rem; overflow: visible; }
+sg-banner[data-skin="playful"] .sg-banner-bunting .string { fill: none; stroke: var(--sg-ink-soft, currentColor); stroke-width: 1.2; stroke-linecap: round; }
+sg-banner[data-skin="playful"] .sg-banner-bunting .flag { stroke: color-mix(in oklab, var(--sg-ink, #000) 55%, transparent); stroke-width: 0.8; stroke-linejoin: round; transform-box: fill-box; transform-origin: 50% 0; }
+
+/* leaving: the skin collapses the strip; this keeps its contents from spilling out as it shrinks */
+sg-banner[data-phase="leaving"] { overflow: hidden; }
+
+/* ── the dismiss button, pressed (the touch contract) ───────────────────────
+   Down answers in the same frame, with no transition; letting go eases back in under 150 ms.
+   Quiet settles 1 px, warm shades the colour toward the ink, playful gives a little. The keyboard never moves it. */
+sg-banner .sg-banner-dismiss {
+  transition: translate 120ms ease-out, scale 120ms var(--sg-ease-out, ease-out), box-shadow 100ms ease-out, background-color 100ms ease-out;
+}
+sg-banner .sg-banner-dismiss:active { transition: none; translate: 0 1px; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text, CanvasText) 10%, transparent); }
+sg-banner[data-skin="warm"] .sg-banner-dismiss:active { translate: none; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text) 18%, transparent); }
+sg-banner[data-skin="playful"] .sg-banner-dismiss { transition-timing-function: ease-out, var(--sg-ease-spring, ease-out), ease-out, ease-out; }
+sg-banner[data-skin="playful"] .sg-banner-dismiss:active { translate: none; scale: 0.93; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-accent, Highlight) 22%, transparent); }
+
+@media (prefers-reduced-motion: reduce) {
+  sg-banner, sg-banner * { transition: none !important; }
+  sg-banner .sg-banner-dismiss:active { translate: none !important; scale: none !important; box-shadow: inset 0 0 0 100vmax color-mix(in oklab, var(--sg-text) 18%, transparent); }
+}
+:root[data-sg-input="key"] sg-banner .sg-banner-dismiss:active { translate: none !important; scale: none !important; }
+:root[data-sg-input="key"] sg-banner *, :root[data-sg-input="key"] sg-banner *::before, :root[data-sg-input="key"] sg-banner *::after { transition: none !important; }
+
+@media (forced-colors: active) {
+  sg-banner, sg-banner[data-skin] { border-block-end: 1px solid CanvasText; padding-block-end: var(--sg-space-2); } /* the drawing is gone, so is the room kept for it */
+  .sg-banner-dismiss { border: 1px solid ButtonText; color: ButtonText; }
+  .sg-banner-deco { display: none; }
+}

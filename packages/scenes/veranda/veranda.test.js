@@ -168,7 +168,7 @@ test('the dust stays inside the picture', () => {
 test('meta is what the docs and the registry need', () => {
   assert.equal(meta.W, W); assert.equal(meta.H, H);
   assert.equal(meta.stillTime, 0, 'the still is the lamp at rest');
-  assert.ok(meta.alt.length > 40 && !meta.alt.includes('—'));
+  assert.ok(meta.alt.length > 40);
 });
 
 // ── the far tree: a tree in the garden, not a band under the roof ────────────

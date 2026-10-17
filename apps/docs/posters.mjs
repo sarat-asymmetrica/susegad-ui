@@ -32,6 +32,41 @@ const CONCURRENCY = 4;
 export const POSTER_FORMATS = ['avif', 'webp', 'jpg'];
 const ENCODE = { avif: { quality: 55, effort: 4 }, webp: { quality: 78, effort: 4 }, jpg: { quality: 72, mozjpeg: true } };
 
+/**
+ * Pieces whose demo, photographed at rest, shows words and a bare button (the dialog is cropped through its
+ * heading; the menu and the popover are one small button on an empty page). Each is photographed at the moment
+ * it exists for instead: the steps run in the page after it settles, in the order written.
+ *   unplaceholder:x (sample copy that says "Placeholder:" reads as a finished sample in the picture; the demo itself still says it)
+ *   click:SEL  hover:SEL  focus:SEL  scroll:SEL (put it at the top of the picture)  center:SEL  css:RULES  wait-for:SEL  wait:MS
+ * `past: false` keeps the demo at the top; the default scrolls past its heading and lede.
+ */
+export const POSTER_STAGES = {
+  dialog: { steps: ['click:[data-sg-dialog=confirm]', 'wait-for:#confirm-dialog[open]', 'wait:900'], past: false },
+  drawer: { steps: ['click:[data-sg-drawer=rooms]', 'wait-for:#rooms-dialog[open]', 'wait:900'], past: false },
+  'action-menu': { steps: ['click:#account-trigger', 'wait-for:#account-menu:popover-open', 'wait:300'] },
+  popover: { steps: ['click:[popovertarget=rates]', 'wait-for:#rates:popover-open', 'wait:300'] },
+  tooltip: { steps: ['hover:#cancel-btn', 'wait:600'] },
+  // the recipe's headline says Placeholder on purpose (it is sample copy); the picture shows the work, which is the recipe
+  'studio-home': { steps: ['unplaceholder:x', 'scroll:#work', 'wait:400'], past: false },
+  'now-note': { steps: ['unplaceholder:x', 'wait:300'] },
+  // a quote with a name under it must never read as a real testimonial: the picture says (sample) beside each role, as studio-home does
+  quote: { steps: ['unplaceholder:x', 'css:.sg-quote-role::after { content: " (sample)"; }', 'wait:300'] },
+  postcard: { steps: ['unplaceholder:x', 'wait:300'] },
+};
+
+/**
+ * The front door's own pictures: a signature of a piece, bigger than a card's poster, taken at the same
+ * moment. name -> { of: the registry item it is taken from, steps, past }. Written beside the posters as
+ * posters/<name>.<register>.<theme>.<format>, with their size in the map makePosters returns.
+ */
+export const SIGNATURES = {
+  'sig-dialog': { of: 'dialog', ...POSTER_STAGES.dialog },
+  'sig-ribbon': { of: 'date-range', steps: ['scroll:#stay', 'wait:400'], past: false },
+  // five blooms, one per name, laid out big enough to read as a picture
+  'sig-bloom': { of: 'bloom', steps: ['css:h1, h2, p { visibility: hidden; } .names { justify-content: center; gap: 14px; } .names sg-bloom { zoom: 2; }', 'center:.names', 'wait:400'], past: false },
+};
+const SIG_SCALE = 1.5;
+
 const loadSharp = async () => { try { return (await import('sharp')).default; } catch { return null; } };
 
 /** One shot as every format, beside `stem`. Pure of the page: bytes in, files out. Returns the formats written. */
@@ -76,9 +111,18 @@ export async function makePosters({ root, out, registry, log = console.log }) {
     if (!src) continue;
     const h = crypto.createHash('sha256').update(VERSION).update(shared).update(item.hash || '');
     if (src.file) h.update(fs.readFileSync(path.join(root, src.file)));
-    const key = h.digest('hex').slice(0, 12);
-    const stem = path.join(cacheDir, `${item.name}.${key}`);
-    jobs.push({ item, src, stem });
+    const stage = POSTER_STAGES[item.name];
+    if (stage && src.kind === 'demo') { src.stage = stage; h.update(JSON.stringify(stage)); }
+    const key2 = h.digest('hex').slice(0, 12);
+    jobs.push({ item, src, stem: path.join(cacheDir, `${item.name}.${key2}`) });
+  }
+  for (const [name, spec] of Object.entries(SIGNATURES)) {
+    const item = registry.items.find(i => i.name === spec.of);
+    const src = item && posterSource(item, exists);
+    if (!src) continue;
+    const sig = { ...src, stage: spec, scale: SIG_SCALE };
+    const h = crypto.createHash('sha256').update(VERSION).update(shared).update(item.hash || '').update(fs.readFileSync(path.join(root, src.file))).update(JSON.stringify(spec));
+    jobs.push({ item: { ...item, name }, src: sig, stem: path.join(cacheDir, `${name}.${h.digest('hex').slice(0, 12)}`) });
   }
 
   const todo = jobs.filter(j => !fs.existsSync(`${j.stem}.json`));
@@ -130,7 +174,7 @@ async function capture(browser, base, { item, src, stem }, sharp) {
     const scene = src.kind === 'scene';
     const context = await browser.newContext({
       viewport: scene ? SCENE_VIEW : DESK,
-      deviceScaleFactor: scene ? 1 : DEMO_SCALE,
+      deviceScaleFactor: scene ? 1 : (src.scale || DEMO_SCALE),
       reducedMotion: 'reduce',
       colorScheme: theme,
     });
@@ -162,9 +206,11 @@ async function capture(browser, base, { item, src, stem }, sharp) {
         const box = await el.boundingBox();
         size ??= { w: Math.round(box.width), h: Math.round(box.height) };
       } else {
-        if (src.pastHeading) await page.evaluate(scrollPastHeading);
+        if (src.pastHeading && src.stage?.past !== false) await page.evaluate(scrollPastHeading);
+        if (src.stage) await runSteps(page, src.stage.steps);
         await shoot(page);
-        size ??= { w: Math.round(DESK.width * DEMO_SCALE), h: Math.round(DESK.height * DEMO_SCALE) };
+        const k = src.scale || DEMO_SCALE;
+        size ??= { w: Math.round(DESK.width * k), h: Math.round(DESK.height * k) };
       }
     } finally {
       await context.close();
@@ -172,6 +218,24 @@ async function capture(browser, base, { item, src, stem }, sharp) {
   }
   // the size file is written last: its presence means all six pictures exist
   fs.writeFileSync(`${stem}.json`, JSON.stringify(size));
+}
+
+/** Runs a stage's steps (see POSTER_STAGES). A step that cannot run throws, so a poster is never a picture of the wrong moment. */
+async function runSteps(page, steps = []) {
+  for (const step of steps) {
+    const at = step.indexOf(':');
+    const [verb, arg] = [step.slice(0, at), step.slice(at + 1)];
+    if (verb === 'click') await page.click(arg, { timeout: 8000 });
+    else if (verb === 'hover') await page.hover(arg, { timeout: 8000 });
+    else if (verb === 'focus') await page.focus(arg, { timeout: 8000 });
+    else if (verb === 'scroll') await page.evaluate(sel => { const el = document.querySelector(sel); scrollTo(0, Math.max(0, el.getBoundingClientRect().top + scrollY - 12)); }, arg);
+    else if (verb === 'unplaceholder') await page.evaluate(() => { const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); for (let n = w.nextNode(); n; n = w.nextNode()) n.nodeValue = n.nodeValue.replace(/Placeholder( quote)?: (\w)/g, (m, q, c) => c.toUpperCase()); })
+    else if (verb === 'center') await page.evaluate(sel => document.querySelector(sel).scrollIntoView({ block: 'center' }), arg);
+    else if (verb === 'css') await page.addStyleTag({ content: arg });
+    else if (verb === 'wait-for') await page.waitForSelector(arg, { state: 'visible', timeout: 8000 });
+    else if (verb === 'wait') await page.waitForTimeout(Number(arg));
+    else throw new Error(`poster step "${step}": I do not know "${verb}"`);
+  }
 }
 
 // Runs in the page. Waits for every picture and player to load, then refuses the

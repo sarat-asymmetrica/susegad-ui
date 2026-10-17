@@ -4,7 +4,7 @@
 //
 //   node packages/components/date-range/date-range.check.mjs
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
+import { engineName, pickEngine, unsupportedIn } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
@@ -32,7 +32,8 @@ async function open({ js = true, reduced = false, register = 'warm' } = {}) {
   check('no JS: an empty stay does not submit', await p.evaluate(f => !document.querySelector(f).checkValidity(), form));
   await p.fill('#stay input[name=arrival]', '2026-10-01');
   await p.fill('#stay input[name=departure]', '2026-10-05');
-  check('no JS: a date before the window is refused by the input itself', await p.evaluate(() => document.querySelector('#stay input[name=arrival]').validity.rangeUnderflow));
+  if (await p.evaluate(() => document.querySelector('#stay input[name=arrival]').type !== 'date')) unsupportedIn(engineName(), 'a date before the window refused by the input itself', 'this build has no <input type="date">: it is a text field, which has no minimum to underflow');
+  else check('no JS: a date before the window is refused by the input itself', await p.evaluate(() => document.querySelector('#stay input[name=arrival]').validity.rangeUnderflow));
   await p.fill('#stay input[name=arrival]', '2026-11-16');
   await p.fill('#stay input[name=departure]', '2026-11-20');
   await p.click('#stay button[type=submit]');

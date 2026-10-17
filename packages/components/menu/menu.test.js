@@ -204,8 +204,3 @@ test('menuHTML: a dish name cannot break out of the markup', () => {
   assert.match(html, /&lt;img src=x onerror=alert\(1\)&gt;/);
   assert.match(html, /&quot;quoted&quot; &amp; more/);
 });
-
-test('words: every sentence is plain, with no em dash', () => {
-  const all = [STRINGS.empty, STRINGS.total(2, '₹9'), STRINGS.added('Tea', 2), STRINGS.removed('Tea'), STRINGS.atMost('Tea', 9), STRINGS.cleared, STRINGS.clear, STRINGS.group('Tea'), STRINGS.add('Tea'), STRINGS.remove('Tea'), STRINGS.soldOut, STRINGS.ask, STRINGS.noPrice];
-  for (const s of all) assert.ok(!/[—–]/.test(s), s);
-});

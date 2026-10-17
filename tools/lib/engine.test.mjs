@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { chromium, firefox, webkit } from 'playwright';
-import { contextOptions, dropBenignErrors, ENGINE_NAMES, engineName, grantsPermission, launchArgs, localeEnv, pickEngine, unsupportedIn } from './engine.mjs';
+import { contextOptions, dropBenignErrors, ENGINE_NAMES, engineName, grantsPermission, launchArgs, localeEnv, pageHas, pickEngine, unsupportedIn } from './engine.mjs';
 
 test('defaults to chromium with no name and no SG_ENGINE', () => {
   const before = process.env.SG_ENGINE;
@@ -123,6 +123,18 @@ test('launchArgs keeps Chromium switches for chromium and passes none to firefox
   assert.deepEqual(launchArgs('webkit', gpu), []);
   assert.deepEqual(launchArgs('firefox', gpu), []);
   assert.deepEqual(launchArgs('webkit'), []);
+});
+
+// pageHas, against a stand-in browser whose page evaluates the expression in Node: Node has no AudioContext and does have Array.
+const nodeBrowser = () => ({ newContext: async () => ({ newPage: async () => ({ setContent: async () => {}, evaluate: async src => (0, eval)(src) }), close: async () => {} }) });
+
+test('pageHas is true for something the page has and false for something it does not', async () => {
+  assert.equal(await pageHas(nodeBrowser(), "typeof Array === 'function'"), true);
+  assert.equal(await pageHas(nodeBrowser(), "typeof AudioContext === 'function'"), false);
+});
+
+test('pageHas is false, not a throw, when the expression itself throws', async () => {
+  assert.equal(await pageHas(nodeBrowser(), 'window.nothing.here'), false);
 });
 
 test('localeEnv keeps the environment and sets LC_ALL, to en_IN unless told otherwise', () => {
