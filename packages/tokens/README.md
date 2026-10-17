@@ -71,7 +71,7 @@ attempt his hands, and no sound ships with it.
 above them there for how a list should use it), with `--sg-tala-beat` as
 the CSS duration of one beat for a pure-CSS stagger. Used in Drawer, Menu
 and the scroll sections. Ported from the sketchbook's Teental plate, per
-`docs/requests/2026-09-25-volume-iii-harvest.md`.
+the Volume III harvest.
 
 ## Utilities
 

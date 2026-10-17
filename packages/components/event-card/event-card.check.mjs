@@ -5,7 +5,7 @@
 //
 //   node packages/components/event-card/event-card.check.mjs
 
-import { harness, settle } from '../../../tools/lib/component-check.mjs';
+import { harness, settle, tabTo } from '../../../tools/lib/component-check.mjs';
 import { contextOptions } from '../../../tools/lib/engine.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
@@ -164,18 +164,20 @@ const read = page => page.evaluate(() => [...document.querySelectorAll('sg-event
 }
 
 // ── the keyboard ───────────────────────────────────────────────────────
-async function tabTo(page, sel, max = 12) {
-  for (let i = 0; i < max; i++) {
-    await page.keyboard.press('Tab');
-    if (await page.evaluate(s => document.activeElement?.matches(s), sel)) return i + 1;
-  }
-  return 0;
-}
+// tabTo: Tab as far as the engine can press it (tools/lib/tab.mjs; WebKit leaves links out of the tab order)
 for (const register of ['quiet', 'warm', 'playful']) {
   const { ctx, page } = await clockPage(IST('2026-10-02T10:00'), PAGE(CARD(), { register }));
   const presses = await tabTo(page, 'a.book');
   const ring = await page.evaluate(() => { const s = getComputedStyle(document.activeElement); return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) >= 2; });
   check(`${register}: Tab reaches "Save my seat" (${presses} presses) and it shows a focus ring`, presses > 0 && ring, `presses ${presses}, ring ${ring}`);
+  await ctx.close();
+}
+{
+  // control: the same probe on a booking link taken out of the tab order must read red, in every engine
+  const { ctx, page } = await clockPage(IST('2026-10-02T10:00'), PAGE(CARD()));
+  await page.evaluate(() => { document.querySelector('a.book').tabIndex = -1; });
+  const presses = await tabTo(page, 'a.book', 12);
+  check('control: a booking link with tabindex -1 is not reached by the keyboard probe', presses === 0, `${presses} presses`);
   await ctx.close();
 }
 {

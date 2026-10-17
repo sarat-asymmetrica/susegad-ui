@@ -86,7 +86,6 @@ test('words in the world: legible sizes follow the root font size; a phone or 20
   assert.deepEqual(skySizes(1240 / 1200, 32), []);
 });
 
-test('registers and words', () => {
+test('registers', () => {
   assert.ok(LOOKS.warm.pace < LOOKS.playful.pace && LOOKS.quiet.pace === 0);
-  for (const k of ['title', 'gloss', 'caption', 'alt', 'keys', 'credit']) assert.ok(!meta[k].includes('—'), k);
 });

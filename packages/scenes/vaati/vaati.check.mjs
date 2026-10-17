@@ -22,10 +22,11 @@
 // Each was watched failing first on a broken build (see the request,
 // docs/requests/2026-10-04-food-site.md, and the report).
 
-import { session, openScene } from '../../../tools/lib/scene-probe.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { openScene } from '../../../tools/lib/scene-probe.mjs';
 import { BOWL, W, H, timeline } from './model.js';
 
-const s = await session();
+const s = await harness({ axe: 'tools/smoke.mjs axes the scene page once, in its default register and theme; the other registers are not axe-checked yet (docs/DEBT.md)' });
 const { check } = s;
 
 /** Samples of the canvas inside the bowl's lip (every 3rd pixel), as [r,g,b] triples, for comparing two bowls. */

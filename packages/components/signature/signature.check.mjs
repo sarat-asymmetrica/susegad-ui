@@ -9,18 +9,15 @@
 // drawing fills the hidden path input; undo, start again and form reset work
 // from the keyboard; a disabled field cannot be drawn on.
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/signature/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, check } = h;
 const url = `${server.url}/packages/components/signature/demo.html`;
 
 // ── without JavaScript ──
 {
-  const ctx = await browser.newContext({ javaScriptEnabled: false });
+  const ctx = await h.context({ javaScriptEnabled: false });
   const p = await ctx.newPage();
   await p.goto(`${url}?register=quiet`);
   check('no JS: no pad, just the typed-name input', await p.locator('#book canvas').count() === 0 && await p.locator('#book input[name="signature"]').count() === 1);
@@ -35,7 +32,7 @@ const url = `${server.url}/packages/components/signature/demo.html`;
 }
 
 // ── with JavaScript ──
-const ctx = await browser.newContext({ viewport: { width: 900, height: 900 } });
+const ctx = await h.context({ viewport: { width: 900, height: 900 } });
 const p = await ctx.newPage();
 const errors = [];
 p.on('pageerror', e => errors.push(String(e)));
@@ -156,8 +153,4 @@ check('strokes can be set from outside, and toSVG() returns a standalone SVG', d
 
 check('no console or page errors', errors.length === 0, errors.join(' | '));
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

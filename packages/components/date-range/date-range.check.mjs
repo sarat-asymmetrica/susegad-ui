@@ -4,17 +4,14 @@
 //
 //   node packages/components/date-range/date-range.check.mjs
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/date-range/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, check } = h;
 const DEMO = `${server.url}/packages/components/date-range/demo.html`;
 
 async function open({ js = true, reduced = false, register = 'warm' } = {}) {
-  const ctx = await browser.newContext({ javaScriptEnabled: js, reducedMotion: reduced ? 'reduce' : 'no-preference' });
+  const ctx = await h.context({ javaScriptEnabled: js, reducedMotion: reduced ? 'reduce' : 'no-preference' });
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -32,7 +29,8 @@ async function open({ js = true, reduced = false, register = 'warm' } = {}) {
   check('no JS: an empty stay does not submit', await p.evaluate(f => !document.querySelector(f).checkValidity(), form));
   await p.fill('#stay input[name=arrival]', '2026-10-01');
   await p.fill('#stay input[name=departure]', '2026-10-05');
-  check('no JS: a date before the window is refused by the input itself', await p.evaluate(() => document.querySelector('#stay input[name=arrival]').validity.rangeUnderflow));
+  if (await p.evaluate(() => document.querySelector('#stay input[name=arrival]').type !== 'date')) h.skip('a date before the window refused by the input itself', 'this build has no <input type="date">: it is a text field, which has no minimum to underflow');
+  else check('no JS: a date before the window is refused by the input itself', await p.evaluate(() => document.querySelector('#stay input[name=arrival]').validity.rangeUnderflow));
   await p.fill('#stay input[name=arrival]', '2026-11-16');
   await p.fill('#stay input[name=departure]', '2026-11-20');
   await p.click('#stay button[type=submit]');
@@ -183,8 +181,4 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(`\n${results.length - failed}/${results.length} checks pass`);
-process.exit(failed ? 1 : 0);
+await h.done();

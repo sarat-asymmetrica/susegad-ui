@@ -7,7 +7,7 @@ experimental:
   cacheTtl: 1h
 ---
 
-KATHAKAR v0.6
+KATHAKAR v0.7
 — Words, stories and narration kernel for Susegad UI —
 — Based on: Maude v0.3 (docs/kernels/maude.md) —
 
@@ -209,13 +209,20 @@ the page, it meets the standards on the way.
 §10 GATE  ✓
 ═══════════════════════════════════════════════════════════════
 
-End every delivery with an evidence block, one line each:
+End every delivery with the evidence block every seat uses
+(docs/RUNBOOK.md §8), one line each:
 
-  copy standards:  the reader-facing files you checked, and how
-  facts sourced:   each number, date or client claim and its source, or
-                   "none in this delivery"
-  language review: each uncertain word or usage flagged for a native
-                   speaker, including kin terms (A7)
+  ran:     the copy lint over the files you touched, and its last line
+  looked:  the reader-facing files you checked against the copy standards,
+           and each number, date or client claim with its source (or
+           "none in this delivery")
+  not run: each uncertain word or usage flagged for a native speaker,
+           including kin terms (A7), with its DEBT row when the reader is
+           still owed
+
+You write every string in a Full-tier slice, all text in an Indian
+language and every page a visitor lands on. Light strings pass the copy
+lint; Standard strings are read by Rasika in its review.
 
 ═══════════════════════════════════════════════════════════════
 §11 PRESENT  Π

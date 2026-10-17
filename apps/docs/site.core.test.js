@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   KINDS, NAV, slugOf, pathOf, up, roman, sceneGroups, neighbours, navLinks, page, posterImg, card,
-  indexPage, scenePage, itemPage, pencilBoxPage, homeDoors, redirectFor, esc, social, posterImage, OG_DEFAULT,
+  indexPage, scenePage, itemPage, pencilBoxPage, homeDoors, redirectFor, esc, social, posterImage, OG_DEFAULT, bar,
 } from './site.core.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -50,15 +50,25 @@ test('neighbours at the ends and in the middle', () => {
 });
 
 test('nav: every section, the current one marked, prefixed for depth', () => {
-  const html = navLinks('recipes', 1);
+  const html = navLinks('scenes', 1);
   assert.equal((html.match(/<a /g) || []).length, NAV.length);
-  assert.match(html, /href="\.\.\/recipes" aria-current="page"/);
-  assert.doesNotMatch(html, /href="\.\.\/scenes" aria-current/);
+  assert.match(html, /href="\.\.\/scenes" aria-current="page"/);
+  assert.doesNotMatch(html, /href="\.\.\/showcase" aria-current/);
 });
 
-test("the home page's hand-written nav is the same as every generated page's", () => {
+test("nav: an index behind the developer's door marks Developers as its section, and nothing else", () => {
+  for (const key of ['components', 'recipes', 'foundations', 'pencil-box', 'handoff']) {
+    const html = navLinks(key, 1);
+    assert.match(html, /href="\.\.\/developers" aria-current="true"/, key);
+    assert.equal((html.match(/aria-current/g) || []).length, 1, key);
+  }
+  assert.doesNotMatch(navLinks('', 0), /aria-current/, 'the home page marks nothing');
+});
+
+test("the header is one piece of code: the home page leaves it to the build, and the nav is NAV", () => {
   const home = fs.readFileSync(path.join(HERE, 'index.html'), 'utf8');
-  const got = [...home.match(/<nav class="nav"[^>]*>([\s\S]*?)<\/nav>/)[1].matchAll(/href="([^"]+)"[^>]*>([^<]+)</g)].map(m => [m[1], m[2]]);
+  assert.match(home, /<header class="bar"><!-- the build writes the header/);
+  const got = [...bar('', 0).match(/<nav class="nav"[^>]*>([\s\S]*?)<\/nav>/)[1].matchAll(/href="([^"]+)"[^>]*>([^<]+)</g)].map(m => [m[1], m[2]]);
   assert.deepEqual(got, NAV.map(n => [n.key, n.label]));
 });
 
@@ -66,7 +76,7 @@ test('a page: shared shell, assets at the right depth, text escaped', () => {
   const html = page({ title: 'A <b>', description: 'x "y"', depth: 1, active: 'scenes', main: '<p>hi</p>', scripts: ['scene-page.js'] });
   assert.match(html, /<title>A &lt;b&gt; · Susegad UI<\/title>/);
   assert.match(html, /content="x &quot;y&quot;"/);
-  for (const href of ['../prefs.js', '../packages/tokens/tokens.css', '../docs.css', '../site.css', '../shell.js', '../scene-page.js', '../for-rafe']) assert.ok(html.includes(`"${href}"`), href);
+  for (const href of ['../prefs.js', '../packages/tokens/tokens.css', '../docs.css', '../site.css', '../door.css', '../shell.js', '../scene-page.js', '../for-rafe']) assert.ok(html.includes(`"${href}"`), href);
   assert.match(html, /class="brand" href="\.\.\/"/);
   assert.match(html, /id="main"/);
 });
@@ -95,7 +105,7 @@ test('an index page lists every item of its kind and runs no live preview', () =
   const html = indexPage('component', { items, posters: { badge: { w: 640, h: 400 } } });
   for (const n of ['badge', 'toast', 'check']) assert.ok(html.includes(`href="components/${n}"`), n);
   assert.doesNotMatch(html, /<iframe|<sg-scene/);
-  assert.match(html, /aria-current="page"/);
+  assert.match(html, /aria-current="(page|true)"/);
   assert.match(html, /index-page\.js/);
   assert.ok(html.indexOf('>Badge<') < html.indexOf('>Check<') && html.indexOf('>Check<') < html.indexOf('>Toast<'), 'alphabetical');
 });
@@ -157,11 +167,13 @@ test('the pencil box: each technique with the scenes that use it', () => {
   assert.match(html, /id="t-lone"><dt>lonely<\/dt><dd>unused<\/dd>/);
 });
 
-test('home doors: one per kind with counts, posters only where they exist', () => {
-  const html = homeDoors([{ type: 'scene', count: 28, samples: [scene('paus'), scene('kolam')] }, { type: 'package', count: 16, samples: [] }], { 'scene-paus': { w: 9, h: 6 } }, 22);
+test('home doors: a picture each where there is one, a count, a line, and a way into the bloom toy', () => {
+  const html = homeDoors([{ type: 'scene', count: 28 }, { type: 'component', count: 57 }, { type: 'package', count: 16 }], { 'scene-kolam': { w: 9, h: 6 }, 'sig-bloom': { w: 9, h: 6 } }, 22, { art: { scene: 'scene-kolam', component: 'sig-dialog', package: 'sig-bloom' } });
   assert.match(html, /href="scenes">Scenes<\/a> <span class="door-count">28</);
   assert.match(html, /href="foundations">Foundations</);
-  assert.equal((html.match(/<img/g) || []).length, 1);
+  assert.equal((html.match(/<img/g) || []).length, 2, 'the dialog has no picture in these fixtures, so it shows words alone');
+  assert.match(html, /door-component">\s*<div class="door-art door-art-plain"/);
+  assert.match(html, /href="templates#bloom">Grow one from a name</);
   assert.match(html, /href="pencil-box">The pencil box<\/a> <span class="door-count">22</);
 });
 
@@ -174,7 +186,7 @@ test('old anchors land where the thing lives now', () => {
   assert.equal(redirectFor('#scenes', s), 'scenes');
   assert.equal(redirectFor('#t-wobble', s), 'pencil-box#t-wobble');
   assert.equal(redirectFor('#main', s), null, 'the skip link stays');
-  assert.equal(redirectFor('#ideas', s), null);
+  assert.equal(redirectFor('#ideas', s), 'developers#ideas', "the three ideas live on the developer's door now");
   assert.equal(redirectFor('', s), null);
 });
 
@@ -208,11 +220,10 @@ test('the use-this-scene box: the site URL in every line, copyable, keyboard rea
   assert.match(html, /tabindex="0" role="region" aria-label="Snippet to copy"/, 'a keyboard can reach a scrollable snippet');
 });
 
-test('the nav carries Start here, and index.html matches it', () => {
-  assert.equal(NAV[0].key, 'start');
-  const home = fs.readFileSync(path.join(HERE, 'index.html'), 'utf8');
-  const got = [...home.match(/<nav class="nav"[^>]*>([\s\S]*?)<\/nav>/)[1].matchAll(/href="([^"]+)"[^>]*>([^<]+)</g)].map(m => [m[1], m[2]]);
-  assert.deepEqual(got, NAV.map(n => [n.key, n.label]));
+test("the nav leads with the showcase and carries every reader's door, the accessibility door among them", () => {
+  assert.equal(NAV[0].key, 'showcase', 'someone who wants a page sees what it makes first');
+  for (const key of ['start', 'for-teams', 'developers']) assert.ok(NAV.some(n => n.key === key), key);
+  assert.ok(NAV.some(n => n.key === 'accessibility'), 'a compliance reader finds the Trust door in the nav');
 });
 
 test('link previews: absolute URLs, the default card, a piece previews with its own poster', () => {

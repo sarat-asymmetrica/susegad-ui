@@ -9,18 +9,15 @@
 // 3. Importing recipe.js wires nothing: with demo.js left out, no prototype
 //    answer is mounted and the form posts as the page wrote it.
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/recipes/enquiry/index.html and /packages/recipes/enquiry/sent.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, browser, check } = h;
 const URL_ = `${server.url}/packages/recipes/enquiry/index.html`;
 
 // ── 1. keyboard only, with JavaScript ──
 {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   const errors = [], posts = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -96,7 +93,7 @@ const URL_ = `${server.url}/packages/recipes/enquiry/index.html`;
 
 // ── 2. the gate: quiet, reduced motion, JavaScript off ──
 {
-  const ctx = await browser.newContext({ javaScriptEnabled: false, reducedMotion: 'reduce' });
+  const ctx = await h.context({ javaScriptEnabled: false, reducedMotion: 'reduce' });
   const p = await ctx.newPage();
   await p.goto(`${URL_}?register=quiet`);
   const look = await p.evaluate(() => ({
@@ -129,7 +126,7 @@ const URL_ = `${server.url}/packages/recipes/enquiry/index.html`;
 // ── 4. a number in a person's own numerals (review W2 S4) ──
 {
   for (const js of [true, false]) {
-    const ctx = await browser.newContext({ javaScriptEnabled: js });
+    const ctx = await h.context({ javaScriptEnabled: js });
     const p = await ctx.newPage();
     await p.goto(`${URL_}?register=warm`);
     if (js) await p.waitForFunction(() => window.__ready === true);
@@ -149,7 +146,7 @@ const URL_ = `${server.url}/packages/recipes/enquiry/index.html`;
 
 // ── 3. importing recipe.js wires nothing; the page's own send is the only answer ──
 {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -170,8 +167,4 @@ const URL_ = `${server.url}/packages/recipes/enquiry/index.html`;
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

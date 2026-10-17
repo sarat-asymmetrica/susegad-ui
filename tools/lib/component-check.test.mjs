@@ -23,3 +23,10 @@ test('a close that throws still lets finish return', async () => {
   const code = await finish([{ ok: true }], [() => { throw new Error('gone'); }], { closeMs: 50, log: () => {} });
   assert.equal(code, 0);
 });
+
+test('finish does not say "all 0 checks pass" when nothing ran', async () => {
+  const lines = [];
+  const code = await finish([], [], { closeMs: 50, log: s => lines.push(s) });
+  assert.equal(code, 0);
+  assert.match(lines[0], /^no check ran/);
+});

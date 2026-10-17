@@ -11,9 +11,11 @@ const VALID_NAME = /^(?:@[a-z0-9][\w.-]*\/)?[a-z0-9][\w.-]*$/i; // not a templat
  * require() and require.resolve(), plus any 'tools/lib/…' path written as a string (a check that
  * spawns a tool by path still runs it). A superset is safe here: an extra edge selects one check
  * too many; a missing one would skip a check the diff needs.
+ * A check reads its fixtures by path string, not by import. `fixtures` names what is in tools/fixtures/; a name written as
+ * 'tools/fixtures/<name>' or as the pieces of a joined path ('fixtures', '<name>') is a repoPath.
  * @returns {{ relative: string[], bare: string[], repoPaths: string[] }}
  */
-export function parseSpecifiers(source) {
+export function parseSpecifiers(source, { fixtures = [] } = {}) {
   const src = String(source);
   const specs = new Set();
   const patterns = [
@@ -30,8 +32,47 @@ export function parseSpecifiers(source) {
     else if (!s.startsWith('/') && !/^[a-z]+:/i.test(s)) { const p = packageName(s); if (p) bare.add(p); }
   }
   const repoPaths = [...new Set([...src.matchAll(/['"`](?:\.\/)?(tools\/lib\/[\w.-]+\.(?:mjs|js|cjs))['"`]/g)].map(m => m[1]))];
-  return { relative, bare: [...bare], repoPaths };
+  const named = fixtures.filter(n => src.includes(n) && new RegExp(`fixtures[/'"\`,\\s\\\\]+${escapeRe(n)}(?![\\w-])`).test(src));
+  return { relative, bare: [...bare], repoPaths: [...repoPaths, ...named.map(n => `tools/fixtures/${n}`)] };
 }
+
+/**
+ * Repo files a page or a check names by a root-absolute path: import('/packages/scenes/kolam/index.js'), a demo it
+ * serves ('/packages/core/lazy.demo.html'), <sg-lazy src="/packages/...">, a stylesheet. A superset is safe; the caller
+ * keeps the ones that exist.
+ * @returns {string[]} repo-relative paths
+ */
+export function rootPaths(source) {
+  const re = /(?:["'`(=])\/([\w@.-]+(?:\/[\w@.-]+)+\.(?:m?js|css|html|json))(?=[?#"'`)\s>])/g;
+  return [...new Set([...String(source).matchAll(re)].map(m => m[1]))];
+}
+
+/** The scene entry files an `<sg-scene name="kolam">` in a page or a check's markup resolves to (the caller keeps the ones that exist). */
+export function sceneNamePaths(source) {
+  const names = [...String(source).matchAll(/<sg-scene[^>]*?name=["']([\w-]+)["']/g)].map(m => m[1]);
+  return [...new Set(names)].map(n => `packages/scenes/${n}/index.js`);
+}
+
+/**
+ * The registry pieces a docs-site check opens or names: a quoted name ('kantar') or a route segment
+ * (/scenes/paus, /components/badge) that is a folder under packages/scenes|components|recipes. The site renders every
+ * piece, but a check follows the ones it names; a superset is safe (the caller keeps the folders that exist).
+ * @param {(rel: string) => boolean} exists is this repo-relative path a file or folder?
+ * @returns {string[]} one entry file per piece found, repo-relative
+ */
+export function pieceFiles(source, exists) {
+  const names = new Set([...String(source).matchAll(/['"`\/]([a-z][a-z0-9-]*)(?=['"`\/?#])/g)].map(m => m[1]));
+  const out = [];
+  for (const n of names) {
+    for (const [kind, entry] of [['scenes', 'index.js'], ['components', `${n}.js`], ['recipes', 'recipe.js']]) {
+      const f = `packages/${kind}/${n}/${entry}`;
+      if (exists(f)) out.push(f);
+    }
+  }
+  return out;
+}
+
+const escapeRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /** 'axe-core/axe.min.js' -> 'axe-core', '@a/b/c' -> '@a/b'; a Node builtin -> null. */
 export function packageName(spec) {

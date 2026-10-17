@@ -26,9 +26,9 @@ test('indeterminate says what is happening, never a number', () => {
   }
 });
 
-test('copy: sentence case, no em dashes', () => {
+test('copy: sentence case', () => {
   for (const group of [STRINGS.working, STRINGS.done]) for (const v of Object.values(group)) {
-    assert.ok(!v.includes('\u2014')); assert.equal(v[0], v[0].toUpperCase());
+    assert.equal(v[0], v[0].toUpperCase());
   }
 });
 

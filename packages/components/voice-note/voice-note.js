@@ -29,7 +29,7 @@ export class SgVoiceNote extends SgElement {
     playful: () => import('./skins/playful.js'),
   };
 
-  #off = []; #button = null; #range = null; #time = null; #cues = []; #spans = []; #current = -1; #seeking = false;
+  #off = []; #button = null; #range = null; #time = null; #cues = []; #spans = []; #current = -1; #seeking = false; #movedAt = -Infinity; #settle = 0;
 
   connected() {
     const audio = this.native;
@@ -46,6 +46,7 @@ export class SgVoiceNote extends SgElement {
   }
 
   disconnected() {
+    clearTimeout(this.#settle);
     this.#off.splice(0).forEach(f => f());
     this.querySelector(':scope > .sg-voice-bar')?.remove();
     this.native?.setAttribute('controls', '');
@@ -84,7 +85,18 @@ export class SgVoiceNote extends SgElement {
       if (audio.paused) { const p = audio.play(); p?.catch?.(() => {}); } else audio.pause();
       this.emit('sg-voice-press', { playing: !audio.paused });
     });
-    on(range, 'input', () => { this.#seeking = true; audio.currentTime = timeFromFraction(range.value / 1000, audio.duration); this.#sync(); });
+    on(range, 'input', () => {
+      this.#seeking = true; this.#movedAt = performance.now();
+      const want = audio.currentTime = timeFromFraction(range.value / 1000, audio.duration), at = performance.now();
+      this.#sync();
+      // WebKit can land an older seek last; once the person stops, say again where they meant to be. If the note is playing,
+      // "where they meant to be" has moved on by the time that has passed, or playing audio would be pulled back.
+      clearTimeout(this.#settle);
+      this.#settle = setTimeout(() => {
+        const expected = want + (audio.paused ? 0 : (performance.now() - at) / 1000);
+        if (Math.abs(audio.currentTime - expected) > 0.1) audio.currentTime = expected;
+      }, 400);
+    });
     on(range, 'change', () => { this.#seeking = false; });
     for (const ev of ['loadedmetadata', 'durationchange', 'timeupdate', 'seeked', 'ended']) on(audio, ev, () => this.#sync());
     on(audio, 'play', () => { this.#sync(); this.emit('sg-voice-play', {}); });
@@ -98,9 +110,14 @@ export class SgVoiceNote extends SgElement {
     const label = this.getAttribute('label');
     this.#button.setAttribute('aria-label', `${playing ? STRINGS.pause : STRINGS.play}${label ? `, ${label}` : ''}`);
     this.#button.dataset.state = playing ? 'playing' : 'paused';
+    // WebKit finishes an older seek late and reports its time, so a run of arrow presses slides back. For a moment after the person
+    // moves the range, it keeps the value they gave it. The spoken position (aria-valuetext) follows that value, because it is what
+    // they just asked for and what a screen reader should say; the visible time below follows the clock, which is what is playing.
+    const held = performance.now() - this.#movedAt < 600;
+    const shown = held ? timeFromFraction(this.#range.value / 1000, d) : t;
     const f = scrubberFraction(t, d);
-    if (!this.#seeking) this.#range.value = String(Math.round(f * 1000));
-    this.#range.setAttribute('aria-valuetext', timeText(t, d));
+    if (!this.#seeking && !held) this.#range.value = String(Math.round(f * 1000));
+    this.#range.setAttribute('aria-valuetext', timeText(shown, d));
     // The length at rest, the time played while playing: what a phone shows.
     this.#time.textContent = formatTime(playing || t > 0 ? t : d);
     // The phrase being spoken, once the note has started; none at rest.

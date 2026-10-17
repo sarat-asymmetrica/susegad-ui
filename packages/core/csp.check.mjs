@@ -8,13 +8,10 @@
 // the frame CSS really applied, so a scene whose styles were silently dropped cannot pass.
 // It fails on main before the constructable-stylesheet fix (docs/requests/2026-10-04-food-site.md, section 5).
 
-import { pickEngine } from '../../tools/lib/engine.mjs';
-import { startServer } from '../../tools/serve.mjs';
+import { harness } from '../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "this check drives bare test pages (tools/harness/blank.html with routed-in fixtures) for the element base class, not demo pages; tools/smoke.mjs axes only the registry's demo pages, so no axe check reads them" });
+const { server, browser, check } = h;
 
 const p = await browser.newPage();
 const errors = [];
@@ -74,5 +71,4 @@ check('the scene holds no <style> element when adoptedStyleSheets exists', out.s
 check('a light-DOM root adopts onto its document, once, with no <style> (the veranda stage’s movable grip)', out.lightStyled && out.lightStyles === 0 && out.docAdopted === 1, `styled ${out.lightStyled}, ${out.lightStyles} <style>, adopted on the document ${out.docAdopted}x`);
 check('no other console errors', errors.length === 0, errors.join(' | '));
 
-await browser.close(); await server.close();
-if (results.some(r => !r.ok)) process.exit(1);
+await h.done();

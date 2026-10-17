@@ -11,13 +11,10 @@
 // from real screenshot pixels, not a guess — a check that could fail, and
 // did fail against the pre-fix Drawer: see drawer.check.mjs).
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/dialog/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked, and no-js.html is in no axe check (docs/DEBT.md row 48)" });
+const { server, browser, check } = h;
 
 /**
  * True while `selector` cannot actually receive focus — per the HTML spec,
@@ -101,7 +98,7 @@ function edgeCorrelation(a, b) {
 }
 
 async function page({ reduced = false, register = 'warm' } = {}) {
-  const ctx = await browser.newContext({ reducedMotion: reduced ? 'reduce' : 'no-preference' });
+  const ctx = await h.context({ reducedMotion: reduced ? 'reduce' : 'no-preference' });
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -196,7 +193,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 
 // the no-JS path: the opener is a real, reachable link
 {
-  const ctx = await browser.newContext({ javaScriptEnabled: false });
+  const ctx = await h.context({ javaScriptEnabled: false });
   const p = await ctx.newPage();
   await p.goto(`${server.url}/packages/components/dialog/demo.html`);
   await p.click('a[data-sg-dialog="ask"]');
@@ -216,8 +213,4 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

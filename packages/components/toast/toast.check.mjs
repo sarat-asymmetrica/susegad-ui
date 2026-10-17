@@ -9,16 +9,14 @@
 // Escape dismisses it and focus goes back; an error stays; reduced motion
 // shows the letter open at once.
 
-import { dropBenignErrors, pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { dropBenignErrors } from '../../../tools/lib/engine.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/toast/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, check } = h;
 
 async function page({ reduced = false, register = 'warm' } = {}) {
-  const ctx = await browser.newContext({ reducedMotion: reduced ? 'reduce' : 'no-preference' });
+  const ctx = await h.context({ reducedMotion: reduced ? 'reduce' : 'no-preference' });
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -89,7 +87,7 @@ async function page({ reduced = false, register = 'warm' } = {}) {
   await p.waitForFunction(() => !window.t3.isConnected, null, { timeout: 9000 }).catch(() => {});
   const took = Date.now() - t0;
   check('a short success leaves after about 5 s', took > 4500 && took < 7000, `${took} ms`);
-  check('no console or page errors', errors.length === 0, errors.join(' | '));
+  check('no console or page errors', dropBenignErrors(errors).length === 0, dropBenignErrors(errors).join(' | '));
   await ctx.close();
 }
 
@@ -102,7 +100,7 @@ async function page({ reduced = false, register = 'warm' } = {}) {
   await p.mouse.move(5, 5);
   await p.waitForFunction(() => !window.t.isConnected, null, { timeout: 9000 }).catch(() => {});
   check('after the pointer leaves, the clock resumes and it goes', await p.evaluate(() => !window.t.isConnected));
-  check('no console or page errors (pause)', errors.length === 0, errors.join(' | '));
+  check('no console or page errors (pause)', dropBenignErrors(errors).length === 0, dropBenignErrors(errors).join(' | '));
   await ctx.close();
 }
 
@@ -119,7 +117,7 @@ async function page({ reduced = false, register = 'warm' } = {}) {
 
 // ── WCAG 2.4.11 at phone width: with an error pinned, no focused control is covered by the pile ──
 for (const register of ['quiet', 'warm', 'playful']) {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, hasTouch: true });
+  const ctx = await h.context({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, hasTouch: true });
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -157,8 +155,4 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

@@ -19,20 +19,17 @@
 //   unnamed      the date field has no label                            -> "axe"
 
 import fs from 'node:fs';
-import { createRequire } from 'node:module';
-import { localeEnv, pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { tab } from '../../../tools/lib/tab.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { localeEnv } from '../../../tools/lib/engine.mjs';
 import { contrastReport } from '../../../tools/lib/contrast.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
-const AXE = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
 const BREAK = process.argv.find(a => a.startsWith('--break='))?.slice('--break='.length) ?? '';
 const shots = process.argv.includes('--shots');
 if (shots) fs.mkdirSync('.shots/wa-order', { recursive: true });
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch({ env: localeEnv() }); // a date field's day-month order is the browser's own locale, not the context's
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ launch: { env: localeEnv() } }); // a date field's day-month order is the browser's own locale, not the context's
+const { server, check, results } = h;
 const PAGE = (reg, extra = '') => `${server.url}/packages/components/wa-order/demo.html?register=${reg}${extra}`;
 
 const BREAKS = {
@@ -49,7 +46,7 @@ const BREAKS = {
 if (BREAK && !BREAKS[BREAK]) { console.error(`unknown --break mode "${BREAK}"`); process.exit(2); }
 const served = new Set();
 async function ctxFor(opts = {}) {
-  const ctx = await browser.newContext({ timezoneId: 'Asia/Kolkata', locale: 'en-IN', ...opts });
+  const ctx = await h.context({ timezoneId: 'Asia/Kolkata', locale: 'en-IN', ...opts });
   // 2 October 2026, 2:30 pm in Goa: the day the notice is counted from
   await ctx.clock.setFixedTime(new Date('2026-10-02T14:30:00+05:30'));
   // nothing leaves the machine: a tap on the send link opens a stub, never WhatsApp
@@ -170,13 +167,27 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   check(`${reg}: still missing the day and a name: no link yet, and it says what is first`, !v.href && v.disabled === 'true' && v.reason === 'Pick the day you want it.' && v.menuLink === null, JSON.stringify({ href: v.href, r: v.reason }));
 
   // keyboard: the walk through the composer, ending on the link
-  await p.focus('#order [name=date]');
-  const order = [];
-  for (let i = 0; i < 11; i++) { order.push(await p.evaluate(() => { const a = document.activeElement; return a.name || a.className || a.localName; })); await p.keyboard.press('Tab'); }
-  // a date input is several stops of its own (day, month, year, the picker): count it once
-  const walk = order.filter((n, i) => i === 0 || n !== order[i - 1]);
+  // the date input takes a Tab per day, month, year and picker where the engine has them (Chromium: four), one where it does not,
+  // so walk until the send link, not for a count
+  const walkToSend = async () => {
+    await p.focus('#order [name=date]');
+    const order = [];
+    for (let i = 0; i < 14; i++) {
+      order.push(await p.evaluate(() => { const a = document.activeElement; return a.name || a.className || a.localName; }));
+      if (order.at(-1) === 'sg-wa-send') break;
+      await tab(p);
+    }
+    return order.filter((n, i) => i === 0 || n !== order[i - 1]); // a date input is several stops of its own where the engine has them: count it once
+  };
+  const walk = await walkToSend();
   const radio = await p.evaluate(() => document.querySelector('#order input[type=radio]:checked').name);
-  check(`${reg}: Tab walks the fields in reading order and ends on the send link`, walk.join(',') === `date,slot,${radio},area,name,dietary,notes,sg-wa-send`, walk.join(','));
+  const want = `date,slot,${radio},area,name,dietary,notes,sg-wa-send`;
+  check(`${reg}: Tab walks the fields in reading order and ends on the send link`, walk.join(',') === want, walk.join(','));
+  // control: with the notes field taken out of the tab order the same walk must read differently
+  await p.evaluate(() => { document.querySelector('#order [name=notes]').tabIndex = -1; });
+  const broken = await walkToSend();
+  await p.evaluate(() => { document.querySelector('#order [name=notes]').removeAttribute('tabindex'); });
+  check(`${reg}: control: the walk with the notes field out of the tab order does not read as the right order`, broken.join(',') !== want && !broken.includes('notes'), broken.join(','));
 
   // pressing the link too early takes you to the first thing missing, and says it in words
   await p.focus('#order a.sg-wa-send');
@@ -198,7 +209,8 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   await p.focus('#order [name=date]');
   await p.keyboard.type('04102026');
   const typed = await p.evaluate(() => document.querySelector('#order [name=date]').value);
-  check(`${reg}: keyboard: a date typed by hand (04102026) is kept as it is typed`, typed === '2026-10-04', typed || 'empty');
+  const dateUi = await p.evaluate(() => document.querySelector('#order [name=date]').type === 'date');
+  if (!dateUi) h.skip('typing a date by hand', 'this build has no <input type="date">: it falls back to a text field, so there are no day, month and year parts to type into'); else check(`${reg}: keyboard: a date typed by hand (04102026) is kept as it is typed`, typed === '2026-10-04', typed || 'empty');
 
   // everything filled in
   await fillAll(p);
@@ -305,18 +317,19 @@ async function sendOnce(p) {
   await fillAll(p, { date: '2026-10-04' });
   await p.waitForTimeout(60);
   await p.evaluate(() => document.querySelector('#order a.sg-wa-send').addEventListener('click', e => e.preventDefault()));
-  await p.click('#order a.sg-wa-send');
+  await p.click('#order a.sg-wa-send'); // straight from the last field, no blur first: leaving the field must not cost the press its click (WebKit dropped it when the link's text node was replaced)
+  await p.waitForFunction(() => document.querySelector('#order .sg-wa-written')?.textContent, null, { timeout: 2000 }).catch(() => {}); // the stamp is what is asked about next: let the press land
 }
 for (const reduced of [false, true]) {
   const ctx = await ctxFor({ viewport: { width: 1280, height: 1100 }, reducedMotion: reduced ? 'reduce' : 'no-preference' });
   const p = await open(ctx, 'playful');
   await sendOnce(p);
   // the send key's own 90 ms press and release (CSS transitions on the key, touch contract) are not the stamp
-  const anims = await p.evaluate(() => document.getAnimations().filter(a => a.effect?.target?.closest?.('sg-wa-order') && !(a instanceof CSSTransition && a.effect.target.classList.contains('sg-wa-send'))).map(a => ({ target: a.effect.target.className, dur: a.effect.getTiming().duration, iter: a.effect.getTiming().iterations })));
+  const anims = await p.evaluate(() => document.getAnimations().filter(a => a.effect?.target?.closest?.('.sg-wa-written')) /* only the written line's own: the menu's count bump from the earlier plus click may still be running */.map(a => ({ target: a.effect.target.className, dur: a.effect.getTiming().duration, iter: a.effect.getTiming().iterations })));
   if (!reduced) {
     check('playful: the "written" line stamps in once (one short animation, a finite run)', anims.length === 1 && anims[0].target === 'sg-wa-written' && anims[0].iter === 1 && anims[0].dur <= 400, JSON.stringify(anims));
     await p.waitForTimeout(600);
-    check('playful: and it is over (nothing left running)', (await p.evaluate(() => document.getAnimations().filter(a => a.effect?.target?.closest?.('sg-wa-order')).length)) === 0);
+    check('playful: and it is over (nothing left running)', (await p.evaluate(() => document.getAnimations().filter(a => a.effect?.target?.closest?.('.sg-wa-written')).length)) === 0);
   } else {
     check('reduced motion: playful says it is written with no animation at all', anims.length === 0, JSON.stringify(anims));
   }
@@ -346,10 +359,9 @@ for (const reg of ['quiet', 'warm', 'playful']) {
 for (const reg of ['quiet', 'warm', 'playful']) {
   const ctx = await ctxFor({ viewport: { width: 1280, height: 1100 } });
   const p = await open(ctx, reg);
-  await p.addScriptTag({ content: AXE });
   // the dishes arrive on the tala in warm and playful (menu.css, core-arrive); axe reads the page at rest, not mid-fade
   await p.evaluate(() => Promise.race([Promise.all(document.getAnimations().filter(a => a.animationName === 'sg-arrive').map(a => a.finished.catch(() => {}))), new Promise(r => setTimeout(r, 2500))]));
-  const run = () => p.evaluate(async () => (await axe.run(document, { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] })).violations.map(x => `${x.id}: ${x.nodes.map(n => n.target.join(' ')).slice(0, 2).join(' | ')}`));
+  const run = () => h.axe(p);
   const states = { empty: await run() };
   await p.click('#menu [data-id=fettuccine] .sg-menu-plus');
   await p.focus('#order a.sg-wa-send'); await p.keyboard.press('Enter'); // too early: the date is flagged
@@ -421,11 +433,10 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-server.close();
 const failed = results.filter(r => !r.ok).length;
 const expected = BREAK ? BREAKS[BREAK].map(([f]) => `${BREAK}:${f}`) : [];
 const allServed = expected.every(k => served.has(k));
-console.log(`${results.length - failed}/${results.length} wa-order checks pass${BREAK ? ` (--break=${BREAK}: ${allServed ? 'the break was served' : 'THE BREAK WAS NEVER SERVED'})` : ''}`);
-if (BREAK && !allServed) process.exit(2);
-process.exit(failed ? 1 : 0);
+await h.done({
+  summary: `${results.length - failed}/${results.length} wa-order checks pass${BREAK ? ` (--break=${BREAK}: ${allServed ? 'the break was served' : 'THE BREAK WAS NEVER SERVED'})` : ''}`,
+  exit: BREAK && !allServed ? 2 : undefined,
+});

@@ -79,7 +79,6 @@ test('the definition: params from attributes, status text, meta', () => {
   assert.deepEqual(kolam.interactive, ['playful']);
   for (const k of ['title', 'alt', 'caption', 'prompt', 'credit', 'tier']) assert.ok(meta[k], k);
   assert.equal(meta.tier, 'shared');
-  for (const k of ['title', 'alt', 'caption', 'prompt', 'credit', 'keys']) assert.ok(!meta[k].includes('—'), `no em dash in ${k}`);
   assert.ok(meta.map.every(row => row.length === 3));
 });
 

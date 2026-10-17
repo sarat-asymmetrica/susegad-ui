@@ -18,20 +18,16 @@
 //   low-contrast   the sauce line is a pale grey                            -> "contrast"
 
 import fs from 'node:fs';
-import { createRequire } from 'node:module';
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { clickFocusesButtons } from '../../../tools/lib/engine.mjs';
 import { contrastReport } from '../../../tools/lib/contrast.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
-const AXE = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
 const BREAK = process.argv.find(a => a.startsWith('--break='))?.slice('--break='.length) ?? '';
 const shots = process.argv.includes('--shots');
 if (shots) fs.mkdirSync('.shots/menu', { recursive: true });
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness();
+const { server, browser, check, results } = h;
 const PAGE = (reg, extra = '') => `${server.url}/packages/components/menu/demo.html?register=${reg}${extra}`;
 
 const BREAKS = {
@@ -48,7 +44,7 @@ const BREAKS = {
 if (BREAK && !BREAKS[BREAK]) { console.error(`unknown --break mode "${BREAK}"`); process.exit(2); }
 let broke = false;
 async function ctxFor(opts = {}) {
-  const ctx = await browser.newContext(opts);
+  const ctx = await h.context(opts);
   if (BREAK) {
     const [file, from, to] = BREAKS[BREAK];
     await ctx.route(u => u.pathname.endsWith(`/menu/${file}`) || u.pathname.endsWith(`/menu/skins/${file}`), async route => {
@@ -77,7 +73,7 @@ const names = p => p.$$eval('sg-menu#menu .sg-menu-qty button', bs => bs.map(b =
 
 // ── Without JavaScript: a plain list that reads fine ──
 {
-  const ctx = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+  const ctx = await h.context({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
   const p = await ctx.newPage();
   await p.goto(PAGE('quiet'));
   await p.waitForLoadState('load');
@@ -166,10 +162,19 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   // the way on, and starting again
   const cont = await p.evaluate(() => { const a = document.querySelector('#menu .sg-menu-continue'); return { href: a.getAttribute('href'), shown: a.getClientRects().length > 0 }; });
   check(`${reg}: a way on to the order shows once something is added`, cont.href === '#after' && cont.shown, JSON.stringify(cont));
+  const clickFocuses = await clickFocusesButtons(browser); // a click gives a button no focus in WebKit, so there is no focus for Start again to keep
+  if (!clickFocuses) h.skip('focus kept on Start again after a mouse click', 'a click leaves focus where it was in this engine; the same question is asked from the keyboard just below');
   await p.click('#menu .sg-menu-clear');
   await p.waitForTimeout(40);
   const cleared = await p.evaluate(() => ({ text: document.querySelector('#menu .sg-menu-total').textContent, counts: [...document.querySelectorAll('#menu .sg-menu-count')].map(c => c.textContent).join(''), last: window.__ev.at(-1), cont: document.querySelector('#menu .sg-menu-continue').getClientRects().length, f: document.activeElement.className }));
-  check(`${reg}: Start again empties the order, says so, tells the page, and focus is not lost`, cleared.text === 'Your order is empty again. Nothing added yet.' && /^0+$/.test(cleared.counts) && cleared.last.total === 0 && cleared.last.lines.length === 0 && cleared.cont === 0 && cleared.f === 'sg-menu-clear', JSON.stringify(cleared));
+  check(`${reg}: Start again empties the order, says so, tells the page, and focus is not lost`, cleared.text === 'Your order is empty again. Nothing added yet.' && /^0+$/.test(cleared.counts) && cleared.last.total === 0 && cleared.last.lines.length === 0 && cleared.cont === 0 && (cleared.f === 'sg-menu-clear' || !clickFocuses), JSON.stringify(cleared));
+  // the same, from the keyboard: Start again keeps focus on itself (the page it empties does not take it away)
+  await p.click('#menu [data-id=fettuccine] .sg-menu-plus');
+  await p.focus('#menu .sg-menu-clear');
+  await p.keyboard.press('Enter');
+  await p.waitForTimeout(40);
+  check(`${reg}: Start again pressed from the keyboard keeps focus on itself`, await p.evaluate(() => document.activeElement.className === 'sg-menu-clear' && /^0+$/.test([...document.querySelectorAll('#menu .sg-menu-count')].map(c => c.textContent).join(''))));
+  await p.waitForTimeout(900); // let the count's settle from that extra add finish before the checks that sample it
 
   // big money, and the limit
   const big = await p.evaluate(async () => {
@@ -288,8 +293,7 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   await p.click('#menu [data-id=fettuccine] .sg-menu-plus');
   await p.click('#menu [data-id=pesto] .sg-menu-plus');
   await p.waitForTimeout(500);
-  await p.addScriptTag({ content: AXE });
-  const v = await p.evaluate(async () => (await axe.run(document, { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] })).violations.map(x => `${x.id}: ${x.nodes.map(n => n.target.join(' ')).slice(0, 3).join(' | ')}`));
+  const v = await h.axe(p);
   check(`axe ${reg} with an order in progress: no violations (WCAG 2.2 AA)`, v.length === 0, v.join('; '));
   await ctx.close();
 }
@@ -347,9 +351,8 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`${results.length - failed}/${results.length} menu checks pass${BREAK ? ` (--break=${BREAK}: ${broke ? 'the break was served' : 'THE BREAK WAS NEVER SERVED'})` : ''}`);
-if (BREAK && !broke) process.exit(2);
-process.exit(failed ? 1 : 0);
+await h.done({
+  summary: `${results.length - failed}/${results.length} menu checks pass${BREAK ? ` (--break=${BREAK}: ${broke ? 'the break was served' : 'THE BREAK WAS NEVER SERVED'})` : ''}`,
+  exit: BREAK && !broke ? 2 : undefined,
+});

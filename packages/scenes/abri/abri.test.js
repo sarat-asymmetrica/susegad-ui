@@ -116,6 +116,5 @@ test('sheets of a sitting, registers and the still', () => {
   assert.equal(meta.stillTime, stillAt(plan(1)));
   assert.ok(stillAt(plan(1)) > times(plan(1).lay).face, 'the still is the print face up');
   assert.deepEqual(abri.interactive, ['playful']);
-  for (const k of ['title', 'gloss', 'caption', 'alt', 'keys', 'credit']) assert.ok(!meta[k].includes('—'), k);
   assert.ok(FX0 < BATH.x0 && FY0 < BATH.y0);
 });

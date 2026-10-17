@@ -59,8 +59,17 @@ test('progress holds the story at a beat, and time never moves it', () => {
   assert.equal(mankurad.status({ progress: null }), '');
 });
 
-test('the plate’s shapes and particles are all here', () => {
-  assert.ok(MANGO.length > 100); assert.equal(RAIN.length, 320); assert.equal(SPLASH.length, 18);
-  assert.equal(CLOUDS.length, 4); assert.equal(LEAVES.length, 12);
-  for (const k of ['title', 'gloss', 'caption', 'alt', 'keys', 'credit']) assert.ok(!meta[k].includes('—'), k);
+test('the plate’s shapes and particles are well formed, and the particle counts stay within the frame budget', () => {
+  const finite = o => Object.values(o).every(v => typeof v !== 'number' || Number.isFinite(v));
+  assert.ok(MANGO.length > 100, 'the mango outline has enough points to be smooth');
+  // A budget, not a count: the rain is redrawn every frame, so the cap protects the frame time,
+  // and below the floor a downpour would read as drizzle.
+  assert.ok(RAIN.length >= 100 && RAIN.length <= 400, `rain drops: ${RAIN.length}`);
+  assert.ok(SPLASH.length >= 6 && SPLASH.length <= 40, `splash droplets: ${SPLASH.length}`);
+  assert.ok(CLOUDS.length >= 1 && CLOUDS.length <= 8, `clouds: ${CLOUDS.length}`);
+  assert.ok(LEAVES.length >= 4 && LEAVES.length <= 24, `leaves: ${LEAVES.length}`);
+  for (const r of RAIN) { assert.ok(finite(r), JSON.stringify(r)); assert.ok(r.speed > 0 && r.len > 0 && r.a > 0 && r.a <= 1); }
+  for (const s of SPLASH) { assert.ok(finite(s), JSON.stringify(s)); assert.ok(s.vy < 0 && s.s > 0, 'a splash droplet leaves upward'); }
+  for (const c of CLOUDS) { assert.ok(finite(c) && c.w > 0 && c.h > 0, JSON.stringify(c)); assert.ok(c.pts.length >= 3, 'a cloud outline is a shape'); }
+  for (const l of LEAVES) { assert.ok(finite(l) && l.len > 0 && l.wid > 0, JSON.stringify(l)); assert.ok(l.at >= 0 && l.at <= 1, 'a leaf sits along the branch'); assert.match(l.tone, /^#[0-9a-f]{6}$/i); }
 });

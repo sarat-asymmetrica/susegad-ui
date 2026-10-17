@@ -13,10 +13,11 @@
 // Each was watched failing first on a broken build (see the request,
 // docs/requests/2026-09-27-studio-scenes.md, and the report).
 
-import { session, openScene } from '../../../tools/lib/scene-probe.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { openScene } from '../../../tools/lib/scene-probe.mjs';
 import { BOOK } from './model.js';
 
-const s = await session();
+const s = await harness({ axe: 'tools/smoke.mjs axes the scene page once, in its default register and theme; the other registers are not axe-checked yet (docs/DEBT.md)' });
 const { check } = s;
 
 // 1

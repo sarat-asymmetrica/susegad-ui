@@ -6,20 +6,17 @@
 // --shots also saves screenshots of each step to .shots/stepper/.
 
 import fs from 'node:fs';
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
 const shots = process.argv.includes('--shots');
 if (shots) fs.mkdirSync('.shots/stepper', { recursive: true });
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/stepper/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, check } = h;
 const PAGE = reg => `${server.url}/packages/components/stepper/demo.html?register=${reg}`;
 
 // ── Without JavaScript ──
 {
-  const ctx = await browser.newContext({ javaScriptEnabled: false });
+  const ctx = await h.context({ javaScriptEnabled: false });
   const p = await ctx.newPage();
   await p.goto(PAGE('quiet'));
   const shown = await p.$$eval('sg-stepper > fieldset', fs => fs.map(f => f.offsetParent !== null));
@@ -40,7 +37,7 @@ const PAGE = reg => `${server.url}/packages/components/stepper/demo.html?registe
 
 // ── With JavaScript, in each register ──
 for (const reg of ['quiet', 'warm', 'playful']) {
-  const ctx = await browser.newContext({ viewport: { width: 900, height: 900 } });
+  const ctx = await h.context({ viewport: { width: 900, height: 900 } });
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -124,7 +121,7 @@ for (const reg of ['quiet', 'warm', 'playful']) {
 
 // ── Reduced motion: nothing animates between steps ──
 {
-  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  const ctx = await h.context({ reducedMotion: 'reduce' });
   const p = await ctx.newPage();
   await p.goto(PAGE('playful'));
   await p.waitForFunction(() => window.__ready && document.querySelector('sg-stepper')?.skin);
@@ -134,8 +131,4 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(`${results.length - failed}/${results.length} stepper checks pass`);
-process.exit(failed ? 1 : 0);
+await h.done();

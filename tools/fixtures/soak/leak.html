@@ -1,0 +1,36 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soak fixture: leak</title>
+<!-- Must FAIL the soak (red first). Every 250 ms it keeps something it should have let go: an array, detached nodes, listeners;
+     every second, a canvas left in the page. Together: heap, DOM nodes, listeners and canvas megapixels all climb. -->
+<style>html, body { margin: 0; background: #f4efe6; color: #2a2118; font: 16px system-ui } #c { display: block }</style>
+<canvas id="c" width="800" height="450"></canvas>
+<div id="n">leak</div>
+<script>
+  const ctx = document.getElementById('c').getContext('2d');
+  const kept = [];
+  function draw(ts) {
+    ctx.fillStyle = '#f4efe6'; ctx.fillRect(0, 0, 800, 450);
+    ctx.fillStyle = '#b3401f';
+    for (let i = 0; i < 12; i++) { ctx.beginPath(); ctx.arc(400 + Math.cos(ts / 900 + i) * 300, 225 + Math.sin(ts / 700 + i * 2) * 160, 14, 0, 7); ctx.fill(); }
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+  setInterval(() => {
+    kept.push(Array.from({ length: 16384 }, Math.random)); // 128 KB retained on the JS heap (a typed array would hide in external memory, which the heap probe cannot see)
+    for (let i = 0; i < 20; i++) {                    // twenty detached nodes, still referenced
+      const el = document.createElement('div');
+      el.textContent = 'x' + i;
+      const on = () => el.textContent;
+      el.addEventListener('click', on);               // and a listener on each
+      kept.push(el);
+    }
+  }, 250);
+  setInterval(() => {                                 // a layer left behind each second
+    const c = document.createElement('canvas');
+    c.width = 400; c.height = 300; c.style.display = 'none';
+    c.getContext('2d').fillRect(0, 0, 10, 10);
+    document.body.appendChild(c);
+  }, 1000);
+</script>

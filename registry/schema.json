@@ -169,6 +169,7 @@
         "manifest": { "$ref": "#/$defs/relPath" },
         "files": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/indexFile" } },
         "dependencies": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/name" } },
+        "checkDeps": { "description": "Items whose files this item's demo, page modules or checks load without the item installing them: derived by the build (registry/edges.mjs), never written in a manifest. A change to one of them can break this item's checks.", "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/name" } },
         "npmDependencies": { "type": "object", "additionalProperties": { "$ref": "#/$defs/version" } },
         "registers": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/register" } },
         "budget": { "$ref": "#/$defs/budget" },

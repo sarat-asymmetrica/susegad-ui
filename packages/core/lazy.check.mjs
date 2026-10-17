@@ -14,21 +14,18 @@
 //   no JavaScript        at 390 px with lazy.css linked, the poster fits and keeps its shape and the scene is hidden;
 //                        without the link it overflows (the control)
 
-import { pickEngine } from '../../tools/lib/engine.mjs';
-import { startServer } from '../../tools/serve.mjs';
+import { harness } from '../../tools/lib/component-check.mjs';
 import { sidewaysScroll } from '../../tools/lib/overflow.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "this check drives bare test pages (tools/harness/blank.html with routed-in fixtures) for the element base class, not demo pages; tools/smoke.mjs axes only the registry's demo pages, so no axe check reads them" });
+const { server, check } = h;
 const HEAVY = /\/packages\/(engine\/|scenes\/kolam\/|core\/index\.js|core\/scene-element\.js)/;
 
 const POSTER = '<picture><img src="/apps/docs/og.jpg" width="1200" height="630" alt="A poster" decoding="async"></picture>';
 const lazy = (attrs = '', src = '/packages/scenes/kolam/index.js') => `<sg-lazy src="${src}" ${attrs}>${POSTER}<sg-scene name="kolam" hidden></sg-scene></sg-lazy>`;
 
 async function open(contextOptions = {}, init = null) {
-  const context = await browser.newContext({ viewport: { width: 800, height: 600 }, ...contextOptions });
+  const context = await h.context({ viewport: { width: 800, height: 600 }, ...contextOptions });
   const page = await context.newPage();
   const seen = { heavy: [], errors: [], violations: [] };
   page.on('request', r => { if (HEAVY.test(new URL(r.url()).pathname)) seen.heavy.push(new URL(r.url()).pathname); });
@@ -130,7 +127,7 @@ for (const [label, opts, init, attrs, reason] of HELD) {
 // Without the stylesheet the poster keeps the size of its attributes and the page scrolls sideways; the second
 // page is that control, so the check can tell the difference.
 for (const [label, linked] of [['with lazy.css linked', true], ['control, without it', false]]) {
-  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+  const context = await h.context({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
   const head = linked ? '<link rel="stylesheet" href="/packages/core/lazy.css">' : '';
   await page.route('**/tools/harness/blank.html', route => route.fulfill({ contentType: 'text/html', body: `<!doctype html><meta name="viewport" content="width=device-width"><title>x</title>${head}<body>${lazy()}</body>` }));
@@ -145,5 +142,4 @@ for (const [label, linked] of [['with lazy.css linked', true], ['control, withou
   await context.close();
 }
 
-await browser.close(); await server.close();
-if (results.some(r => !r.ok)) process.exit(1);
+await h.done();

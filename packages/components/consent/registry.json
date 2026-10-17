@@ -1,0 +1,43 @@
+{
+  "name": "consent",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Consent notice",
+  "description": "A draft, not yet reviewed by a lawyer: the plain notice a form shows before it keeps someone's details, written for India's DPDP Act in words a visitor can follow: what is collected, why, for how long, whom to ask, how to withdraw, and a line where the site says where to complain, ending in a native required checkbox that is never pre-ticked. The site gives its own values; one it leaves out shows as a visible, highlighted [placeholder] and the console says so once, so a sample is never published by mistake. The same markup is a pure function (renderConsent) for a build script, so the notice can be plain HTML and read with no script. English, and Konkani in both scripts. Sending without the tick marks the box, moves focus to it and says why. Quiet is a hairline block, warm boxes it in seeded pencil strokes, playful makes it a ticket with a perforated tear line. A starting point, not legal advice: a legal read is the site's to get before it goes live.",
+  "version": "0.1.0",
+  "files": [
+    "consent.js",
+    "consent.core.js",
+    "consent.strings.js",
+    "consent.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "consent.prompt.md",
+    "consent.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "core-strings",
+    "check",
+    "field-note",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "consent.prompt.md",
+  "docs": "consent.docs.md",
+  "budget": {
+    "jsBytes": 24576,
+    "reason": "Decision 0009: the element and its pure core (the notice, the placeholders, the escaping, the same markup for a build script), the strings in three languages (Devanagari costs three bytes a letter, and the notice is long), and a skin per register: a pencil frame and a ticket. The checkbox and the note are the check and field-note pieces, counted with theirs. 22.7 KB today with comments, about 8% to spare."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif: a notice and a ticket stub, with nothing drawn from a tradition."
+  }
+}

@@ -9,13 +9,10 @@
 // click is left alone, and two <sg-tabs> on the page never collide over a
 // View Transition name.
 
-import { chromium } from 'playwright';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: 'tools/smoke.mjs axes the demo page once, in its default register and theme; the other registers are not axe-checked yet (docs/DEBT.md)' });
+const { server, check } = h;
 const demo = `${server.url}/packages/components/tabs/demo.html`;
 
 const selected = p => p.evaluate(() => {
@@ -28,7 +25,7 @@ const shownPanels = p => p.evaluate(() => [...document.querySelectorAll('#room [
 
 // ── no JavaScript ───────────────────────────────────────────────────────────
 {
-  const ctx = await browser.newContext({ javaScriptEnabled: false });
+  const ctx = await h.context({ javaScriptEnabled: false });
   const p = await ctx.newPage();
   await p.goto(demo);
   const look = await p.evaluate(() => ({
@@ -45,7 +42,7 @@ const shownPanels = p => p.evaluate(() => [...document.querySelectorAll('#room [
 
 // ── with JavaScript, every register ─────────────────────────────────────────
 for (const register of ['quiet', 'warm', 'playful']) {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -119,7 +116,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 
 // ── reduced motion: the underline still lands, with no lasting animation ───
 for (const register of ['warm', 'playful']) {
-  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  const ctx = await h.context({ reducedMotion: 'reduce' });
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=${register}`);
   await p.waitForFunction(() => window.__ready && document.querySelector('#room[data-skin]'));
@@ -131,8 +128,4 @@ for (const register of ['warm', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

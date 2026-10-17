@@ -13,7 +13,13 @@
 <link rel="stylesheet" href="../susegad/tokens/fonts.css">
 <link rel="stylesheet" href="../susegad/tokens/tokens.css">
 <link rel="stylesheet" href="../susegad/core/lazy.css">
+<link rel="stylesheet" href="../susegad/components/banner/banner.css">
 <link rel="stylesheet" href="../susegad/components/lang/lang.css">
+<link rel="stylesheet" href="../susegad/components/check/check.css">
+<link rel="stylesheet" href="../susegad/components/field-note/field-note.css">
+<link rel="stylesheet" href="../susegad/components/consent/consent.css">
+<link rel="stylesheet" href="../susegad/components/qr/qr.css">
+<link rel="stylesheet" href="../susegad/components/ticket/ticket.css">
 <link rel="stylesheet" href="../susegad/components/person-card/person-card.css">
 <link rel="stylesheet" href="../susegad/components/site-footer/site-footer.css">
 <link rel="stylesheet" href="../susegad/recipes/agenda/recipe.css">
@@ -25,11 +31,14 @@
 <body>
 <a class="skip" href="#main">Thet mojkurak vochem</a>
 
+<sg-banner id="doors" until="2026-11-21">Sonvar 21 Novembr, sokallim 9:30 vorancher daram ugdat. Tumchem tikit, fonar va kagdar, hadat.</sg-banner>
+
 <header class="bar">
   <p class="brand"><a href="../index.html">Mandovi Conclave</a></p>
   <nav class="bar-links" aria-label="Mukhel">
     <a href="#agenda">Velapotrok</a>
     <a href="#speakers">Ulovpi</a>
+    <a href="#register">Nanv nond</a>
     <a href="#venue">Thol</a>
   </nav>
   <sg-lang>
@@ -46,7 +55,7 @@
 <main id="main">
   <section class="hero" aria-labelledby="hero-h">
     <div class="hero-words">
-      <p class="eyebrow">Xonivar 21 Novembor 2026 · Panjim, Goem</p>
+      <p class="eyebrow">Sonvar 21 Novembr 2026 · Panjim, Goem</p>
       <h1 id="hero-h">Sorkari sevankhatir AI, protyoksh vaparant</h1>
       <p class="lede">Sorkari sevam ghodovpi, chalovpi ani tancher avolombun asllea lokankhatir eka disachim lhan bhaxonnam. Kitem chalta, kitem chalna ani kitem monxanuch sodanch tharavpak zai, tem ami polloitat.</p>
       <p class="hero-links">
@@ -72,61 +81,61 @@
     <h2 id="agenda-h">Velapotrok</h2>
     <p class="sg-agenda-zone">Hanga dillyo sogllyo velo Bharotiy pramann velent (IST) asat: Panjimchea ghodyalachi vel.</p>
     <section class="sg-agenda-day" aria-labelledby="day1">
-      <h3 id="day1"><time datetime="2026-11-21">Xonivar 21 Novembor</time></h3>
+      <h3 id="day1"><time datetime="2026-11-21">Sonvar 21 Novembr</time></h3>
       <ol class="sg-agenda-sessions">
         <li class="sg-session" id="doors" data-kind="break" data-start="2026-11-21T09:30" data-end="2026-11-21T10:00">
-          <p class="sg-session-time"><time datetime="2026-11-21T09:30:00+05:30">9:30 sokallim</time> te <time datetime="2026-11-21T10:00:00+05:30">10 sokallim</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
+          <p class="sg-session-time"><time datetime="2026-11-21T09:30:00+05:30">sokallim 9:30</time> te <time datetime="2026-11-21T10:00:00+05:30">sokallim 10:00</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
           <h4 class="sg-session-title">Daram ugodtat ani nanv nond</h4>
           <p class="sg-session-where"><span class="sg-session-room">Lobi</span></p>
         </li>
         <li class="sg-session" id="welcome" data-start="2026-11-21T10:00" data-end="2026-11-21T10:30">
-          <p class="sg-session-time"><time datetime="2026-11-21T10:00:00+05:30">10 sokallim</time> te <time datetime="2026-11-21T10:30:00+05:30">10:30 sokallim</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
+          <p class="sg-session-time"><time datetime="2026-11-21T10:00:00+05:30">sokallim 10:00</time> te <time datetime="2026-11-21T10:30:00+05:30">sokallim 10:30</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
           <h4 class="sg-session-title">Swagat, ani ami hanga kityak</h4>
           <p class="sg-session-who">Ayojok</p>
           <p class="sg-session-where"><span class="sg-session-room">Mukhel sobhagruh</span></p>
         </li>
         <li class="sg-session" id="forms" data-start="2026-11-21T10:30" data-end="2026-11-21T11:15">
-          <p class="sg-session-time"><time datetime="2026-11-21T10:30:00+05:30">10:30 sokallim</time> te <time datetime="2026-11-21T11:15:00+05:30">11:15 sokallim</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
+          <p class="sg-session-time"><time datetime="2026-11-21T10:30:00+05:30">sokallim 10:30</time> te <time datetime="2026-11-21T11:15:00+05:30">sokallim 11:15</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
           <h4 class="sg-session-title">Sopea bhaxentle arz: arz bhorpi monxakhatir to porot borovpi ek model</h4>
           <p class="sg-session-who">Asha Naik</p>
           <p class="sg-session-where"><span class="sg-session-room">Mukhel sobhagruh</span> <span class="sg-session-track">Sorkari sevam</span></p>
         </li>
         <li class="sg-session" id="records" data-start="2026-11-21T10:30" data-end="2026-11-21T11:15">
-          <p class="sg-session-time"><time datetime="2026-11-21T10:30:00+05:30">10:30 sokallim</time> te <time datetime="2026-11-21T11:15:00+05:30">11:15 sokallim</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
+          <p class="sg-session-time"><time datetime="2026-11-21T10:30:00+05:30">sokallim 10:30</time> te <time datetime="2026-11-21T11:15:00+05:30">sokallim 11:15</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
           <h4 class="sg-session-title">Hatan borollyo nondi vachop, mul pan japun dovorun</h4>
           <p class="sg-session-who">Rohan Kamat</p>
           <p class="sg-session-where"><span class="sg-session-room">Studio kholi</span> <span class="sg-session-track">Bhas ani nondi</span></p>
         </li>
         <li class="sg-session" id="tea" data-kind="break" data-start="2026-11-21T11:15" data-end="2026-11-21T11:45">
-          <p class="sg-session-time"><time datetime="2026-11-21T11:15:00+05:30">11:15 sokallim</time> te <time datetime="2026-11-21T11:45:00+05:30">11:45 sokallim</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
+          <p class="sg-session-time"><time datetime="2026-11-21T11:15:00+05:30">sokallim 11:15</time> te <time datetime="2026-11-21T11:45:00+05:30">sokallim 11:45</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
           <h4 class="sg-session-title">Chah ani visanvo</h4>
           <p class="sg-session-where"><span class="sg-session-room">Lobi</span></p>
         </li>
         <li class="sg-session" id="review" data-start="2026-11-21T11:45" data-end="2026-11-21T12:30">
-          <p class="sg-session-time"><time datetime="2026-11-21T11:45:00+05:30">11:45 sokallim</time> te <time datetime="2026-11-21T12:30:00+05:30">12:30 danparam</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
+          <p class="sg-session-time"><time datetime="2026-11-21T11:45:00+05:30">sokallim 11:45</time> te <time datetime="2026-11-21T12:30:00+05:30">donparam 12:30</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
           <h4 class="sg-session-title">Modelan kitem tharavchem nhoi: labhachea magnnyant monxachi tapasnni</h4>
           <p class="sg-session-who">Sneha Fernandes</p>
           <p class="sg-session-where"><span class="sg-session-room">Mukhel sobhagruh</span> <span class="sg-session-track">Sorkari sevam</span></p>
         </li>
         <li class="sg-session" id="lunch" data-kind="break" data-start="2026-11-21T12:30" data-end="2026-11-21T13:30">
-          <p class="sg-session-time"><time datetime="2026-11-21T12:30:00+05:30">12:30 danparam</time> te <time datetime="2026-11-21T13:30:00+05:30">1:30 danparam</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
+          <p class="sg-session-time"><time datetime="2026-11-21T12:30:00+05:30">donparam 12:30</time> te <time datetime="2026-11-21T13:30:00+05:30">donparam 1:30</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
           <h4 class="sg-session-title">Danparchem jevonn</h4>
           <p class="sg-session-where"><span class="sg-session-room">Lobi</span></p>
         </li>
         <li class="sg-session" id="laptop" data-start="2026-11-21T13:30" data-end="2026-11-21T14:15">
-          <p class="sg-session-time"><time datetime="2026-11-21T13:30:00+05:30">1:30 danparam</time> te <time datetime="2026-11-21T14:15:00+05:30">2:15 danparam</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
+          <p class="sg-session-time"><time datetime="2026-11-21T13:30:00+05:30">donparam 1:30</time> te <time datetime="2026-11-21T14:15:00+05:30">donparam 2:15</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
           <h4 class="sg-session-title">Lhan karyalayakhatir moklim sadhnam: eka laptopar kitem chalta</h4>
           <p class="sg-session-who">Vivek Dessai</p>
           <p class="sg-session-where"><span class="sg-session-room">Studio kholi</span> <span class="sg-session-track">Moklim sadhnam</span></p>
         </li>
         <li class="sg-session" id="konkani" data-start="2026-11-21T14:15" data-end="2026-11-21T15:00">
-          <p class="sg-session-time"><time datetime="2026-11-21T14:15:00+05:30">2:15 danparam</time> te <time datetime="2026-11-21T15:00:00+05:30">3 danparam</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
+          <p class="sg-session-time"><time datetime="2026-11-21T14:15:00+05:30">donparam 2:15</time> te <time datetime="2026-11-21T15:00:00+05:30">donparam 3:00</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
           <h4 class="sg-session-title">Padyar ani avazant Konknni: ami khoim pavlyat ani kitem unnem asa</h4>
           <p class="sg-session-who">Maria D’Costa</p>
           <p class="sg-session-where"><span class="sg-session-room">Mukhel sobhagruh</span> <span class="sg-session-track">Bhas ani nondi</span></p>
         </li>
         <li class="sg-session" id="closing" data-start="2026-11-21T15:00" data-end="2026-11-21T15:30">
-          <p class="sg-session-time"><time datetime="2026-11-21T15:00:00+05:30">3 danparam</time> te <time datetime="2026-11-21T15:30:00+05:30">3:30 danparam</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
+          <p class="sg-session-time"><time datetime="2026-11-21T15:00:00+05:30">donparam 3:00</time> te <time datetime="2026-11-21T15:30:00+05:30">donparam 3:30</time> <abbr title="Bharotiy pramann vel">IST</abbr></p>
           <h4 class="sg-session-title">Prosn ani samarop</h4>
           <p class="sg-session-who">Ayojok</p>
           <p class="sg-session-where"><span class="sg-session-room">Mukhel sobhagruh</span></p>
@@ -182,6 +191,32 @@
   </section>
 
   <!-- data-lat, data-lng and data-name are written once; the page's script makes the two map links from them -->
+  <!-- Registration. A valid send fires sg-register ({ name, email }) and never leaves the page; page.js answers it by making the ticket on this device; the consent notice is the library's, and a legal read of it is yours to get before going live -->
+  <section class="sg-register" id="register" aria-labelledby="register-h">
+    <h2 id="register-h">Nanv nond</h2>
+    <p class="lede">Kon kon yeta tem amkam sangat, ami tumchea khatir ek zago dovortole.</p>
+    <sg-ticket id="ticket" event="Mandovi Conclave" event-id="mandovi-conclave" at="2026-11-21T09:30"></sg-ticket>
+    <form class="sg-register-form" action="#" method="post" data-sample="Ho namunno arz kainch dhadina.">
+      <p class="sg-register-field"><label for="reg-name">Nanv</label> <input id="reg-name" name="name" autocomplete="name" required></p>
+      <p class="sg-register-field"><label for="reg-email">E-mel patto</label> <input id="reg-email" name="email" type="email" autocomplete="email" required></p>
+      <sg-consent id="register-consent" role="group" aria-labelledby="register-consent-h">
+      <h3 class="sg-consent-heading" id="register-consent-h">Tumchea topxilanchem ami kitem kortat</h3>
+      <p class="sg-consent-line" data-part="collect">Ami tumchem nanv ani e-mel patto vichartat.</p>
+      <p class="sg-consent-line" data-part="why">Tim ami tumchea zagechi pakkaikee korop ani tikit toxem hya karyokramantle bodol dhadop khatir vapartat, ani her kaxakhatirui na.</p>
+      <p class="sg-consent-line" data-part="howLong">Tim karyokrama uprant 30 disam meren dovortat, magir kadun udoitat.</p>
+      <p class="sg-consent-line" data-part="ask">Amchekden kitem asa tem vicharpak, sudharpak va kadun udovpak, <span class="sg-consent-blank" lang="en">[contact: the site fills in a real address]</span> voir boroyat.</p>
+      <p class="sg-consent-line" data-part="withdraw">Tumi kennai bi tyach pattyar boroyun tumchi sommoti porot ghevn yeta. Porot ghetlea adim jem zalem tem unem zavchem na, ani tumchea khatir ami kitem korun xokta tem bodolta zalear, ami sangtele.</p>
+      <p class="sg-consent-line" data-part="complain"><span class="sg-consent-blank" lang="en">[complaint line: the site fills this in, naming where a visitor can complain if they are not satisfied]</span></p>
+      <div class="sg-consent-tick">
+        <sg-check><label><input type="checkbox" id="register-consent-box" name="consent" value="yes" required> <span class="sg-consent-words">Mhajea topxilancho <span class="sg-consent-blank" lang="en">[site name]</span> hanga sangillea taren vapar korpak mhaji sommoti asa. Hem hanv vachlem.</span></label></sg-check>
+        <sg-field-note for="register-consent-box" validate data-value-missing="Pudem vachpak khuxi asalear, khonn tik korat. Tachevoichina ami tumche topxil vapru xokna."></sg-field-note>
+      </div>
+      </sg-consent>
+      <p><button class="button" type="submit" disabled>Nond korat</button></p>
+      <noscript><p class="sg-register-noscript" lang="en">Registering needs JavaScript. Please turn it on and reload this page.</p></noscript>
+      <p class="sg-register-status" role="status"></p>
+    </form>
+  </section>
   <section class="sg-venue" id="venue" aria-labelledby="venue-h" data-lat="15.4989" data-lng="73.8278" data-name="Mandovi Riverside Hall">
     <h2 id="venue-h">Thol</h2>
     <div class="sg-venue-top">

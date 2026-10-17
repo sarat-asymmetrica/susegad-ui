@@ -10,17 +10,15 @@
 // a register change redraws and keeps the step; a narrow screen turns a
 // rightward diagram downward but keeps a direction its author chose.
 
-import { dropBenignErrors, pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { dropBenignErrors } from '../../../tools/lib/engine.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/folio/diagram/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, check } = h;
 const url = `${server.url}/packages/folio/diagram/demo.html`;
 const open = async (ctxOpts = {}, q = 'register=warm') => {
-  const ctx = await browser.newContext({ viewport: { width: 1000, height: 900 }, ...ctxOpts });
+  const ctx = await h.context({ viewport: { width: 1000, height: 900 }, ...ctxOpts });
   const p = await ctx.newPage();
   p.errors = [];
   p.on('pageerror', e => p.errors.push(String(e)));
@@ -187,8 +185,4 @@ for (const width of [390, 600, 1100]) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

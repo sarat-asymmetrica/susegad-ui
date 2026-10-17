@@ -9,19 +9,16 @@
 // while lit and on screen, and not at all under reduced motion; the drawing is
 // hidden from assistive tech; forced colours bring back the native control.
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/toggle/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, check } = h;
 const demo = `${server.url}/packages/components/toggle/demo.html`;
 const hk = 'input[name="housekeeping"]';
 
 // ── no JavaScript ───────────────────────────────────────────────────────────
 {
-  const ctx = await browser.newContext({ javaScriptEnabled: false, reducedMotion: 'reduce' });
+  const ctx = await h.context({ javaScriptEnabled: false, reducedMotion: 'reduce' });
   const p = await ctx.newPage();
   await p.goto(demo);
   const look = await p.evaluate(s => ({ defined: typeof customElements.get('sg-toggle'), appearance: getComputedStyle(document.querySelector(s)).appearance, radius: getComputedStyle(document.querySelector(s)).borderTopLeftRadius }), hk);
@@ -43,7 +40,7 @@ const hk = 'input[name="housekeeping"]';
 
 // ── with JavaScript, every register ─────────────────────────────────────────
 for (const register of ['quiet', 'warm', 'playful']) {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -94,7 +91,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 
 // ── the flame pauses off screen, and holds still under reduced motion ───────
 {
-  const ctx = await browser.newContext({ viewport: { width: 800, height: 400 } });
+  const ctx = await h.context({ viewport: { width: 800, height: 400 } });
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=playful`);
   await p.waitForFunction(() => window.__ready && [...document.querySelectorAll('sg-toggle')].every(e => e.dataset.skin));
@@ -110,7 +107,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 for (const register of ['warm', 'playful']) {
-  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  const ctx = await h.context({ reducedMotion: 'reduce' });
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=${register}`);
   await p.waitForFunction(() => window.__ready && [...document.querySelectorAll('sg-toggle')].every(e => e.dataset.skin));
@@ -128,7 +125,7 @@ for (const register of ['warm', 'playful']) {
 // with or without it); then the check proves the attribute does no harm, and the haptic itself
 // needs a real iPhone (docs/contributing/touch-contract.md).
 for (const register of ['quiet', 'warm', 'playful']) {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=${register}`);
   await p.waitForFunction(reg => window.__ready && [...document.querySelectorAll('sg-toggle')].every(e => e.dataset.skin || reg === 'quiet'), register);
@@ -151,7 +148,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 
 // ── forced colours ──────────────────────────────────────────────────────────
 for (const register of ['quiet', 'playful']) {
-  const ctx = await browser.newContext({ forcedColors: 'active' });
+  const ctx = await h.context({ forcedColors: 'active' });
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=${register}`);
   await p.waitForFunction(() => window.__ready);
@@ -164,8 +161,4 @@ for (const register of ['quiet', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();
