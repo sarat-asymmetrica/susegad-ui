@@ -6,7 +6,7 @@
 //
 //   node packages/components/person-card/person-card.check.mjs
 
-import { harness, settle } from '../../../tools/lib/component-check.mjs';
+import { harness, settle, tabTo } from '../../../tools/lib/component-check.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const { server, browser, engine, check, open, openHtml, axe, axeNoJs, done } = await harness();
@@ -89,18 +89,19 @@ const read = page => page.evaluate(() => [...document.querySelectorAll('sg-perso
 }
 
 // ── the keyboard ───────────────────────────────────────────────────────
-async function tabTo(page, sel, max = 8) {
-  for (let i = 0; i < max; i++) {
-    await page.keyboard.press('Tab');
-    if (await page.evaluate(s => document.activeElement?.matches(s), sel)) return i + 1;
-  }
-  return 0;
-}
+// tabTo: Tab as far as the engine can press it (tools/lib/tab.mjs; WebKit leaves links out of the tab order)
 for (const register of ['quiet', 'warm', 'playful']) {
   const { ctx, page } = await openHtml(`kbd-${register}`, PAGE(CARD(), { register }));
   const presses = await tabTo(page, 'a.link');
   const ring = await page.evaluate(() => { const s = getComputedStyle(document.activeElement); return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) >= 2; });
   check(`${register}: Tab reaches the link (${presses} presses) and it shows a focus ring`, presses > 0 && ring, `presses ${presses}, ring ${ring}`);
+  await ctx.close();
+}
+{
+  const { ctx, page } = await openHtml('kbd-broken', PAGE(CARD(), { register: 'warm' }));
+  await page.evaluate(() => { document.querySelector('a.link').tabIndex = -1; });
+  const presses = await tabTo(page, 'a.link');
+  check('control: a link taken out of the tab order is not reached by the keyboard probe', presses === 0, `${presses} presses`);
   await ctx.close();
 }
 {

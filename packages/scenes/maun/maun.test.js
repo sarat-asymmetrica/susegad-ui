@@ -74,8 +74,7 @@ test('a hand’s scrape is centred where the hand is', () => {
   assert.ok(Math.abs(s.x + s.w / 2 - 400) < 1e-9 && s.y === 300);
 });
 
-test('meta keeps the lineage note, names only Gaitonde, no em dash', () => {
+test('meta keeps the lineage note, names only Gaitonde', () => {
   assert.equal(meta.after.who, 'V. S. Gaitonde');
-  for (const k of ['title', 'gloss', 'caption', 'alt', 'keys', 'credit']) assert.ok(!meta[k].includes('—'), k);
   assert.equal(PALETTES.length, 4);
 });

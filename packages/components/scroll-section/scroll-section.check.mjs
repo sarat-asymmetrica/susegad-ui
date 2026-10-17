@@ -5,20 +5,17 @@
 //
 //   node packages/components/scroll-section/scroll-section.check.mjs
 
-import { chromium } from 'playwright';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: 'tools/smoke.mjs axes the demo page once, in its default register and theme; the other registers are not axe-checked yet (docs/DEBT.md)' });
+const { server, check } = h;
 const demo = `${server.url}/packages/components/scroll-section/demo.html`;
 
 const progress = p => p.evaluate(() => document.getElementById('section').progress);
 const sceneProgress = p => p.evaluate(() => +document.querySelector('#section sg-scene').getAttribute('progress'));
 
 for (const register of ['quiet', 'warm', 'playful']) {
-  const ctx = await browser.newContext({ viewport: { width: 1000, height: 800 } });
+  const ctx = await h.context({ viewport: { width: 1000, height: 800 } });
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -55,7 +52,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 
 // quiet never gets the parallax attribute
 {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=quiet`);
   await p.waitForFunction(() => window.__ready && document.getElementById('section').dataset.skin);
@@ -75,7 +72,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 
 // reduced motion: the same still path as quiet, in warm
 {
-  const ctx = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 1000, height: 800 } });
+  const ctx = await h.context({ reducedMotion: 'reduce', viewport: { width: 1000, height: 800 } });
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=warm`);
   await p.waitForFunction(() => window.__ready && document.getElementById('section').dataset.skin);
@@ -91,7 +88,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 // view" -- checked by counting sg-scroll-progress events fired during a
 // quiet window well after scrolling past (A4: pause off screen).
 {
-  const ctx = await browser.newContext({ viewport: { width: 1000, height: 800 } });
+  const ctx = await h.context({ viewport: { width: 1000, height: 800 } });
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=warm`);
   await p.waitForFunction(() => window.__ready && document.getElementById('section').dataset.skin);
@@ -116,7 +113,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
     <link rel="stylesheet" href="/packages/tokens/tokens.css"><link rel="stylesheet" href="/packages/components/scroll-section/scroll-section.css"></head>
     <body style="margin:0"><sg-scroll-section><div style="height:1400px"></div><p class="sg-scroll-reveal" id="r" style="margin:0 0 0 1rem">The last paragraph on the page.</p>${tail}</sg-scroll-section></body></html>`;
   for (const [name, tail, want] of [['the last thing on the page', '', 0.99], ['control: with 1400 px of page after it', '<div style="height:1400px"></div>', 0.99]]) {
-    const ctx = await browser.newContext({ viewport: { width: 1000, height: 800 } });
+    const ctx = await h.context({ viewport: { width: 1000, height: 800 } });
     const p = await ctx.newPage();
     await ctx.route('**/__check/reveal.html', r => r.fulfill({ contentType: 'text/html; charset=utf-8', body: html(tail) }));
     await p.goto(`${server.url}/__check/reveal.html`);
@@ -125,13 +122,11 @@ for (const register of ['quiet', 'warm', 'playful']) {
     await p.evaluate(t => { const r = document.getElementById('r'); if (t) window.scrollTo(0, r.offsetTop - 300); else window.scrollTo(0, document.documentElement.scrollHeight); }, tail);
     await p.waitForTimeout(300);
     const op = await p.evaluate(() => +getComputedStyle(document.getElementById('r')).opacity);
-    check(`a .sg-scroll-reveal paragraph, ${name}, ends fully shown (opacity ${want} or more)`, !supported || op >= want, `opacity ${op.toFixed(2)}${supported ? '' : ' (no scroll timelines in this browser: always shown)'}`);
+    // without scroll timelines the paragraph is simply always shown: nothing here could fail, so it is a skip, not a pass
+    if (!supported) h.skip(`a .sg-scroll-reveal paragraph, ${name}, ends fully shown`, 'no scroll timelines in this browser: the paragraph is always shown');
+    else check(`a .sg-scroll-reveal paragraph, ${name}, ends fully shown (opacity ${want} or more)`, op >= want, `opacity ${op.toFixed(2)}`);
     await ctx.close();
   }
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

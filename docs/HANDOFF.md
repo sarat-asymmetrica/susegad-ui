@@ -19,7 +19,7 @@ git clone https://github.com/sarat-asymmetrica/susegad-ui
 node susegad-ui/packages/cli/bin/susegad.mjs create my-site
 ```
 
-If `susegad-ui/packages/templates/event/` is missing from your clone, the clone is older than the command; pull again. When a release after 0.1.0 reaches npm, the same thing will be `npx @susegad/cli create my-site`. (The package is `@susegad/cli`. There is no package called `susegad`, so `npx susegad` does not work.)
+If `susegad-ui/packages/templates/event/` is missing from your clone, the clone is older than the command; pull again. When a release after 0.1.0 reaches npm, the same thing will be `npx @susegad/cli create my-site`. (The package is `@susegad/cli`. There is no package called `susegad`, so asking npx for `susegad` fails.)
 
 It asks "Go ahead?" first when it has a terminal (add `--yes` to skip that), and refuses a folder that is not empty before it writes anything. This is what it prints, abridged:
 

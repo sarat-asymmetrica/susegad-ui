@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en-IN" data-register="quiet">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>No connection right now | Offline page demo</title>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/recipes/offline/recipe.css">
+<script type="module" src="/packages/recipes/offline/retry.js"></script>
+</head>
+<body>
+<main class="sg-offline" id="main">
+  <h1>No connection right now</h1>
+  <p class="sg-offline-lede">We cannot reach the internet from here. Nothing you did caused this, and it often passes on its own.</p>
+  <div class="sg-offline-lists">
+    <section aria-labelledby="off-works">
+      <h2 id="off-works">Still here for you</h2>
+      <ul>
+        <li>The event page, if you have opened it before.</li>
+        <li>Your ticket, if you have opened it before.</li>
+      </ul>
+    </section>
+    <section aria-labelledby="off-not">
+      <h2 id="off-not">Waiting for a connection</h2>
+      <ul>
+        <li>Pages you have not opened yet.</li>
+        <li>Registering, and anything that needs us to answer.</li>
+        <li>Maps, and live updates.</li>
+      </ul>
+    </section>
+  </div>
+  <p class="sg-offline-actions">
+    <button type="button" class="sg-offline-button" data-offline="retry" hidden>Try again</button>
+    <button type="button" class="sg-offline-button sg-offline-plain" data-offline="back" hidden>Back</button>
+  </p>
+</main>
+</body>
+</html>

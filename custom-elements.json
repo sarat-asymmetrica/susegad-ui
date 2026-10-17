@@ -121,6 +121,44 @@
     },
     {
       "kind": "javascript-module",
+      "path": "packages/components/banner/banner.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgBanner",
+          "tagName": "sg-banner",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "until"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-banner-dismiss",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-banner",
+          "declaration": {
+            "name": "SgBanner",
+            "module": "packages/components/banner/banner.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "packages/components/bloom/bloom.js",
       "declarations": [
         {
@@ -408,6 +446,47 @@
           "declaration": {
             "name": "SgConnecting",
             "module": "packages/components/connecting/connecting.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/consent/consent.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgConsent",
+          "tagName": "sg-consent",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "complain"
+            },
+            {
+              "name": "level"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-consent",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-consent",
+          "declaration": {
+            "name": "SgConsent",
+            "module": "packages/components/consent/consent.js"
           }
         }
       ]
@@ -1950,6 +2029,56 @@
           "declaration": {
             "name": "SgTabs",
             "module": "packages/components/tabs/tabs.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "packages/components/ticket/ticket.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "SgTicket",
+          "tagName": "sg-ticket",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "register"
+            },
+            {
+              "name": "event"
+            },
+            {
+              "name": "event-id"
+            },
+            {
+              "name": "at"
+            }
+          ],
+          "events": [
+            {
+              "name": "sg-ticket",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "sg-ticket-forget",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "sg-ticket",
+          "declaration": {
+            "name": "SgTicket",
+            "module": "packages/components/ticket/ticket.js"
           }
         }
       ]

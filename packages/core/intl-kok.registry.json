@@ -1,0 +1,17 @@
+{
+  "name": "core-intl-kok",
+  "type": "package",
+  "stability": "experimental",
+  "title": "Core: Konkani dates and hours",
+  "description": "Days, months and the hours of the day in Konkani, in Devanagari and in Romi, the same in every engine. formatKonkani(at, { locale: 'gom-Deva', time: true }) reads 'शेनवार 21 नोव्हेंबर, सांजे 7:00' and 'gom-Latn' reads 'Sonvar 21 Novembr, sanje 7:00', in IST whatever the visitor's zone. The tag is mapped gom to kok with its script kept, the engine's own words are probed (Chromium has only a root pattern for Devanagari Konkani and WebKit has no gom alias) and a table of ICU's forms answers when the probe fails. The parts of the day (सकाळीं, दनपारां, सांजे, राती) always come from the table. Draft words, for a native reader. Pure; the formatter can be swapped, so tests fake the engine.",
+  "version": "0.1.0",
+  "files": ["intl.kok.js", "intl.kok.docs.md"],
+  "dependencies": ["core-intl", "core-strings"],
+  "docs": "intl.kok.docs.md",
+  "budget": { "jsBytes": 8192, "reason": "A pure core: two small tables (days, months and the four parts of the day, in two scripts; Devanagari costs three bytes a letter) and the probe. 7.6 KB today with comments, so about 7% to spare." },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "The days and months as Goan Konkani says them; words only, nothing drawn."
+  }
+}

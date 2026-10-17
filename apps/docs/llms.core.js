@@ -17,7 +17,8 @@ const TYPE_TITLE = { component: 'Components', recipe: 'Recipes', scene: 'Scenes'
  * @param {(item: object) => { docs?: string, prompt?: string }} readTexts
  *   already-read text for an item's docs/prompt file, keyed by item; called
  *   once per item so the disk (or a fixture) is only touched by the caller.
- * @param {{ summary?: string, siteUrl?: string, machineFiles?: Array<{ href: string, note?: string }> }} [opts]
+ * @param {{ summary?: string, siteUrl?: string, start?: string, machineFiles?: Array<{ href: string, note?: string }> }} [opts]
+ *   `start` is Markdown placed under the summary in both files: how an agent makes a page (apps/docs/words/llms-start.md).
  *   `machineFiles` are files an agent can fetch straight from the site root
  *   (custom-elements.json, registry.json). They go into llms.txt under their
  *   own heading, at the end, so a link-following agent sees them first.
@@ -35,6 +36,8 @@ export function buildLlms(index, readTexts, opts = {}) {
   const noteFor = item => item.description ? item.description.trim().replace(/\s+/g, ' ') : '';
 
   const txtLines = [`# ${index?.name === 'susegad-ui' || !index?.name ? 'Susegad UI' : index.name}`, '', `> ${summary}`, ''];
+  const start = opts.start ? [opts.start.trim(), ''] : [];
+  txtLines.push(...start);
   for (const g of groups) {
     txtLines.push(`## ${g.title}`);
     for (const item of g.items) {
@@ -55,6 +58,7 @@ export function buildLlms(index, readTexts, opts = {}) {
   const txt = txtLines.join('\n').replace(/\n+$/, '\n');
 
   const fullLines = [`# ${index?.name === 'susegad-ui' || !index?.name ? 'Susegad UI' : index.name}`, '', `> ${summary}`, ''];
+  fullLines.push(...start);
   for (const g of groups) {
     fullLines.push(`## ${g.title}`, '');
     for (const item of g.items) {

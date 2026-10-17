@@ -2,7 +2,7 @@
 
 *The standing method for every run. A goal file (`docs/GOAL-*.md`) holds only its ladder: what to build, in what order, and each rung's exit gate. Where `GOAL-OCTOBER.md` §1 and §3 to §6 or `GOAL-OCTOBER-RESUME.md` §2 say otherwise, this file holds.*
 
-**The current goal: none named.** The math pass (`docs/GOAL-MATH-PASS.md`, rungs M1 to M5) closed on 10 October 2026; its run stop, its reviews and its one new red are in `docs/LEDGER.md` (entry dated 10 October 23:55) and `docs/runs/2026-10-10-math-pass-close.md`. The text tier and bake-and-reflow closed before it. The conclave run is parked at `run/conclave` a189ca4 with its backlog; the owner names the next goal and the command center changes this line, and only this line.
+**The current goal: `docs/GOAL-RIGOUR.md`** (rigour as machinery, on `run/rigour`, from the rigour audit of 17 October). Deferred verification lives in `docs/DEBT.md`. `docs/GOAL-GRADUATION.md` is built on `run/graduation` (`a9f380b`); its rigour day runs on this goal's machinery. The Conclave postcard (`docs/GOAL-POSTCARD.md`) was parked on 14 October 2026; its backlog is `docs/requests/2026-10-14-postcard-parked.md`, and its branch `run/postcard` at a9d2aa5. The next goal comes from the owner's brainstorm on showing the library on screens at the event. The math pass, the text tier and bake-and-reflow are closed (`docs/LEDGER.md`). The conclave run is still parked at `run/conclave` a189ca4.
 
 ## 1. Read first, once
 

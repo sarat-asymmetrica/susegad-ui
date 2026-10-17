@@ -9,13 +9,14 @@
 // page follows without a reload; the drawing follows in warm and playful;
 // reduced motion holds it still; forced colours bring back the native control.
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
+import { engineName, pageHas, pickEngine, unsupportedIn } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
 const browser = await pickEngine().launch();
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const hasAudio = await pageHas(browser, "typeof AudioContext === 'function'"); // a count of zero contexts passes for want of an AudioContext, so ask first
 const demo = `${server.url}/packages/components/sound-switch/demo.html`;
 const sw = 'sg-sound-switch input[type="checkbox"]';
 
@@ -34,7 +35,8 @@ const sw = 'sg-sound-switch input[type="checkbox"]';
 }
 
 // ── nothing plays before a gesture, even the first click on the switch itself ──
-{
+if (!hasAudio) unsupportedIn(engineName(), 'the AudioContext count before and after the first click', "this build has no AudioContext, so no context can be made, counted or heard; a count of zero would pass for want of one");
+else {
   const ctx = await browser.newContext();
   const p = await ctx.newPage();
   // count every AudioContext ever constructed, and every resume() call, before the module even loads

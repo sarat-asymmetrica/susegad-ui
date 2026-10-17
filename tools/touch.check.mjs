@@ -139,6 +139,17 @@ async function pressOne(page, n, tag) {
   await page.waitForTimeout(120);
   // hover and focus transitions settle, however slow, so the press is all that changes
   await page.waitForFunction(() => !document.querySelector('[data-touch-host]').getAnimations({ subtree: true }).some(a => a instanceof CSSTransition && a.playState === 'running'), null, { timeout: 2500 }).catch(() => {});
+  // WebKit can come back to a control still "pressed": after an earlier press released away from it, moving the mouse back over
+  // the control finds the whole chain from <html> down matching :active (seen on the good fixture's radio label, the last cell
+  // of a second context). A "before" taken in that state already shows the pressed look, so the press seems to change nothing.
+  // Release the mouse where nothing is, then come back, so the press starts from rest.
+  if (await page.evaluate(() => !!document.querySelector(':active'))) {
+    await page.mouse.move(0, 0); await page.mouse.down(); await page.mouse.up();
+    await page.mouse.move(x, y);
+    await page.waitForTimeout(120);
+    await page.waitForFunction(() => !document.querySelector('[data-touch-host]').getAnimations({ subtree: true }).some(a => a instanceof CSSTransition && a.playState === 'running'), null, { timeout: 2500 }).catch(() => {});
+    say('released a stale :active before pressing', n);
+  }
   const before = await page.evaluate(snapshot, { props: WATCHED });
   return { before, x, y };
 }

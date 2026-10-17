@@ -92,9 +92,28 @@ check('axe without JavaScript: 0 violations', !(await axeNoJs(DEMO)).length);
   await page.keyboard.press('Tab');
   const onRange = await page.evaluate(() => document.activeElement.type === 'range' && document.activeElement.closest('sg-voice-note') === document.querySelector('[data-register="quiet"] sg-voice-note'));
   for (let i = 0; i < 20; i++) await page.keyboard.press('ArrowRight');
+  // the seeks land when the engine gets to them (WebKit: a second or so, and not in order); wait for the audio to arrive, not for a guess
+  await page.waitForFunction(() => { const a = document.querySelector('[data-register="quiet"] audio'); return !a.seeking && a.currentTime > 0.3; }, null, { timeout: 4000 }).catch(() => {});
   await page.waitForTimeout(200);
   const r = await page.evaluate(() => { const n = document.querySelector('[data-register="quiet"] sg-voice-note'); return { t: +n.querySelector('audio').currentTime.toFixed(2), text: n.querySelector('input').getAttribute('aria-valuetext'), ring: getComputedStyle(n.querySelector('.sg-voice-wave')).outlineStyle }; });
   check('keyboard: Space plays and pauses; Tab reaches the waveform; arrows seek and it says where', playing && onRange && r.t > 0.3 && /^0:0\d of 0:3\d$/.test(r.text) && r.ring === 'solid', JSON.stringify({ playing, onRange, ...r }));
+  await ctx.close();
+}
+
+// ── a seek while it plays: the note carries on from there, it is not pulled back ──
+{
+  const { ctx, page } = await open(DEMO);
+  await page.focus('[data-register="quiet"] .sg-voice-play');
+  await page.keyboard.press('Space');
+  await page.waitForFunction(() => document.querySelector('[data-register="quiet"] audio').currentTime > 0.5, null, { timeout: 8000 }).catch(() => {});
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('ArrowRight');
+  const at = async () => page.evaluate(() => { const a = document.querySelector('[data-register="quiet"] audio'); return { t: a.currentTime, paused: a.paused }; });
+  await page.waitForTimeout(350);
+  const early = await at();
+  await page.waitForTimeout(500); // past the 400 ms moment when the component says again where the person meant to be
+  const late = await at();
+  check('keyboard: a seek while it plays carries on from there; the note is not pulled back', !late.paused && late.t >= early.t + 0.2, `${early.t.toFixed(2)} s then ${late.t.toFixed(2)} s`);
   await ctx.close();
 }
 

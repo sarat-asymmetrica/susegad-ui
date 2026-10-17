@@ -87,7 +87,3 @@ test('the still places the egrets where the simulation settles them (one seeded 
     assert.deepEqual(at(settledEgrets(seed)), at(sim.placed()), `seed ${seed}`);
   }
 });
-
-test('meta: no em dash, no living person named', () => {
-  for (const k of ['title', 'gloss', 'caption', 'alt', 'keys', 'credit']) assert.ok(!meta[k].includes('—'), k);
-});

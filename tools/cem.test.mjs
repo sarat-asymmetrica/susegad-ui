@@ -1,9 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { buildManifest, serialise } from './cem.mjs';
+import { definedTags, missingTags } from './cem-coverage.mjs';
 
 /** A throwaway repo with a registry index and one component. */
 function fixture(t, { withCore = true } = {}) {
@@ -70,15 +71,6 @@ test('serialise is deterministic and newline-terminated', t => {
   assert.ok(a.endsWith('}\n'));
 });
 
-// This is the check that must fail first: a stale custom-elements.json (a
-// hand-edit, or source that moved on since it was last generated) is caught.
-test('--check fails on a stale file, in the real repo', () => {
-  const here = new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
-  const real = buildManifest({ root: join(here, '..') });
-  const onDisk = readFileSync(join(here, '..', 'custom-elements.json'), 'utf8').replace(/\r\n/g, '\n');
-  assert.equal(serialise(real), onDisk, 'custom-elements.json is stale: run node tools/cem.mjs');
-});
-
 // A define outside core/index.js was invisible to the manifest (sg-lazy, in core/lazy.js, was missing while --check said
 // "up to date"). Red first: this fixture is the sg-lazy shape, a package item whose own file defines its element.
 test('an element a package defines in its own file (not core/index.js) is in the manifest', t => {
@@ -103,23 +95,14 @@ test('an element a package defines in its own file (not core/index.js) is in the
   assert.equal(lazy.path, 'packages/core/lazy.js');
 });
 
-// And in the real repo: every tag the packages define is in the manifest, wherever it is defined.
-test('every custom element defined under packages/ is in custom-elements.json', () => {
-  const here = join(new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'), '..');
-  const listed = new Set(buildManifest({ root: here }).modules.flatMap(m => m.declarations.map(d => d.tagName)));
-  const found = new Map();
-  const walk = dir => {
-    for (const e of readdirSync(dir, { withFileTypes: true })) {
-      if (e.name === 'node_modules' || e.name === 'fixtures' || e.name.startsWith('.')) continue;
-      const p = join(dir, e.name);
-      if (e.isDirectory()) walk(p);
-      else if (/\.m?js$/.test(e.name) && !/\.(test|check)\.m?js$/.test(e.name)) {
-        const src = readFileSync(p, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
-        for (const m of src.matchAll(/(?:customElements\.define|defineComponent)\(\s*['"](sg-[a-z0-9-]+)['"]/g)) found.set(m[1], p);
-      }
-    }
-  };
-  walk(join(here, 'packages'));
-  const missing = [...found].filter(([tag]) => !listed.has(tag)).map(([tag, p]) => `${tag} (${p.replace(here, '')})`);
-  assert.deepEqual(missing, [], 'defined but not in custom-elements.json');
+// The whole-repo cases (a stale custom-elements.json, every tag defined under packages/ listed) run once in
+// tools/repo-check.mjs, through `cem.mjs --check` and tools/cem-coverage.mjs, not here. The coverage helper on a fixture:
+test('a tag defined in a file the manifest builder does not read is reported missing', t => {
+  const root = fixture(t);
+  mkdirSync(join(root, 'packages/core'), { recursive: true });
+  writeFileSync(join(root, 'packages/core/hidden.js'), "customElements.define('sg-hidden', class extends HTMLElement {});\n");
+  const missing = missingTags(root).map(m => m.split(' ')[0]);
+  assert.ok(missing.includes('sg-hidden'), 'the hidden define is reported');
+  assert.ok(!missing.includes('sg-widget'), 'a listed element is not');
+  assert.deepEqual(definedTags(root).has('sg-widget'), true);
 });

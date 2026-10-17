@@ -79,7 +79,8 @@ async function axe(page) {
 
 try {
   // ── 1. the home page is short, on a desk and in a hand ──────────────
-  for (const [width, height, max] of [[1440, 900, 4], [390, 844, 8]]) {
+  // the doors are pictures now (two across on a desk, one by one on a phone), so a screen or two more than when they were thumbnails
+  for (const [width, height, max] of [[1440, 900, 5], [390, 844, 12]]) {
     const { context, page, errors, status } = await open('/', { width, height });
     const screens = await scrollAll(page, height);
     const live = await liveCount(page);
@@ -214,7 +215,7 @@ try {
       else if (e.name.endsWith('.html')) htmlFiles.push(p);
     }
   })(OUT);
-  const mdLinks = htmlFiles.flatMap(f => [...fs.readFileSync(f, 'utf8').matchAll(/href="([^"]+\.md)"/g)].map(m => `${path.relative(OUT, f)} -> ${m[1]}`));
+  const mdLinks = htmlFiles.flatMap(f => [...fs.readFileSync(f, 'utf8').matchAll(/href="(?!https?:)([^"]+\.md)"/g)].map(m => `${path.relative(OUT, f)} -> ${m[1]}`));
   check('no site page links to a raw .md file', mdLinks.length === 0, mdLinks.slice(0, 4).join(', '));
 
   // ── 5. old links still land ─────────────────────────────────────────

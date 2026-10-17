@@ -61,7 +61,7 @@ const run = (label, cmd, args) => {
   const t0 = Date.now();
   const r = spawnSync(process.execPath, [cmd, ...args], { cwd: REPO, encoding: 'utf8', timeout: 600000, env: { ...process.env } });
   const out = (r.stdout || '') + (r.stderr || '');
-  console.log(`${r.status === 0 ? 'ok  ' : 'FAIL'}  ${label}  (${((Date.now() - t0) / 1000).toFixed(1)}s)`);
+  console.log(`${r.status === 0 ? 'ok  ' : r.status === 3 && cmd.endsWith('perf.mjs') ? 'skip' : 'FAIL'}  ${label}  (${((Date.now() - t0) / 1000).toFixed(1)}s)`);
   return { label, cmd, args, status: r.status, out, seconds: (Date.now() - t0) / 1000 };
 };
 
@@ -140,7 +140,8 @@ for (const name of items) {
   // 5. perf, against Paus, with the CPU busy
   if (target) {
     const pf = run(`perf ${slug}`, 'tools/perf.mjs', [...target.split(' '), '--json']);
-    pack.perf = { seconds: pf.seconds, status: pf.status };
+    // exit 3 is "not measured: the machine is busy": neither a pass nor a fail, so it is not a bad status
+    pack.perf = { seconds: pf.seconds, status: pf.status === 3 ? 0 : pf.status, notMeasured: pf.status === 3 };
     try {
       const j = JSON.parse(pf.out.slice(pf.out.indexOf('{'), pf.out.lastIndexOf('}') + 1));
       pack.perf.result = j;
@@ -222,10 +223,12 @@ async function contentShots({ slug, dir }) {
 async function tileSheet({ slug, dir, cells }) {
   const { session, shoot } = await import('./lib/browser.mjs');
   const s = await session();
+  let png;
+  try {
   const work = await s.browser.newContext();
   const wp = await work.newPage();
   await wp.goto(`${s.base}/tools/harness/blank.html`);
-  const png = await wp.evaluate(async ({ cells, title, dir }) => {
+  png = await wp.evaluate(async ({ cells, title, dir }) => {
     const COLS = 5, BOX = { w: 380, h: 280 }, GAP = 12, LABEL = 34, HEAD = 30;
     const rows = Math.ceil(cells.length / COLS);
     const W = GAP + COLS * (BOX.w + GAP) + GAP, H = HEAD + rows * (BOX.h + LABEL + GAP) + GAP;
@@ -265,6 +268,7 @@ async function tileSheet({ slug, dir, cells }) {
     }
   }, { cells: cells.map(c => ({ ...c, pngB64: fs.existsSync(path.join(REPO, dir, 'matrix', c.shot)) ? fs.readFileSync(path.join(REPO, dir, 'matrix', c.shot)).toString('base64') : null })), title: `${slug}   the full matrix, one picture   ${new Date().toISOString().slice(0, 10)}`, dir });
   await work.close();
+  } finally { await s.done(); } // give the browser slot back: the pack runs axe and other checks after this, and they need it
   const sheet = path.join(REPO, dir, `${slug}-sheet.png`);
   fs.writeFileSync(sheet, Buffer.from(png, 'base64'));
   console.log(`ok   sheet ${path.relative(REPO, sheet).replaceAll('\\', '/')}`);
@@ -291,11 +295,14 @@ function writePackMd(pack) {
     const v = pack.axe.runs.filter(r => r.violations), hand = pack.axe.runs.filter(r => r.incomplete && !r.violations);
     L.push(`- Axe: ${pack.axe.runs.length} register/theme runs${v.length ? `, violations in ${v.length}: ${v.map(r => `${r.register}/${r.theme} ${r.ids.join('+')}`).join('; ')}` : ', no violations'}${hand.length ? `; ${hand.length} with items to check by hand (axe incomplete)` : ''}`);
   }
-  if (pack.perf?.result) {
+  if (pack.perf?.notMeasured) {
+    L.push(`- Perf (advisory): ${pack.perf.result?.reason ?? 'not measured: the machine is busy'}. Run \`node tools/perf.mjs\` again when it is quiet.`);
+  } else if (pack.perf?.result) {
     const r = pack.perf.result;
-    const ratio = r.ratio?.mean?.ratio != null ? `${r.ratio.mean.ratio.toFixed(2)}x mean (${r.ratio.mean.within ? 'within' : 'OVER'} budget), p95 ${r.ratio.p95?.ratio}` : 'see perf.json';
+    const v = r.verdict;
+    const ratio = v ? `${v.mean.toFixed(2)}x mean, 95% interval ${v.lo.toFixed(2)} to ${v.hi.toFixed(2)} over ${v.rounds} rounds: ${v.verdict.toUpperCase()}${v.note ? ` (${v.note})` : ''} (budget ${v.budget.toFixed(2)}x)` : (r.ratio?.mean?.ratio != null ? `${r.ratio.mean.ratio.toFixed(2)}x mean` : 'see perf.json');
     const busy = r.machine?.busyPercent != null ? `, CPU busy ${r.machine.busyPercent}%` : '';
-    L.push(`- Perf: ratio to Paus ${ratio}${busy}, ${r.environment ?? ''}`);
+    L.push(`- Perf (advisory, headless and CPU-rendered; read the interval, not the mean): ratio to Paus ${ratio}${busy}${v?.stamp ? ', under load' : ''}, ${r.environment ?? ''}`);
   }
   if (pack.tests) L.push(`- Tests: ${pack.tests.status === 0 ? 'pass' : pack.tests.status == null ? 'none' : 'FAIL'} (${pack.tests.tail?.slice(-1)[0] ?? ''})`);
   for (const n of pack.notes) L.push(`- Note: ${n}`);

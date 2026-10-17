@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<script src="/tools/harness/demo.js"></script>
+<link rel="stylesheet" href="/packages/tokens/fonts.css">
+<link rel="stylesheet" href="/packages/tokens/tokens.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consent notice</title>
+<link rel="stylesheet" href="./consent.css">
+<link rel="stylesheet" href="../check/check.css">
+<link rel="stylesheet" href="../field-note/field-note.css">
+<style>
+  body { margin: 0; background: var(--sg-surface); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+  main { max-width: 64rem; margin: 0 auto; padding: var(--sg-space-5) 16px var(--sg-space-6); }
+  h1 { font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); margin: 0 0 var(--sg-space-2); }
+  h2 { font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); color: var(--sg-text-soft); margin: var(--sg-space-5) 0 var(--sg-space-3); }
+  .lede, .note { margin: 0; max-width: var(--sg-measure); color: var(--sg-text-soft); }
+  .note { font-size: var(--sg-step--1); margin-bottom: var(--sg-space-3); }
+  .stack { display: grid; gap: var(--sg-space-4); }
+  .stack > * { min-width: 0; }
+  form { display: grid; gap: var(--sg-space-3); max-width: var(--sg-measure); }
+  form > *, .field > * { min-width: 0; }
+  .field { display: grid; gap: var(--sg-space-1); }
+  label.t { font-weight: 500; }
+  input:not([type="checkbox"]) { font: 400 1rem/1.4 var(--sg-font-body); color: var(--sg-text); background: var(--sg-surface-raised); border: var(--sg-hairline) solid var(--sg-rule-strong); border-radius: var(--sg-radius-2); padding: 0.55em 0.7em; inline-size: 100%; box-sizing: border-box; max-inline-size: 22rem; }
+  input:focus-visible, button:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+  button.send { justify-self: start; min-height: 2.75rem; font: 500 1rem/1 var(--sg-font-body); color: var(--sg-on-accent); background: var(--sg-accent); border: 0; border-radius: var(--sg-radius-pill); padding: 0 1.4em; cursor: pointer; }
+  #status { min-height: 1.5em; margin: 0; color: var(--sg-text-soft); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Consent notice</h1>
+  <p class="note"><strong>Not yet reviewed by a lawyer.</strong> Use this notice as a draft to take to someone who knows India's DPDP Act, not on a live form as it stands.</p>
+  <p class="lede">The plain notice a form shows before it keeps someone's details: what is collected, why, for how long, whom to ask, how to withdraw, and a box that is never ticked for the visitor. A starting point, not legal advice: have it read before a site goes live. The words are made up for made-up places, and a value the site has not filled in shows as a [placeholder] on purpose.</p>
+
+  <h2>In a form</h2>
+  <p class="note">The notice in this form is plain HTML, written ahead of time, so it reads with no script. Press Send without ticking the box and the note says what is missing. Nothing leaves this page.</p>
+  <form id="enquiry" action="#">
+    <div class="field">
+      <label class="t" for="name">Your name</label>
+      <input id="name" name="name" autocomplete="name" value="Maria Fernandes">
+    </div>
+    <div class="field">
+      <label class="t" for="email">Your email address</label>
+      <input id="email" name="email" type="email" autocomplete="email" value="maria@example.in">
+    </div>
+    <!-- written ahead of time with renderConsent() (consent.check.mjs keeps this in step with it), so it reads with no script -->
+    <sg-consent id="form-notice" role="group" aria-labelledby="form-notice-h">
+    <h3 class="sg-consent-heading" id="form-notice-h">What we do with your details</h3>
+    <p class="sg-consent-line" data-part="collect">We ask for your name and your email address.</p>
+    <p class="sg-consent-line" data-part="why">We use them to reserve your seat and tell you if the time changes, and for nothing else.</p>
+    <p class="sg-consent-line" data-part="howLong">We keep them until 30 days after the show, then we delete them.</p>
+    <p class="sg-consent-line" data-part="ask">To ask what we hold, to correct it, or to have it deleted, write to seats@tiatr.example.</p>
+    <p class="sg-consent-line" data-part="withdraw">You can take back your consent at any time by writing to the same address. Taking it back will not undo anything we did before you wrote, and we will tell you if it changes what we can do for you.</p>
+    <p class="sg-consent-line" data-part="complain">If you are not satisfied with our answer, tell the Sample Tiatr Night committee at the same address.</p>
+    <div class="sg-consent-tick">
+      <sg-check><label><input type="checkbox" id="form-notice-box" name="consent" value="yes" required> <span class="sg-consent-words">I have read this, and I agree that Sample Tiatr Night may use my details in this way.</span></label></sg-check>
+      <sg-field-note for="form-notice-box" validate data-value-missing="Please tick the box if you are happy to go on. We cannot use your details without it."></sg-field-note>
+    </div>
+    </sg-consent>
+    <button class="send" type="submit">Send</button>
+    <p id="status" role="status"></p>
+  </form>
+
+  <h2>Three sample sites</h2>
+  <p class="note">The conclave from the event template (its contact, site name and complaint line are left for the site), a parish feast and a tiatr night. A site brings its own words.</p>
+  <div class="stack">
+    <sg-consent id="n-event" fields="your name and your email address" purpose="confirm your place and send you the ticket and any change to this event" period="30 days after the event"></sg-consent>
+    <sg-consent id="n-feast" site="the Santa Cruz chapel committee" fields="your name and your phone number" purpose="reserve your seat and tell you if the time changes" period="a week after the feast"
+      contact="feast@chapel.example" complain="If you are not satisfied with our answer, tell the chapel committee at the same address."></sg-consent>
+    <sg-consent id="n-tiatr" site="Sample Tiatr Night" fields="your name and your phone number" purpose="reserve your seat and tell you if the time changes" period="a week after the show"
+      contact="seats@tiatr.example" complain="If you are not satisfied with our answer, tell the Sample Tiatr Night committee at the same address."></sg-consent>
+  </div>
+
+  <h2>In Konkani</h2>
+  <p class="note">Draft Konkani, for a native reader. The values are the site's own words, so a page in Konkani gives them in Konkani; here they are left as placeholders.</p>
+  <div class="stack">
+    <div lang="gom-Deva"><sg-consent id="n-deva"></sg-consent></div>
+    <div lang="gom-Latn"><sg-consent id="n-latn"></sg-consent></div>
+  </div>
+
+  <h2>The three registers, side by side</h2>
+  <div class="stack">
+    <section data-register="quiet" aria-label="Quiet"><sg-consent id="r-quiet" site="Sample Tiatr Night" fields="your name and your email address" purpose="reserve your seat" period="30 days after the show" contact="seats@tiatr.example" complain="Tell the committee at the same address."></sg-consent></section>
+    <section data-register="warm" aria-label="Warm"><sg-consent id="r-warm" site="Sample Tiatr Night" fields="your name and your email address" purpose="reserve your seat" period="30 days after the show" contact="seats@tiatr.example" complain="Tell the committee at the same address."></sg-consent></section>
+    <section data-register="playful" aria-label="Playful"><sg-consent id="r-playful" site="Sample Tiatr Night" fields="your name and your email address" purpose="reserve your seat" period="30 days after the show" contact="seats@tiatr.example" complain="Tell the committee at the same address."></sg-consent></section>
+  </div>
+</main>
+
+<script type="module">
+  import './consent.js';
+  await customElements.whenDefined('sg-consent');
+  const form = document.getElementById('enquiry'), status = document.getElementById('status');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    status.textContent = `Sent to nobody: a demo. Consent: ${new FormData(form).get('consent')}.`;
+  });
+  window.__demoReady?.();
+</script>
+</body>
+</html>

@@ -5,21 +5,18 @@
 //
 //   node packages/transitions/kantar/kantar.check.mjs      (or: npm run check)
 
-import { chromium } from 'playwright';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 import { singerSilhouette, singerHead, singerBun } from './kantar.core.js';
 
-const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: 'tools/smoke.mjs axes the demo page once, in its default register and theme; the other registers are not axe-checked yet (docs/DEBT.md)' });
+const { server, check } = h;
 const demo = `${server.url}/packages/transitions/kantar/demo.html`;
 
 const curtain = p => p.evaluate(() => +getComputedStyle(document.querySelector('.sg-kantar')).getPropertyValue('--sg-kantar-curtain'));
 
 // ── warm: the named phases across a run ─────────────────────────────────────
 {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -66,7 +63,7 @@ const curtain = p => p.evaluate(() => +getComputedStyle(document.querySelector('
 // against the box the line must clear, not just "it looks fine at one
 // instant". ──────────────────────────────────────────────────────────────
 for (const [width, tag] of [[900, 'desktop'], [390, 'phone']]) {
-  const ctx = await browser.newContext({ viewport: { width, height: 500 } });
+  const ctx = await h.context({ viewport: { width, height: 500 } });
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=playful`);
   await p.waitForFunction(() => window.__ready);
@@ -100,7 +97,7 @@ for (const [width, tag] of [[900, 'desktop'], [390, 'phone']]) {
 // being focused stays at or under 300ms, for real (not instant, not
 // pathologically slow) work ────────────────────────────────────────────────
 {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=warm`);
   await p.waitForFunction(() => window.__ready);
@@ -119,7 +116,7 @@ for (const [width, tag] of [[900, 'desktop'], [390, 'phone']]) {
 
 // ── the skip control ─────────────────────────────────────────────────────
 {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=warm`);
   await p.waitForFunction(() => window.__ready);
@@ -138,7 +135,7 @@ for (const [width, tag] of [[900, 'desktop'], [390, 'phone']]) {
 
 // ── instant work still gets one readable beat, never a flash ───────────────
 {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=warm`);
   await p.waitForFunction(() => window.__ready);
@@ -157,7 +154,7 @@ for (const [width, tag] of [[900, 'desktop'], [390, 'phone']]) {
 
 // ── quiet: a plain status line, no curtain theatre ──────────────────────────
 {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=quiet`);
   await p.waitForFunction(() => window.__ready);
@@ -171,7 +168,7 @@ for (const [width, tag] of [[900, 'desktop'], [390, 'phone']]) {
 
 // ── reduced motion: the same plain fallback ─────────────────────────────────
 {
-  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  const ctx = await h.context({ reducedMotion: 'reduce' });
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=warm`);
   await p.waitForFunction(() => window.__ready);
@@ -181,8 +178,4 @@ for (const [width, tag] of [[900, 'desktop'], [390, 'phone']]) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

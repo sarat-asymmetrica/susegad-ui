@@ -3,18 +3,15 @@
 //
 //   node packages/transitions/page.check.mjs      (or: npm run check)
 
-import { chromium } from 'playwright';
-import { startServer } from '../../tools/serve.mjs';
+import { harness } from '../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: 'tools/smoke.mjs axes the demo page once, in its default register and theme; the other registers are not axe-checked yet (docs/DEBT.md)' });
+const { server, check } = h;
 const a = `${server.url}/packages/transitions/demo/a.html`;
 
 // ── cross-document navigation, plain (no reduced motion) ────────────────────
 {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -47,7 +44,7 @@ const a = `${server.url}/packages/transitions/demo/a.html`;
 
 // ── reduced motion: the navigation still lands, with nothing left animating ─
 {
-  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  const ctx = await h.context({ reducedMotion: 'reduce' });
   const p = await ctx.newPage();
   await p.goto(a);
   await Promise.all([p.waitForURL(/b\.html/), p.click('#to-b')]);
@@ -61,7 +58,7 @@ const a = `${server.url}/packages/transitions/demo/a.html`;
 
 // ── the same-document helper's guards, in a real page (not just Node) ──────
 {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   await p.goto(a);
   const out = await p.evaluate(async () => {
@@ -80,8 +77,4 @@ const a = `${server.url}/packages/transitions/demo/a.html`;
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

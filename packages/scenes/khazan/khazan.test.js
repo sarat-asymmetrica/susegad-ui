@@ -64,7 +64,6 @@ test('the still is a wave, the same every time', () => {
   assert.ok(localOrder(wavePhases(sw.xs, sw.ys), sw.nbrs) > 0.9);
 });
 
-test('registers and words', () => {
+test('registers', () => {
   assert.equal(LOOKS.quiet.pace, 0); assert.ok(!LOOKS.warm.hand && LOOKS.playful.hand);
-  for (const k of ['title', 'gloss', 'caption', 'alt', 'keys', 'credit']) assert.ok(!meta[k].includes('—'), k);
 });

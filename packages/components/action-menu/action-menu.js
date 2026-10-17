@@ -18,10 +18,10 @@
 //
 // The list is placed by CSS anchor positioning and staggered by CSS
 // (sibling-index()); this file does both by hand only in a browser that
-// lacks them. Attributes: register.
+// lacks them. Either way the open list is slid back inside the visual viewport (#fit). Attributes: register.
 
 import { SgElement, defineComponent } from '../../core/component.js';
-import { wrap, typeaheadIndex, placement } from './action-menu.core.js';
+import { wrap, typeaheadIndex, placement, visibleBox, fitShift } from './action-menu.core.js';
 import { talaDelay } from '../../tokens/tokens.js';
 
 let uid = 0, anchorUid = 0;
@@ -65,6 +65,8 @@ export class SgActionMenu extends SgElement {
     this.#refreshItems();
 
     const on = (el, type, fn, opts) => { el.addEventListener(type, fn, opts); this.#off.push(() => el.removeEventListener(type, fn, opts)); };
+    // beforetoggle runs inside showPopover(), before the list's first painted frame: fit then, not a task later on 'toggle'
+    on(menu, 'beforetoggle', e => { if (e.newState === 'open') requestAnimationFrame(() => { this.#place(); this.#fit(); }); });
     on(menu, 'toggle', e => this.#onToggle(e));
     on(this.#trigger, 'keydown', e => this.#onTriggerKey(e));
     on(menu, 'keydown', e => this.#onMenuKey(e));
@@ -74,11 +76,11 @@ export class SgActionMenu extends SgElement {
       const i = item ? this.#items.indexOf(item) : -1;
       if (i >= 0 && i !== this.#active) this.#move(i);
     });
-    if (!anchors) {
-      const onReflow = () => this.#place();
-      on(window, 'resize', onReflow);
-      on(window, 'scroll', onReflow, { capture: true, passive: true });
-    }
+    // the visible box changes under an open list (pinch zoom, the URL bar, rotation): place and fit it again
+    const onView = () => { this.#place(); this.#fit(); };
+    on(window, 'resize', onView);
+    if (window.visualViewport) for (const type of ['resize', 'scroll']) on(window.visualViewport, type, onView);
+    if (!anchors) on(window, 'scroll', onView, { capture: true, passive: true });
   }
 
   disconnected() {
@@ -102,9 +104,11 @@ export class SgActionMenu extends SgElement {
       // the stylesheet staggers with sibling-index(); talaDelay() is the same beats, for a browser without it
       if (!cssStagger) this.#items.forEach((it, i) => it.style.setProperty('--sg-item-delay', `${talaDelay(i)}ms`));
       this.#place();
+      this.#fit();
       if (this.#pendingFocus === 'last') this.#move(this.#items.length - 1); else this.#move(0);
       this.#pendingFocus = 'first';
     } else {
+      this.native.style.removeProperty('--sg-fit-x');
       this.#items.forEach(it => { it.tabIndex = -1; });
       this.#active = -1;
     }
@@ -115,16 +119,27 @@ export class SgActionMenu extends SgElement {
    * trigger, or above near the bottom of the page, measured (a bare
    * `position: fixed` with no offsets falls back to its flow position). */
   #place() {
-    if (anchors || !this.#open || !this.#trigger) return;
+    if (anchors || !this.native.matches(':popover-open') || !this.#trigger) return;
     const t = this.#trigger.getBoundingClientRect();
     const panel = { width: this.native.offsetWidth, height: this.native.offsetHeight };
-    const viewport = { width: window.innerWidth, height: window.innerHeight };
+    const viewport = visibleBox(window);
     const { left, above } = placement(t, panel, viewport);
     const s = this.native.style;
     s.margin = '0';
-    s.left = `${left}px`;
-    if (above) { s.top = 'auto'; s.bottom = `${viewport.height - t.top + 6}px`; }
-    else { s.bottom = 'auto'; s.top = `${t.bottom + 6}px`; }
+    s.left = `${left}px`; s.bottom = 'auto';
+    // from the top edge, never from the bottom: the bottom is measured against innerHeight, which a phone widens
+    s.top = `${above ? t.top - 6 - this.native.offsetHeight : t.bottom + 6}px`;
+  }
+
+  /** Both paths, last: slide the placed list back inside what a person can see. The anchored path is placed against
+   * the layout viewport, which mobile Chromium widens to fit overflow, so on a phone it can sit past the screen.
+   * The slide is a custom property (action-menu.css turns it into a translateX), measured from the unslid box. */
+  #fit() {
+    const menu = this.native;
+    menu.style.removeProperty('--sg-fit-x');
+    if (!this.native.matches(':popover-open')) return;
+    const dx = fitShift(menu.getBoundingClientRect(), visibleBox(window));
+    if (dx) menu.style.setProperty('--sg-fit-x', `${Math.round(dx * 100) / 100}px`);
   }
 
   #move(i) {

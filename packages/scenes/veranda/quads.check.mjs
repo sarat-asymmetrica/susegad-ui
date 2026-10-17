@@ -34,24 +34,22 @@
 // --break: quads left on when they are not painting (3), blank textures (2), a dropped line (1), measuring in quiet (4), a quad painter
 // that draws every texture again every frame (6).
 
-import { chromium } from 'playwright';
 import os from 'node:os';
-import { startServer } from '../../../tools/serve.mjs';
-import { engineName, pickEngine } from '../../../tools/lib/engine.mjs';
-import { gpuOf, skipLine } from '../../../tools/lib/gpu.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { skipLine } from '../../../tools/lib/gpu.mjs';
 
 const BREAK = process.argv.includes('--break');
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); if (!ok) console.log('      what was measured is in the brackets; the numbered note at the top of this file says what the check protects'); };
-const server = await startServer({ quiet: true });
-const ENGINE = engineName(), CHROMIUM = ENGINE === 'chromium';
-const browser = await pickEngine().launch(CHROMIUM ? { args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] } : {});
+const GPU_FLAGS = ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist']; // Chromium's; the harness gives other engines none
+const h = await harness({ args: GPU_FLAGS, axe: 'not axe-checked anywhere yet: this page is not in tools/smoke.mjs (docs/DEBT.md); this check asks about drawing and layout' });
+const { server, browser, results } = h;
+const check = (name, ok, detail = '') => { h.check(name, ok, detail); if (!ok) console.log('      what was measured is in the brackets; the numbered note at the top of this file says what the check protects'); };
+const ENGINE = h.engine, CHROMIUM = ENGINE === 'chromium';
 // The live clauses need Chromium's WebGL readback AND a renderer the library will draw live on: a software one (a CI runner, or
 // SG_FORCE_SOFTWARE_GL=1) gets the 2D tier, so they skip with the no-GPU line (tools/lib/gpu.mjs). Another engine skips as it always did.
-const gate = await gpuOf(browser);
+const gate = await h.gpu();
 const LIVE = CHROMIUM && !gate.gpu.software;
 const skip = name => {
-  if (!CHROMIUM) return console.log(`skip  ${name}  (needs the live WebGL readback: Chromium only; this run is ${ENGINE})`);
+  if (!CHROMIUM) return h.skip(name, 'needs the live WebGL readback: Chromium only');
   gate.skipped.push(name); console.log(skipLine(name, gate.gpu));
 };
 const TYPE_TIER = /\/type\/(index|measure|operators|layout\.[a-z]+)\.js|\/type\/vendor\/pretext\.js/;
@@ -75,7 +73,7 @@ const BREAKS = {
   noQuads: [/matka-view\.js$/, s => s.replace(/quads = live3\.createTextQuads\([^\n]*\);/, 'quads = null;')], // the perf baseline: the same page with no quads (not a break)
 };
 async function open({ browser: b = browser, query = 'register=warm', reduced = false, forced = false, noGL = false, js = true, block = null, scheme = 'light', width = 1280, height = 900, dpr = 1, patches = [], baseline = [], delayFonts = 0, fontPct = 0, init = null } = {}) {
-  const context = await b.newContext({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference', forcedColors: forced ? 'active' : 'none', colorScheme: scheme, deviceScaleFactor: dpr, javaScriptEnabled: js });
+  const context = await h.context({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference', forcedColors: forced ? 'active' : 'none', colorScheme: scheme, deviceScaleFactor: dpr, javaScriptEnabled: js }, b);
   const requests = [], errors = [];
   context.on('request', r => requests.push(r.url()));
   if (noGL) await context.addInitScript("const g = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function (t, ...a) { return /webgl/.test(t) ? null : g.call(this, t, ...a); };");
@@ -259,7 +257,7 @@ if (!LIVE) skip('selecting a line shows'); else {
   }
   // the words are on the page, as written and visible, at every moment while the delayed faces load
   {
-    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const context = await h.context({ viewport: { width: 1280, height: 900 } });
     await context.route(u => /\.woff2$/.test(u.pathname), async r => { await new Promise(res => setTimeout(res, 2500)); r.continue(); });
     for (const key of BREAK ? ['clearEarly'] : []) { const [re, fn] = BREAKS[key]; await context.route(u => re.test(u.pathname), async r => { const res = await r.fetch(); r.fulfill({ response: res, body: fn(await res.text()) }); }); }
     const page = await context.newPage(), samples = [];
@@ -374,7 +372,7 @@ if (!LIVE) skip('no leak, no wasted pot: after 30 stack and unstack cycles the s
 if (!LIVE) skip('no frame stalls'); else {
   const cpu = () => os.cpus().reduce((a, c) => { for (const k in c.times) a[k === 'idle' ? 'idle' : 'busy'] += c.times[k]; return a; }, { idle: 0, busy: 0 });
   // uncapped, so a frame's time is its cost and not the 16.7 ms any frame that fits in one reads
-  const fast = await chromium.launch({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--disable-gpu-vsync', '--disable-frame-rate-limit'] });
+  const fast = await h.launch({ args: [...GPU_FLAGS, '--disable-gpu-vsync', '--disable-frame-rate-limit'] });
   const frames = async (opts, ms) => {
     const p = await open({ ...opts, browser: fast }), c0 = cpu();
     const r = await p.page.evaluate(async ms => {
@@ -398,7 +396,5 @@ if (!LIVE) skip('no frame stalls'); else {
     `without: p50 ${f(A.p50)} p95 ${f(A.p95)} ms, ${A.long} frames over 33 ms, layout median ${f(A.layMed)} ms, a frame's own JS median ${f(A.tick50)} p95 ${f(A.tick95)} ms; with: p50 ${f(B.p50)} p95 ${f(B.p95)} ms, ${B.long} over, layout median ${f(B.layMed)} ms, frame JS median ${f(B.tick50)} p95 ${f(B.tick95)} ms; CPU busy ${without.map(x => x.busy).join('/')}% without, ${withQ.map(x => x.busy).join('/')}% with (all runs, on this machine's GPU)`);
 }
 
-await browser.close(); await server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
-process.exit(BREAK ? 0 : failed ? 1 : 0);
+await h.done({ summary: `${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`, expectRed: BREAK });

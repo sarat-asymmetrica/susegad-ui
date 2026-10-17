@@ -19,7 +19,7 @@
 
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
-import { pickEngine } from '../../../tools/lib/engine.mjs';
+import { clickFocusesButtons, engineName, pickEngine, unsupportedIn } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 import { contrastReport } from '../../../tools/lib/contrast.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
@@ -166,10 +166,19 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   // the way on, and starting again
   const cont = await p.evaluate(() => { const a = document.querySelector('#menu .sg-menu-continue'); return { href: a.getAttribute('href'), shown: a.getClientRects().length > 0 }; });
   check(`${reg}: a way on to the order shows once something is added`, cont.href === '#after' && cont.shown, JSON.stringify(cont));
+  const clickFocuses = await clickFocusesButtons(browser); // a click gives a button no focus in WebKit, so there is no focus for Start again to keep
+  if (!clickFocuses) unsupportedIn(engineName(), 'focus kept on Start again after a mouse click', 'a click leaves focus where it was in this engine; the same question is asked from the keyboard just below');
   await p.click('#menu .sg-menu-clear');
   await p.waitForTimeout(40);
   const cleared = await p.evaluate(() => ({ text: document.querySelector('#menu .sg-menu-total').textContent, counts: [...document.querySelectorAll('#menu .sg-menu-count')].map(c => c.textContent).join(''), last: window.__ev.at(-1), cont: document.querySelector('#menu .sg-menu-continue').getClientRects().length, f: document.activeElement.className }));
-  check(`${reg}: Start again empties the order, says so, tells the page, and focus is not lost`, cleared.text === 'Your order is empty again. Nothing added yet.' && /^0+$/.test(cleared.counts) && cleared.last.total === 0 && cleared.last.lines.length === 0 && cleared.cont === 0 && cleared.f === 'sg-menu-clear', JSON.stringify(cleared));
+  check(`${reg}: Start again empties the order, says so, tells the page, and focus is not lost`, cleared.text === 'Your order is empty again. Nothing added yet.' && /^0+$/.test(cleared.counts) && cleared.last.total === 0 && cleared.last.lines.length === 0 && cleared.cont === 0 && (cleared.f === 'sg-menu-clear' || !clickFocuses), JSON.stringify(cleared));
+  // the same, from the keyboard: Start again keeps focus on itself (the page it empties does not take it away)
+  await p.click('#menu [data-id=fettuccine] .sg-menu-plus');
+  await p.focus('#menu .sg-menu-clear');
+  await p.keyboard.press('Enter');
+  await p.waitForTimeout(40);
+  check(`${reg}: Start again pressed from the keyboard keeps focus on itself`, await p.evaluate(() => document.activeElement.className === 'sg-menu-clear' && /^0+$/.test([...document.querySelectorAll('#menu .sg-menu-count')].map(c => c.textContent).join(''))));
+  await p.waitForTimeout(900); // let the count's settle from that extra add finish before the checks that sample it
 
   // big money, and the limit
   const big = await p.evaluate(async () => {

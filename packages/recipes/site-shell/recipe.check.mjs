@@ -7,17 +7,14 @@
 //
 //   node packages/recipes/site-shell/recipe.check.mjs
 
-import { chromium } from 'playwright';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: 'tools/smoke.mjs axes the demo page once, in its default register and theme; the other registers are not axe-checked yet (docs/DEBT.md)' });
+const { server, check } = h;
 const demo = `${server.url}/packages/recipes/site-shell/index.html`;
 
 for (const register of ['warm', 'playful']) {
-  const ctx = await browser.newContext({ viewport: { width: 1100, height: 800 } });
+  const ctx = await h.context({ viewport: { width: 1100, height: 800 } });
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -101,7 +98,7 @@ for (const register of ['warm', 'playful']) {
 
 // quiet: no curtain theatre for Kantar, still works end to end
 {
-  const ctx = await browser.newContext({ viewport: { width: 1100, height: 800 } });
+  const ctx = await h.context({ viewport: { width: 1100, height: 800 } });
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=quiet`);
   await p.waitForFunction(() => window.__ready);
@@ -117,7 +114,7 @@ for (const register of ['warm', 'playful']) {
 
 // no JavaScript: nothing is unreachable
 {
-  const ctx = await browser.newContext({ javaScriptEnabled: false });
+  const ctx = await h.context({ javaScriptEnabled: false });
   const p = await ctx.newPage();
   await p.goto(demo);
   const look = await p.evaluate(() => ({
@@ -130,8 +127,4 @@ for (const register of ['warm', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

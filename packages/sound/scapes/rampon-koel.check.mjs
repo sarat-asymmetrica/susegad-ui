@@ -8,11 +8,12 @@
 // quiet even with the switch on; and once on, in playful, with a bird
 // actually on screen, a call happens within the schedule's own window.
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
+import { engineName, pageHas, pickEngine, unsupportedIn } from '../../../tools/lib/engine.mjs';
 import { startServer } from '../../../tools/serve.mjs';
 
 const server = await startServer({ quiet: true });
 const browser = await pickEngine().launch();
+const hasAudio = await pageHas(browser, "typeof AudioContext === 'function'"); // without one every count below is zero and the zeros would pass
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 
@@ -51,6 +52,12 @@ async function withScene(register, fn) {
   return errs;
 }
 
+if (!hasAudio) unsupportedIn(engineName(), 'every koel check (before the gesture, warm and quiet never call, playful calls, a hidden tab stops)', "this build has no AudioContext, so no context can be made, counted or heard; a count of zero would pass for want of one");
+if (!hasAudio) {
+  // what can still be asked without a context: the scene and the attached scape run without throwing
+  const errs = await withScene('playful', async p => { await p.waitForTimeout(2600); });
+  check('no console or page errors with the scape attached (no AudioContext in this engine)', errs.length === 0, errs.join(' | '));
+} else {
 // ── before any gesture: nothing plays, in any register ─────────────────────
 {
   const errs = await withScene('playful', async p => {
@@ -103,6 +110,7 @@ async function withScene(register, fn) {
   check('tab hidden: the koel never calls', calls === 0, `${calls} oscillators`);
   await p.evaluate(() => window.__detach());
   await ctx.close();
+}
 }
 
 await browser.close();
