@@ -5,7 +5,7 @@
 //
 //   node packages/components/event-list/event-list.check.mjs
 
-import { harness, settle } from '../../../tools/lib/component-check.mjs';
+import { harness, settle, tabTo } from '../../../tools/lib/component-check.mjs';
 import { contextOptions } from '../../../tools/lib/engine.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
@@ -111,8 +111,16 @@ const read = page => page.evaluate(() => {
   check('nothing to come: the default words show, "Nothing on the calendar right now. Ask about a private session."', r.emptyShown && r.emptyText === 'Nothing on the calendar right now. Ask about a private session.', r.emptyText);
   check('...with the slotted call to action beside it', r.askShown);
   check('...and every past event is in the drawer, which is still closed', r.top.length === 0 && r.inDrawer.length === 4 && r.drawerOpen === false && r.drawerLabel === 'Before (4)', `${r.top} | ${r.inDrawer} | ${r.drawerLabel}`);
-  const tab = await (async () => { for (let i = 1; i <= 6; i++) { await page.keyboard.press('Tab'); if (await page.evaluate(() => document.activeElement?.matches('a.ask'))) return i; } return 0; })();
+  const tab = await tabTo(page, 'a.ask', 6);
   check('the keyboard reaches the call to action in the empty state', tab > 0, `${tab} presses`);
+  await ctx.close();
+}
+{
+  // control: the same probe with the call to action taken out of the tab order must read red, in every engine
+  const { ctx, page } = await clockPage(IST('2026-12-20T10:00'), PAGE(LIST()));
+  await page.evaluate(() => { document.querySelector('a.ask').tabIndex = -1; });
+  const tab = await tabTo(page, 'a.ask', 6);
+  check('control: a call to action with tabindex -1 is not reached by the keyboard probe', tab === 0, `${tab} presses`);
   await ctx.close();
 }
 {
@@ -165,8 +173,7 @@ const read = page => page.evaluate(() => {
 // ── the keyboard: the drawer ───────────────────────────────────────────
 {
   const { ctx, page } = await clockPage(IST('2026-10-02T10:00'), PAGE(LIST()));
-  let landed = 0;
-  for (let i = 1; i <= 12 && !landed; i++) { await page.keyboard.press('Tab'); if (await page.evaluate(() => document.activeElement?.matches('details.sg-event-before > summary'))) landed = i; }
+  const landed = await tabTo(page, 'details.sg-event-before > summary', 12);
   const ring = await page.evaluate(() => { const s = getComputedStyle(document.activeElement); return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) >= 2; });
   await page.keyboard.press('Enter');
   const opened = await page.evaluate(() => document.querySelector('details.sg-event-before').open);

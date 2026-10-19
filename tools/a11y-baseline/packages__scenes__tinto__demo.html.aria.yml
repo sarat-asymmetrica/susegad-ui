@@ -1,0 +1,76 @@
+- main:
+  - heading "Tinto" [level=1]
+  - paragraph
+  - paragraph:
+    - link "Words in the world":
+      - /url: world.html
+  - img "A village square where everyone has a line"
+  - paragraph
+  - list:
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+  - heading "This page isn't here" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Text over the square" [checked]
+  - combobox "Pinned line":
+    - option "None: the round" [selected]
+    - option "Two crows on the wire"
+    - option "The taverna keeper"
+    - option "The baker and a small boy"
+    - option "Two neighbours"
+    - option "A woman with an umbrella"
+    - option "The fish seller and a cat"
+    - option "Two old men under the tree"
+    - option "A tourist with a map"
+    - option "A cow"
+    - option "The coconut seller"
+    - option "A motorcycle pilot"
+    - option "The poder on his bicycle"
+    - option "A dog"
+    - option "The sugarcane juice man and his customer"
+    - option "Two children with a ball"
+    - option "The postman"
+    - option "The bus conductor"
+  - checkbox "Caption cards" [checked]
+  - paragraph
+  - heading "Who is in the square" [level=2]
+  - list:
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem

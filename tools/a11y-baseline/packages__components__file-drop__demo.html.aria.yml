@@ -1,0 +1,8 @@
+- main:
+  - heading "File drop" [level=1]
+  - paragraph
+  - button "Floor plans PDF or JPG, up to 10 MB each. You can send several."
+  - status
+  - button "Photo ID One photo, JPG or PNG, up to 5 MB"
+  - status
+  - button "Send the files"

@@ -17,6 +17,7 @@
 //    register, light and dark; no console errors.
 
 import { harness } from '../../../tools/lib/component-check.mjs';
+import { loaded, pollUntil, rafs } from '../../../tools/lib/wait.mjs';
 
 const h = await harness();
 const { check } = h;
@@ -40,16 +41,20 @@ const share = (page, box, test) => page.evaluate(([box, test]) => {
   let n = 0; for (let i = 0; i < d.length; i += 4) if (fn(d[i], d[i + 1], d[i + 2], d[i + 3])) n++;
   return n / (w * hh);
 }, [box, test]);
+/** A still is a picture that two pictures in a row agree on (up to 30 tries; a shot takes a frame or more by itself). */
+const stillShot = async page => { let prev = await shot(page); for (let i = 0; i < 30; i++) { const next = await shot(page); if (next.equals(prev)) return next; prev = next; } return prev; };
 const pct = v => `${(v * 100).toFixed(2)}%`;
 
 // 1. the still
 {
   const a = await open(scene('register=quiet&renderer=webgl'));
-  await a.page.waitForTimeout(400); const quiet = await shot(a.page); await a.ctx.close();
+  const quiet = await stillShot(a.page); await a.ctx.close();
   const b = await open(scene('register=warm&renderer=webgl'), { reduced: true });
-  await b.page.waitForTimeout(400); const reduced = await shot(b.page); await b.ctx.close();
+  const reduced = await stillShot(b.page); await b.ctx.close();
   const c = await open(scene('register=warm&renderer=webgl'));
-  await c.page.waitForTimeout(1000); const running = await shot(c.page); await c.ctx.close();
+  // the running leaf has moved on from the still (waited for, not timed: a slow machine gets there later)
+  const moved = await pollUntil(async () => { const s = await shot(c.page); return s.equals(quiet) ? null : s; }, { ms: 20000, every: 50 });
+  const running = moved.value ?? quiet; await c.ctx.close();
   check('the still: quiet and warm under reduced motion are the same leaf, pixel for pixel', quiet.equals(reduced), `${quiet.length} and ${reduced.length} bytes`);
   check('control: the running leaf a second in is a different picture', !quiet.equals(running));
 }
@@ -69,7 +74,8 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
   const { ctx, page, errors } = await open(scene('register=warm&renderer=webgl'));
   const before = await data(page, 'leaf');
   await page.evaluate(() => window.__piece.shadowRoot.querySelector('.stage canvas').getContext('webgl').getExtension('WEBGL_lose_context').loseContext());
-  await page.waitForTimeout(600);
+  await page.waitForFunction(() => window.__piece.shadowRoot.querySelector('.stage').dataset.leaf === '2d', null, { timeout: 15000 }).catch(() => {}); // handed over; the clause reads what it handed to
+  await rafs(page, 3);
   const after = await data(page, 'leaf');
   const green = await share(page, { x: 460, y: 300, w: 300, h: 200 }, '(r, g, b) => g > r + 25 && g > b + 25 && g > 90');
   check('context lost: the shader hands the leaf to the 2D painting', before === 'webgl' && after === '2d' && green > 0.5, `${before} then ${after}, leaf ${pct(green)} green on the 2D canvas`);
@@ -88,7 +94,7 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
     const boxesOfWords = content ? boxes.slice(1) : [{ x: 60, y: 655, w: 560, h: 40 }, { x: 60, y: 710, w: 560, h: 30 }];
     let sum = 0;
     for (let k = 0; k < 16; k++) {
-      await page.waitForTimeout(250);
+      await rafs(page, 15); // a quarter of a second of frames at 60 a second, and the same number of frames on a busy machine
       for (const b of boxesOfWords) sum += await share(page, b, '(r, g, b, a) => a > 12');
     }
     await ctx.close();
@@ -107,7 +113,7 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
   await page.waitForFunction(() => +window.__piece.shadowRoot.querySelector('.stage').dataset.water > 1200, null, { timeout: 20000 }).catch(() => {});
   const phase0 = await data(page, 'phase'), water0 = +(await data(page, 'water'));
   await page.keyboard.press('Enter');
-  await page.waitForTimeout(400);
+  await page.waitForFunction(() => window.__piece.shadowRoot.querySelector('.stage').dataset.phase === 'dip', null, { timeout: 5000 }).catch(() => {}); // the clause reads the phase
   const phase1 = await data(page, 'phase');
   const role = await stage.getAttribute('role');
   check('playful: with water in the cup, Enter makes the leaf dip and pour', phase0 !== 'dip' && phase1 === 'dip', `${phase0} with ${water0} of water, then ${phase1}`);
@@ -121,7 +127,7 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
   const out = [];
   const { ctx, page, errors } = await open('/packages/scenes/themb/demo.html?register=warm');
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1|localhost)/, r => { out.push(new URL(r.request().url()).host); r.abort(); });
-  await page.reload(); await page.waitForTimeout(1500);
+  await page.reload(); await loaded(page, { quiet: 1500 });
   check('no request leaves the page', out.length === 0, out.join(', ') || 'none');
   check('no console errors (demo)', errors.length === 0, errors.join(' | '));
   await ctx.close();

@@ -148,18 +148,6 @@ test('scene definition, status, and accessibility contracts', () => {
   assert.equal(mithagar.status({ progress: 1.0 }), '100% crystallized');
 });
 
-test('copy standards: no em dashes in any user-facing text, metadata, or map', () => {
-  for (const k of ['title', 'gloss', 'caption', 'alt', 'keys', 'credit', 'prompt']) {
-    if (meta[k]) assert.ok(!meta[k].includes('—'), `em dash found in meta.${k}`);
-  }
-  for (const spark of meta.sparks || []) {
-    assert.ok(!spark.includes('—'), `em dash found in spark: "${spark}"`);
-  }
-  for (const row of meta.map) {
-    assert.ok(!row.join(' ').includes('—'), `em dash found in map: "${row[0]}"`);
-  }
-});
-
 test('drying: progress 0 leaves every pan wet and progress 1 leaves every pan dry, for any seed', () => {
   for (const seed of [1, 2, 7, 42, 1001]) {
     const { pans } = panLayout(seed, W, H);

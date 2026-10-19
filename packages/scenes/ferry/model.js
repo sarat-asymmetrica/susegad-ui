@@ -106,6 +106,7 @@ export function bank(seed = 1) {
  * The frame: the stop the ferry is going to (1..4), the boil clock, the kite
  * and the far bank. Where it is between stops is the renderer's to ease: it
  * depends on where it was when the page changed its mind.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
  */
 export function model({ time = 0, seed = 1, register = 'warm', params = {} } = {}) {
   const look = LOOKS[register] ?? LOOKS.warm;

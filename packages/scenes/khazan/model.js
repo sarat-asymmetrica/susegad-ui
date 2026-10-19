@@ -212,7 +212,10 @@ export const LOOKS = {
   playful: { pace: 1, hand: true },
 };
 
-/** The per-frame description. With progress set, the swarm is held at that synchrony. */
+/**
+ * The per-frame description. With progress set, the swarm is held at that synchrony.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
+ */
 export function model({ time = 0, seed = 1, register = 'warm', params = {} } = {}) {
   const look = LOOKS[register] || LOOKS.warm;
   const held = params.progress != null;

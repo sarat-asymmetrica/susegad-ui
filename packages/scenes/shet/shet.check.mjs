@@ -31,6 +31,7 @@
 import { readFileSync } from 'node:fs';
 import { harness } from '../../../tools/lib/component-check.mjs';
 import { contextOptions } from '../../../tools/lib/engine.mjs';
+import { loaded, stillSettled } from '../../../tools/lib/wait.mjs';
 import { frames, frozenAt, grabPixels, openStepped, plantFault, until } from '../../../tools/lib/virtual-time.mjs';
 
 const BREAK = process.argv.includes('--break');
@@ -64,7 +65,7 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
 
 // 1. the still
 {
-  const stillOf = async (q, opts) => { const { ctx, page } = await open(scene(q), opts); await page.waitForTimeout(400); const g = await grab(page); await ctx.close(); return g; };
+  const stillOf = async (q, opts) => { const { ctx, page } = await open(scene(q), opts); await stillSettled(page); const g = await grab(page); await ctx.close(); return g; };
   const quiet = await stillOf('register=quiet'), reduced = await stillOf('register=warm', { reduced: true });
   check('the still: quiet and warm under reduced motion paint the same ripening field', diff(quiet, reduced, undefined, 6) < 0.002, `${pct(diff(quiet, reduced, undefined, 6))} differ`);
   const early = await frozen('register=warm&freeze=2');
@@ -133,7 +134,7 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
   const out = [];
   const { ctx, page, errors } = await open('/packages/scenes/shet/demo.html?register=warm');
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1|localhost)/, r => { out.push(new URL(r.request().url()).host); r.abort(); });
-  await page.reload(); await page.waitForTimeout(1500);
+  await page.reload(); await loaded(page, { quiet: 1500 });
   check('no request leaves the page', out.length === 0, out.join(', ') || 'none');
   check('no console errors (demo)', errors.length === 0, errors.join(' | '));
   await ctx.close();
@@ -163,7 +164,9 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
       page = await ctx.newPage();
       await page.goto(`${h.server.url}${scene(q)}`);
       await page.waitForFunction(() => window.__ready === true, null, { timeout: 40000 });
-      await page.waitForTimeout(2500);
+      // the first frame is drawn (the year is asked for there, or never), the network is quiet, and the still has stopped changing
+      await loaded(page, { quiet: 2500 });
+      await stillSettled(page);
     } else {
       ({ ctx, page } = await load(scene(q), { routes, setup: watch }));
       for (const t0 = Date.now(); block && !failed.length && Date.now() - t0 < 10000;) await frames(page, 6);

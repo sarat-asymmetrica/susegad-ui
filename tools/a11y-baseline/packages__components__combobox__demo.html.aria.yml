@@ -1,0 +1,16 @@
+- main:
+  - heading "Combobox" [level=1]
+  - paragraph
+  - combobox "Travelling from"
+  - status
+  - paragraph
+  - combobox "Where in Goa"
+  - status
+  - button "Plan the trip"
+  - status
+  - heading "Filled in, and wrong" [level=2]
+  - combobox "Staying in": Siolim
+  - status
+  - combobox "Your nearest airport" [invalid]: Gova
+  - status
+  - paragraph

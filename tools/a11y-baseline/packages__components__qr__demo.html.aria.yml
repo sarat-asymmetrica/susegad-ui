@@ -1,0 +1,18 @@
+- main:
+  - heading "QR code" [level=1]
+  - paragraph
+  - heading "A UPI payment link" [level=2]
+  - img "QR code for the UPI payment link"
+  - paragraph
+  - paragraph
+  - paragraph:
+  - heading "A Wi-Fi network and a ticket" [level=2]
+  - img "QR code to join the Wi-Fi network"
+  - paragraph:
+  - paragraph:
+  - img "QR code for the ticket number"
+  - heading "Words that are not Latin" [level=2]
+  - img "QR code with the booking note"
+  - paragraph
+  - paragraph
+  - paragraph

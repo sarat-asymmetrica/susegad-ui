@@ -1,0 +1,17 @@
+- main:
+  - heading "One-time code" [level=1]
+  - paragraph
+  - heading "Confirm your phone number" [level=2]
+  - textbox "Enter the 6-digit code we sent to 98220 12345"
+  - button "Confirm"
+  - status
+  - heading "Filled in" [level=2]
+  - textbox "Code from your email": "482913"
+  - heading "Four digits" [level=2]
+  - textbox "Enter the 4-digit code from the gate": "27"
+  - heading "Not accepted" [level=2]
+  - textbox "Enter the 6-digit code we sent to 98220 12345" [invalid]: "118204"
+  - paragraph
+  - heading "Waiting for a code" [level=2]
+  - textbox "Enter the 6-digit code we sent to 98220 12345" [disabled]
+  - paragraph

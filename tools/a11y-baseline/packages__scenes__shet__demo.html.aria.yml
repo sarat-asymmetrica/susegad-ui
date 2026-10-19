@@ -1,0 +1,19 @@
+- main:
+  - heading "Shet" [level=1]
+  - paragraph
+  - img "Season progress"
+  - heading "Grown on the farm" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Words on it" [checked]
+  - checkbox "Hold the year"
+  - slider "Progress" [disabled]: "0.4"
+  - button "The year again"
+  - button "A new field"
+  - paragraph

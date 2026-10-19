@@ -1,4 +1,4 @@
-// Run the browser behaviour checks (*.check.mjs) under packages/ and recipes/, one at a time.
+// Run the browser behaviour checks (*.check.mjs) under packages/, recipes/ and apps/ (the docs site's), one at a time.
 //   node tools/checks.mjs                    (or: npm run check; chromium, the default)
 //   node tools/checks.mjs --engine=webkit
 //   SG_ENGINE=firefox node tools/checks.mjs  (the flag and the env var do the same thing;
@@ -6,6 +6,7 @@
 //   node tools/checks.mjs --changed          only the checks this branch needs (see below)
 //   node tools/checks.mjs --changed=<ref>    the same, against the merge-base with <ref> (default: main, or $SG_BASE)
 //   node tools/checks.mjs --changed --dry    print what would run, and why, then stop (--dry works on its own too)
+// The docs-site checks that read the built site (out/docs) get one `node apps/docs/build.mjs --no-verify` before them.
 // Also run: the checks that live in tools/ and cover the whole library (EXTRA below), and the Node-only checks
 // (NODE below: the text gate), which need no browser, take no browser slot and run first.
 //   node tools/checks.mjs --shard=2/4        only the second of four shards (combines with --engine, --changed, --dry)
@@ -15,8 +16,10 @@
 // Known flakes: a red from a check listed in the "Known flakes" table of docs/BROWSERS.md, for this
 // engine, prints `FAIL (known: <cause>)` and is counted apart in the summary. THE EXIT CODE COUNTS
 // ONLY NEW REDS: a run whose only reds are known flakes exits 0. A known red is recorded, not re-run;
-// any other red is a new red, compared with main before anyone believes it (RUNBOOK §6.2). A listed
-// check that passes prints `pass` as usual. (lib/flakes.core.js reads the table.)
+// any other red is a new red: fixed, or given a DEBT row and a flake row (RUNBOOK §6.2). A listed
+// check that passes prints `pass` as usual. A row names the failing line (its clause) and expires 14 days
+// after it was added: an expired row stops excusing and the runner prints `expired flake row: …`; a red
+// in a listed file that the clause does not name is a new red. (lib/flakes.core.js reads the table.)
 //
 // --changed takes the files that differ from the merge-base (committed, staged, unstaged and untracked)
 // and picks: the checks in a folder the diff touches; the checks of every registry item that depends,
@@ -43,10 +46,23 @@ import { runCheck, defaultTimeoutS } from './lib/run-check.mjs';
 import { selectForDiff } from './lib/changed-deps.mjs';
 import { NODE_CHECKS } from './lib/changed.core.js';
 import { parseShard, shardChecks, durationOf } from './lib/shard.core.js';
-import { parseKnownFlakes, knownFlake, verdict } from './lib/flakes.core.js';
+import { parseKnownFlakes, knownFlake, verdict, redSignals, isExpired, expiredLine } from './lib/flakes.core.js';
 import { spawnSync } from 'node:child_process';
 import { parseSkips } from './lib/gpu.core.js';
 import { drivesChromium } from './lib/chromium-only.core.js';
+import { redTail } from './lib/red-tail.mjs';
+
+// Only these flags exist. A file name is not one: this runs the whole suite (or --changed's choice), so a stray argument is an error, not a quiet "run everything".
+const USAGE = `usage: node tools/checks.mjs [--engine=chromium|webkit|firefox] [--changed[=<ref>]] [--shard=<i>/<n>] [--dry]
+
+  Runs every *.check.mjs under packages/, recipes/ and apps/, plus tools/touch.check.mjs and tools/lib/tab.check.mjs,
+  after the Node-only checks (the text and bake gates).
+  To run ONE check, run its file directly:   node packages/components/menu/menu.check.mjs
+  (SG_ENGINE=webkit node packages/components/menu/menu.check.mjs for another engine.)`;
+const FLAGS = process.argv.slice(2);
+if (FLAGS.includes('--help') || FLAGS.includes('-h')) { console.log(USAGE); process.exit(0); }
+const unknown = FLAGS.filter(a => !/^--(engine=.+|changed(=.+)?|shard=.+|dry)$/.test(a));
+if (unknown.length) { console.error(`unknown argument${unknown.length === 1 ? '' : 's'}: ${unknown.join(' ')}\n\n${USAGE}`); process.exit(2); }
 
 const engineFlag = process.argv.find(a => a.startsWith('--engine='))?.slice('--engine='.length);
 const engineName = (engineFlag ?? process.env.SG_ENGINE ?? 'chromium').trim().toLowerCase();
@@ -63,6 +79,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 let flakes;
 try { flakes = parseKnownFlakes(fs.readFileSync(path.join(root, 'docs', 'BROWSERS.md'), 'utf8')); }
 catch (e) { console.error(`Known flakes: ${e.message}`); process.exit(2); } // a broken table must not quietly turn reds known, or new
+for (const f of flakes.filter(f => (f.engine === engineName || f.engine === 'all') && isExpired(f))) console.log(expiredLine(f));
 const found = [];
 const walk = dir => {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -72,10 +89,10 @@ const walk = dir => {
     else if (e.name.endsWith('.check.mjs')) found.push(p);
   }
 };
-for (const d of ['packages', 'recipes']) if (fs.existsSync(path.join(root, d))) walk(path.join(root, d));
+for (const d of ['packages', 'recipes', 'apps']) if (fs.existsSync(path.join(root, d))) walk(path.join(root, d));
 // Library-wide checks that live in tools/ (the rest of tools/*.check.mjs are run by hand, with their own gates).
 const NODE = Object.keys(NODE_CHECKS); // Node-only checks: no browser, no slot (tools/lib/changed.core.js says what selects each)
-const EXTRA = ['tools/touch.check.mjs']; // the microinteraction check: press, focus and reduced-motion, per interactive component
+const EXTRA = ['tools/touch.check.mjs', 'tools/lib/tab.check.mjs', 'tools/lib/overflow.check.mjs', 'tools/rest.check.mjs']; // the microinteraction check (press, focus and reduced-motion, per interactive component), the Tab helpers the other checks lean on, the sideways-scroll gate shown to fail, and the rest checks (a scene's idle and reduced-motion rest)
 for (const e of EXTRA) found.push(path.join(root, e));
 found.sort();
 
@@ -121,12 +138,15 @@ const picked = found.filter((f, i) => chosen.includes(rels[i]));
 // It is not run there, and it is neither a pass nor a red (docs/BROWSERS.md lists them).
 const chromiumOnly = engineName === 'chromium' ? [] : picked.filter(f => drivesChromium(fs.readFileSync(f, 'utf8')));
 const toRun = picked.filter(f => !chromiumOnly.includes(f));
+// The docs-site checks that serve the built site (out/docs) need it built from this tree: once, before the first of them.
+const needsSite = toRun.filter(f => path.relative(root, f).replaceAll('\\', '/').startsWith('apps/docs/') && /['"]out['"]\s*,\s*['"]docs['"]|SG_DOCS_OUT/.test(fs.readFileSync(f, 'utf8')));
+let siteBuilt = null;
 for (const f of chromiumOnly) console.log(`skip  ${path.relative(root, f).replaceAll('\\', '/')}  (drives Chromium itself; --engine=${engineName} does not reach it)`);
 
 const failed = [];
-const results = []; // { check, ok } in run order, for the verdict
+const results = []; // { check, ok, blocks } in run order, for the verdict (blocks: the FAIL lines the check printed, which a flake row's clause must name)
 const ran = new Set();
-const mark = rel => { const f = knownFlake(flakes, rel, engineName); return f ? `FAIL (known: ${f.cause})` : 'FAIL'; };
+const mark = (rel, out = '', timedOut = false) => { const sig = redSignals(out, { timedOut }); const f = knownFlake(flakes, rel, engineName, sig.blocks, sig); return f ? `FAIL (known: ${f.cause})` : 'FAIL'; };
 const skipped = []; // { check, clauses } for each check that skipped clauses for want of a GPU (lib/gpu.core.js)
 // Node-only checks first: plain child processes, no browser, no slot.
 for (const rel of chosenNode) {
@@ -137,34 +157,52 @@ for (const rel of chosenNode) {
   ran.add(rel);
   const ok = r.status === 0, out = `${r.stdout ?? ''}${r.stderr ?? ''}`.trim();
   if (!ok) failed.push(rel);
-  results.push({ check: rel, ok });
-  console.log(`${ok ? 'pass' : mark(rel)}  ${rel}  ${out.split('\n').slice(-1)[0] || ''} (node only, ${((Date.now() - t0) / 1000).toFixed(1)} s)`);
-  if (!ok) console.log(out.split('\n').slice(-40).join('\n'));
+  results.push({ check: rel, ok, ...redSignals(out) });
+  console.log(`${ok ? 'pass' : mark(rel, out)}  ${rel}  ${out.split('\n').slice(-1)[0] || ''} (node only, ${((Date.now() - t0) / 1000).toFixed(1)} s)`);
+  if (!ok) console.log(redTail(out, 40));
 }
 console.log(`Running ${toRun.length} check${toRun.length === 1 ? '' : 's'} in ${engineName}.\n`);
+let withSkips = 0; // files that passed but printed a skip line: they did not ask everything
 const timeoutS = defaultTimeoutS();
 const LONG = { 'tools/touch.check.mjs': 4 }; // whole-library checks get a multiple of the limit (the probe presses every demo in three registers) // SG_CHECK_TIMEOUT_S to change; a hung check is killed and reported, never waited on
 for (const f of toRun) {
   const rel = path.relative(root, f).replaceAll('\\', '/');
+  if (needsSite.includes(f) && siteBuilt === null) {
+    const t0 = Date.now();
+    const b = spawnSync(process.execPath, [path.join(root, 'apps', 'docs', 'build.mjs'), '--no-verify'], { cwd: root, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
+    siteBuilt = b.status === 0;
+    console.log(`${siteBuilt ? 'built' : 'FAIL '} the docs site for its checks (node apps/docs/build.mjs --no-verify, ${((Date.now() - t0) / 1000).toFixed(1)} s)`);
+    if (!siteBuilt) console.log(`${b.stdout ?? ''}${b.stderr ?? ''}`.trim().split('\n').slice(-15).join('\n'));
+  }
+  if (needsSite.includes(f) && !siteBuilt) {
+    failed.push(rel);
+    results.push({ check: rel, ok: false, blocks: [] });
+    console.log(`${mark(rel)}  ${rel}  (the docs site did not build, so this check could not look at it)`);
+    continue;
+  }
   const r = await runCheck(f, { cwd: root, env: { ...process.env, SG_ENGINE: engineName }, timeoutS: timeoutS * (LONG[rel] ?? 1) });
   const ok = r.status === 0;
   if (!ok) failed.push(rel);
-  results.push({ check: rel, ok });
+  results.push({ check: rel, ok, ...redSignals(r.out, { timedOut: !!r.timedOut }) });
   const noGpu = parseSkips(r.out);
   if (noGpu.length) skipped.push({ check: rel, clauses: noGpu });
   const tail = r.out.trim().split('\n').slice(-1)[0] || '';
-  console.log(`${ok ? 'pass' : mark(rel)}  ${rel}  ${r.timedOut ? `(timed out after ${timeoutS * (LONG[rel] ?? 1)} s)` : tail}`);
-  if (!ok) console.log(r.out.trim().split('\n').slice(-15).join('\n'));
+  const withSkip = ok && /^skip /m.test(r.out); // passed, but printed a skip line (a GPU skip or an engine skip)
+  if (withSkip) withSkips++;
+  console.log(`${ok ? (withSkip ? 'pass*' : 'pass') : mark(rel, r.out, !!r.timedOut)}  ${rel}  ${r.timedOut ? `(timed out after ${timeoutS * (LONG[rel] ?? 1)} s)` : tail}`);
+  if (!ok) console.log(redTail(r.out));
 }
 // Konkani strings no native reader has checked yet: a warning, never a failure (decision 0025; --strict on the tool fails).
 const { report, format } = await import('./strings-review.mjs');
 console.log(`\nKonkani strings awaiting a native reader (warn only)\n${format(report())}`);
 const total = toRun.length + chosenNode.length;
 const v = verdict(results, flakes, engineName);
-console.log(`\n${total - failed.length} of ${total} checks pass (${engineName}${chosenNode.length ? `; ${chosenNode.length} Node-only` : ''}${shard ? `; shard ${shard.index}/${shard.count}` : ''})`);
+console.log(`\n${total - failed.length} of ${total} checks pass (${engineName}${chosenNode.length ? `; ${chosenNode.length} Node-only` : ''}${shard ? `; shard ${shard.index}/${shard.count}` : ''})`
+  + (withSkips ? `; ${withSkips} of those passed with skips (pass*: part of the file did not run in this engine, and said why)` : ''));
 // A skip is a clause that did not run (no GPU: the live tier is not there to test). It is not a pass of that clause and not a red.
 const nSkipped = skipped.reduce((n, k) => n + k.clauses.length, 0);
 console.log(`Skipped, no GPU: ${nSkipped} clause${nSkipped === 1 ? '' : 's'} in ${skipped.length} check${skipped.length === 1 ? '' : 's'}${skipped.map(k => `\n  ${k.check}${failed.includes(k.check) ? ' (FAILED)' : ''}${k.clauses.map(c => `\n    ${c}`).join('')}`).join('')}`);
+for (const f of v.expired) console.log(expiredLine(f));
 console.log(`New reds: ${v.newReds.length}${v.newReds.map(c => `\n  ${c}`).join('')}`);
 console.log(`Known flakes that went red: ${v.known.length}${v.known.map(k => `\n  ${k.check} (${k.cause})`).join('')}`);
 console.log(v.exitCode ? 'Exit 1: new reds.' : `Exit 0: no new reds${v.known.length ? '; the known flakes are recorded, not counted' : ''}.`);

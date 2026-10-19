@@ -1,0 +1,47 @@
+- main:
+  - heading "Our event" [level=1]
+  - paragraph
+  - 'region "Quiet: plain names, a hairline between"':
+    - heading "Quiet: plain names, a hairline between" [level=2]
+    - navigation "Language, quiet":
+      - list:
+        - listitem:
+          - link "English":
+            - /url: demo.html
+        - listitem:
+          - link "कोंकणी":
+            - /url: demo.gom-Deva.html
+        - listitem:
+          - link "Konknni":
+            - /url: demo.gom-Latn.html
+  - 'region "Warm: in the hand, a pencil line"':
+    - heading "Warm: in the hand, a pencil line" [level=2]
+    - navigation "Language, warm":
+      - list:
+        - listitem:
+          - link "English":
+            - /url: demo.html
+        - listitem:
+          - link "कोंकणी":
+            - /url: demo.gom-Deva.html
+        - listitem:
+          - link "Konknni":
+            - /url: demo.gom-Latn.html
+  - 'region "Playful: stamped tabs"':
+    - heading "Playful: stamped tabs" [level=2]
+    - navigation "Language, playful":
+      - list:
+        - listitem:
+          - link "English":
+            - /url: demo.html
+        - listitem:
+          - link "कोंकणी":
+            - /url: demo.gom-Deva.html
+        - listitem:
+          - link "Konknni":
+            - /url: demo.gom-Latn.html
+  - heading "The shared words, from the strings table" [level=2]
+  - button "Close"
+  - button "Menu"
+  - paragraph
+  - paragraph

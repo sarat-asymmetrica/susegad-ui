@@ -10,6 +10,7 @@
 //   node packages/components/bubble/bubble.check.mjs [--engine=webkit]
 
 import { harness, settle } from '../../../tools/lib/component-check.mjs';
+import { pollUntil, rafs, signature, stable } from '../../../tools/lib/wait.mjs';
 
 const { check, open, openHtml, axe, axeNoJs, done, engine, browser, server } = await harness();
 const DEMO = '/packages/components/bubble/demo.html';
@@ -20,6 +21,14 @@ const page = (title, body, register = 'warm') => `<!doctype html><html lang="en"
 /** Every drawn bubble has said which way it laid its words (quiet bubbles never do). */
 const laidAll = p => p.waitForFunction(() => [...document.querySelectorAll('sg-bubble')].every(b => b.dataset.text || b.closest('[data-register="quiet"]') || b.getAttribute('register') === 'quiet'), null, { timeout: 20000 });
 const ready = async p => { await laidAll(p); await settle(p); };
+/** How every laid bubble stands: its box and its type size. A relayout (bigger text, new spacing) changes it. */
+const stance = () => [...document.querySelectorAll('sg-bubble[data-text] p')].map(p => { const r = p.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height), getComputedStyle(p).fontSize]; });
+/** Run `change`, then wait for the bubbles to be laid again: a stance that differs from the one before and holds for 5 frames. */
+const relaid = async (p, change) => {
+  const before = await signature(p, stance);
+  await change();
+  return stable(p, stance, { frames: 5, ms: 20000, not: before });
+};
 
 // ── what the page can measure, run inside it ────────────────────────────────
 
@@ -172,7 +181,9 @@ for (const reduced of [false, true]) {
 const oracle = p => p.evaluate(() => performance.getEntriesByType('resource').map(e => e.name).filter(n => /\/packages\/type\/(operators|index|measure|layout\.operators|layout\.zones)\.js|\/type\/vendor\/|bubble\.live\.js/.test(n)).map(n => n.replace(/^.*\/packages\//, '')));
 {
   const q = await openHtml('bubble-quiet-only', page('quiet', '<sg-bubble kind="speech"><figure><p>Quiet words in a callout.</p></figure></sg-bubble><sg-bubble kind="thought" tail="top"><figure><p>And a thought.</p></figure></sg-bubble>', 'quiet'));
-  await q.page.waitForTimeout(600);
+  // the quiet skin has said it loaded, then no request for ten frames: anything it was going to ask for would have been asked by now
+  await q.page.waitForFunction(() => [...document.querySelectorAll('sg-bubble')].every(b => b.dataset.skin === 'quiet'), null, { timeout: 20000 });
+  await stable(q.page, () => performance.getEntriesByType('resource').length, { frames: 10 });
   const quiet = await oracle(q.page), qs = await q.page.evaluate(() => ({ skin: document.querySelector('sg-bubble').dataset.skin, svg: document.querySelectorAll('svg').length, resources: performance.getEntriesByType('resource').length, geometry: performance.getEntriesByType('resource').map(e => e.name).filter(n => /\/packages\/(type|engine)\//.test(n)).map(n => n.replace(/^.*\/packages\//, '')) }));
   check('quiet: the skin loads, draws nothing, and asks for no type tier, geometry or Pretext file (not even layout.core.js)', qs.skin === 'quiet' && qs.svg === 0 && quiet.length === 0 && qs.geometry.length === 0, `${[...quiet, ...qs.geometry].join(',') || 'none'} of ${qs.resources} requests`);
   await q.ctx.close();
@@ -245,19 +256,16 @@ for (const width of [390, 320]) {
   const { ctx, page: p } = await open(`${DEMO}?register=warm`);
   await ready(p);
   const before = (await p.evaluate(geometry)).filter(r => r.mode);
-  await p.evaluate(() => { document.documentElement.style.fontSize = '200%'; });
-  await p.waitForTimeout(900);
+  const big = await relaid(p, () => p.evaluate(() => { document.documentElement.style.fontSize = '200%'; }));
   await ready(p);
   const after = await p.evaluate(geometry);
   const sx = await p.evaluate(() => document.documentElement.scrollWidth);
-  check('200 percent text: laid again at the bigger size, every line still inside its fill, no sideways scroll', after.filter(r => r.mode).length === before.length && !OUTSIDE(after) && sx <= 1280, `${OUTSIDE(after)} scrollWidth ${sx}; first bubble ${before[0].minPx} -> ${after.find(r => r.mode).minPx}px`);
-  await p.evaluate(() => { document.documentElement.style.fontSize = ''; });
+  check('200 percent text: laid again at the bigger size, every line still inside its fill, no sideways scroll', big.ok && after.filter(r => r.mode).length === before.length && !OUTSIDE(after) && sx <= 1280, `${OUTSIDE(after)} scrollWidth ${sx}; first bubble ${before[0].minPx} -> ${after.find(r => r.mode).minPx}px`);
   const spacing = '* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important } p { margin-bottom: 2em !important }';
-  await p.addStyleTag({ content: spacing });
-  await p.waitForTimeout(1200);
+  const wide = await relaid(p, async () => { await p.evaluate(() => { document.documentElement.style.fontSize = ''; }); await p.addStyleTag({ content: spacing }); });
   await ready(p);
   const spaced = await p.evaluate(geometry);
-  check('WCAG text spacing injected after load: the words are laid again and every line is inside its fill', spaced.filter(r => r.mode).length === before.length && !OUTSIDE(spaced) && spaced.filter(r => r.mode === 'laid').length === 0, `${OUTSIDE(spaced)}; modes ${[...new Set(spaced.filter(r => r.mode).map(r => r.mode))].join(',')}`);
+  check('WCAG text spacing injected after load: the words are laid again and every line is inside its fill', wide.ok && spaced.filter(r => r.mode).length === before.length && !OUTSIDE(spaced) && spaced.filter(r => r.mode === 'laid').length === 0, `${OUTSIDE(spaced)}; modes ${[...new Set(spaced.filter(r => r.mode).map(r => r.mode))].join(',')}`);
   await ctx.close();
 }
 
@@ -266,11 +274,10 @@ for (const width of [390, 320]) {
   const { ctx, page: p } = await open(`${DEMO}?register=warm`);
   await ready(p);
   const before = (await p.evaluate(geometry)).filter(r => r.mode);
-  await p.addStyleTag({ content: '* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important } p { margin-bottom: 2em !important }' });
-  await p.waitForTimeout(1500);
+  const fresh = await relaid(p, () => p.addStyleTag({ content: '* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important } p { margin-bottom: 2em !important }' }));
   await ready(p);
   const spaced = await p.evaluate(geometry), drawn = spaced.filter(r => r.mode), cat = drawn.filter(r => r.reg === 'warm').at(-1), catPlayful = drawn.filter(r => r.reg === 'playful').at(-1);
-  check('WCAG text spacing on a fresh page: every bubble, the markup cloud too, is laid again and has every line inside its fill (hug where the lines nest, else flow)', drawn.length === before.length && !OUTSIDE(spaced), `${OUTSIDE(spaced)}; Cat warm ${cat.mode} ${cat.w}x${cat.h}, playful ${catPlayful.mode} ${catPlayful.w}x${catPlayful.h}`);
+  check('WCAG text spacing on a fresh page: every bubble, the markup cloud too, is laid again and has every line inside its fill (hug where the lines nest, else flow)', fresh.ok && drawn.length === before.length && !OUTSIDE(spaced), `${OUTSIDE(spaced)}; Cat warm ${cat.mode} ${cat.w}x${cat.h}, playful ${catPlayful.mode} ${catPlayful.w}x${catPlayful.h}`);
   await ctx.close();
 }
 // ── contrast ────────────────────────────────────────────────────────────────
@@ -312,11 +319,14 @@ for (const theme of ['light', 'dark']) {
 {
   // a skin that will not load, on a page that turns every animation off (a common reduced-motion style): the words must still reach full opacity
   const c = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-  await c.route(/\/skins\/(warm|playful)\.js/, r => r.abort());
+  const refused = new Set();
+  await c.route(/\/skins\/(warm|playful)\.js/, r => { refused.add(new URL(r.request().url()).pathname.split('/').pop()); r.abort(); });
   await c.addInitScript(() => document.addEventListener('DOMContentLoaded', () => { const st = document.createElement('style'); st.textContent = '* { animation: none !important; transition: none !important }'; document.head.append(st); }));
   const p = await c.newPage();
   await p.goto(`${server.url}${DEMO}`);
-  await p.waitForTimeout(3000);
+  // both skins have been asked for and refused, and the page has had two frames to give up on them
+  await pollUntil(() => refused.size >= 2, { ms: 20000, every: 25 });
+  await rafs(p, 2);
   const o = await p.evaluate(() => ({ n: document.querySelectorAll('sg-bubble p').length, hidden: [...document.querySelectorAll('sg-bubble p')].filter(e => getComputedStyle(e).opacity !== '1').length, waiting: document.querySelectorAll('sg-bubble[data-wait]').length }));
   check('a skin that fails to load, on a page with every animation switched off: the words of all bubbles are at full opacity', o.n === 18 && o.hidden === 0 && o.waiting === 0, JSON.stringify(o));
   await c.close();
@@ -331,7 +341,9 @@ for (const theme of ['light', 'dark']) {
   });
   const p = await c.newPage();
   await p.goto(`${server.url}${DEMO}`);
-  await p.waitForTimeout(2500);
+  // every bubble laid (its skin is in), then ten more frames of the page's own watcher
+  await laidAll(p);
+  await rafs(p, 10);
   const min = await p.evaluate(() => { window.__done = true; return window.__min; });
   check('reduced motion: after the element is upgraded the words of every bubble are never at less than full opacity, in any register', min === 1, `lowest opacity seen ${min}`);
   await c.close();
@@ -349,7 +361,9 @@ for (const theme of ['light', 'dark']) {
   await p.goto(`${server.url}${DEMO}?register=playful`);
   // until the first bubble has finished arriving (opacity 1 after it was below), not a fixed 2.5 s: a busy runner draws 10 frames a second and was still at 0
   await p.waitForFunction(() => window.__ops.length > 5 && window.__ops.at(-1) === 1 && window.__ops.some(o => o < 0.5), null, { timeout: 20000 }).catch(() => {});
-  await p.waitForTimeout(1000); // and a second more, so a flash after the first arrival would still be seen
+  // and sixty frames more, so a flash after the first arrival would still be seen (frames, not seconds: a busy runner draws fewer of them a second)
+  const arrived = await p.evaluate(() => window.__ops.length);
+  await p.waitForFunction(n => window.__ops.length >= n + 60 || window.__ops.length >= 400, arrived, { timeout: 20000 }).catch(() => {});
   const ops = await p.evaluate(() => window.__ops);
   let up = true, high = false;
   for (const o of ops) { if (high && o < 0.2) up = false; if (o > 0.6) high = true; }

@@ -1,0 +1,10 @@
+- main:
+  - heading "A greeting card with a flower of its own" [level=1]
+  - paragraph
+  - textbox "Name": Maria Fernandes
+  - textbox "A line for the card": We look forward to seeing you.
+  - button "Save as PNG"
+  - button "Make a JPG to share"
+  - status
+  - figure:
+    - img "Greeting card for Maria Fernandes: We look forward to seeing you."

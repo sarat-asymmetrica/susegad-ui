@@ -20,20 +20,17 @@
 // --break patches the served build once per family: the words drawn into a canvas only (1), a mask that ignores depth (2), no
 // settle on release (3), a 20% tint (4), a page that awaits three before it draws (5), a grip that ignores PageUp and PageDown (6).
 
-import { chromium } from 'playwright';
-import { startServer } from '../../../tools/serve.mjs';
-import { gpuOf } from '../../../tools/lib/gpu.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 import { TURN } from '../../core/orient.core.js';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
+import { TIMERS_SCRIPT, rafs, stable } from '../../../tools/lib/wait.mjs';
 
 const BREAK = process.argv.includes('--break');
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
-const server = await startServer({ quiet: true });
-const browser = await chromium.launch({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] });
+const h = await harness({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'], axe: 'not axe-checked anywhere yet: this page is not in tools/smoke.mjs (docs/DEBT.md); this check asks about drawing and layout' });
+const { server, browser, check, results } = h;
 // On a software renderer (a CI runner, or SG_FORCE_SOFTWARE_GL=1) the stage rightly draws in 2D: the live-tier readings skip
 // (`skip  <clause>  (no GPU: <renderer>)`, tools/lib/gpu.mjs) and the 2D and quiet readings still run, as their own clauses.
-const gate = await gpuOf(browser);
+const gate = await h.gpu();
 const THREE = /node_modules\/three\/|three\.named\.js|three(\.module|\.core)?\.js/;
 
 /** Patches by file, applied to the served text when --break asks for one. */
@@ -49,9 +46,10 @@ const BREAKS = {
 };
 
 async function open({ query = 'register=warm', theme = 'light', reduced = false, noGL = false, blockThree = false, holdThree = 0, width = 1280, height = 900, patches = [], always = false } = {}) {
-  const context = await browser.newContext({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference', colorScheme: theme, deviceScaleFactor: 1 });
+  const context = await h.context({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference', colorScheme: theme, deviceScaleFactor: 1 });
   const requests = [], errors = [];
   context.on('request', r => requests.push(r.url()));
+  await context.addInitScript(TIMERS_SCRIPT); // the stage's debounces and settle timers are what 'at rest' means here
   if (noGL) await context.addInitScript("const g = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function (t, ...a) { return /webgl/.test(t) ? null : g.call(this, t, ...a); };");
   if (blockThree) await context.route(THREE, r => r.abort());
   if (holdThree) await context.route(THREE, async r => { await new Promise(res => setTimeout(res, holdThree)); r.continue().catch(() => {}); });
@@ -66,18 +64,14 @@ async function open({ query = 'register=warm', theme = 'light', reduced = false,
   await page.addScriptTag({ content: PROBE });
   return { context, page, requests, errors, three: () => requests.filter(u => THREE.test(u)) };
 }
-const ready = async (p, ms = 60000) => { await p.page.waitForFunction(() => window.__ready === true, null, { timeout: ms }); await p.page.waitForTimeout(700); };
-/** The pane's own arrangement eases into place for a second or so after ready (it steps clear of the pot's words), and a box read before then is a box the pane is about to leave: wait until the pane's box and depth have held still for three reads. */
-const settled = async (p, ms = 10000) => {
-  let prev = '', still = 0;
-  for (let t = 0; t < ms; t += 250) {
-    const now = await p.page.evaluate(() => { const r = window.__stage.pane.getBoundingClientRect(); return [r.left, r.top, r.width, r.height].map(v => v.toFixed(1)).join() + ' ' + window.__stage.paneDepth; });
-    still = now === prev ? still + 1 : 0; prev = now;
-    if (still >= 3) return;
-    await p.page.waitForTimeout(250);
-  }
-  throw new Error('the pane never came to rest: ' + prev);
-};
+/** The pane's box, depth, settle mark and mask: what 'it has come to rest' is read from. */
+const paneStance = () => { const s = window.__stage, r = s?.pane?.getBoundingClientRect(); return r ? [r.left, r.top, r.width, r.height].map(v => +v.toFixed(1)).concat(s.paneDepth, s.dataset.settled ?? '', (s.pane.style.maskImage || s.pane.style.webkitMaskImage || '').length) : null; };
+/** At rest: none of the stage's short timers pending and the pane's box and depth unchanged for four frames. A slow machine waits longer, not less. */
+const atRest = (p, ms = 10000) => stable(p.page, paneStance, { frames: 4, ms, timers: true });
+/** Ready, and the pot's words have found their place (dataset.flow is set once matka-view has loaded; until then the paragraph sits above the picture, and a reading taken then is of another page), and at rest. */
+const ready = async (p, ms = 60000) => { await p.page.waitForFunction(() => window.__ready === true, null, { timeout: ms }); await p.page.waitForFunction(() => window.__stage?.dataset.flow !== undefined, null, { timeout: ms }).catch(() => {}); await atRest(p); };
+/** The pane's own arrangement eases into place for a second or so after ready (it steps clear of the pot's words), and a box read before then is a box the pane is about to leave: wait until the pane is at rest. */
+const settled = async (p, ms = 10000) => { const r = await atRest(p, ms); if (!r.ok) throw new Error('the pane never came to rest: ' + JSON.stringify(r.value)); };
 
 /** In the page: world.js's own G-buffer as the depth truth, and the lines' covered share against it. */
 const PROBE = `
@@ -104,7 +98,7 @@ window.__probe = async () => {
     await ready(p);
     for (const d of [0.15, 0.3, 0.6, 0.8]) {
       await p.page.evaluate(d => { window.__stage.paneDepth = d; }, d);
-      await p.page.waitForTimeout(250);
+      await atRest(p);
       const snap = await p.page.locator('sg-veranda-stage').ariaSnapshot();
       seen.push({ tier, d, ok: NEED.test(snap.replace(/\n/g, ' ')) && (await p.page.evaluate(() => window.__stage.dataset.tier)) === (tier === 'live' ? 'live' : '2d') });
     }
@@ -132,19 +126,19 @@ async function dragBehindPillar(p, hold) {
   });
   await p.page.mouse.move(m.g[0], m.g[1]); await p.page.mouse.down();
   await p.page.mouse.move(m.g[0] + m.dx, m.g[1] + m.drop, { steps: 12 });
-  if (!hold) { await p.page.mouse.up(); await p.page.waitForTimeout(1000); }
+  if (!hold) { await p.page.mouse.up(); await atRest(p); }
   return m;
 }
 {
   const p = await open({ patches: ['flatMask'] });
   await ready(p);
   await dragBehindPillar(p, true);
-  await p.page.waitForTimeout(500);
+  await atRest(p);
   const box = await p.page.evaluate(() => { const r = window.__stage.pane.getBoundingClientRect(), s = window.__stage.querySelector('.stage').getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height, sx: s.left, sy: s.top }; });
   const png = async () => (await p.page.screenshot()).toString('base64');
   const A = await png();
   await p.page.evaluate(() => { window.__stage.pane.style.visibility = 'hidden'; });
-  await p.page.waitForTimeout(250);
+  await rafs(p.page, 3); // the hidden pane is painted away
   const B = await png();
   const r = await p.page.evaluate(async ([A, B, box]) => {
     const P = await window.__probe(), d = window.__stage.paneDepth;
@@ -167,7 +161,7 @@ async function dragBehindPillar(p, hold) {
   await p.page.evaluate(() => window.__probe());
   await dragBehindPillar(p, true);
   const mid = await p.page.evaluate(async () => (await window.__probe()).share(window.__stage.paneDepth));
-  await p.page.mouse.up(); await p.page.waitForTimeout(1000);
+  await p.page.mouse.up(); await atRest(p);
   const after = await p.page.evaluate(async () => { const P = await window.__probe(), s = window.__stage; return { share: P.share(s.paneDepth), d: s.paneDepth, settled: s.dataset.settled ?? null, said: [...s.querySelectorAll('[role=status]')].map(x => x.textContent).join(' | ') }; });
   check('readable on release: dropped behind the pillar, the pane settles to under 15% covered and says so', mid > 0.4 && after.share < 0.15 && !!after.settled && /brought forward/.test(after.said), `covered ${(mid * 100).toFixed(0)}% while dragging, ${(after.share * 100).toFixed(1)}% after, depth ${after.d.toFixed(2)}, "${after.said}"`);
   await p.context.close();
@@ -187,7 +181,7 @@ async function contrast(theme, d, register = 'warm', patches = [], always = fals
   });
   let worst = 99, bad = 0, n = 0;
   for (let k = 0; k < 2; k++) {
-    await p.page.waitForTimeout(300);
+    await rafs(p.page, 18); // two readings, a stretch of frames apart: the picture behind the glass sways between them
     for (const l of lines.out) {
       const png = await p.page.screenshot({ clip: { x: l.x, y: l.y, width: l.w, height: l.h } });
       const r = await p.page.evaluate(async ([b64, ink, l]) => {
@@ -242,7 +236,9 @@ async function contrast(theme, d, register = 'warm', patches = [], always = fals
   // it really shows another veranda inside the pane's rect, in both tiers; and it is off in quiet, in warm and under reduced motion
   const read = async (opts, query) => {
     const p = await open({ ...opts, query });
-    await ready(p); await settled(p); await p.page.waitForTimeout(900);
+    await ready(p); await settled(p);
+    // and the lens, where there is one, has finished drawing: its picture's mean colour has held for twenty frames
+    await stable(p.page, () => { const cv = window.__stage.querySelector('.lens-view'); if (!cv || cv.width < 3) return null; const c = document.createElement('canvas'); c.width = 6; c.height = 4; const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(cv, 0, 0, 6, 4); return [...g.getImageData(0, 0, 6, 4).data]; }, { frames: 20, ms: 20000, timers: true });
     const r = await p.page.evaluate(() => {
       const s = window.__stage, cv = s.querySelector('.lens-view'), mean = (src, sx, sy, sw, sh) => { const c = document.createElement('canvas'); c.width = 48; c.height = 32; const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(src, sx, sy, sw, sh, 0, 0, 48, 32); const d = g.getImageData(0, 0, 48, 32).data, m = [0, 0, 0]; for (let i = 0; i < d.length; i += 4) { m[0] += d[i]; m[1] += d[i + 1]; m[2] += d[i + 2]; } return m.map(v => Math.round(v / 1536)); };
       // the lens against the day's still, cropped to the same rect on the picture: the same veranda in other weather, not a copy of it
@@ -284,7 +280,9 @@ async function seen(p) {
     await p.context.close();
   }
   const p = await open({ holdThree: 6000, patches: ['awaitThree'] });
-  await p.page.waitForTimeout(4500);
+  // the held request is 6 s long: the still has to be up well inside it, and the page then judged while three is still held back
+  await p.page.waitForFunction(() => !!window.__stage?.querySelector('sg-depth-photo img'), null, { timeout: 4500 }).catch(() => {});
+  await rafs(p.page, 3);
   const s = await p.page.evaluate(() => ({ still: !!window.__stage?.querySelector('sg-depth-photo img') }));
   const shot = s.still ? await seen(p) : { blank: 1, words: false };
   check('the still is on screen while three is still loading', s.still && shot.blank < 0.25, s.still ? `${(shot.blank * 100).toFixed(0)}% paper with three held back` : 'no picture yet: the page is waiting for three');
@@ -353,13 +351,17 @@ async function seen(p) {
   await ready(p);
   const absent = await p.page.evaluate(() => !!window.__stage.pane.querySelector('.turn'));
   check('the turn is off unless a page asks: no layer is made and nothing is turned', !absent, `turn layer ${absent}`);
-  await on(p.page); await p.page.waitForTimeout(300);
+  await on(p.page);
+  await p.page.waitForFunction(() => !!window.__stage.pane.querySelector('.turn'), null, { timeout: 10000 }).catch(() => {}); // the layer is mounted (the clause below asks)
+  await rafs(p.page, 3);
   const a0 = await tilt();
   check('pane-turn at rest: the layer is mounted, and only the register\'s idle sway leans the words', await p.page.evaluate(() => !!window.__stage.pane.querySelector('.turn')) && a0.tiltDeg <= TURN.warm, `tilt ${a0.tiltDeg.toFixed(2)} deg, inside the ${TURN.warm}-deg cone`);
   // the camera drives it: the pan becomes a gentle pointer, the words lean, the cone holds and they come to rest
   await dolly(p.page, 0.9);
   let most = 0;
+  // sampling, kept: the peak of the lean over 3.6 s of the real clock (the ease is a time constant, not a count of frames)
   for (let i = 0; i < 30; i++) { await p.page.waitForTimeout(120); most = Math.max(most, (await tilt()).tiltDeg); }
+  // sampling, kept: 'settled' means it did not move over 300 ms of the real clock
   const a = await tilt(); await p.page.waitForTimeout(300); const b = await tilt();
   check('the camera turns the words: a little, inside warm\'s 6 degrees, and they settle', most > 0.3 && most <= TURN.warm + 0.2 && Math.abs(b.tiltDeg - a.tiltDeg) <= 0.2, `most ${most.toFixed(2)} deg of ${TURN.warm}, ${Math.abs(b.tiltDeg - a.tiltDeg) <= 0.2 ? 'settled' : 'still moving'}`);
   const text = await p.page.evaluate(() => {
@@ -372,12 +374,16 @@ async function seen(p) {
   check('the words stay real text under the turn: a selection over the turned layer yields them', text.real && /Come and sit/.test(text.picked), `selection "${text.picked}"`);
   // unproject: the rects the settle judges are the plane's own, though the turn moved them on screen
   const thr = await flatRects(p.page), raw = await rawRects(p.page);
-  await p.page.evaluate(() => window.__stage.removeAttribute('pane-turn')); await p.page.waitForTimeout(300);
+  await p.page.evaluate(() => window.__stage.removeAttribute('pane-turn'));
+  await p.page.waitForFunction(() => !window.__stage.pane.querySelector('.turn'), null, { timeout: 10000 }).catch(() => {}); // the layer is taken down; the flat rects are read next
+  await rafs(p.page, 3);
   const flat = await flatRects(p.page);
   const turned = raw.length && raw.length === flat.length ? widest(raw, flat) : 0, off = thr.length === flat.length ? widest(thr, flat) : 99;
   check('occlusion is judged in the plane\'s own space: unproject() hands the flat rects back within 1 px, though the turn moved them on screen', raw.length > 0 && off <= 1 && turned > 1, `the turn moved the lines ${turned.toFixed(2)} px on screen, unprojected within ${off.toFixed(3)} px`);
   // the camera rests and the look is gone: back to flat, and nothing jitters
-  await on(p.page); await p.page.waitForTimeout(200);
+  await on(p.page);
+  await p.page.waitForFunction(() => !!window.__stage.pane.querySelector('.turn'), null, { timeout: 10000 }).catch(() => {});
+  // sampling, kept: the ease out and back is a time constant of the real clock (SETTLE_MS), and 'without jitter' is 400 ms of it standing still
   await dolly(p.page, 0.9); await p.page.waitForTimeout(SETTLE_MS);
   await dolly(p.page, 0); await p.page.waitForTimeout(SETTLE_MS);
   const c = await tilt(); await p.page.waitForTimeout(400); const d = await tilt();
@@ -389,14 +395,12 @@ async function seen(p) {
     await ready(q);
     await on(q.page);
     await dolly(q.page, 0.9);
-    await q.page.waitForTimeout(1400);
+    await q.page.waitForTimeout(1400); // sampling, kept: the camera's own ease is a second of the real clock, then the transform is read
     const t = await tilt(q.page);
     check(`${label} with pane-turn stays perfectly still`, STILL.test(t.transform), `transform ${t.transform || 'none'}`);
     await q.context.close();
   }
 }
 
-await browser.close(); await server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
-process.exit(BREAK ? 0 : failed ? 1 : 0);
+await h.done({ summary: `${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`, expectRed: BREAK });

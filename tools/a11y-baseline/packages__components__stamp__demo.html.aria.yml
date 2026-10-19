@@ -1,0 +1,23 @@
+- main:
+  - heading "Stamp" [level=1]
+  - paragraph
+  - heading "Stamped when the work is done" [level=2]
+  - paragraph
+  - paragraph
+  - button "Hold these dates"
+  - button "Release"
+  - heading "Tones" [level=2]
+  - status:
+  - status:
+  - status:
+  - status:
+  - status:
+  - status:
+  - heading "In Marathi, Kannada and Konkani" [level=2]
+  - status:
+  - status:
+  - status:
+  - status:
+  - paragraph
+  - heading "A long line wraps inside the frame" [level=2]
+  - status:

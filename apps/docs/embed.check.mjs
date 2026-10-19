@@ -24,7 +24,7 @@ import { chromium } from 'playwright';
 import { REPO_ROOT } from '../../tools/serve.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const OUT = path.join(REPO_ROOT, 'out', 'docs');
+const OUT = process.env.SG_DOCS_OUT ? path.resolve(process.env.SG_DOCS_OUT) : path.join(REPO_ROOT, 'out', 'docs');
 const FIXTURE = path.join(REPO_ROOT, 'tools', 'fixtures', 'embed', 'embed.html');
 
 let failed = 0, passed = 0;

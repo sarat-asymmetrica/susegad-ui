@@ -1,14 +1,13 @@
-// Pixel probes for scene checks (*.check.mjs): open a scene in the harness,
+// Pixel probes for scene checks (*.check.mjs): open a scene in the check harness
+// (tools/lib/component-check.mjs, which owns the server, the slot and the engine),
 // then read its canvas the way a person would look at it. Every probe works
 // in the scene's logical units, so a check can say "at the book's left page"
 // rather than a pixel that changes with the window.
 //
-//   const probe = await openScene(browser, server, 'vahi', { register: 'warm', progress: 0.5 });
+//   const h = await harness();
+//   const probe = await h.scene('vahi', { register: 'warm', progress: 0.5 });   // or openScene(h, 'vahi', ...)
 //   const a = await probe.hash();              // a fingerprint of the whole canvas
 //   const f = await probe.fraction(box, 'sheet'); // share of pixels in box matching a colour test
-
-import { chromium } from 'playwright';
-import { startServer } from '../serve.mjs';
 
 /** Colour tests by name, on [r, g, b] in 0..255. Kept here so checks and their fail-first runs share them. */
 export const TESTS = {
@@ -25,18 +24,6 @@ export const TESTS = {
   // a sky past first light: bright, whatever its hue
   daylight: ([r, g, b]) => r + g + b > 400,
 };
-
-/** Start a server and a browser for a check. Call done() at the end. */
-export async function session() {
-  const server = await startServer({ quiet: true });
-  const browser = await chromium.launch();
-  const results = [];
-  const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
-  return {
-    server, browser, check, results,
-    async done() { await browser.close(); await server.close(); if (results.some(r => !r.ok)) process.exit(1); },
-  };
-}
 
 /**
  * Open one scene in the harness. `opts` are harness params (register, theme,

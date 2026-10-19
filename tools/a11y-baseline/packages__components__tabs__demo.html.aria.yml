@@ -1,0 +1,22 @@
+- main:
+  - heading "Tabs" [level=1]
+  - paragraph
+  - heading "A room's details" [level=2]
+  - navigation "Room details":
+    - tablist "Room details":
+      - tab "Overview" [selected]
+      - tab "Amenities"
+      - tab "House rules"
+      - tab "Reviews"
+  - tabpanel "Overview":
+    - heading "Overview" [level=2]
+    - paragraph
+  - heading "A second, independent tablist on the same page" [level=2]
+  - paragraph
+  - navigation "Your dates":
+    - tablist "Your dates":
+      - tab "Arrival" [selected]
+      - tab "Departure"
+  - tabpanel "Arrival":
+    - heading "Arrival" [level=2]
+    - paragraph

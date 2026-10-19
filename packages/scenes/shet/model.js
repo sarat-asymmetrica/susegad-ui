@@ -329,6 +329,7 @@ export const localOf = progress => clamp(progress) * (T.cycle - 0.01);
 /**
  * The per-frame description. With progress set the year holds at that
  * moment: time stands still and the scene rests until the attribute changes.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
  */
 export function model({ time = 0, seed = 1, register = 'warm', params = {} } = {}) {
   const look = LOOKS[register] || LOOKS.warm;

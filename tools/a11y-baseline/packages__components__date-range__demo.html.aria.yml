@@ -1,0 +1,563 @@
+- main:
+  - heading "Date range" [level=1]
+  - paragraph
+  - heading "A stay at the house" [level=2]
+  - group "Your stay":
+    - textbox "Arrival"
+    - textbox "Departure"
+  - button "Previous month" [disabled]: ‹
+  - paragraph
+  - button "Next month": ›
+  - paragraph
+  - grid "October 2026":
+    - rowgroup:
+      - row "Mo Tu We Th Fr Sa Su":
+        - columnheader "Mo"
+        - columnheader "Tu"
+        - columnheader "We"
+        - columnheader "Th"
+        - columnheader "Fr"
+        - columnheader "Sa"
+        - columnheader "Su"
+    - rowgroup:
+      - row "Thu 1 Oct 2026, too soon, arrivals need 2 days' notice Fri 2 Oct 2026, too soon, arrivals need 2 days' notice Sat 3 Oct 2026, too soon, arrivals need 2 days' notice Sun 4 Oct 2026, too soon, arrivals need 2 days' notice":
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell "Thu 1 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Thu 1 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "1"
+        - gridcell "Fri 2 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Fri 2 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "2"
+        - gridcell "Sat 3 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Sat 3 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "3"
+        - gridcell "Sun 4 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Sun 4 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "4"
+      - row "Mon 5 Oct 2026, too soon, arrivals need 2 days' notice Tue 6 Oct 2026, too soon, arrivals need 2 days' notice Wed 7 Oct 2026, too soon, arrivals need 2 days' notice Thu 8 Oct 2026, too soon, arrivals need 2 days' notice Fri 9 Oct 2026, too soon, arrivals need 2 days' notice Sat 10 Oct 2026, too soon, arrivals need 2 days' notice Sun 11 Oct 2026, too soon, arrivals need 2 days' notice":
+        - gridcell "Mon 5 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Mon 5 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "5"
+        - gridcell "Tue 6 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Tue 6 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "6"
+        - gridcell "Wed 7 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Wed 7 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "7"
+        - gridcell "Thu 8 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Thu 8 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "8"
+        - gridcell "Fri 9 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Fri 9 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "9"
+        - gridcell "Sat 10 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Sat 10 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "10"
+        - gridcell "Sun 11 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Sun 11 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "11"
+      - row "Mon 12 Oct 2026, too soon, arrivals need 2 days' notice Tue 13 Oct 2026, too soon, arrivals need 2 days' notice Wed 14 Oct 2026, too soon, arrivals need 2 days' notice Thu 15 Oct 2026, too soon, arrivals need 2 days' notice Fri 16 Oct 2026, too soon, arrivals need 2 days' notice Sat 17 Oct 2026, too soon, arrivals need 2 days' notice Sun 18 Oct 2026, too soon, arrivals need 2 days' notice":
+        - gridcell "Mon 12 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Mon 12 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "12"
+        - gridcell "Tue 13 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Tue 13 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "13"
+        - gridcell "Wed 14 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Wed 14 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "14"
+        - gridcell "Thu 15 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Thu 15 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "15"
+        - gridcell "Fri 16 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Fri 16 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "16"
+        - gridcell "Sat 17 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Sat 17 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "17"
+        - gridcell "Sun 18 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Sun 18 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "18"
+      - row "Mon 19 Oct 2026, too soon, arrivals need 2 days' notice Tue 20 Oct 2026, too soon, arrivals need 2 days' notice Wed 21 Oct 2026, too soon, arrivals need 2 days' notice Thu 22 Oct 2026, free night, ₹20,000 (20k) Fri 23 Oct 2026, taken, you can leave on this day Sat 24 Oct 2026, taken Sun 25 Oct 2026, taken":
+        - gridcell "Mon 19 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Mon 19 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "19"
+        - gridcell "Tue 20 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Tue 20 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "20"
+        - gridcell "Wed 21 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Wed 21 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "21"
+        - gridcell "Thu 22 Oct 2026, free night, ₹20,000 (20k)":
+          - button "Thu 22 Oct 2026, free night, ₹20,000 (20k)": "22"
+        - gridcell "Fri 23 Oct 2026, taken, you can leave on this day":
+          - button "Fri 23 Oct 2026, taken, you can leave on this day" [disabled]: "23"
+        - gridcell "Sat 24 Oct 2026, taken":
+          - button "Sat 24 Oct 2026, taken" [disabled]: "24"
+        - gridcell "Sun 25 Oct 2026, taken":
+          - button "Sun 25 Oct 2026, taken" [disabled]: "25"
+      - row "Mon 26 Oct 2026, taken Tue 27 Oct 2026, free night, ₹20,000 (20k) Wed 28 Oct 2026, free night, ₹20,000 (20k) Thu 29 Oct 2026, free night, ₹20,000 (20k) Fri 30 Oct 2026, free night, ₹26,000 (26k) Sat 31 Oct 2026, free night, ₹26,000 (26k)":
+        - gridcell "Mon 26 Oct 2026, taken":
+          - button "Mon 26 Oct 2026, taken" [disabled]: "26"
+        - gridcell "Tue 27 Oct 2026, free night, ₹20,000 (20k)":
+          - button "Tue 27 Oct 2026, free night, ₹20,000 (20k)": "27"
+        - gridcell "Wed 28 Oct 2026, free night, ₹20,000 (20k)":
+          - button "Wed 28 Oct 2026, free night, ₹20,000 (20k)": "28"
+        - gridcell "Thu 29 Oct 2026, free night, ₹20,000 (20k)":
+          - button "Thu 29 Oct 2026, free night, ₹20,000 (20k)": "29"
+        - gridcell "Fri 30 Oct 2026, free night, ₹26,000 (26k)":
+          - button "Fri 30 Oct 2026, free night, ₹26,000 (26k)": "30"
+        - gridcell "Sat 31 Oct 2026, free night, ₹26,000 (26k)":
+          - button "Sat 31 Oct 2026, free night, ₹26,000 (26k)": "31"
+        - gridcell
+  - paragraph
+  - grid "November 2026":
+    - rowgroup:
+      - row "Mo Tu We Th Fr Sa Su":
+        - columnheader "Mo"
+        - columnheader "Tu"
+        - columnheader "We"
+        - columnheader "Th"
+        - columnheader "Fr"
+        - columnheader "Sa"
+        - columnheader "Su"
+    - rowgroup:
+      - row "Sun 1 Nov 2026, free night, ₹20,000 (20k)":
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell "Sun 1 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Sun 1 Nov 2026, free night, ₹20,000 (20k)": "1"
+      - row "Mon 2 Nov 2026, free night, ₹20,000 (20k) Tue 3 Nov 2026, free night, ₹20,000 (20k) Wed 4 Nov 2026, free night, ₹20,000 (20k) Thu 5 Nov 2026, free night, ₹20,000 (20k) Fri 6 Nov 2026, free night, ₹26,000 (26k) Sat 7 Nov 2026, free night, ₹26,000 (26k) Sun 8 Nov 2026, free night, ₹20,000 (20k)":
+        - gridcell "Mon 2 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Mon 2 Nov 2026, free night, ₹20,000 (20k)": "2"
+        - gridcell "Tue 3 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Tue 3 Nov 2026, free night, ₹20,000 (20k)": "3"
+        - gridcell "Wed 4 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Wed 4 Nov 2026, free night, ₹20,000 (20k)": "4"
+        - gridcell "Thu 5 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Thu 5 Nov 2026, free night, ₹20,000 (20k)": "5"
+        - gridcell "Fri 6 Nov 2026, free night, ₹26,000 (26k)":
+          - button "Fri 6 Nov 2026, free night, ₹26,000 (26k)": "6"
+        - gridcell "Sat 7 Nov 2026, free night, ₹26,000 (26k)":
+          - button "Sat 7 Nov 2026, free night, ₹26,000 (26k)": "7"
+        - gridcell "Sun 8 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Sun 8 Nov 2026, free night, ₹20,000 (20k)": "8"
+      - row "Mon 9 Nov 2026, free night, ₹20,000 (20k) Tue 10 Nov 2026, free night, ₹20,000 (20k) Wed 11 Nov 2026, free night, ₹20,000 (20k) Thu 12 Nov 2026, free night, ₹20,000 (20k) Fri 13 Nov 2026, taken, you can leave on this day Sat 14 Nov 2026, taken Sun 15 Nov 2026, taken":
+        - gridcell "Mon 9 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Mon 9 Nov 2026, free night, ₹20,000 (20k)": "9"
+        - gridcell "Tue 10 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Tue 10 Nov 2026, free night, ₹20,000 (20k)": "10"
+        - gridcell "Wed 11 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Wed 11 Nov 2026, free night, ₹20,000 (20k)": "11"
+        - gridcell "Thu 12 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Thu 12 Nov 2026, free night, ₹20,000 (20k)": "12"
+        - gridcell "Fri 13 Nov 2026, taken, you can leave on this day":
+          - button "Fri 13 Nov 2026, taken, you can leave on this day" [disabled]: "13"
+        - gridcell "Sat 14 Nov 2026, taken":
+          - button "Sat 14 Nov 2026, taken" [disabled]: "14"
+        - gridcell "Sun 15 Nov 2026, taken":
+          - button "Sun 15 Nov 2026, taken" [disabled]: "15"
+      - row "Mon 16 Nov 2026, free night, ₹20,000 (20k) Tue 17 Nov 2026, free night, ₹20,000 (20k) Wed 18 Nov 2026, free night, ₹20,000 (20k) Thu 19 Nov 2026, free night, ₹20,000 (20k) Fri 20 Nov 2026, free night, ₹26,000 (26k) Sat 21 Nov 2026, free night, ₹26,000 (26k) Sun 22 Nov 2026, free night, ₹20,000 (20k)":
+        - gridcell "Mon 16 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Mon 16 Nov 2026, free night, ₹20,000 (20k)": "16"
+        - gridcell "Tue 17 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Tue 17 Nov 2026, free night, ₹20,000 (20k)": "17"
+        - gridcell "Wed 18 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Wed 18 Nov 2026, free night, ₹20,000 (20k)": "18"
+        - gridcell "Thu 19 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Thu 19 Nov 2026, free night, ₹20,000 (20k)": "19"
+        - gridcell "Fri 20 Nov 2026, free night, ₹26,000 (26k)":
+          - button "Fri 20 Nov 2026, free night, ₹26,000 (26k)": "20"
+        - gridcell "Sat 21 Nov 2026, free night, ₹26,000 (26k)":
+          - button "Sat 21 Nov 2026, free night, ₹26,000 (26k)": "21"
+        - gridcell "Sun 22 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Sun 22 Nov 2026, free night, ₹20,000 (20k)": "22"
+      - row "Mon 23 Nov 2026, free night, ₹20,000 (20k) Tue 24 Nov 2026, free night, ₹20,000 (20k) Wed 25 Nov 2026, free night, ₹20,000 (20k) Thu 26 Nov 2026, free night, ₹20,000 (20k) Fri 27 Nov 2026, free night, ₹26,000 (26k) Sat 28 Nov 2026, free night, ₹26,000 (26k) Sun 29 Nov 2026, free night, ₹20,000 (20k)":
+        - gridcell "Mon 23 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Mon 23 Nov 2026, free night, ₹20,000 (20k)": "23"
+        - gridcell "Tue 24 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Tue 24 Nov 2026, free night, ₹20,000 (20k)": "24"
+        - gridcell "Wed 25 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Wed 25 Nov 2026, free night, ₹20,000 (20k)": "25"
+        - gridcell "Thu 26 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Thu 26 Nov 2026, free night, ₹20,000 (20k)": "26"
+        - gridcell "Fri 27 Nov 2026, free night, ₹26,000 (26k)":
+          - button "Fri 27 Nov 2026, free night, ₹26,000 (26k)": "27"
+        - gridcell "Sat 28 Nov 2026, free night, ₹26,000 (26k)":
+          - button "Sat 28 Nov 2026, free night, ₹26,000 (26k)": "28"
+        - gridcell "Sun 29 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Sun 29 Nov 2026, free night, ₹20,000 (20k)": "29"
+      - row "Mon 30 Nov 2026, free night, ₹20,000 (20k)":
+        - gridcell "Mon 30 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Mon 30 Nov 2026, free night, ₹20,000 (20k)": "30"
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+  - list:
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+  - group
+  - button "Check these dates"
+  - status
+  - heading "Already chosen" [level=2]
+  - paragraph
+  - group "Your stay":
+    - textbox "Arrival": 2026-11-09
+    - textbox "Departure": 2026-11-13
+  - button "Previous month": ‹
+  - paragraph
+  - button "Next month": ›
+  - paragraph
+  - grid "November 2026":
+    - rowgroup:
+      - row "Mo Tu We Th Fr Sa Su":
+        - columnheader "Mo"
+        - columnheader "Tu"
+        - columnheader "We"
+        - columnheader "Th"
+        - columnheader "Fr"
+        - columnheader "Sa"
+        - columnheader "Su"
+    - rowgroup:
+      - row "Sun 1 Nov 2026, free night, ₹20,000 (20k)":
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell "Sun 1 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Sun 1 Nov 2026, free night, ₹20,000 (20k)": "1"
+      - row "Mon 2 Nov 2026, free night, ₹20,000 (20k) Tue 3 Nov 2026, free night, ₹20,000 (20k) Wed 4 Nov 2026, free night, ₹20,000 (20k) Thu 5 Nov 2026, free night, ₹20,000 (20k) Fri 6 Nov 2026, free night, ₹26,000 (26k) Sat 7 Nov 2026, free night, ₹26,000 (26k) Sun 8 Nov 2026, free night, ₹20,000 (20k)":
+        - gridcell "Mon 2 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Mon 2 Nov 2026, free night, ₹20,000 (20k)": "2"
+        - gridcell "Tue 3 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Tue 3 Nov 2026, free night, ₹20,000 (20k)": "3"
+        - gridcell "Wed 4 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Wed 4 Nov 2026, free night, ₹20,000 (20k)": "4"
+        - gridcell "Thu 5 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Thu 5 Nov 2026, free night, ₹20,000 (20k)": "5"
+        - gridcell "Fri 6 Nov 2026, free night, ₹26,000 (26k)":
+          - button "Fri 6 Nov 2026, free night, ₹26,000 (26k)": "6"
+        - gridcell "Sat 7 Nov 2026, free night, ₹26,000 (26k)":
+          - button "Sat 7 Nov 2026, free night, ₹26,000 (26k)": "7"
+        - gridcell "Sun 8 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Sun 8 Nov 2026, free night, ₹20,000 (20k)": "8"
+      - row "Mon 9 Nov 2026, your arrival, free night, ₹20,000 (20k) Tue 10 Nov 2026, free night, ₹20,000 (20k) Wed 11 Nov 2026, free night, ₹20,000 (20k) Thu 12 Nov 2026, free night, ₹20,000 (20k) Fri 13 Nov 2026, your departure, taken, you can leave on this day Sat 14 Nov 2026, taken Sun 15 Nov 2026, taken":
+        - gridcell "Mon 9 Nov 2026, your arrival, free night, ₹20,000 (20k)" [selected]:
+          - button "Mon 9 Nov 2026, your arrival, free night, ₹20,000 (20k)": "9"
+        - gridcell "Tue 10 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Tue 10 Nov 2026, free night, ₹20,000 (20k)": "10"
+        - gridcell "Wed 11 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Wed 11 Nov 2026, free night, ₹20,000 (20k)": "11"
+        - gridcell "Thu 12 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Thu 12 Nov 2026, free night, ₹20,000 (20k)": "12"
+        - gridcell "Fri 13 Nov 2026, your departure, taken, you can leave on this day" [selected]:
+          - button "Fri 13 Nov 2026, your departure, taken, you can leave on this day" [disabled]: "13"
+        - gridcell "Sat 14 Nov 2026, taken":
+          - button "Sat 14 Nov 2026, taken" [disabled]: "14"
+        - gridcell "Sun 15 Nov 2026, taken":
+          - button "Sun 15 Nov 2026, taken" [disabled]: "15"
+      - row "Mon 16 Nov 2026, free night, ₹20,000 (20k) Tue 17 Nov 2026, free night, ₹20,000 (20k) Wed 18 Nov 2026, free night, ₹20,000 (20k) Thu 19 Nov 2026, free night, ₹20,000 (20k) Fri 20 Nov 2026, free night, ₹26,000 (26k) Sat 21 Nov 2026, free night, ₹26,000 (26k) Sun 22 Nov 2026, free night, ₹20,000 (20k)":
+        - gridcell "Mon 16 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Mon 16 Nov 2026, free night, ₹20,000 (20k)": "16"
+        - gridcell "Tue 17 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Tue 17 Nov 2026, free night, ₹20,000 (20k)": "17"
+        - gridcell "Wed 18 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Wed 18 Nov 2026, free night, ₹20,000 (20k)": "18"
+        - gridcell "Thu 19 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Thu 19 Nov 2026, free night, ₹20,000 (20k)": "19"
+        - gridcell "Fri 20 Nov 2026, free night, ₹26,000 (26k)":
+          - button "Fri 20 Nov 2026, free night, ₹26,000 (26k)": "20"
+        - gridcell "Sat 21 Nov 2026, free night, ₹26,000 (26k)":
+          - button "Sat 21 Nov 2026, free night, ₹26,000 (26k)": "21"
+        - gridcell "Sun 22 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Sun 22 Nov 2026, free night, ₹20,000 (20k)": "22"
+      - row "Mon 23 Nov 2026, free night, ₹20,000 (20k) Tue 24 Nov 2026, free night, ₹20,000 (20k) Wed 25 Nov 2026, free night, ₹20,000 (20k) Thu 26 Nov 2026, free night, ₹20,000 (20k) Fri 27 Nov 2026, free night, ₹26,000 (26k) Sat 28 Nov 2026, free night, ₹26,000 (26k) Sun 29 Nov 2026, free night, ₹20,000 (20k)":
+        - gridcell "Mon 23 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Mon 23 Nov 2026, free night, ₹20,000 (20k)": "23"
+        - gridcell "Tue 24 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Tue 24 Nov 2026, free night, ₹20,000 (20k)": "24"
+        - gridcell "Wed 25 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Wed 25 Nov 2026, free night, ₹20,000 (20k)": "25"
+        - gridcell "Thu 26 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Thu 26 Nov 2026, free night, ₹20,000 (20k)": "26"
+        - gridcell "Fri 27 Nov 2026, free night, ₹26,000 (26k)":
+          - button "Fri 27 Nov 2026, free night, ₹26,000 (26k)": "27"
+        - gridcell "Sat 28 Nov 2026, free night, ₹26,000 (26k)":
+          - button "Sat 28 Nov 2026, free night, ₹26,000 (26k)": "28"
+        - gridcell "Sun 29 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Sun 29 Nov 2026, free night, ₹20,000 (20k)": "29"
+      - row "Mon 30 Nov 2026, free night, ₹20,000 (20k)":
+        - gridcell "Mon 30 Nov 2026, free night, ₹20,000 (20k)":
+          - button "Mon 30 Nov 2026, free night, ₹20,000 (20k)": "30"
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+  - paragraph
+  - grid "December 2026":
+    - rowgroup:
+      - row "Mo Tu We Th Fr Sa Su":
+        - columnheader "Mo"
+        - columnheader "Tu"
+        - columnheader "We"
+        - columnheader "Th"
+        - columnheader "Fr"
+        - columnheader "Sa"
+        - columnheader "Su"
+    - rowgroup:
+      - row "Tue 1 Dec 2026, free night, ₹20,000 (20k) Wed 2 Dec 2026, free night, ₹20,000 (20k) Thu 3 Dec 2026, free night, ₹20,000 (20k) Fri 4 Dec 2026, free night, ₹26,000 (26k) Sat 5 Dec 2026, free night, ₹26,000 (26k) Sun 6 Dec 2026, free night, ₹20,000 (20k)":
+        - gridcell
+        - gridcell "Tue 1 Dec 2026, free night, ₹20,000 (20k)":
+          - button "Tue 1 Dec 2026, free night, ₹20,000 (20k)": "1"
+        - gridcell "Wed 2 Dec 2026, free night, ₹20,000 (20k)":
+          - button "Wed 2 Dec 2026, free night, ₹20,000 (20k)": "2"
+        - gridcell "Thu 3 Dec 2026, free night, ₹20,000 (20k)":
+          - button "Thu 3 Dec 2026, free night, ₹20,000 (20k)": "3"
+        - gridcell "Fri 4 Dec 2026, free night, ₹26,000 (26k)":
+          - button "Fri 4 Dec 2026, free night, ₹26,000 (26k)": "4"
+        - gridcell "Sat 5 Dec 2026, free night, ₹26,000 (26k)":
+          - button "Sat 5 Dec 2026, free night, ₹26,000 (26k)": "5"
+        - gridcell "Sun 6 Dec 2026, free night, ₹20,000 (20k)":
+          - button "Sun 6 Dec 2026, free night, ₹20,000 (20k)": "6"
+      - row "Mon 7 Dec 2026, free night, ₹20,000 (20k) Tue 8 Dec 2026, free night, ₹20,000 (20k) Wed 9 Dec 2026, free night, ₹20,000 (20k) Thu 10 Dec 2026, free night, ₹20,000 (20k) Fri 11 Dec 2026, free night, ₹26,000 (26k) Sat 12 Dec 2026, free night, ₹26,000 (26k) Sun 13 Dec 2026, free night, ₹20,000 (20k)":
+        - gridcell "Mon 7 Dec 2026, free night, ₹20,000 (20k)":
+          - button "Mon 7 Dec 2026, free night, ₹20,000 (20k)": "7"
+        - gridcell "Tue 8 Dec 2026, free night, ₹20,000 (20k)":
+          - button "Tue 8 Dec 2026, free night, ₹20,000 (20k)": "8"
+        - gridcell "Wed 9 Dec 2026, free night, ₹20,000 (20k)":
+          - button "Wed 9 Dec 2026, free night, ₹20,000 (20k)": "9"
+        - gridcell "Thu 10 Dec 2026, free night, ₹20,000 (20k)":
+          - button "Thu 10 Dec 2026, free night, ₹20,000 (20k)": "10"
+        - gridcell "Fri 11 Dec 2026, free night, ₹26,000 (26k)":
+          - button "Fri 11 Dec 2026, free night, ₹26,000 (26k)": "11"
+        - gridcell "Sat 12 Dec 2026, free night, ₹26,000 (26k)":
+          - button "Sat 12 Dec 2026, free night, ₹26,000 (26k)": "12"
+        - gridcell "Sun 13 Dec 2026, free night, ₹20,000 (20k)":
+          - button "Sun 13 Dec 2026, free night, ₹20,000 (20k)": "13"
+      - row "Mon 14 Dec 2026, free night, ₹20,000 (20k) Tue 15 Dec 2026, free night, ₹20,000 (20k) Wed 16 Dec 2026, free night, ₹20,000 (20k) Thu 17 Dec 2026, free night, ₹20,000 (20k) Fri 18 Dec 2026, free night, ₹26,000 (26k) Sat 19 Dec 2026, free night, ₹26,000 (26k) Sun 20 Dec 2026, free night, ₹40,000 (40k), Christmas week":
+        - gridcell "Mon 14 Dec 2026, free night, ₹20,000 (20k)":
+          - button "Mon 14 Dec 2026, free night, ₹20,000 (20k)": "14"
+        - gridcell "Tue 15 Dec 2026, free night, ₹20,000 (20k)":
+          - button "Tue 15 Dec 2026, free night, ₹20,000 (20k)": "15"
+        - gridcell "Wed 16 Dec 2026, free night, ₹20,000 (20k)":
+          - button "Wed 16 Dec 2026, free night, ₹20,000 (20k)": "16"
+        - gridcell "Thu 17 Dec 2026, free night, ₹20,000 (20k)":
+          - button "Thu 17 Dec 2026, free night, ₹20,000 (20k)": "17"
+        - gridcell "Fri 18 Dec 2026, free night, ₹26,000 (26k)":
+          - button "Fri 18 Dec 2026, free night, ₹26,000 (26k)": "18"
+        - gridcell "Sat 19 Dec 2026, free night, ₹26,000 (26k)":
+          - button "Sat 19 Dec 2026, free night, ₹26,000 (26k)": "19"
+        - gridcell "Sun 20 Dec 2026, free night, ₹40,000 (40k), Christmas week":
+          - button "Sun 20 Dec 2026, free night, ₹40,000 (40k), Christmas week": "20"
+      - row "Mon 21 Dec 2026, free night, ₹40,000 (40k), Christmas week Tue 22 Dec 2026, free night, ₹40,000 (40k), Christmas week Wed 23 Dec 2026, free night, ₹40,000 (40k), Christmas week Thu 24 Dec 2026, free night, ₹40,000 (40k), Christmas week Fri 25 Dec 2026, free night, ₹48,000 (48k), Christmas week Sat 26 Dec 2026, free night, ₹48,000 (48k), Christmas week Sun 27 Dec 2026, free night, ₹40,000 (40k), Christmas week":
+        - gridcell "Mon 21 Dec 2026, free night, ₹40,000 (40k), Christmas week":
+          - button "Mon 21 Dec 2026, free night, ₹40,000 (40k), Christmas week": "21"
+        - gridcell "Tue 22 Dec 2026, free night, ₹40,000 (40k), Christmas week":
+          - button "Tue 22 Dec 2026, free night, ₹40,000 (40k), Christmas week": "22"
+        - gridcell "Wed 23 Dec 2026, free night, ₹40,000 (40k), Christmas week":
+          - button "Wed 23 Dec 2026, free night, ₹40,000 (40k), Christmas week": "23"
+        - gridcell "Thu 24 Dec 2026, free night, ₹40,000 (40k), Christmas week":
+          - button "Thu 24 Dec 2026, free night, ₹40,000 (40k), Christmas week": "24"
+        - gridcell "Fri 25 Dec 2026, free night, ₹48,000 (48k), Christmas week":
+          - button "Fri 25 Dec 2026, free night, ₹48,000 (48k), Christmas week": "25"
+        - gridcell "Sat 26 Dec 2026, free night, ₹48,000 (48k), Christmas week":
+          - button "Sat 26 Dec 2026, free night, ₹48,000 (48k), Christmas week": "26"
+        - gridcell "Sun 27 Dec 2026, free night, ₹40,000 (40k), Christmas week":
+          - button "Sun 27 Dec 2026, free night, ₹40,000 (40k), Christmas week": "27"
+      - row "Mon 28 Dec 2026, free night, ₹40,000 (40k), Christmas week Tue 29 Dec 2026, free night, ₹40,000 (40k), Christmas week Wed 30 Dec 2026, free night, ₹40,000 (40k), Christmas week Thu 31 Dec 2026, free night, ₹40,000 (40k), Christmas week":
+        - gridcell "Mon 28 Dec 2026, free night, ₹40,000 (40k), Christmas week":
+          - button "Mon 28 Dec 2026, free night, ₹40,000 (40k), Christmas week": "28"
+        - gridcell "Tue 29 Dec 2026, free night, ₹40,000 (40k), Christmas week":
+          - button "Tue 29 Dec 2026, free night, ₹40,000 (40k), Christmas week": "29"
+        - gridcell "Wed 30 Dec 2026, free night, ₹40,000 (40k), Christmas week":
+          - button "Wed 30 Dec 2026, free night, ₹40,000 (40k), Christmas week": "30"
+        - gridcell "Thu 31 Dec 2026, free night, ₹40,000 (40k), Christmas week":
+          - button "Thu 31 Dec 2026, free night, ₹40,000 (40k), Christmas week": "31"
+        - gridcell
+        - gridcell
+        - gridcell
+  - list:
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+  - group
+  - heading "Dates only" [level=2]
+  - paragraph:
+  - group "Dates for the studio":
+    - textbox "From"
+    - textbox "Until"
+  - button "Previous month" [disabled]: ‹
+  - paragraph
+  - button "Next month": ›
+  - paragraph
+  - grid "October 2026":
+    - rowgroup:
+      - row "Mo Tu We Th Fr Sa Su":
+        - columnheader "Mo"
+        - columnheader "Tu"
+        - columnheader "We"
+        - columnheader "Th"
+        - columnheader "Fr"
+        - columnheader "Sa"
+        - columnheader "Su"
+    - rowgroup:
+      - row "Thu 1 Oct 2026, too soon, arrivals need 2 days' notice Fri 2 Oct 2026, too soon, arrivals need 2 days' notice Sat 3 Oct 2026, too soon, arrivals need 2 days' notice Sun 4 Oct 2026, too soon, arrivals need 2 days' notice":
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell "Thu 1 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Thu 1 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "1"
+        - gridcell "Fri 2 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Fri 2 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "2"
+        - gridcell "Sat 3 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Sat 3 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "3"
+        - gridcell "Sun 4 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Sun 4 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "4"
+      - row "Mon 5 Oct 2026, too soon, arrivals need 2 days' notice Tue 6 Oct 2026, too soon, arrivals need 2 days' notice Wed 7 Oct 2026, too soon, arrivals need 2 days' notice Thu 8 Oct 2026, too soon, arrivals need 2 days' notice Fri 9 Oct 2026, too soon, arrivals need 2 days' notice Sat 10 Oct 2026, too soon, arrivals need 2 days' notice Sun 11 Oct 2026, too soon, arrivals need 2 days' notice":
+        - gridcell "Mon 5 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Mon 5 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "5"
+        - gridcell "Tue 6 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Tue 6 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "6"
+        - gridcell "Wed 7 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Wed 7 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "7"
+        - gridcell "Thu 8 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Thu 8 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "8"
+        - gridcell "Fri 9 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Fri 9 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "9"
+        - gridcell "Sat 10 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Sat 10 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "10"
+        - gridcell "Sun 11 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Sun 11 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "11"
+      - row "Mon 12 Oct 2026, too soon, arrivals need 2 days' notice Tue 13 Oct 2026, too soon, arrivals need 2 days' notice Wed 14 Oct 2026, too soon, arrivals need 2 days' notice Thu 15 Oct 2026, too soon, arrivals need 2 days' notice Fri 16 Oct 2026, too soon, arrivals need 2 days' notice Sat 17 Oct 2026, too soon, arrivals need 2 days' notice Sun 18 Oct 2026, too soon, arrivals need 2 days' notice":
+        - gridcell "Mon 12 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Mon 12 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "12"
+        - gridcell "Tue 13 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Tue 13 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "13"
+        - gridcell "Wed 14 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Wed 14 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "14"
+        - gridcell "Thu 15 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Thu 15 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "15"
+        - gridcell "Fri 16 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Fri 16 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "16"
+        - gridcell "Sat 17 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Sat 17 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "17"
+        - gridcell "Sun 18 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Sun 18 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "18"
+      - row "Mon 19 Oct 2026, too soon, arrivals need 2 days' notice Tue 20 Oct 2026, too soon, arrivals need 2 days' notice Wed 21 Oct 2026, too soon, arrivals need 2 days' notice Thu 22 Oct 2026, free night Fri 23 Oct 2026, free night Sat 24 Oct 2026, free night Sun 25 Oct 2026, free night":
+        - gridcell "Mon 19 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Mon 19 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "19"
+        - gridcell "Tue 20 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Tue 20 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "20"
+        - gridcell "Wed 21 Oct 2026, too soon, arrivals need 2 days' notice":
+          - button "Wed 21 Oct 2026, too soon, arrivals need 2 days' notice" [disabled]: "21"
+        - gridcell "Thu 22 Oct 2026, free night":
+          - button "Thu 22 Oct 2026, free night": "22"
+        - gridcell "Fri 23 Oct 2026, free night":
+          - button "Fri 23 Oct 2026, free night": "23"
+        - gridcell "Sat 24 Oct 2026, free night":
+          - button "Sat 24 Oct 2026, free night": "24"
+        - gridcell "Sun 25 Oct 2026, free night":
+          - button "Sun 25 Oct 2026, free night": "25"
+      - row "Mon 26 Oct 2026, free night Tue 27 Oct 2026, free night Wed 28 Oct 2026, closed by the house, you can leave on this day Thu 29 Oct 2026, closed by the house Fri 30 Oct 2026, closed by the house Sat 31 Oct 2026, closed by the house":
+        - gridcell "Mon 26 Oct 2026, free night":
+          - button "Mon 26 Oct 2026, free night": "26"
+        - gridcell "Tue 27 Oct 2026, free night":
+          - button "Tue 27 Oct 2026, free night": "27"
+        - gridcell "Wed 28 Oct 2026, closed by the house, you can leave on this day":
+          - button "Wed 28 Oct 2026, closed by the house, you can leave on this day" [disabled]: "28"
+        - gridcell "Thu 29 Oct 2026, closed by the house":
+          - button "Thu 29 Oct 2026, closed by the house" [disabled]: "29"
+        - gridcell "Fri 30 Oct 2026, closed by the house":
+          - button "Fri 30 Oct 2026, closed by the house" [disabled]: "30"
+        - gridcell "Sat 31 Oct 2026, closed by the house":
+          - button "Sat 31 Oct 2026, closed by the house" [disabled]: "31"
+        - gridcell
+  - paragraph
+  - grid "November 2026":
+    - rowgroup:
+      - row "Mo Tu We Th Fr Sa Su":
+        - columnheader "Mo"
+        - columnheader "Tu"
+        - columnheader "We"
+        - columnheader "Th"
+        - columnheader "Fr"
+        - columnheader "Sa"
+        - columnheader "Su"
+    - rowgroup:
+      - row "Sun 1 Nov 2026, closed by the house":
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell "Sun 1 Nov 2026, closed by the house":
+          - button "Sun 1 Nov 2026, closed by the house" [disabled]: "1"
+      - row "Mon 2 Nov 2026, free night Tue 3 Nov 2026, free night Wed 4 Nov 2026, free night Thu 5 Nov 2026, free night Fri 6 Nov 2026, free night Sat 7 Nov 2026, free night Sun 8 Nov 2026, free night":
+        - gridcell "Mon 2 Nov 2026, free night":
+          - button "Mon 2 Nov 2026, free night": "2"
+        - gridcell "Tue 3 Nov 2026, free night":
+          - button "Tue 3 Nov 2026, free night": "3"
+        - gridcell "Wed 4 Nov 2026, free night":
+          - button "Wed 4 Nov 2026, free night": "4"
+        - gridcell "Thu 5 Nov 2026, free night":
+          - button "Thu 5 Nov 2026, free night": "5"
+        - gridcell "Fri 6 Nov 2026, free night":
+          - button "Fri 6 Nov 2026, free night": "6"
+        - gridcell "Sat 7 Nov 2026, free night":
+          - button "Sat 7 Nov 2026, free night": "7"
+        - gridcell "Sun 8 Nov 2026, free night":
+          - button "Sun 8 Nov 2026, free night": "8"
+      - row "Mon 9 Nov 2026, free night Tue 10 Nov 2026, free night Wed 11 Nov 2026, free night Thu 12 Nov 2026, free night Fri 13 Nov 2026, free night Sat 14 Nov 2026, free night Sun 15 Nov 2026, free night":
+        - gridcell "Mon 9 Nov 2026, free night":
+          - button "Mon 9 Nov 2026, free night": "9"
+        - gridcell "Tue 10 Nov 2026, free night":
+          - button "Tue 10 Nov 2026, free night": "10"
+        - gridcell "Wed 11 Nov 2026, free night":
+          - button "Wed 11 Nov 2026, free night": "11"
+        - gridcell "Thu 12 Nov 2026, free night":
+          - button "Thu 12 Nov 2026, free night": "12"
+        - gridcell "Fri 13 Nov 2026, free night":
+          - button "Fri 13 Nov 2026, free night": "13"
+        - gridcell "Sat 14 Nov 2026, free night":
+          - button "Sat 14 Nov 2026, free night": "14"
+        - gridcell "Sun 15 Nov 2026, free night":
+          - button "Sun 15 Nov 2026, free night": "15"
+      - row "Mon 16 Nov 2026, free night Tue 17 Nov 2026, free night Wed 18 Nov 2026, free night Thu 19 Nov 2026, free night Fri 20 Nov 2026, free night Sat 21 Nov 2026, free night Sun 22 Nov 2026, free night":
+        - gridcell "Mon 16 Nov 2026, free night":
+          - button "Mon 16 Nov 2026, free night": "16"
+        - gridcell "Tue 17 Nov 2026, free night":
+          - button "Tue 17 Nov 2026, free night": "17"
+        - gridcell "Wed 18 Nov 2026, free night":
+          - button "Wed 18 Nov 2026, free night": "18"
+        - gridcell "Thu 19 Nov 2026, free night":
+          - button "Thu 19 Nov 2026, free night": "19"
+        - gridcell "Fri 20 Nov 2026, free night":
+          - button "Fri 20 Nov 2026, free night": "20"
+        - gridcell "Sat 21 Nov 2026, free night":
+          - button "Sat 21 Nov 2026, free night": "21"
+        - gridcell "Sun 22 Nov 2026, free night":
+          - button "Sun 22 Nov 2026, free night": "22"
+      - row "Mon 23 Nov 2026, free night Tue 24 Nov 2026, free night Wed 25 Nov 2026, free night Thu 26 Nov 2026, free night Fri 27 Nov 2026, free night Sat 28 Nov 2026, free night Sun 29 Nov 2026, free night":
+        - gridcell "Mon 23 Nov 2026, free night":
+          - button "Mon 23 Nov 2026, free night": "23"
+        - gridcell "Tue 24 Nov 2026, free night":
+          - button "Tue 24 Nov 2026, free night": "24"
+        - gridcell "Wed 25 Nov 2026, free night":
+          - button "Wed 25 Nov 2026, free night": "25"
+        - gridcell "Thu 26 Nov 2026, free night":
+          - button "Thu 26 Nov 2026, free night": "26"
+        - gridcell "Fri 27 Nov 2026, free night":
+          - button "Fri 27 Nov 2026, free night": "27"
+        - gridcell "Sat 28 Nov 2026, free night":
+          - button "Sat 28 Nov 2026, free night": "28"
+        - gridcell "Sun 29 Nov 2026, free night":
+          - button "Sun 29 Nov 2026, free night": "29"
+      - row "Mon 30 Nov 2026, free night":
+        - gridcell "Mon 30 Nov 2026, free night":
+          - button "Mon 30 Nov 2026, free night": "30"
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+        - gridcell
+  - list:
+    - listitem
+    - listitem
+    - listitem

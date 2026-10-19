@@ -1,0 +1,30 @@
+- main:
+  - heading "Tollem" [level=1]
+  - paragraph
+  - img "Looking down into a pool at noon: pale tiles under a moving net of light, a laterite edge, and a frangipani flower afloat."
+  - heading "Swim before lunch" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - paragraph
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Text on the water" [checked]
+  - slider "Swell": "0.5"
+  - checkbox "Show progress"
+  - slider "Progress" [disabled]: "0.4"
+  - combobox "Palette":
+    - option "seed" [selected]
+    - option "aqua"
+    - option "sky"
+    - option "celadon"
+  - combobox "Renderer":
+    - option "auto" [selected]
+    - option "webgl"
+    - option "2d"
+  - button "Lose the WebGL context"
+  - button "Start again"
+  - button "New pool"

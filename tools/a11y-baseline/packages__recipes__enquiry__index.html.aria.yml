@@ -1,0 +1,25 @@
+- main:
+  - paragraph
+  - heading "A question, or dates we can't show yet?" [level=1]
+  - paragraph
+  - textbox "Your name"
+  - paragraph
+  - textbox "Phone or email"
+  - combobox "Where are you travelling from?"
+  - status
+  - textbox "Rough dates":
+    - /placeholder: e.g. a week in November
+  - combobox "People":
+    - option "Choose" [selected]
+    - option "1"
+    - option "2"
+    - option "3"
+    - option "4"
+    - option "5"
+    - option "6"
+    - option "More than 6"
+  - textbox "What's the occasion?":
+    - /placeholder: Family holiday, a birthday, a writing week…
+  - textbox "Anything else"
+  - paragraph
+  - button "Send"

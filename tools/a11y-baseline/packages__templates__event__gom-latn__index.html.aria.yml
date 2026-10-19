@@ -1,0 +1,196 @@
+- link "Thet mojkurak vochem":
+  - /url: "#main"
+- region "Suchona":
+  - button "Hi suchona bond korchi"
+- banner:
+  - paragraph:
+    - link "Mandovi Conclave":
+      - /url: ../index.html
+  - navigation "Mukhel":
+    - link "Velapotrok":
+      - /url: "#agenda"
+    - link "Ulovpi":
+      - /url: "#speakers"
+    - link "Nanv nond":
+      - /url: "#register"
+    - link "Thol":
+      - /url: "#venue"
+  - navigation "Bhas":
+    - list:
+      - listitem:
+        - link "English":
+          - /url: ../index.html
+      - listitem:
+        - link "कोंकणी":
+          - /url: ../gom-deva/index.html
+      - listitem:
+        - link "Konknni":
+          - /url: index.html
+- main:
+  - region "Sorkari sevankhatir AI, protyoksh vaparant":
+    - paragraph
+    - heading "Sorkari sevankhatir AI, protyoksh vaparant" [level=1]
+    - paragraph
+    - paragraph:
+      - link "Velapotrok pollovchem":
+        - /url: "#agenda"
+      - link "Thol sodchem":
+        - /url: "#venue"
+    - figure:
+      - img "Goemchea pahantecho ek table: lokhnnachea sollyanchea khidkechea sokoil ek laptop ani chahacho stilacho glas, bhayr madam ani kavlam ghatillem ghor."
+      - button "Chitr chalovchem"
+  - region "Velapotrok":
+    - heading "Velapotrok" [level=2]
+    - paragraph
+    - paragraph
+    - region "Sonvar 21 Novembr":
+      - heading "Sonvar 21 Novembr" [level=3]:
+      - list:
+        - listitem:
+          - paragraph:
+          - heading "Daram ugodtat ani nanv nond" [level=4]
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Swagat, ani ami hanga kityak" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Sopea bhaxentle arz: arz bhorpi monxakhatir to porot borovpi ek model" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Hatan borollyo nondi vachop, mul pan japun dovorun" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Chah ani visanvo" [level=4]
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Modelan kitem tharavchem nhoi: labhachea magnnyant monxachi tapasnni" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Danparchem jevonn" [level=4]
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Lhan karyalayakhatir moklim sadhnam: eka laptopar kitem chalta" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Padyar ani avazant Konknni: ami khoim pavlyat ani kitem unnem asa" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Prosn ani samarop" [level=4]
+          - paragraph
+          - paragraph
+  - region "Ulovpi":
+    - heading "Ulovpi" [level=2]
+    - list:
+      - listitem:
+        - article "Asha Naik":
+          - heading "Asha Naik" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - 'link "Sopea bhaxentle arz: arz bhorpi monxakhatir to porot borovpi ek model"':
+              - /url: "#forms"
+      - listitem:
+        - article "Rohan Kamat":
+          - heading "Rohan Kamat" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - link "Hatan borollyo nondi vachop, mul pan japun dovorun":
+              - /url: "#records"
+      - listitem:
+        - article "Sneha Fernandes":
+          - heading "Sneha Fernandes" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - 'link "Modelan kitem tharavchem nhoi: labhachea magnnyant monxachi tapasnni"':
+              - /url: "#review"
+      - listitem:
+        - article "Vivek Dessai":
+          - heading "Vivek Dessai" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - 'link "Lhan karyalayakhatir moklim sadhnam: eka laptopar kitem chalta"':
+              - /url: "#laptop"
+      - listitem:
+        - article "Maria D’Costa":
+          - heading "Maria D’Costa" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - 'link "Padyar ani avazant Konknni: ami khoim pavlyat ani kitem unnem asa"':
+              - /url: "#konkani"
+  - region "Nanv nond":
+    - heading "Nanv nond" [level=2]
+    - paragraph
+    - paragraph:
+      - textbox "Nanv"
+    - paragraph:
+      - textbox "E-mel patto"
+    - group "Tumchea topxilanchem ami kitem kortat":
+      - heading "Tumchea topxilanchem ami kitem kortat" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - checkbox "Mhajea topxilancho [site name] hanga sangillea taren vapar korpak mhaji sommoti asa. Hem hanv vachlem."
+    - paragraph:
+      - button "Nond korat"
+    - status
+  - region "Thol":
+    - heading "Thol" [level=2]
+    - paragraph
+    - heading "Tem sodop" [level=3]
+    - paragraph
+    - paragraph:
+      - link "Web nakxant ugodchem":
+        - /url: https://www.google.com/maps/search/?api=1&query=15.4989,73.8278
+    - region "Thollak koxem pavchem":
+      - heading "Thollak koxem pavchem" [level=3]
+      - list:
+        - listitem:
+        - listitem:
+        - listitem:
+    - region "Provexachyo soyi":
+      - heading "Provexachyo soyi" [level=3]
+      - term
+      - definition
+      - term
+      - definition
+      - term
+      - definition
+- contentinfo "Sayticho sokoylo bhag":
+  - paragraph
+  - navigation "Hea panant":
+    - list:
+      - listitem:
+        - link "Velapotrok":
+          - /url: "#agenda"
+      - listitem:
+        - link "Ulovpi":
+          - /url: "#speakers"
+      - listitem:
+        - link "Thol":
+          - /url: "#venue"
+      - listitem:
+        - link "Voir vochem":
+          - /url: "#main"
+  - paragraph:

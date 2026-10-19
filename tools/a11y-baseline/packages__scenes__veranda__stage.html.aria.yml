@@ -1,0 +1,13 @@
+- main:
+  - heading "The veranda, staged" [level=1]
+  - paragraph
+  - img "A drawing of a Goan veranda seen along its length: laterite pillars and a built-in seat on the right, a lime-washed wall with a teak door and a shuttered window on the left, a brass lamp hanging from the roof, and the garden and paddy beyond."
+  - button "Focus on the lamp"
+  - button "Focus on the near pillar"
+  - button "Focus on the paddy"
+  - slider "Focus depth": "0.55"
+  - status
+  - slider "Walk in": "0"
+  - status
+  - paragraph
+  - paragraph

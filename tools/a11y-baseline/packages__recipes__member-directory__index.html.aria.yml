@@ -1,0 +1,68 @@
+- main:
+  - heading "Members, building near Aldona" [level=1]
+  - paragraph
+  - searchbox "Search the members"
+  - group "Track":
+    - checkbox "AI for Senior Citizens"
+    - checkbox "AI for Kids"
+    - checkbox "Tech for Good"
+    - checkbox "Builders Moving to Goa"
+    - checkbox "Workshops for Founders"
+  - status
+  - list:
+    - listitem:
+      - article "Priyanka Naik":
+        - heading "Priyanka Naik" [level=3]
+        - paragraph
+        - paragraph
+        - paragraph:
+          - link "Her notes":
+            - /url: https://example.com/priyanka
+    - listitem:
+      - article "Melwyn Fernandes":
+        - heading "Melwyn Fernandes" [level=3]
+        - paragraph
+        - paragraph
+        - paragraph:
+          - link "Write to Melwyn":
+            - /url: mailto:melwyn@example.com
+    - listitem:
+      - article "Sarita Kamat":
+        - heading "Sarita Kamat" [level=3]
+        - paragraph
+        - paragraph
+        - paragraph:
+          - link "Her page":
+            - /url: https://example.com/sarita
+    - listitem:
+      - article "Aldrich Pinto":
+        - heading "Aldrich Pinto" [level=3]
+        - paragraph
+        - paragraph
+        - paragraph:
+          - link "His notebook":
+            - /url: https://example.com/aldrich
+    - listitem:
+      - article "Fernanda D'Souza":
+        - heading "Fernanda D'Souza" [level=3]
+        - paragraph
+        - paragraph
+        - paragraph:
+          - link "Her guide":
+            - /url: https://example.com/fernanda
+    - listitem:
+      - article "Deepa Shirodkar":
+        - heading "Deepa Shirodkar" [level=3]
+        - paragraph
+        - paragraph
+        - paragraph:
+          - link "Her page":
+            - /url: https://example.com/deepa
+    - listitem:
+      - article "Roque Barros":
+        - heading "Roque Barros" [level=3]
+        - paragraph
+        - paragraph
+        - paragraph:
+          - link "His log":
+            - /url: https://example.com/roque

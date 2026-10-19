@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  // ?register=quiet|warm|playful, ?theme=light|dark and ?palette=… set the page's look (the tools use them too).
+  for (const [k, v] of new URLSearchParams(location.search)) if (['register', 'theme', 'palette'].includes(k)) document.documentElement.setAttribute(`data-${k}`, v);
+  window.__ready = false; // set once the first card is drawn, so a screenshot is not of an empty frame
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Picture postcards</title>
+<link rel="stylesheet" href="../../tokens/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="./recipe.css">
+</head>
+<body>
+<main class="pc">
+  <header class="pc__head">
+    <h1>A postcard of Goa with your name on it</h1>
+    <p class="pc__sub">Type a name, pick a picture, and the card is drawn here, on this device. Save it as a picture, or as a short moving GIF, or send it on.</p>
+  </header>
+
+  <div class="pc__cols">
+    <form id="maker" class="pc__form">
+      <label for="name">Your name</label>
+      <input id="name" name="name" type="text" value="Maria Fernandes" placeholder="Asha Naik" maxlength="60" autocomplete="off" spellcheck="false" enterkeyhint="done">
+      <label for="scene">Choose a scene</label>
+      <select id="scene" name="scene"></select>
+      <div class="pc__buttons">
+        <button type="button" id="save-png" class="pc__button pc__button--primary">Save picture</button>
+        <button type="button" id="save-gif" class="pc__button pc__button--primary">Save GIF</button>
+        <button type="button" id="share-png" class="pc__button">Share picture</button>
+        <button type="button" id="share-gif" class="pc__button">Share GIF</button>
+      </div>
+      <div class="pc__progress"><progress id="progress" max="1" value="0" aria-label="Making the GIF"></progress><button type="button" id="cancel" class="pc__button" aria-label="Cancel making the GIF">Cancel</button></div>
+      <p id="gif-note" class="pc__note" hidden></p>
+      <p id="motion-note" class="pc__note" hidden></p>
+      <p id="status" class="pc__status" role="status"></p>
+    </form>
+
+    <figure class="pc__preview">
+      <canvas id="card" width="1800" height="1200" role="img" aria-label="A postcard of Goa"></canvas>
+      <img id="gif-preview" alt="" hidden width="900" height="600" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+      <p class="pc__note">The card never leaves this device until you save or share it.</p>
+    </figure>
+  </div>
+  <noscript><p class="pc__sub">Postcards are drawn in your browser, so this page needs JavaScript. Please switch it on and come back.</p></noscript>
+</main>
+<script type="module">
+  import { mountPostcard } from './recipe.js';
+  mountPostcard().then(() => document.fonts.ready).then(() => { window.__ready = true; });
+</script>
+</body>
+</html>

@@ -2,6 +2,8 @@
 //
 //   node packages/scenes/ferry/ferry.check.mjs
 //
+// (The current band's softness is in ferry.band.check.mjs, which runs in WebKit and Firefox too.)
+//
 // The ferry is found in the pixels: the centroid of its laterite hull over
 // the water (the near bank is left out of the box).
 //
@@ -12,10 +14,11 @@
 //
 // Each was watched failing first on a broken build (see the report).
 
-import { session, openScene } from '../../../tools/lib/scene-probe.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { openScene } from '../../../tools/lib/scene-probe.mjs';
 import { STOP_AT, HORIZON } from './model.js';
 
-const s = await session();
+const s = await harness({ axe: 'tools/smoke.mjs axes the scene page once, in its default register and theme; the other registers are not axe-checked yet (docs/DEBT.md)' });
 const { check } = s;
 const WATER = { x: 0, y: HORIZON + 24, w: 1030, h: 690 - HORIZON - 24 };
 // the anchored canoe's fisherman wears kokum, which the hull test also sees: take his box out of the count

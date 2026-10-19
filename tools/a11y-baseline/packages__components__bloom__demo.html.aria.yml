@@ -1,0 +1,24 @@
+- main:
+  - heading "Bloom" [level=1]
+  - paragraph
+  - heading "Zendu, in the page's register" [level=2]
+  - img "Maria's bloom"
+  - heading "Quiet, warm and playful" [level=2]
+  - figure
+  - figure
+  - figure
+  - heading "An honest count" [level=2]
+  - button "One more"
+  - button "One fewer"
+  - paragraph
+  - heading "One bloom per name" [level=2]
+  - img "Asha's bloom"
+  - img "Bruno's bloom"
+  - img "Chandra's bloom"
+  - img "Dev's bloom"
+  - img "Esha's bloom"
+  - heading "Your own words" [level=2]
+  - heading "Sizes, and the cap" [level=2]
+  - figure
+  - figure
+  - figure

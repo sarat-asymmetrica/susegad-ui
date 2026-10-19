@@ -111,6 +111,7 @@ export function hourAt(time, register = 'warm', seed = 1) {
 /**
  * The per-frame description. With `hour` set the page's own clock drives the
  * light: time stands still and the scene settles until the attribute changes.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
  */
 export function model({ time = 0, seed = 1, register = 'warm', params = {} } = {}) {
   const look = LOOKS[register] || LOOKS.warm;

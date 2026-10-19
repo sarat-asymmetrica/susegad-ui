@@ -1,0 +1,17 @@
+- main:
+  - heading "Abri" [level=1]
+  - paragraph
+  - img "Looking down into a wooden tray of cream size where drops of indigo, ochre, madder and grey-green have spread into rings and been combed into waves, and a sheet of marbled paper lifted from it."
+  - heading "Every sheet is one of a kind" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Words on it" [checked]
+  - button "Start the sitting again"
+  - button "A new sitting"
+  - paragraph

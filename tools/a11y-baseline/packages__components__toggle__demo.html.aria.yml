@@ -1,0 +1,14 @@
+- main:
+  - heading "Toggle" [level=1]
+  - paragraph
+  - group "During your stay":
+    - switch "Breakfast on the balcão every morning" [checked]
+    - switch "Daily housekeeping, between 11 am and 1 pm"
+    - switch "A WhatsApp reminder the day before you arrive" [checked]
+    - switch "Pool heating (not needed until December)" [disabled]
+  - group "In Marathi, Kannada and Konkani":
+    - switch "रोज सकाळी न्याहारी" [checked]
+    - switch "ಪ್ರತಿದಿನ ಬೆಳಗಿನ ಉಪಾಹಾರ"
+    - switch "Dis-dis sokalchem nhastem"
+  - button "Save"
+  - status

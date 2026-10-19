@@ -17,6 +17,7 @@ const items = [
   item('kernels-booking', 'package', 'packages/kernels/booking', []),
 ];
 const checks = [
+  'apps/docs/site.check.mjs',
   'packages/cli/create.check.mjs',
   'packages/components/button/button.check.mjs',
   'packages/components/dialog/dialog.check.mjs',
@@ -103,7 +104,7 @@ test('a check outside the registry runs when its own folder changes', () => {
 
 test('the touch check runs when its own files change, and docs alone select nothing', () => {
   assert.deepEqual(names(run(['tools/touch.core.js'])), ['tools/touch.check.mjs']);
-  const docs = run(['docs/LEDGER.md', 'tools/checks.mjs', 'tools/README.md']);
+  const docs = run(['docs/LEDGER.md', 'docs/reviews/x.md', 'tools/checks.mjs']);
   assert.equal(docs.all, false);
   assert.deepEqual(docs.selected, []);
 });
@@ -124,4 +125,13 @@ test('itemDir is the manifest folder', () => assert.equal(itemDir(items[2]), 'pa
 
 test('windows separators in the diff are tolerated', () => {
   assert.equal(run(['packages\\core\\index.js']).all, true);
+});
+
+test('prose in a shared folder is not a shared primitive, and reaches no dependents: only the docs site checks run', () => {
+  const r = run(['packages/tokens/README.md']);
+  assert.equal(r.all, false);
+  assert.deepEqual(names(r), ['apps/docs/site.check.mjs']);
+  assert.match(r.selected[0].reasons[0], /prose the docs site renders/);
+  assert.deepEqual(names(run(['packages/recipes/booking/booking.docs.md'])), ['apps/docs/site.check.mjs', 'packages/recipes/booking/booking.check.mjs'], 'its own folder still runs');
+  assert.equal(run(['packages/tokens/README.md', 'packages/tokens/tokens.css']).all, true, 'code beside it still selects everything');
 });

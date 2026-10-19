@@ -20,6 +20,7 @@
 // page" (it watches the network), and axe.
 
 import { harness } from '../../../tools/lib/component-check.mjs';
+import { loaded, stillSettled } from '../../../tools/lib/wait.mjs';
 import { frames, frozenAt, grabPixels, openStepped, plantFault, until } from '../../../tools/lib/virtual-time.mjs';
 
 const BREAK = process.argv.includes('--break');
@@ -53,7 +54,7 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
 {
   const stillOf = async (q, opts) => {
     const { ctx, page } = await open(scene(q), opts);
-    await page.waitForTimeout(300);
+    await stillSettled(page);
     const g = await grab(page); await ctx.close(); return g;
   };
   const quiet = await stillOf('register=quiet&seed=1'), quiet2 = await stillOf('register=quiet&seed=1'), reduced = await stillOf('register=warm&seed=1', { reduced: true });
@@ -103,7 +104,7 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
   const out = [];
   const { ctx, page, errors } = await open('/packages/scenes/chiro/demo.html?register=warm');
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1|localhost)/, r => { out.push(new URL(r.request().url()).host); r.abort(); });
-  await page.reload(); await page.waitForTimeout(1500);
+  await page.reload(); await loaded(page, { quiet: 1500 });
   check('no request leaves the page', out.length === 0, out.join(', ') || 'none');
   check('no console errors (demo)', errors.length === 0, errors.join(' | '));
   await ctx.close();

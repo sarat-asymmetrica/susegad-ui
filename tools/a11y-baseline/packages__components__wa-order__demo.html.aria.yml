@@ -1,0 +1,68 @@
+- main:
+  - heading "WhatsApp order" [level=1]
+  - paragraph
+  - heading "The menu" [level=2]
+  - heading "Fresh pasta" [level=3]
+  - list:
+    - listitem:
+      - list:
+        - listitem
+        - listitem
+      - group "Fresh fettuccine, quantity":
+        - button "Remove one Fresh fettuccine" [disabled]
+        - button "Add one Fresh fettuccine"
+    - listitem:
+      - list:
+        - listitem
+      - group "Spinach ravioli, quantity":
+        - button "Remove one Spinach ravioli" [disabled]
+        - button "Add one Spinach ravioli"
+    - listitem:
+      - list:
+        - listitem
+        - listitem
+      - group "Beetroot gnocchi, quantity":
+        - button "Remove one Beetroot gnocchi" [disabled]
+        - button "Add one Beetroot gnocchi"
+  - heading "Sauces" [level=3]
+  - list:
+    - listitem:
+      - list:
+        - listitem
+        - listitem
+      - group "Tomato and basil, quantity":
+        - button "Remove one Tomato and basil" [disabled]
+        - button "Add one Tomato and basil"
+    - listitem:
+      - list:
+        - listitem
+        - listitem
+      - group "Walnut pesto, quantity":
+        - button "Remove one Walnut pesto" [disabled]
+        - button "Add one Walnut pesto"
+  - status
+  - button "Start again" [disabled]
+  - heading "Your order" [level=2]
+  - group "Your details":
+    - textbox "Day you want it"
+    - combobox "Time of day":
+      - option "No preference" [selected]
+      - option "Morning (9 to 12)"
+      - option "Afternoon (12 to 4)"
+      - option "Evening (4 to 7)"
+    - group "How you get it":
+      - radio "Delivery" [checked]
+      - radio "Pickup"
+    - paragraph
+    - combobox "Delivery area"
+    - textbox "Your name"
+    - textbox "Allergies or dietary needs (optional)"
+    - textbox "Anything else (optional)"
+  - region "This is what we'll send":
+    - heading "This is what we'll send" [level=3]
+    - paragraph
+  - link "Send on WhatsApp" [disabled]
+  - paragraph
+  - link "Back to the menu":
+    - /url: "#menu"
+  - paragraph

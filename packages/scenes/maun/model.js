@@ -80,6 +80,7 @@ export function breathAt(t) {
 /**
  * The per-frame description: the plan, how many passes are down, and where
  * the breath is. Quiet is only ever the finished still.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
  */
 export function model({ time = 0, seed = 1, register = 'warm', params = {} } = {}) {
   const p = planOf(seed, params.palette ?? 'seed');

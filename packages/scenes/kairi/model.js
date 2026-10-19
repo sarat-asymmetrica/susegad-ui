@@ -183,6 +183,7 @@ export const seedAfter = (seed, n) => (n === 0 ? seed : typeof seed === 'number'
 /**
  * The per-frame description. With `progress` set, only the number moves the
  * border and the scene settles; warm settles once the border is finished.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
  */
 export function model({ time = 0, seed = 1, register = 'warm', params = {} } = {}) {
   const look = LOOKS[register] || LOOKS.warm;

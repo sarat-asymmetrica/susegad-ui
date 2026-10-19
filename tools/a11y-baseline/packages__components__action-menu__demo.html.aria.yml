@@ -1,0 +1,8 @@
+- main:
+  - heading "Action menu" [level=1]
+  - paragraph:
+  - heading "Account" [level=2]
+  - button "Account"
+  - status
+  - heading "In Kannada" [level=2]
+  - button "ಖಾತೆ"

@@ -219,11 +219,11 @@ export function passerby(time = 0, { rain = 0.6, lamp = 0.85 } = {}) {
 
 /**
  * Pure model function.
- * @param {object} opts
+ * @param {Object} opts
  * @param {number} [opts.time] Current animation time in seconds
  * @param {number} [opts.seed] Random seed
  * @param {'quiet'|'warm'|'playful'} [opts.register]
- * @param {object} [opts.params] Scene parameters: rain, lamp, steamer
+ * @param {Record<string, any>} [opts.params] Scene parameters: rain, lamp, steamer
  * @param {number} [opts.W] Viewport width
  * @param {number} [opts.H] Viewport height
  * @param {Array} [opts.chimes] Acoustic chimes

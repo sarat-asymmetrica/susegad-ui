@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import tinto from './index.js';
 import {
   model, VIGNETTES, IDS, LOOKS, STILL_TIME, W, H, pickLine, placeCard, nextId, inCalm, poderAt, walkerAt, kidsAt, phaseOf, depth, SQUARE,
@@ -11,12 +12,17 @@ import { paramsFromAttributes, defaultParams } from '../../core/define-scene.js'
 const P = (o = {}) => ({ ...defaultParams(tinto.params), ...o });
 const anchorsAt = () => Object.fromEntries(IDS.map((id, i) => [id, [60 + i * 65, 400 + (i % 3) * 100]]));
 
-test('seventeen people, each with one line, every id unique', () => {
-  assert.equal(VIGNETTES.length, 17);
-  assert.equal(new Set(IDS).size, 17);
+test('every person has what the renderer and the accessible list need, and every id is unique', () => {
+  assert.ok(VIGNETTES.length > 0);
+  assert.equal(new Set(IDS).size, VIGNETTES.length, 'ids are unique');
+  const render = readFileSync(new URL('./render.js', import.meta.url), 'utf8');
   for (const v of VIGNETTES) {
-    assert.ok(v.who && v.line, v.id);
+    assert.match(v.id, /^[a-z][a-z0-9-]*$/, 'an id is a key');
+    for (const f of ['who', 'line']) assert.ok(typeof v[f] === 'string' && v[f].trim() === v[f] && v[f].length > 0, `${v.id}.${f}: a trimmed, non-empty string`);
     assert.ok(!v.line.includes('—') && !v.who.includes('—'), `no em dash: ${v.id}`);
+    // the renderer draws each one by id, and a traveller also has a path
+    assert.match(render, new RegExp(`^  ${v.id}\\(g, `, 'm'), `render.js draws ${v.id}`);
+    if (v.travels) assert.match(render, new RegExp(`^  ${v.id}: t =>`, 'm'), `render.js moves ${v.id}`);
   }
 });
 
@@ -156,8 +162,7 @@ test('words: the board makes its own break (the cow steps aside), and the plaque
   }
 });
 
-test('meta: the after line names only Mario Miranda, and the copy has no em dash', () => {
+test('meta: the after line names only Mario Miranda', () => {
   assert.equal(meta.after.who, 'Mario Miranda');
   for (const k of ['took', 'left']) assert.ok(meta.after[k].length > 10);
-  for (const k of ['title', 'gloss', 'caption', 'alt', 'keys', 'credit']) assert.ok(!meta[k].includes('—'), k);
 });

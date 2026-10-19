@@ -1,0 +1,49 @@
+- main:
+  - heading "File upload" [level=1]
+  - paragraph
+  - heading "Try it" [level=2]
+  - paragraph
+  - button "Add four sample files"
+  - region "Try it":
+    - button "Photos and PDFs"
+    - paragraph
+    - region "No files yet":
+      - heading "No files yet" [level=3]
+      - paragraph
+      - button "Choose files"
+      - img "A Goan window in the monsoon: raindrops on fogged glass, with flooded paddy and palms beyond"
+      - button "Pause animation"
+      - status
+  - heading "Part way through" [level=2]
+  - region "Part way through":
+    - button "Photos and PDFs"
+    - paragraph
+    - list:
+      - listitem:
+        - progressbar "veranda-in-the-rain.jpg, 3.1 MB"
+      - listitem:
+        - progressbar "room-rates-2026.pdf, 922 KB: checking the file"
+      - listitem:
+        - progressbar "front-door.png, 1.7 MB"
+  - heading "A file too large, and one that didn't arrive" [level=2]
+  - region "A file too large, and one that didn't arrive":
+    - button "Photos and PDFs"
+    - paragraph
+    - list:
+      - listitem:
+        - progressbar "room-rates-2026.pdf, 922 KB: didn't upload"
+        - button "Try room-rates-2026.pdf again": Try again
+  - heading "Everything received" [level=2]
+  - region "Everything received":
+    - button "Photos and PDFs"
+    - paragraph
+    - list:
+      - listitem:
+        - progressbar "veranda-in-the-rain.jpg, 3.1 MB"
+      - listitem:
+        - progressbar "room-rates-2026.pdf, 922 KB"
+      - listitem:
+        - progressbar "front-door.png, 1.7 MB"
+    - status:
+- status
+- alert

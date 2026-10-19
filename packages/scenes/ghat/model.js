@@ -437,6 +437,7 @@ export function keepGeo(seed, geo) { if (memo.size > 4) memo.delete(memo.keys().
  * The per-frame description: how far the sheet is inked. With `progress`
  * set the page drives it: time stands still and the scene rests until the
  * attribute changes.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
  */
 export function model({ time = 0, seed = 1, register = 'warm', params = {} } = {}) {
   const look = LOOKS[register] || LOOKS.warm;

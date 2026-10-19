@@ -1,0 +1,37 @@
+- main:
+  - heading "Quote" [level=1]
+  - paragraph
+  - region "Quiet":
+    - heading "Quiet" [level=2]
+    - figure "Maya Fernandes Founder, Aldona Organics Hear the voice note":
+      - blockquote:
+        - paragraph
+      - link "Hear the voice note":
+        - /url: ../voice-note/demo.html
+    - heading "Without a link" [level=3]
+    - figure "A. Menezes Accounts, a trading company in Margao":
+      - blockquote:
+        - paragraph
+  - region "Warm":
+    - heading "Warm" [level=2]
+    - figure "Maya Fernandes Founder, Aldona Organics Hear the voice note":
+      - blockquote:
+        - paragraph
+      - link "Hear the voice note":
+        - /url: ../voice-note/demo.html
+    - heading "Without a link" [level=3]
+    - figure "A. Menezes Accounts, a trading company in Margao":
+      - blockquote:
+        - paragraph
+  - region "Playful":
+    - heading "Playful" [level=2]
+    - figure "Maya Fernandes Founder, Aldona Organics Hear the voice note":
+      - blockquote:
+        - paragraph
+      - link "Hear the voice note":
+        - /url: ../voice-note/demo.html
+    - heading "Without a link" [level=3]
+    - figure "A. Menezes Accounts, a trading company in Margao":
+      - blockquote:
+        - paragraph
+  - paragraph

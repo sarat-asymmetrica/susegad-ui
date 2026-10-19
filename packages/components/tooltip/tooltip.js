@@ -14,10 +14,10 @@
 // The tooltip's words must never be the only place a meaning lives: put
 // anything a person must know to act (a price, a deadline) in real text
 // nearby too. The panel is placed by CSS anchor positioning (tooltip.css);
-// the measured JS placement runs only in a browser without it. Attributes: register.
+// the measured JS placement runs only in a browser without it. Either way the open panel is slid back inside the visual viewport (#fit). Attributes: register.
 
 import { SgElement, defineComponent } from '../../core/component.js';
-import { placement, hintSupported } from './tooltip.core.js';
+import { placement, hintSupported, visibleBox, fitShift, parseGap } from './tooltip.core.js';
 
 let uid = 0, anchorUid = 0;
 const anchors = typeof CSS !== 'undefined' && !!CSS.supports?.('anchor-name: --a');
@@ -36,7 +36,7 @@ export class SgTooltip extends SgElement {
   #onEscape = e => { if (e.key === 'Escape' && this.#open) { this.#hide(); } };
   // a press anywhere else closes it (touch has no hover to leave, and WebKit never focuses a tapped button)
   #onOutside = e => { if (this.#open && !this.#trigger?.contains(e.target) && !this.native.contains(e.target)) this.#hide(); };
-  #trigger = null; #off = []; #showT = 0; #hideT = 0; #open = false;
+  #trigger = null; #off = []; #showT = 0; #hideT = 0; #open = false; #flipped = false;
 
   connected() {
     const panel = this.native;
@@ -76,10 +76,11 @@ export class SgTooltip extends SgElement {
       panel.style.setProperty('position-anchor', name);
       this.#off.push(() => { this.#trigger.style.removeProperty('anchor-name'); panel.style.removeProperty('position-anchor'); });
     } else {
-      const onReflow = () => this.#place();
-      on(window, 'resize', onReflow);
-      on(window, 'scroll', onReflow, { capture: true, passive: true });
+      on(window, 'scroll', () => this.#reflow(), { capture: true, passive: true });
     }
+    // the visible box changes under an open tooltip (pinch zoom, the URL bar, rotation): place and fit it again
+    on(window, 'resize', () => this.#reflow());
+    if (window.visualViewport) for (const type of ['resize', 'scroll']) on(window.visualViewport, type, () => this.#reflow());
   }
 
   disconnected() {
@@ -107,8 +108,11 @@ export class SgTooltip extends SgElement {
     this.#open = true;
     this.ownerDocument.addEventListener('keydown', this.#onEscape);
     this.ownerDocument.addEventListener('pointerdown', this.#onOutside, true);
+    // trim the hover bridge first: data-open draws it, and a band past the screen edge widens the layout viewport
+    // (mobile Chromium), which the placement below would then measure
+    this.#trimBridge(visibleBox(window));
     this.toggleAttribute('data-open', true);
-    this.#place();
+    this.#reflow();
     this.update();
     // anchored: the browser chose a side; read it once, for the leader line's direction
     if (anchors) requestAnimationFrame(() => this.#readSide());
@@ -120,8 +124,71 @@ export class SgTooltip extends SgElement {
     this.ownerDocument.removeEventListener('keydown', this.#onEscape);
     this.ownerDocument.removeEventListener('pointerdown', this.#onOutside, true);
     this.toggleAttribute('data-open', false);
+    this.native.style.removeProperty('--sg-fit-x');
+    this.style.removeProperty('--sg-bridge-l'); this.style.removeProperty('--sg-bridge-r');
+    this.native.style.removeProperty('--sg-fit-max'); this.native.style.removeProperty('--sg-lead-x');
+    if (this.#flipped) this.#unflip();
     this.update();
   }
+
+  #reflow() {
+    if (!this.#open) return;
+    // the panel may be no wider than the visible box less a margin on each side (a 22em panel is wider than a 320 px phone)
+    this.native.style.setProperty('--sg-fit-max', `${Math.max(0, visibleBox(window).width - 16)}px`);
+    this.#place(); this.#fit();
+  }
+
+  /** The hover bridge reaches 1.5rem past the trigger each side; never past the edge of what is visible. */
+  #trimBridge(box) {
+    const t = this.#trigger.getBoundingClientRect();
+    this.style.setProperty('--sg-bridge-l', `${Math.max(0, t.left - box.left)}px`);
+    this.style.setProperty('--sg-bridge-r', `${Math.max(0, box.left + box.width - t.right)}px`);
+  }
+
+  /** Both paths, last: slide the placed panel back inside what a person can see. The anchored path is placed against
+   * the layout viewport, which mobile Chromium widens to fit overflow, so on a phone it can sit past the screen.
+   * The slide is a custom property (tooltip.css turns it into a translateX and keeps the leader line under the
+   * trigger), measured from the unslid box. */
+  #fit() {
+    if (!this.#open) return;
+    const panel = this.native;
+    panel.style.removeProperty('--sg-fit-x');
+    const box = visibleBox(window);
+    // undo last time's hand-flip, so the browser's own choice is what gets measured
+    if (this.#flipped) this.#unflip();
+    let r = panel.getBoundingClientRect();
+    // anchored: position-try-fallbacks: flip-block did not flip a panel that is cut by the top edge of the screen (warm, 56 px
+    // tall, a trigger 60 px down: -4.2..52), so below it, by hand, when there is room
+    // (measured without the entrance's rise: a warm panel opens 4px low and settles, and that 4px hid the cut at first)
+    const rise = parseFloat(getComputedStyle(panel).translate.split(' ')[1]) || 0;
+    if (anchors && r.top - rise < box.top - 0.5) {
+      const t = this.#trigger.getBoundingClientRect(), gap = this.#gap();
+      if (t.bottom + gap + r.height <= box.top + box.height) {
+        const st = panel.style;
+        // the anchor, not pixels: a pixel top would stay put when the page scrolls and leave the panel behind its trigger
+        st.bottom = 'auto'; st.top = 'anchor(bottom)'; st.marginBlock = `${gap}px 0`;
+        this.#flipped = true;
+        this.toggleAttribute('data-above', false);
+        r = panel.getBoundingClientRect();
+      }
+    }
+    const dx = fitShift(r, box);
+    if (dx) panel.style.setProperty('--sg-fit-x', `${Math.round(dx * 100) / 100}px`);
+    this.#trimBridge(box);
+    // the playful leader line sits under the middle of the trigger, wherever the panel ended up (the fallback
+    // clamp and the slide both move the panel, never the line)
+    const t = this.#trigger.getBoundingClientRect();
+    const lead = Math.min(Math.max(t.left + t.width / 2 - (r.left + dx), 6), Math.max(6, r.width - 6));
+    panel.style.setProperty('--sg-lead-x', `${Math.round(lead * 100) / 100}px`);
+  }
+
+  #unflip() {
+    const st = this.native.style;
+    st.removeProperty('margin-block'); st.removeProperty('bottom'); st.removeProperty('top');
+    this.#flipped = false;
+  }
+
+  #gap() { return parseGap(getComputedStyle(this).getPropertyValue('--sg-tooltip-gap'), parseFloat(getComputedStyle(this.ownerDocument.documentElement).fontSize) || 16); }
 
   /** Which side of the trigger the browser put the panel on, read once as it opens. */
   #readSide() {
@@ -135,13 +202,14 @@ export class SgTooltip extends SgElement {
     if (anchors || !this.#open || !this.#trigger) return;
     const t = this.#trigger.getBoundingClientRect();
     const panel = { width: this.native.offsetWidth, height: this.native.offsetHeight };
-    const viewport = { width: window.innerWidth, height: window.innerHeight };
-    const { left, above } = placement(t, panel, viewport);
+    const viewport = visibleBox(window);
+    const gap = this.#gap();
+    const { left, above } = placement(t, panel, viewport, { gap });
     const s = this.native.style;
-    s.position = 'fixed'; s.margin = '0'; s.left = `${left}px`;
+    s.position = 'fixed'; s.margin = '0'; s.left = `${left}px`; s.bottom = 'auto';
     this.toggleAttribute('data-above', above);
-    if (above) { s.top = 'auto'; s.bottom = `${viewport.height - t.top + 8}px`; }
-    else { s.bottom = 'auto'; s.top = `${t.bottom + 8}px`; }
+    // from the top edge, never from the bottom: the bottom is measured against innerHeight, which a phone widens
+    s.top = `${above ? t.top - gap - this.native.offsetHeight : t.bottom + gap}px`;
   }
 
   state() { return { open: this.#open, motion: this.motion, visible: this.visible }; }

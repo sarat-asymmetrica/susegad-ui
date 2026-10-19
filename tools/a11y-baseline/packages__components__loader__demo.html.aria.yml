@@ -1,0 +1,16 @@
+- main:
+  - heading "Loader" [level=1]
+  - region "With the page's words":
+    - heading "With the page's words" [level=2]
+    - status
+    - status
+  - region "With the register's own words":
+    - heading "With the register's own words" [level=2]
+    - status
+  - region "In place of content":
+    - heading "In place of content" [level=2]
+    - status
+  - region "Words that change are read out":
+    - heading "Words that change are read out" [level=2]
+    - status
+    - button "Move to the next step"

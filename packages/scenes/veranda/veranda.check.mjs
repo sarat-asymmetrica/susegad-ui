@@ -18,18 +18,15 @@
 // --break patches the served scene once per check family: the lamp never swings, quiet washes,
 // the dark theme stays day, the shadows are never traced, and the hand is ignored.
 
-import { chromium } from 'playwright';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 import { projectM, W, H, gbuffer, SOLIDS } from './world.js';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
 
 const BREAK = process.argv.includes('--break');
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
 const pct = v => `${(v * 100).toFixed(1)}%`;
 
-const server = await startServer({ quiet: true });
-const browser = await chromium.launch();
+const h = await harness({ axe: 'not axe-checked anywhere yet: this page is not in tools/smoke.mjs (docs/DEBT.md); this check asks about drawing and layout' });
+const { server, check, results } = h;
 
 /** Boxes in the scene's logical units. The lamp hangs at about (u, v) of its top, 0.35 of the picture tall. */
 const [lu, lv] = projectM(0.25, 2.88, 4.4);
@@ -50,7 +47,7 @@ const BREAKS = {
 };
 
 async function open({ register = 'warm', theme = 'light', reduced = false, width = 1280, height = 900, content = false, seed, params = {}, patches = [] } = {}) {
-  const context = await browser.newContext({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference', colorScheme: theme === 'dark' ? 'dark' : 'light', deviceScaleFactor: 1 });
+  const context = await h.context({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference', colorScheme: theme === 'dark' ? 'dark' : 'light', deviceScaleFactor: 1 });
   for (const key of BREAK ? patches : []) {
     const [re, fn] = BREAKS[key];
     await context.route(u => re.test(u.pathname) && u.pathname.includes('/scenes/veranda/'), async r => { const res = await r.fetch(); r.fulfill({ response: res, body: fn(await res.text()) }); });
@@ -191,7 +188,5 @@ for (const register of ['quiet', 'warm', 'playful']) for (const theme of ['light
   await p.context.close();
 }
 
-await browser.close(); await server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${results.length - failed} of ${results.length} pass${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
-process.exit(BREAK ? 0 : failed ? 1 : 0);
+await h.done({ summary: `${results.length - failed} of ${results.length} pass${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`, expectRed: BREAK });

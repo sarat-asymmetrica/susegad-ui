@@ -1,0 +1,10 @@
+- main:
+  - heading "Words round pictures" [level=1]
+  - paragraph
+  - figure:
+    - img "A wooden jetty running out into a calm sea at dusk, the low sun laying a path of light across the water."
+  - paragraph
+  - figure:
+    - img "A lime-washed arched doorway in a red laterite wall, its double doors dark and closed."
+  - paragraph
+  - paragraph

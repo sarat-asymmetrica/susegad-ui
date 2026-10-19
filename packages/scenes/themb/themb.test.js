@@ -89,5 +89,4 @@ test('every register’s still is the plate’s moment, and warm rains more gent
 test('the renderer attribute is a closed list', () => {
   assert.equal(paramsFromAttributes(themb.params, a => (a === 'renderer' ? '2d' : null)).renderer, '2d');
   assert.equal(paramsFromAttributes(themb.params, a => (a === 'renderer' ? 'gpu' : null)).renderer, 'auto');
-  for (const k of ['title', 'gloss', 'caption', 'alt', 'keys', 'credit']) assert.ok(!meta[k].includes('—'), k);
 });

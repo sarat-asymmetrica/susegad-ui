@@ -14,9 +14,14 @@
 // 5. playful: the arrow keys and Enter say a line, once, in a live region;
 // 6. axe (WCAG 2.2 AA) on the demo in every register, light and dark, and no
 //    console errors.
+//
+// Scene time is stepped, not waited for: every page that moves or reads its pixels runs on virtual frames
+// (tools/lib/virtual-time.mjs). On the real clock still: the network clause (what leaves the page) and axe.
 
 import { harness } from '../../../tools/lib/component-check.mjs';
 import { VIGNETTES } from './model.js';
+import { loaded } from '../../../tools/lib/wait.mjs';
+import { frames, openStepped, until, untilFrozen } from '../../../tools/lib/virtual-time.mjs';
 
 const h = await harness();
 const { check } = h;
@@ -27,21 +32,23 @@ const openReady = async (path, opts) => {
   await r.page.waitForFunction(() => window.__ready === true, null, { timeout: 20000 }).catch(() => check(`ready: ${path}`, false, 'no sg-ready in 20 s'));
   return r;
 };
+// a page on virtual frames, stepped to sg-ready (a page that never gets there fails the check and ends the run)
+const stepped = path => openStepped(h, path, { ms: 20000 });
 const scene = q => `/tools/harness/scene.html?name=tinto&${q}`;
 
 /** The canvas at one moment, downsampled 4x, as [r, g, b] triples, with its size. */
 async function grab(page) {
   return page.evaluate(() => {
     const cv = window.__piece.shadowRoot.querySelector('canvas'), g = cv.getContext('2d'), d = g.getImageData(0, 0, cv.width, cv.height).data;
-    const s = 4, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), out = new Array(w * hh * 3);
+    const s = 4, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), out = new Uint8Array(w * hh * 3);
     for (let y = 0; y < hh; y++) for (let x = 0; x < w; x++) { const i = (y * s * cv.width + x * s) * 4, o = (y * w + x) * 3; out[o] = d[i]; out[o + 1] = d[i + 1]; out[o + 2] = d[i + 2]; }
     return { w, h: hh, kx: 1200 / w, ky: 800 / hh, px: out };
   });
 }
-/** Open a harness page on a frozen clock and grab its canvas once the clock stops. */
+/** Open a harness page on a frozen clock and grab its canvas once the clock stops (stepped to the frame that freezes it). */
 async function frozen(q) {
-  const { ctx, page, errors } = await h.open(scene(q));
-  await page.waitForFunction(() => window.__frozen === true, null, { timeout: 30000 });
+  const { ctx, page, errors } = await stepped(scene(q));
+  if (!(await untilFrozen(page, { ms: 60000 }))) check(`frozen: ${q}`, false, 'never froze in 60 s');
   const img = await grab(page);
   await ctx.close();
   return { img, errors };
@@ -61,7 +68,7 @@ const fmt = d => (d.cx === null ? 'no card' : `${d.cx.toFixed(0)}, ${d.cy.toFixe
 
 // 1. every line is text a screen reader reaches
 {
-  const { ctx, page, errors } = await openReady('/packages/scenes/tinto/demo.html?register=warm');
+  const { ctx, page, errors } = await stepped('/packages/scenes/tinto/demo.html?register=warm');
   const tree = await page.locator('sg-scene').ariaSnapshot();
   const missing = VIGNETTES.filter(v => !tree.includes(v.line.slice(0, 30)));
   check('every one of the seventeen lines is in the accessibility tree', missing.length === 0, missing.length ? `missing: ${missing.map(v => v.id).join(', ')}` : '17 of 17');
@@ -98,34 +105,36 @@ const fmt = d => (d.cx === null ? 'no card' : `${d.cx.toFixed(0)}, ${d.cy.toFixe
 
 // 4. no request leaves the page
 {
-  const count = async open => {
+  const count = async (open, control = false) => {
     const out = [];
     const { ctx, page } = await open();
     page.on('request', r => { const u = new URL(r.url()); if (!['127.0.0.1', 'localhost'].includes(u.hostname) && u.protocol.startsWith('http')) out.push(u.host); });
     await ctx.route(/^https?:\/\/(?!127\.0\.0\.1|localhost)/, r => { out.push(new URL(r.request().url()).host); r.abort(); });
     await page.reload();
-    await page.waitForTimeout(1500);
+    await loaded(page, { ready: !control, quiet: 1500 });
     await ctx.close();
     return [...new Set(out)];
   };
   const ours = await count(() => openReady('/packages/scenes/tinto/demo.html?register=playful'));
   check('no request leaves the page (the library’s own Kalam, no Google Fonts)', ours.length === 0, ours.join(', ') || 'none');
-  const theirs = await count(() => h.openHtml('tinto-fonts-control', '<!doctype html><html lang="en"><title>control</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400&display=swap"><p>control</p></html>'));
+  const theirs = await count(() => h.openHtml('tinto-fonts-control', '<!doctype html><html lang="en"><title>control</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400&display=swap"><p>control</p></html>'), true);
   check('control: a page with the sketchbook’s Google Fonts link is caught', theirs.length > 0, theirs.join(', ') || 'nothing caught');
 }
 
 // 5. playful: the keyboard hand and Enter say a line, once
 {
-  const { ctx, page, errors } = await openReady('/packages/scenes/tinto/demo.html?register=playful&content=0');
+  const { ctx, page, errors } = await stepped('/packages/scenes/tinto/demo.html?register=playful&content=0');
   const stage = page.locator('sg-scene').locator('.stage');
   await stage.focus();
   const said = () => page.evaluate(() => window.__piece.shadowRoot.querySelector('[aria-live=polite]').textContent);
   // the hand starts at the middle; walk it left towards the card players under the tree
-  for (let k = 0; k < 6; k++) { await page.keyboard.press('ArrowLeft'); await page.waitForTimeout(120); }
-  await page.waitForTimeout(300);
+  for (let k = 0; k < 6; k++) { await page.keyboard.press('ArrowLeft'); await frames(page, 2); } // a press, and a frame or two for the scene to take it
+  const live = () => window.__piece.shadowRoot.querySelector('[aria-live=polite]').textContent;
+  // the line the hand ended on, and nothing more to come before Enter: the same reading for twenty frames in a row
+  for (let last, same = 0, t0 = Date.now(); same < 20 && Date.now() - t0 < 10000; await frames(page, 1)) { const v = await said(); same = v === last ? same + 1 : 0; last = v; }
   const first = await said();
   await page.keyboard.press('Enter');
-  await page.waitForTimeout(400);
+  await until(page, ([live, was]) => (new Function(`return (${live})()`))() !== was, { arg: [live.toString(), first], ms: 10000 }); // and what Enter said next
   const second = await said();
   const known = s => VIGNETTES.some(v => s.endsWith(v.line));
   check('playful: the keyboard hand picks someone and their line is said', known(first), `"${first}"`);

@@ -27,6 +27,7 @@
 // network), and axe.
 
 import { harness } from '../../../tools/lib/component-check.mjs';
+import { loaded, stillSettled } from '../../../tools/lib/wait.mjs';
 import { forceQuality, frames, frozenAt, grabPixels, openStepped, plantFault, until } from '../../../tools/lib/virtual-time.mjs';
 
 const BREAK = process.argv.includes('--break');
@@ -60,7 +61,7 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
 
 // 1. the still is the print
 {
-  const stillOf = async (q, opts) => { const { ctx, page } = await open(scene(q), opts); await page.waitForTimeout(300); const g = await grab(page); await ctx.close(); return g; };
+  const stillOf = async (q, opts) => { const { ctx, page } = await open(scene(q), opts); await stillSettled(page); const g = await grab(page); await ctx.close(); return g; };
   const [a, b, c] = await Promise.all([stillOf('register=quiet&seed=1'), stillOf('register=quiet&seed=1'), stillOf('register=warm&seed=1', { reduced: true })]);
   check('the still: quiet twice and warm under reduced motion show the same print', a.data.stage === 'print' && diff(a, b, undefined, 0) === 0 && diff(a, c, undefined, 6) < 0.002, `stage ${a.data.stage}; ${pct(diff(a, b, undefined, 0))} and ${pct(diff(a, c, undefined, 6))} differ`);
   const early = await frozen('register=playful&seed=1&freeze=3');
@@ -123,7 +124,7 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
   const out = [];
   const { ctx, page, errors } = await open('/packages/scenes/abri/demo.html?register=warm');
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1|localhost)/, r => { out.push(new URL(r.request().url()).host); r.abort(); });
-  await page.reload(); await page.waitForTimeout(1500);
+  await page.reload(); await loaded(page, { quiet: 1500 });
   check('no request leaves the page', out.length === 0, out.join(', ') || 'none');
   check('no console errors (demo)', errors.length === 0, errors.join(' | '));
   await ctx.close();

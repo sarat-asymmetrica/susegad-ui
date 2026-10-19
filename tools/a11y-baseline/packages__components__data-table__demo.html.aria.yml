@@ -1,0 +1,211 @@
+- main:
+  - heading "Data table" [level=1]
+  - paragraph
+  - 'region "Quiet: hairline rules, generous space"':
+    - heading "Quiet: hairline rules, generous space" [level=2]
+    - 'region "Quiet: hairline rules, generous space"':
+      - 'region "Furtado''s Cashew & Provisions, Aldona: what came in and what is still owed"':
+        - 'table "Furtado''s Cashew & Provisions, Aldona: what came in and what is still owed"':
+          - caption
+          - rowgroup:
+            - row "Month Invoices Collected Outstanding Top buyer Note":
+              - columnheader "Month":
+                - button "Month"
+              - columnheader "Invoices":
+                - button "Invoices"
+              - columnheader "Collected":
+                - button "Collected"
+              - columnheader "Outstanding":
+                - button "Outstanding"
+              - columnheader "Top buyer":
+                - button "Top buyer"
+              - columnheader "Note"
+          - rowgroup:
+            - row "April 2026 38 ₹2,45,000 ₹38,500 St. Anne's convent kitchen Season opens":
+              - cell "April 2026"
+              - cell "38"
+              - cell "₹2,45,000"
+              - cell "₹38,500"
+              - cell "St. Anne's convent kitchen"
+              - cell "Season opens"
+            - row "May 2026 42 ₹3,10,000 ₹52,000 Miguel's Bakery, Mapusa Wedding orders":
+              - cell "May 2026"
+              - cell "42"
+              - cell "₹3,10,000"
+              - cell "₹52,000"
+              - cell "Miguel's Bakery, Mapusa"
+              - cell "Wedding orders"
+            - row "June 2026 29 ₹1,25,000 ₹1,12,400 A village shop, Moira Monsoon, slow":
+              - cell "June 2026"
+              - cell "29"
+              - cell "₹1,25,000"
+              - cell "₹1,12,400"
+              - cell "A village shop, Moira"
+              - cell "Monsoon, slow"
+            - row "July 2026 31 ₹1,68,000 ₹86,000 St. Anne's convent kitchen A cheque returned, then paid":
+              - cell "July 2026"
+              - cell "31"
+              - cell "₹1,68,000"
+              - cell "₹86,000"
+              - cell "St. Anne's convent kitchen"
+              - cell "A cheque returned, then paid"
+            - row "August 2026 35 ₹2,02,750 ₹64,300 A guesthouse, Siolim Feast preparations":
+              - cell "August 2026"
+              - cell "35"
+              - cell "₹2,02,750"
+              - cell "₹64,300"
+              - cell "A guesthouse, Siolim"
+              - cell "Feast preparations"
+            - row "September 2026 40 ₹2,56,300 ₹41,000 Miguel's Bakery, Mapusa Two new wholesale lines":
+              - cell "September 2026"
+              - cell "40"
+              - cell "₹2,56,300"
+              - cell "₹41,000"
+              - cell "Miguel's Bakery, Mapusa"
+              - cell "Two new wholesale lines"
+          - rowgroup:
+            - row "Total 215 ₹13,07,050 ₹3,94,200 Across six months":
+              - cell "Total"
+              - cell "215"
+              - cell "₹13,07,050"
+              - cell "₹3,94,200"
+              - cell "Across six months"
+  - 'region "Warm: a hand-ruled header"':
+    - heading "Warm: a hand-ruled header" [level=2]
+    - 'region "Warm: a hand-ruled header"':
+      - 'region "Furtado''s Cashew & Provisions, Aldona: what came in and what is still owed"':
+        - 'table "Furtado''s Cashew & Provisions, Aldona: what came in and what is still owed"':
+          - caption
+          - rowgroup:
+            - row "Month Invoices Collected Outstanding Top buyer Note":
+              - columnheader "Month":
+                - button "Month"
+              - columnheader "Invoices":
+                - button "Invoices"
+              - columnheader "Collected":
+                - button "Collected"
+              - columnheader "Outstanding":
+                - button "Outstanding"
+              - columnheader "Top buyer":
+                - button "Top buyer"
+              - columnheader "Note"
+          - rowgroup:
+            - row "April 2026 38 ₹2,45,000 ₹38,500 St. Anne's convent kitchen Season opens":
+              - cell "April 2026"
+              - cell "38"
+              - cell "₹2,45,000"
+              - cell "₹38,500"
+              - cell "St. Anne's convent kitchen"
+              - cell "Season opens"
+            - row "May 2026 42 ₹3,10,000 ₹52,000 Miguel's Bakery, Mapusa Wedding orders":
+              - cell "May 2026"
+              - cell "42"
+              - cell "₹3,10,000"
+              - cell "₹52,000"
+              - cell "Miguel's Bakery, Mapusa"
+              - cell "Wedding orders"
+            - row "June 2026 29 ₹1,25,000 ₹1,12,400 A village shop, Moira Monsoon, slow":
+              - cell "June 2026"
+              - cell "29"
+              - cell "₹1,25,000"
+              - cell "₹1,12,400"
+              - cell "A village shop, Moira"
+              - cell "Monsoon, slow"
+            - row "July 2026 31 ₹1,68,000 ₹86,000 St. Anne's convent kitchen A cheque returned, then paid":
+              - cell "July 2026"
+              - cell "31"
+              - cell "₹1,68,000"
+              - cell "₹86,000"
+              - cell "St. Anne's convent kitchen"
+              - cell "A cheque returned, then paid"
+            - row "August 2026 35 ₹2,02,750 ₹64,300 A guesthouse, Siolim Feast preparations":
+              - cell "August 2026"
+              - cell "35"
+              - cell "₹2,02,750"
+              - cell "₹64,300"
+              - cell "A guesthouse, Siolim"
+              - cell "Feast preparations"
+            - row "September 2026 40 ₹2,56,300 ₹41,000 Miguel's Bakery, Mapusa Two new wholesale lines":
+              - cell "September 2026"
+              - cell "40"
+              - cell "₹2,56,300"
+              - cell "₹41,000"
+              - cell "Miguel's Bakery, Mapusa"
+              - cell "Two new wholesale lines"
+          - rowgroup:
+            - row "Total 215 ₹13,07,050 ₹3,94,200 Across six months":
+              - cell "Total"
+              - cell "215"
+              - cell "₹13,07,050"
+              - cell "₹3,94,200"
+              - cell "Across six months"
+  - 'region "Playful: colour and a hand-lettered sort"':
+    - heading "Playful: colour and a hand-lettered sort" [level=2]
+    - 'region "Playful: colour and a hand-lettered sort"':
+      - 'region "Furtado''s Cashew & Provisions, Aldona: what came in and what is still owed"':
+        - 'table "Furtado''s Cashew & Provisions, Aldona: what came in and what is still owed"':
+          - caption
+          - rowgroup:
+            - row "Month Invoices Collected Outstanding Top buyer Note":
+              - columnheader "Month":
+                - button "Month"
+              - columnheader "Invoices":
+                - button "Invoices"
+              - columnheader "Collected":
+                - button "Collected"
+              - columnheader "Outstanding":
+                - button "Outstanding"
+              - columnheader "Top buyer":
+                - button "Top buyer"
+              - columnheader "Note"
+          - rowgroup:
+            - row "April 2026 38 ₹2,45,000 ₹38,500 St. Anne's convent kitchen Season opens":
+              - cell "April 2026"
+              - cell "38"
+              - cell "₹2,45,000"
+              - cell "₹38,500"
+              - cell "St. Anne's convent kitchen"
+              - cell "Season opens"
+            - row "May 2026 42 ₹3,10,000 ₹52,000 Miguel's Bakery, Mapusa Wedding orders":
+              - cell "May 2026"
+              - cell "42"
+              - cell "₹3,10,000"
+              - cell "₹52,000"
+              - cell "Miguel's Bakery, Mapusa"
+              - cell "Wedding orders"
+            - row "June 2026 29 ₹1,25,000 ₹1,12,400 A village shop, Moira Monsoon, slow":
+              - cell "June 2026"
+              - cell "29"
+              - cell "₹1,25,000"
+              - cell "₹1,12,400"
+              - cell "A village shop, Moira"
+              - cell "Monsoon, slow"
+            - row "July 2026 31 ₹1,68,000 ₹86,000 St. Anne's convent kitchen A cheque returned, then paid":
+              - cell "July 2026"
+              - cell "31"
+              - cell "₹1,68,000"
+              - cell "₹86,000"
+              - cell "St. Anne's convent kitchen"
+              - cell "A cheque returned, then paid"
+            - row "August 2026 35 ₹2,02,750 ₹64,300 A guesthouse, Siolim Feast preparations":
+              - cell "August 2026"
+              - cell "35"
+              - cell "₹2,02,750"
+              - cell "₹64,300"
+              - cell "A guesthouse, Siolim"
+              - cell "Feast preparations"
+            - row "September 2026 40 ₹2,56,300 ₹41,000 Miguel's Bakery, Mapusa Two new wholesale lines":
+              - cell "September 2026"
+              - cell "40"
+              - cell "₹2,56,300"
+              - cell "₹41,000"
+              - cell "Miguel's Bakery, Mapusa"
+              - cell "Two new wholesale lines"
+          - rowgroup:
+            - row "Total 215 ₹13,07,050 ₹3,94,200 Across six months":
+              - cell "Total"
+              - cell "215"
+              - cell "₹13,07,050"
+              - cell "₹3,94,200"
+              - cell "Across six months"
+  - paragraph:

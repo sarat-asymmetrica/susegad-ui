@@ -1,0 +1,67 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>print-check fixture</title>
+<style>body { margin: 0; background: #fff }</style>
+<canvas id="c" width="480" height="200"></canvas>
+<script>
+// A page that implements the window.__printCheck contract (tools/print-check.mjs) the smallest honest way:
+// a cream cloth that drifts right over time, with a word printed on it in dark ink, drawn on a canvas. It
+// predicts the cloth's rectangle and the word's box from the same numbers it draws from.
+//
+// Faults, by query (the red proofs in tools/print-check.check.mjs):
+//   ?offset=40    the print is drawn 40 px right and 14 px down of where it is predicted
+//   ?cloth=30     the cloth is drawn 30 px right of where it is predicted
+//   ?wide=1       the prediction is the whole canvas, so a slid copy of it still lands on the ink: the control cannot fall
+//   ?tiny=1       the print is a hairline 3 px dot: too few pixels to say anything
+const q = new URLSearchParams(location.search);
+const W = 480, H = 200;
+const cv = document.getElementById('c'), g = cv.getContext('2d', { willReadFrequently: true });
+const WORD = 'Susegad', FONT = '700 56px sans-serif';
+
+const geometry = t => ({ cloth: { x: 20 + t * 40, y: 30, w: 300, h: 130 }, word: { x: 50 + t * 40, y: 100 } });
+
+function paint(t, { cloth, print }) {
+  const geo = geometry(t);
+  g.clearRect(0, 0, W, H);
+  g.fillStyle = '#fff'; g.fillRect(0, 0, W, H);
+  if (cloth) {
+    const c = geo.cloth, dx = Number(q.get('cloth') || 0);
+    g.fillStyle = '#e9d7a4'; g.fillRect(c.x + dx, c.y, c.w, c.h);
+  }
+  if (print) {
+    g.font = FONT; g.textBaseline = 'alphabetic'; g.fillStyle = '#2a1d12';
+    const dx = Number(q.get('offset') || 0), dy = dx ? 14 : 0;
+    if (q.get('tiny')) g.fillRect(geo.word.x, geo.word.y, 2, 2);
+    else g.fillText(WORD, geo.word.x + dx, geo.word.y + dy);
+  }
+}
+
+const b64 = data => {
+  let s = '';
+  for (let i = 0; i < data.length; i += 0x8000) s += String.fromCharCode.apply(null, data.subarray(i, i + 0x8000));
+  return btoa(s);
+};
+const grab = () => b64(g.getImageData(0, 0, W, H).data);
+
+window.__printCheck = {
+  plan: () => [0, 1, 2],
+  at(t) {
+    const geo = geometry(t);
+    g.font = FONT;
+    const m = g.measureText(WORD);
+    const box = { x: geo.word.x - 1, y: geo.word.y - m.actualBoundingBoxAscent - 1, w: m.width + 2, h: m.actualBoundingBoxAscent + m.actualBoundingBoxDescent + 2 };
+    const whole = [{ x: 0, y: 0, w: W, h: H }];
+    paint(t, {}); const bare = grab();
+    paint(t, { cloth: true }); const withCloth = grab();
+    paint(t, { cloth: true, print: true }); const full = grab();
+    return {
+      w: W, h: H, controlShift: [110, 60],
+      layers: [
+        { name: 'cloth', base: bare, drawn: withCloth, kind: 'fill', predicted: q.get('wide') ? whole : [geo.cloth] },
+        { name: 'print', base: withCloth, drawn: full, kind: 'print', predicted: q.get('wide') ? whole : [box], on: 'cloth' },
+      ],
+    };
+  },
+};
+window.__ready = true;
+</script>

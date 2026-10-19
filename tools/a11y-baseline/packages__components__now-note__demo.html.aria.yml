@@ -1,0 +1,43 @@
+- main:
+  - heading "Now note" [level=1]
+  - paragraph
+  - 'region "Quiet: a dated line"':
+    - heading "Quiet: a dated line" [level=2]
+    - region "Now":
+      - heading "Now" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+    - region "Now":
+      - heading "Now" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+      - paragraph
+  - 'region "Warm: a sticky note"':
+    - heading "Warm: a sticky note" [level=2]
+    - region "Now":
+      - heading "Now" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+    - region "Now":
+      - heading "Now" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+      - paragraph
+  - 'region "Playful: a café chalkboard"':
+    - heading "Playful: a café chalkboard" [level=2]
+    - region "Now":
+      - heading "Now" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+    - region "Now":
+      - heading "Now" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+      - paragraph
+  - paragraph:

@@ -101,6 +101,9 @@ export const LOOKS = {
 /** The plate's still: the steam rising, the lamp lit, the creeper grown and in flower. */
 export const STILL_TIME = 6.2;
 
+/**
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
+ */
 export function model({ time = 0, seed = 1, register = 'warm', params = {} } = {}) {
   const look = LOOKS[register] || LOOKS.warm;
   const t = STILL_TIME + (time - STILL_TIME) * (look.pace || 1);

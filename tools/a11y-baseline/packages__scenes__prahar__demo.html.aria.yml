@@ -1,0 +1,19 @@
+- main:
+  - heading "Prahar" [level=1]
+  - paragraph
+  - img "The light in the village"
+  - heading "Open until late" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Text over the sky" [checked]
+  - checkbox "Follow my clock"
+  - slider "Hour": "19.2"
+  - checkbox "Hold this hour"
+  - paragraph
+  - paragraph

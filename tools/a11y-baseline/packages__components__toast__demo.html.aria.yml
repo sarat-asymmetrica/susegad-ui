@@ -1,0 +1,26 @@
+- main:
+  - heading "Toast" [level=1]
+  - paragraph
+  - heading "Every tone" [level=2]
+  - button "Dismiss: New prices. The price list was updated this morning."
+  - button "Dismiss: Saved. Your booking for 12 to 15 October is saved."
+  - button "Dismiss: Almost full. Only one room is left for those dates."
+  - button "Try again"
+  - button "Dismiss: Couldn't send. Check your connection and try again."
+  - heading "Try it" [level=2]
+  - button "Save"
+  - button "Show a note"
+  - button "Warn"
+  - button "Fail"
+  - button "Delete, with undo"
+  - paragraph
+- status:
+  - paragraph
+  - paragraph
+  - paragraph
+- alert:
+  - paragraph
+- region "Notifications":
+  - button "Undo"
+  - button "Dismiss: The photo was deleted."
+  - paragraph

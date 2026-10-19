@@ -15,8 +15,14 @@
 //    the pointer entering a tile turns it;
 // 6. no request leaves the page; axe (WCAG 2.2 AA) on the demo in every
 //    register, light and dark; no console errors.
+//
+// Scene time is stepped, not waited for (tools/lib/virtual-time.mjs): the floor that turns runs on virtual frames, so
+// "twelve seconds" is 720 frames however busy the machine is. On the real clock still: the stills (nothing moves),
+// the frozen clock, "no request leaves the page" (it watches the network), and axe.
 
 import { harness } from '../../../tools/lib/component-check.mjs';
+import { frames, openStepped, until } from '../../../tools/lib/virtual-time.mjs';
+import { loaded, stillSettled } from '../../../tools/lib/wait.mjs';
 
 const h = await harness();
 const { check } = h;
@@ -29,10 +35,11 @@ const open = async (path, opts) => {
     .catch(async () => { check(`ready: ${path}`, false, 'no sg-ready in 20 s'); await h.done(); });
   return r;
 };
+const stepped = (path, opts) => openStepped(h, path, { ms: 60000, ...opts });
 const stageData = page => page.evaluate(() => ({ ...window.__piece.shadowRoot.querySelector('.stage').dataset }));
 const grab = page => page.evaluate(() => {
   const cv = window.__piece.shadowRoot.querySelector('canvas'), d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
-  const s = 4, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), px = new Array(w * hh * 3);
+  const s = 4, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), px = new Uint8Array(w * hh * 3);
   let hash = 0;
   for (let y = 0; y < hh; y++) for (let x = 0; x < w; x++) { const i = (y * s * cv.width + x * s) * 4, o = (y * w + x) * 3; px[o] = d[i]; px[o + 1] = d[i + 1]; px[o + 2] = d[i + 2]; hash = (hash * 31 + d[i] * 3 + d[i + 1] * 5 + d[i + 2] * 7) >>> 0; }
   return { w, h: hh, kx: 1200 / w, ky: 840 / hh, px, hash };
@@ -70,7 +77,7 @@ const pagePoint = (page, x, y) => page.evaluate(([x, y]) => { const r = window._
 {
   const quiet = await frozen('register=quiet&seed=2&freeze=0.1');
   const r = await open(scene('register=warm&seed=2'), { reduced: true });
-  await r.page.waitForTimeout(600);
+  await stillSettled(r.page);
   const still = await grab(r.page); await r.ctx.close();
   check('reduced motion: warm shows the finished floor, the same pixels as quiet', diff(still, quiet) < 0.001, `${pct(diff(still, quiet))} of pixels differ from quiet`);
   const laying = await frozen('register=warm&seed=2&freeze=1');
@@ -79,9 +86,9 @@ const pagePoint = (page, x, y) => page.evaluate(([x, y]) => { const r = window._
 
 // 3. warm: a tile turns now and then and the ant walks
 {
-  const { ctx, page, errors } = await open(demo('register=warm&content=0&seed=1'));
+  const { ctx, page, errors } = await stepped(demo('register=warm&content=0&seed=1'));
   const d0 = await stageData(page);
-  await page.waitForTimeout(12000);
+  await frames(page, 720); // twelve seconds of the scene's time
   const d1 = await stageData(page);
   check('warm: in twelve seconds a tile turns and the ant walks to another tile', changed(d0.ks, d1.ks).length >= 1 && d0.ant !== d1.ant, `${changed(d0.ks, d1.ks).length} tiles turned, ant ${d0.ant} → ${d1.ant}`);
   check('no console errors (warm)', errors.length === 0, errors.join(' | '));
@@ -90,8 +97,8 @@ const pagePoint = (page, x, y) => page.evaluate(([x, y]) => { const r = window._
 
 // 4. no tile under the words turns
 async function clickBeside(content) {
-  const { ctx, page } = await open(demo(`register=playful&seed=3&content=${content}`));
-  await page.waitForTimeout(3200);
+  const { ctx, page } = await stepped(demo(`register=playful&seed=3&content=${content}`));
+  await frames(page, 192); // 3.2 s: the floor is laid
   const calm = new Set(((await stageData(page)).calm || '').split(',').filter(Boolean).map(Number));
   // the click: the first tile outside the words that sits next to one under them
   const words = content === '0' ? CALM : calm;
@@ -100,12 +107,12 @@ async function clickBeside(content) {
     const i = n % 10, j = Math.floor(n / 10);
     if (!words.has(n) && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([a, b]) => words.has((j + b) * 10 + i + a) && i + a >= 0 && i + a < 10)) target = [i, j];
   }
-  // an ant the seed set down under the words walks out (it is under the scrim meanwhile): wait until it has
-  await page.waitForFunction(calm => { const [i, j] = window.__piece.shadowRoot.querySelector('.stage').dataset.ant.split(',').map(Number); return !calm.includes(j * 10 + i); }, [...calm], { timeout: 30000 }).catch(() => {});
+  // an ant the seed set down under the words walks out (it is under the scrim meanwhile): step until it has
+  await until(page, calm => { const [i, j] = window.__piece.shadowRoot.querySelector('.stage').dataset.ant.split(',').map(Number); return !calm.includes(j * 10 + i); }, { arg: [...calm], ms: 60000, batch: 30 });
   const before = await stageData(page), img0 = await grab(page);
   const [px, py] = await pagePoint(page, target[0] * 120 + 60, target[1] * 120 + 60);
   await page.mouse.move(px, py); await page.mouse.down(); await page.mouse.up();
-  await page.waitForTimeout(2600);
+  await frames(page, 156); // 2.6 s of the ripple
   const after = await stageData(page), img1 = await grab(page);
   await ctx.close();
   return { calm, target, turned: changed(before.ks, after.ks), img0, img1 };
@@ -129,15 +136,15 @@ let CALM = new Set();
 
 // 5. playful: Enter turns the tile under the hand; the pointer entering a tile turns it
 {
-  const { ctx, page, errors } = await open(demo('register=playful&content=0&seed=4'));
-  await page.waitForTimeout(3200);
+  const { ctx, page, errors } = await stepped(demo('register=playful&content=0&seed=4'));
+  await frames(page, 192); // 3.2 s: the floor is laid
   await page.locator('sg-scene').locator('.stage').focus();
   await page.keyboard.press('ArrowUp');
   const hand = await page.evaluate(() => window.__piece.lastPointer);
   const tile = Math.floor(hand.y / 120) * 10 + Math.floor(hand.x / 120);
   const before = await stageData(page), img0 = await grab(page);
   await page.keyboard.press('Enter');
-  await page.waitForTimeout(1400);
+  await frames(page, 84); // 1.4 s of the turn
   const after = await stageData(page), img1 = await grab(page);
   const box = { x: (tile % 10) * 120 + 6, y: Math.floor(tile / 10) * 120 + 6, w: 108, h: 108 };
   check('playful: Enter turns the tile under the keyboard hand by a quarter', (Number(after.ks[tile]) - Number(before.ks[tile]) + 4) % 4 === 1 && diff(img0, img1, box) > 0.1, `tile ${tile}: turn ${before.ks[tile]} → ${after.ks[tile]}, ${pct(diff(img0, img1, box))} of it redrawn`);
@@ -146,7 +153,7 @@ let CALM = new Set();
   const b2 = await stageData(page);
   const [px, py] = await pagePoint(page, i * 120 + 60, j * 120 + 60);
   await page.mouse.move(px - 200, py); await page.mouse.move(px, py, { steps: 4 });
-  await page.waitForTimeout(300);
+  await frames(page, 18); // 0.3 s
   const a2 = await stageData(page);
   check('playful: the pointer entering a tile turns it', a2.ks[t2] !== b2.ks[t2], `tile ${t2}: ${b2.ks[t2]} → ${a2.ks[t2]}`);
   check('no console errors (playful)', errors.length === 0, errors.join(' | '));
@@ -158,7 +165,7 @@ let CALM = new Set();
   const out = [];
   const { ctx, page, errors } = await open(demo('register=warm'));
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1|localhost)/, r => { out.push(new URL(r.request().url()).host); r.abort(); });
-  await page.reload(); await page.waitForTimeout(1500);
+  await page.reload(); await loaded(page, { quiet: 1500 });
   check('no request leaves the page', out.length === 0, out.join(', ') || 'none');
   check('no console errors (demo)', errors.length === 0, errors.join(' | '));
   await ctx.close();

@@ -1,0 +1,23 @@
+- main:
+  - heading "Maun" [level=1]
+  - paragraph
+  - img "A field of colour built from thin translucent veils, some scraped back so a warm ground glows through, in a narrow paper margin."
+  - heading "Annual report, 2026" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Words on it" [checked]
+  - combobox "Palette":
+    - option "Let the seed choose" [selected]
+    - option "Turmeric"
+    - option "Monsoon"
+    - option "Kokum"
+    - option "Indigo on lime"
+  - button "Paint it again"
+  - button "New painting"
+  - paragraph

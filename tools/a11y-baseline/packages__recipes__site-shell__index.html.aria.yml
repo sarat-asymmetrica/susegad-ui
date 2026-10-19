@@ -1,0 +1,20 @@
+- banner:
+  - link "Casa Aldona":
+    - /url: "#top"
+  - navigation "Casa Aldona":
+    - tablist "Casa Aldona":
+      - tab "Overview" [selected]
+      - tab "Rooms"
+      - tab "Book"
+  - button "Account"
+- main:
+  - tabpanel "Overview":
+    - heading "A house above the paddy, in Aldona" [level=1]
+    - paragraph
+    - link "Ask the house":
+      - /url: ./no-js.html
+    - heading "Come for the rain" [level=2]
+    - img "A Goan window in the monsoon: raindrops on fogged glass, with flooded paddy and palms beyond"
+    - button "Pause animation"
+    - status
+    - paragraph

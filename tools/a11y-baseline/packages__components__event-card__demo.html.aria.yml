@@ -1,0 +1,313 @@
+- main:
+  - heading "Event card" [level=1]
+  - paragraph
+  - 'region "Quiet: a ruled card"':
+    - heading "Quiet: a ruled card" [level=2]
+    - article "Handmade pasta, from the dough up":
+      - paragraph
+      - heading "Handmade pasta, from the dough up" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph:
+        - link "Map":
+          - /url: https://maps.example/courtyard-kitchen
+      - heading "What you'll do" [level=4]
+      - list:
+        - listitem
+        - listitem
+        - listitem
+      - heading "What you'll eat" [level=4]
+      - list:
+        - listitem
+        - listitem
+        - listitem
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Save my seat":
+          - /url: https://wa.me/919800000000?text=Hello%2C%20I%27d%20like%20to%20save%20a%20seat%20for%20Sunday
+    - article "Filled pasta for beginners":
+      - paragraph
+      - heading "Filled pasta for beginners" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph
+      - heading "What you'll learn" [level=4]
+      - list:
+        - listitem
+        - listitem
+      - heading "What you'll eat" [level=4]
+      - list:
+        - listitem
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Ask about the next date":
+          - /url: https://wa.me/919800000000?text=Please%20tell%20me%20about%20the%20next%20date
+    - article "A long table, four courses":
+      - paragraph
+      - heading "A long table, four courses" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph
+      - heading "What you'll eat" [level=4]
+      - list:
+        - listitem
+        - listitem
+        - listitem
+      - paragraph
+      - paragraph:
+        - link "Ask for a place":
+          - /url: https://wa.me/919800000000?text=Hello%2C%20I%27d%20like%20a%20place%20at%20the%20supper%20club
+    - article "Pasta by the plate, one evening":
+      - paragraph
+      - heading "Pasta by the plate, one evening" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph:
+        - link "Map":
+          - /url: https://maps.example/cafe-courtyard
+      - heading "What you'll eat" [level=4]
+      - list:
+        - listitem
+        - listitem
+      - paragraph
+      - paragraph:
+        - link "Reserve a plate":
+          - /url: https://wa.me/919800000000?text=Hello%2C%20can%20I%20reserve%20a%20plate%20tonight%3F
+    - article "An evening of tagliatelle":
+      - paragraph
+      - heading "An evening of tagliatelle" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph
+      - heading "What you'll do" [level=4]
+      - list:
+        - listitem
+        - listitem
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Ask about tonight":
+          - /url: https://wa.me/919800000000?text=Hello%2C%20is%20there%20room%20tonight%3F
+    - article "Handmade pasta, from the dough up":
+      - paragraph
+      - heading "Handmade pasta, from the dough up" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph
+      - heading "What you'll do" [level=4]
+      - list:
+        - listitem
+        - listitem
+      - heading "What you'll eat" [level=4]
+      - list:
+        - listitem
+      - paragraph
+  - 'region "Warm: a ticket with a stub"':
+    - heading "Warm: a ticket with a stub" [level=2]
+    - article "Handmade pasta, from the dough up":
+      - paragraph
+      - heading "Handmade pasta, from the dough up" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph:
+        - link "Map":
+          - /url: https://maps.example/courtyard-kitchen
+      - heading "What you'll do" [level=4]
+      - list:
+        - listitem
+        - listitem
+        - listitem
+      - heading "What you'll eat" [level=4]
+      - list:
+        - listitem
+        - listitem
+        - listitem
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Save my seat":
+          - /url: https://wa.me/919800000000?text=Hello%2C%20I%27d%20like%20to%20save%20a%20seat%20for%20Sunday
+    - article "Filled pasta for beginners":
+      - paragraph
+      - heading "Filled pasta for beginners" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph
+      - heading "What you'll learn" [level=4]
+      - list:
+        - listitem
+        - listitem
+      - heading "What you'll eat" [level=4]
+      - list:
+        - listitem
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Ask about the next date":
+          - /url: https://wa.me/919800000000?text=Please%20tell%20me%20about%20the%20next%20date
+    - article "A long table, four courses":
+      - paragraph
+      - heading "A long table, four courses" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph
+      - heading "What you'll eat" [level=4]
+      - list:
+        - listitem
+        - listitem
+        - listitem
+      - paragraph
+      - paragraph:
+        - link "Ask for a place":
+          - /url: https://wa.me/919800000000?text=Hello%2C%20I%27d%20like%20a%20place%20at%20the%20supper%20club
+    - article "Pasta by the plate, one evening":
+      - paragraph
+      - heading "Pasta by the plate, one evening" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph:
+        - link "Map":
+          - /url: https://maps.example/cafe-courtyard
+      - heading "What you'll eat" [level=4]
+      - list:
+        - listitem
+        - listitem
+      - paragraph
+      - paragraph:
+        - link "Reserve a plate":
+          - /url: https://wa.me/919800000000?text=Hello%2C%20can%20I%20reserve%20a%20plate%20tonight%3F
+    - article "An evening of tagliatelle":
+      - paragraph
+      - heading "An evening of tagliatelle" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph
+      - heading "What you'll do" [level=4]
+      - list:
+        - listitem
+        - listitem
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Ask about tonight":
+          - /url: https://wa.me/919800000000?text=Hello%2C%20is%20there%20room%20tonight%3F
+    - article "Handmade pasta, from the dough up":
+      - paragraph
+      - heading "Handmade pasta, from the dough up" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph
+      - heading "What you'll do" [level=4]
+      - list:
+        - listitem
+        - listitem
+      - heading "What you'll eat" [level=4]
+      - list:
+        - listitem
+      - paragraph
+  - 'region "Playful: the stub tears a little"':
+    - heading "Playful: the stub tears a little" [level=2]
+    - article "Handmade pasta, from the dough up":
+      - paragraph
+      - heading "Handmade pasta, from the dough up" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph:
+        - link "Map":
+          - /url: https://maps.example/courtyard-kitchen
+      - heading "What you'll do" [level=4]
+      - list:
+        - listitem
+        - listitem
+        - listitem
+      - heading "What you'll eat" [level=4]
+      - list:
+        - listitem
+        - listitem
+        - listitem
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Save my seat":
+          - /url: https://wa.me/919800000000?text=Hello%2C%20I%27d%20like%20to%20save%20a%20seat%20for%20Sunday
+    - article "Filled pasta for beginners":
+      - paragraph
+      - heading "Filled pasta for beginners" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph
+      - heading "What you'll learn" [level=4]
+      - list:
+        - listitem
+        - listitem
+      - heading "What you'll eat" [level=4]
+      - list:
+        - listitem
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Ask about the next date":
+          - /url: https://wa.me/919800000000?text=Please%20tell%20me%20about%20the%20next%20date
+    - article "A long table, four courses":
+      - paragraph
+      - heading "A long table, four courses" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph
+      - heading "What you'll eat" [level=4]
+      - list:
+        - listitem
+        - listitem
+        - listitem
+      - paragraph
+      - paragraph:
+        - link "Ask for a place":
+          - /url: https://wa.me/919800000000?text=Hello%2C%20I%27d%20like%20a%20place%20at%20the%20supper%20club
+    - article "Pasta by the plate, one evening":
+      - paragraph
+      - heading "Pasta by the plate, one evening" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph:
+        - link "Map":
+          - /url: https://maps.example/cafe-courtyard
+      - heading "What you'll eat" [level=4]
+      - list:
+        - listitem
+        - listitem
+      - paragraph
+      - paragraph:
+        - link "Reserve a plate":
+          - /url: https://wa.me/919800000000?text=Hello%2C%20can%20I%20reserve%20a%20plate%20tonight%3F
+    - article "An evening of tagliatelle":
+      - paragraph
+      - heading "An evening of tagliatelle" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph
+      - heading "What you'll do" [level=4]
+      - list:
+        - listitem
+        - listitem
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Ask about tonight":
+          - /url: https://wa.me/919800000000?text=Hello%2C%20is%20there%20room%20tonight%3F
+    - article "Handmade pasta, from the dough up":
+      - paragraph
+      - heading "Handmade pasta, from the dough up" [level=3]
+      - paragraph:
+      - paragraph
+      - paragraph
+      - heading "What you'll do" [level=4]
+      - list:
+        - listitem
+        - listitem
+      - heading "What you'll eat" [level=4]
+      - list:
+        - listitem
+      - paragraph
+  - paragraph:

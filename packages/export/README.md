@@ -13,6 +13,17 @@ const webm = await recordSceneToWebm(kolam, { register: 'warm', seed: 7, duratio
 const gif = await recordSceneToGif(kolam, { register: 'warm', seed: 7, durationSec: 3, fps: 10 });
 ```
 
+## GIF, one frame at a time (`gif.stream.js`)
+
+`recordSceneToGif` builds the whole clip in one call, which holds the page still for as long as that takes. For a
+caller that works frame by frame, yields to the page between frames and can stop (the picture postcard does),
+`gif.stream.js` is the same format in pieces: `createHistogram()` takes pixels a frame at a time and cuts one shared
+`palette(256)`; `createIndexer(palette, { dither })` turns each frame's pixels into palette indices, keeping its
+nearest-colour lookup between frames (`indexFrameFast` is the one-shot form); `createGifEncoder({ width, height,
+palette })` takes `addFrame(indices, delayMs, rect?)` and `finish()`. A frame may cover only a sub-rectangle, so a
+card whose picture moves under a still name and stamp encodes only the picture after its first frame. It writes the
+same LZW bytes as `gif.core.js` (its test decodes them with an independent reader). Pure; runs in Node and the browser.
+
 ## PNG (`png.js`)
 
 `canvasToPng(canvas)` wraps `canvas.toBlob`. `svgToPng(svg, { width, height, scale, background })`

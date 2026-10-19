@@ -1,0 +1,71 @@
+- main:
+  - heading "Makers’ Weekend, Panjim" [level=1]
+  - paragraph
+  - region "Agenda":
+    - heading "Agenda" [level=2]
+    - paragraph
+    - paragraph
+    - region "Saturday 14 November":
+      - heading "Saturday 14 November" [level=3]:
+      - list:
+        - listitem:
+          - paragraph:
+          - heading "Welcome, and why we are here" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "A storybook that reads aloud, in Konkani" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "A voice calendar for people who would rather not look at a screen" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Tea and a sit down" [level=4]
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "A booking board for the village hall" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Lunch" [level=4]
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "One-page medicine reminders, in Konkani" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Workshop: pricing for a one-oven bakery" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Evening demos and music" [level=4]
+          - paragraph
+          - paragraph
+    - region "Sunday 15 November":
+      - heading "Sunday 15 November" [level=3]:
+      - list:
+        - listitem:
+          - paragraph:
+          - heading "Moving to Goa as a builder: what actually works" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "A tide and catch log the whole family can read" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Closing circle" [level=4]
+          - paragraph
+          - paragraph

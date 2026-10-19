@@ -1,0 +1,34 @@
+{
+  "name": "picture-postcard",
+  "type": "recipe",
+  "stability": "experimental",
+  "title": "Picture postcard",
+  "description": "A postcard of Goa with a typed name on it: a 3:2 card with a picture drawn by one of the library's scenes, the name set under it in any script, a perforated stamp and a postmark with an event's words, and a line saying where to make your own. Saved as a PNG, or as a three-second looping GIF of 30 frames under 5 MB, or handed to the share sheet with the file where the browser has one. Everything is drawn in the browser: nothing is sent anywhere, the same name makes the same card, and the GIF is made a frame at a time, shows its progress, can be cancelled and never freezes the page. The event's words are one config file.",
+  "version": "0.1.0",
+  "files": [
+    "recipe.js",
+    "postcard.core.js",
+    "postcard.draw.js",
+    "scenes.js",
+    "words.js",
+    "events/conclave-2026.js",
+    "events/goa-oct-2026.js",
+    "recipe.css",
+    "index.html",
+    "README.md",
+    "recipe.prompt.md"
+  ],
+  "dependencies": ["export", "engine", "type", "tokens", "scene-posta", "scene-ferry", "scene-mithagar", "scene-tinto", "scene-saanj", "scene-dar", "scene-rampon"],
+  "registers": ["quiet", "warm", "playful"],
+  "prompt": "recipe.prompt.md",
+  "docs": "README.md",
+  "budget": {
+    "jsBytes": 61440,
+    "reason": "Recipe code only, the scenes and the export package (with its GIF encoder) counted in their own budgets: the maker and its page wiring with the nudge, the fallbacks and the late-font redraw, the pure core (layout, name fitting, scripts, the placeholder), the drawing (paper, stamp, postmark), the scene list, the words the maker says, the event words. 60.2 KB today, up from 49 KB with the page round (the words, the empty name, share text, the late-font redraw)."
+  },
+  "motif": {
+    "origin": "goa",
+    "tier": "everyday",
+    "gloss": "A postcard from Goa, in the way of the old Indian post office: a stamp and a round postmark over the corner, a picture of an ordinary Goan place, a name written under it. No deity imagery, no religious figures; the scenes are everyday and regional places."
+  }
+}

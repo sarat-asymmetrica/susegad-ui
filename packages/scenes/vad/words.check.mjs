@@ -23,6 +23,7 @@
 import { readFileSync } from 'node:fs';
 import { harness } from '../../../tools/lib/component-check.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
+import { loaded } from '../../../tools/lib/wait.mjs';
 
 const h = await harness();
 const { check, browser, server } = h;
@@ -155,8 +156,7 @@ const summary = rows => rows.map(r => `${r.name} ${(r.share * 100).toFixed(1)}% 
   check('1280 px: the sky holds the words, every line at or over its minimum', r.words === 'surface' && r.lines.length > 0 && r.lines.every(px => px >= 14), r.lines.map(px => `${px}px`).join(', '));
   await ctx.close();
   const broken = await openAt(`${WORLD}&register=warm`, { reduced: true, width: 390, height: 844, patch: { 'model.js': [['({ body: 0.875 * rootPx, heading: 1.25 * rootPx })', '({ body: 0.1 * rootPx, heading: 0.1 * rootPx })']] } });
-  await settled(broken.page);
-  await broken.page.waitForTimeout(800);
+  await settled(broken.page, 'surface'); // the clause below needs the sky; if it never gets there the clause is red
   const b = await flat(broken.page);
   check('control: a build whose minimum is zero keeps tiny words in the sky at 390 px, and is caught', b.words === 'surface' && b.lines.some(px => px < 14), `${b.words}; ${b.lines.map(px => `${px.toFixed(1)}px`).join(', ')}`);
   await broken.ctx.close();
@@ -225,7 +225,7 @@ const summary = rows => rows.map(r => `${r.name} ${(r.share * 100).toFixed(1)}% 
     const s = await page.evaluate(() => {
       const sr = window.__piece.shadowRoot, cv = sr.querySelector('.stage canvas'), c = cv.getBoundingClientRect(), k = cv.width / c.width;
       const lines = [...sr.querySelectorAll('[data-line]')].map(e => { const r = e.getBoundingClientRect(); return { x: (r.left - c.left) * k, y: (r.top - c.top) * k, w: r.width * k, h: r.height * k }; });
-      return { w: cv.width, h: cv.height, lines, px: Array.from(cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data) };
+      return { w: cv.width, h: cv.height, lines, px: cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data };
     });
     await ctx.close();
     return s;
@@ -263,7 +263,7 @@ const summary = rows => rows.map(r => `${r.name} ${(r.share * 100).toFixed(1)}% 
   const load = async (path, words) => {
     const requests = [];
     const { ctx, page } = await openAt(path, { requests, reduced: true });
-    if (words) await settled(page, words); else await page.waitForTimeout(2500);
+    if (words) await settled(page, words); else await loaded(page, { quiet: 2500 }); // no words to wait for: the page is loaded and the network quiet
     await ctx.close();
     return { pretext: requests.some(u => u.includes('/type/vendor/pretext.js')), outside: requests.filter(u => !u.startsWith(server.url) && /^https?:/.test(u)) };
   };

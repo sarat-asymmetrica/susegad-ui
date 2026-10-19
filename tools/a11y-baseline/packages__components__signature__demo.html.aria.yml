@@ -1,0 +1,26 @@
+- main:
+  - heading "Signature" [level=1]
+  - paragraph
+  - heading "Sign the booking" [level=2]
+  - paragraph
+  - button "Undo last stroke" [disabled]
+  - button "Start again" [disabled]
+  - textbox "Type your full name to sign"
+  - button "Sign and send"
+  - status
+  - heading "Signed by drawing" [level=2]
+  - paragraph
+  - button "Undo last stroke"
+  - button "Start again"
+  - textbox "Type your full name to sign"
+  - heading "Signed by typing" [level=2]
+  - paragraph
+  - button "Undo last stroke" [disabled]
+  - button "Start again"
+  - textbox "Type your full name to sign": Sarat Chandran
+  - heading "Not open for signing yet" [level=2]
+  - paragraph
+  - button "Undo last stroke" [disabled]
+  - button "Start again" [disabled]
+  - textbox "Type your full name to sign" [disabled]
+  - paragraph

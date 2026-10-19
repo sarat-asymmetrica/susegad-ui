@@ -1,0 +1,16 @@
+- main:
+  - group "Language / भाषा":
+    - button "English" [pressed]
+    - button "मराठी"
+  - img "The first rain"
+  - button "Pause animation"
+  - status
+  - heading "The first rain" [level=1]
+  - button "Play": ▶
+  - slider "Seek": "0"
+  - button "Turn captions off": CC
+  - button "Mute"
+  - paragraph
+  - paragraph
+  - paragraph
+  - paragraph

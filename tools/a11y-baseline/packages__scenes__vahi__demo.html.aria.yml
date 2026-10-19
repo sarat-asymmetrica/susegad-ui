@@ -1,0 +1,18 @@
+- main:
+  - heading "Vahi" [level=1]
+  - paragraph
+  - img "Records sorted"
+  - heading "Run your back office" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - paragraph
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Show progress"
+  - slider "Records sorted" [disabled]: "3"
+  - button "Sort again"
+  - button "A new pile"

@@ -1,0 +1,94 @@
+- main:
+  - heading "Gallery" [level=1]
+  - paragraph
+  - 'region "Quiet: hairline frames"':
+    - heading "Quiet: hairline frames" [level=2]
+    - 'region "Consent granted: the photographs show"':
+      - heading "Consent granted: the photographs show" [level=2]
+      - figure "Rain clouds over the courtyard, October":
+        - 'button "A Goan courtyard in October rain, seen from under the eave: a tulsi vrindavan with a lit lamp, and a clay pot catching the water off the roof, open larger"':
+          - img "A Goan courtyard in October rain, seen from under the eave: a tulsi vrindavan with a lit lamp, and a clay pot catching the water off the roof"
+      - figure "The ghat steps, first light":
+        - button "Stone steps to the river at first light, open larger":
+          - img "Stone steps to the river at first light"
+      - figure "Mankurad mangoes, from the tree by the gate":
+        - button "Ripe mangoes in a cane basket, open larger":
+          - img "Ripe mangoes in a cane basket"
+    - region "Some consent in, some still pending":
+      - heading "Some consent in, some still pending" [level=2]
+      - figure "The first rain, seen from the kitchen window":
+        - button "Rain on red Mangalore tiles seen from a kitchen window, a frangipani flower fallen on them and a steel tumbler on the sill, open larger":
+          - img "Rain on red Mangalore tiles seen from a kitchen window, a frangipani flower fallen on them and a steel tumbler on the sill"
+      - figure "Guests at the long table, faces turned to the sea":
+        - paragraph
+      - figure "A neighbour teaching fish curry on the back step":
+        - paragraph
+    - 'region "No consent yet: the gallery is all frames"':
+      - heading "No consent yet: the gallery is all frames" [level=2]
+      - figure "The courtyard at dusk":
+        - paragraph
+      - figure "The Pathrabhat room, made up for two":
+        - paragraph
+      - figure "Bread rising under a cloth":
+        - paragraph
+  - 'region "Warm: hand-drawn photo corners"':
+    - heading "Warm: hand-drawn photo corners" [level=2]
+    - 'region "Consent granted: the photographs show"':
+      - heading "Consent granted: the photographs show" [level=2]
+      - figure "Rain clouds over the courtyard, October":
+        - 'button "A Goan courtyard in October rain, seen from under the eave: a tulsi vrindavan with a lit lamp, and a clay pot catching the water off the roof, open larger"':
+          - img "A Goan courtyard in October rain, seen from under the eave: a tulsi vrindavan with a lit lamp, and a clay pot catching the water off the roof"
+      - figure "The ghat steps, first light":
+        - button "Stone steps to the river at first light, open larger":
+          - img "Stone steps to the river at first light"
+      - figure "Mankurad mangoes, from the tree by the gate":
+        - button "Ripe mangoes in a cane basket, open larger":
+          - img "Ripe mangoes in a cane basket"
+    - region "Some consent in, some still pending":
+      - heading "Some consent in, some still pending" [level=2]
+      - figure "The first rain, seen from the kitchen window":
+        - button "Rain on red Mangalore tiles seen from a kitchen window, a frangipani flower fallen on them and a steel tumbler on the sill, open larger":
+          - img "Rain on red Mangalore tiles seen from a kitchen window, a frangipani flower fallen on them and a steel tumbler on the sill"
+      - figure "Guests at the long table, faces turned to the sea":
+        - paragraph
+      - figure "A neighbour teaching fish curry on the back step":
+        - paragraph
+    - 'region "No consent yet: the gallery is all frames"':
+      - heading "No consent yet: the gallery is all frames" [level=2]
+      - figure "The courtyard at dusk":
+        - paragraph
+      - figure "The Pathrabhat room, made up for two":
+        - paragraph
+      - figure "Bread rising under a cloth":
+        - paragraph
+  - 'region "Playful: photos laid on a table"':
+    - heading "Playful: photos laid on a table" [level=2]
+    - 'region "Consent granted: the photographs show"':
+      - heading "Consent granted: the photographs show" [level=2]
+      - figure "Rain clouds over the courtyard, October":
+        - 'button "A Goan courtyard in October rain, seen from under the eave: a tulsi vrindavan with a lit lamp, and a clay pot catching the water off the roof, open larger"':
+          - img "A Goan courtyard in October rain, seen from under the eave: a tulsi vrindavan with a lit lamp, and a clay pot catching the water off the roof"
+      - figure "The ghat steps, first light":
+        - button "Stone steps to the river at first light, open larger":
+          - img "Stone steps to the river at first light"
+      - figure "Mankurad mangoes, from the tree by the gate":
+        - button "Ripe mangoes in a cane basket, open larger":
+          - img "Ripe mangoes in a cane basket"
+    - region "Some consent in, some still pending":
+      - heading "Some consent in, some still pending" [level=2]
+      - figure "The first rain, seen from the kitchen window":
+        - button "Rain on red Mangalore tiles seen from a kitchen window, a frangipani flower fallen on them and a steel tumbler on the sill, open larger":
+          - img "Rain on red Mangalore tiles seen from a kitchen window, a frangipani flower fallen on them and a steel tumbler on the sill"
+      - figure "Guests at the long table, faces turned to the sea":
+        - paragraph
+      - figure "A neighbour teaching fish curry on the back step":
+        - paragraph
+    - 'region "No consent yet: the gallery is all frames"':
+      - heading "No consent yet: the gallery is all frames" [level=2]
+      - figure "The courtyard at dusk":
+        - paragraph
+      - figure "The Pathrabhat room, made up for two":
+        - paragraph
+      - figure "Bread rising under a cloth":
+        - paragraph
+  - paragraph:

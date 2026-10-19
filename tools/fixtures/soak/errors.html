@@ -1,0 +1,10 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soak fixture: console error</title>
+<!-- Must FAIL the soak on errors (red first). Steady in every other way; two seconds in, it logs one console error. -->
+<style>html, body { margin: 0; background: #f4efe6; color: #2a2118; font: 16px system-ui }</style>
+<div>one error</div>
+<script>
+  setTimeout(() => console.error('soak fixture: planted console error'), 2000);
+</script>

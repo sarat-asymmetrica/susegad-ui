@@ -37,6 +37,8 @@ their targets.
 
 v0.6 (12 Oct 2026, command center, on the owner's word: "do the optimization pass"): the harness review (docs/runs/2026-10-12-harness-review/): model, effort and a one-hour prompt cache in the frontmatter; the §10 gate JSON (exemplar, logic mode, self-computed score) became a plain evidence block that keeps every evidence field; this changelog moved out of the kernel; pins to an older model and history-relative wording were removed. REVIEW and GATE trust the builder's pack and gate results when their commit is the head being merged, and the Sutradhar runs the rung gate (they contradicted RUNBOOK §5.3); DELEGATION_WIDTH is capped at four, as RUNBOOK §4 says; the repeated "no winding down" lines and DIAL_INTEGRITY, which nothing checked, are gone.
 
+v0.7 (18 Oct 2026, Sutradhar, rigour rung 2e; docs/reports/2026-10-17-rigour-audit.md, Phase 2): §10 uses the one evidence block every seat shares (docs/RUNBOOK.md §8) plus a zones line; the rung does not close until gate-tier --enforce is green, because the tier binds under every goal, light rigour included.
+
 ## Karigar
 
 v0.2 (25 Sep 2026, Sutradhar after Wave 4; first run with Sonnet 5
@@ -77,6 +79,8 @@ the slice gate from docs/RUNBOOK.md §5.3 (`npm run gates`, `npm run check
 one line, keeping every evidence field.
 
 v0.7 (12 Oct 2026, command center): the harness review (docs/runs/2026-10-12-harness-review/): model, effort and a one-hour prompt cache in the frontmatter; the §10 gate JSON (exemplar, logic mode, self-computed score) became a plain evidence block that keeps every evidence field; this changelog moved out of the kernel; pins to an older model and history-relative wording were removed. model sonnet, effort medium.
+
+v0.8 (18 Oct 2026, Sutradhar, rigour rung 2e; docs/reports/2026-10-17-rigour-audit.md, Phase 2): §10 becomes the shared evidence block (ran, looked, not run); the slice gate it reports is rigour.mjs --scope=slice; deferrals name their DEBT row.
 
 ## Rasika
 
@@ -127,6 +131,8 @@ into one line, keeping every evidence field. The machine-level lessons
 
 v0.7 (12 Oct 2026, command center): the harness review (docs/runs/2026-10-12-harness-review/): model, effort and a one-hour prompt cache in the frontmatter; the §10 gate JSON (exemplar, logic mode, self-computed score) became a plain evidence block that keeps every evidence field; this changelog moved out of the kernel; pins to an older model and history-relative wording were removed. model sonnet, effort high. GATHER reads the builder's pack and re-gathers only when its commit isn't the head (Karigar already said so); A13 spends the time saved on adversarial probing, where about 24 of 30 must-fix findings came from; §11 drops the word caps and the per-phase timing table for one start and end time.
 
+v0.8 (18 Oct 2026, Sutradhar, rigour rung 2e; docs/reports/2026-10-17-rigour-audit.md, Phase 2): GATHER no longer says the copy, motif and rest lints are ungated (repo-check and the suite run them); at Standard Rasika is the only reader of new strings, since the per-rung Kathakar pass is gone; §11 carries the canonical verdict line gate-tier --enforce credits, one section per unit; §10 becomes the shared evidence block.
+
 ## Kathakar
 
 v0.2 (25 Sep 2026, Sutradhar after Wave 4; Sonnet 5 writer): A7 kin words
@@ -156,3 +162,9 @@ drops the dial echo and folds Maude's generic gates into one line, keeping
 every evidence field.
 
 v0.6 (12 Oct 2026, command center): the harness review (docs/runs/2026-10-12-harness-review/): model, effort and a one-hour prompt cache in the frontmatter; the §10 gate JSON (exemplar, logic mode, self-computed score) became a plain evidence block that keeps every evidence field; this changelog moved out of the kernel; pins to an older model and history-relative wording were removed. model sonnet, effort medium.
+
+v0.7 (18 Oct 2026, Sutradhar, rigour rung 2e; docs/reports/2026-10-17-rigour-audit.md, Phase 2): §10 becomes the shared evidence block; the per-rung pass over Light and Standard strings is retired (Light: the copy lint; Standard: Rasika).
+
+v0.8 (19 Oct 2026, command center; decision 0031): rigour at promotion. Sutradhar §10: the tier binds on shared ground; experimental-lane slices owe their review at promotion (RUNBOOK §4a).
+
+v0.8 addendum (19 Oct 2026, command center, after Rasika K1 to K4 and D3): Sutradhar header v0.8; A2 names the experimental lane and the public-page pass; rasika.md description and §4 say shared ground, promotion batches and the ci/ lane.

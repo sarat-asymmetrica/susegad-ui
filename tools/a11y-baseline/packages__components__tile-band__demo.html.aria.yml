@@ -1,0 +1,28 @@
+- main:
+  - heading "Tile band" [level=1]
+  - paragraph
+  - 'region "Quiet: a cobalt hairline on the page, flat"':
+    - heading "Quiet: a cobalt hairline on the page, flat" [level=2]
+    - paragraph
+    - paragraph
+    - heading "Down the side of a page" [level=3]
+    - paragraph
+    - separator
+    - paragraph
+  - 'region "Warm: hand-painted glaze, brush variation, crackle"':
+    - heading "Warm: hand-painted glaze, brush variation, crackle" [level=2]
+    - paragraph
+    - paragraph
+    - heading "Down the side of a page" [level=3]
+    - paragraph
+    - separator
+    - paragraph
+  - 'region "Playful: a tile turns a quarter when you touch it"':
+    - heading "Playful: a tile turns a quarter when you touch it" [level=2]
+    - paragraph
+    - paragraph
+    - heading "Down the side of a page" [level=3]
+    - paragraph
+    - separator
+    - paragraph
+  - paragraph:

@@ -73,7 +73,6 @@ test('strings say what is loading and when it has arrived', () => {
   assert.equal(STRINGS.loaded('your bookings'), 'Your bookings loaded');
   assert.equal(STRINGS.loading(''), 'Loading');
   assert.equal(STRINGS.loaded(''), 'Loaded');
-  for (const s of [STRINGS.loading('x'), STRINGS.loaded('x')]) assert.ok(!s.includes('—'));
 });
 
 test('text seeds work as well as numbers', () => {

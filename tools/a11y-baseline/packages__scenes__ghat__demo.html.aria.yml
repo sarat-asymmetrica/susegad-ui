@@ -1,0 +1,20 @@
+- main:
+  - heading "Ghat" [level=1]
+  - paragraph
+  - img "A survey sheet of the ghats"
+  - heading "Up the ghat by bus" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Words on it" [checked]
+  - button "Ink it again"
+  - button "A new sheet"
+  - heading "Inked by this page's scroll" [level=2]
+  - paragraph:
+  - img "The survey sheet, inked as you scroll"
+  - status

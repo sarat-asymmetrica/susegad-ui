@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A11y fixture: open axe</title>
+<meta name="smoke-open" content="the dialog | #opener | dialog[open]">
+</head>
+<body>
+<main>
+<h1>Open axe</h1>
+<button id="opener" type="button" commandfor="d" command="show-modal">Open</button>
+<dialog id="d" aria-label="A dialog"><p>Inside.</p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="40" height="40"><form method="dialog"><button>Close</button></form></dialog>
+</main>
+</body>
+</html>

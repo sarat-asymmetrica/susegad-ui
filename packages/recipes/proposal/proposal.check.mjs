@@ -12,16 +12,17 @@ import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { contextOptions, engineName, pickEngine } from '../../../tools/lib/engine.mjs';
 import { buildProposal } from './build.mjs';
 import { verify } from '../../folio/build/seal.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const AXE = await readFile(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+// The sealed proposal is a file: page the check opens itself; the harness's dev server is not used.
+const h = await harness({ axe: 'this check runs axe itself, below, on the sealed proposal file with and without JavaScript, with the same WCAG 2.2 AA tags as h.axe()' });
+const { check } = h;
 
 const tmp = await mkdtemp(join(tmpdir(), 'proposal-check-'));
 const out = join(tmp, 'sample.folio.html');
@@ -35,12 +36,10 @@ const i = text.indexOf('Where things stand', text.indexOf('<body')) + 2;
 check('one byte changed in the body breaks the seal', !verify(text.slice(0, i) + (text[i] === 'e' ? 'a' : 'e') + text.slice(i + 1)).ok);
 
 const url = pathToFileURL(out).href;
-const engine = engineName();
-const browser = await pickEngine(engine).launch();
 const open = async (opts = {}) => {
-  const ctx = await browser.newContext(contextOptions(engine, { viewport: { width: 1100, height: 900 }, ...opts }));
+  const ctx = await h.context({ viewport: { width: 1100, height: 900 }, ...opts });
   const requests = [], errors = [];
-  await ctx.route('**/*', route => { if (route.request().url() === url) return route.continue(); requests.push(route.request().url()); return route.abort(); });
+  await ctx.route('**/*', route => { if (route.request().url() === url) return route.continue(); if (/^(blob|data):/.test(route.request().url())) return route.continue(); /* WebKit routes the page's own blob: URLs; they never leave the machine */ requests.push(route.request().url()); return route.abort(); });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(String(e)));
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
@@ -69,7 +68,7 @@ try {
     check('without JavaScript: the tables, the plan as a list, the options', r.tables === 2 && r.plan === 3 && r.options === 2, JSON.stringify(r));
     const dom = (await page.content()).replace(/<script\b[\s\S]*?<\/script>/gi, '');
     await ctx.close();
-    const c2 = await browser.newContext({ bypassCSP: true });
+    const c2 = await h.context({ bypassCSP: true });
     const p2 = await c2.newPage();
     await p2.route('**/*', route => route.abort());
     await p2.setContent(dom, { waitUntil: 'load' });
@@ -101,10 +100,7 @@ try {
     await ctx.close();
   }
 } finally {
-  await browser.close();
   await rm(tmp, { recursive: true, force: true });
 }
 
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

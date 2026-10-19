@@ -1,0 +1,8 @@
+- main:
+  - heading "Export" [level=1]
+  - paragraph
+  - figure "PNG, SIZE":
+    - img "A PNG still of the Kolam scene"
+  - figure "WebM, SIZE"
+  - figure "GIF, SIZE":
+    - img "An animated GIF of the Kolam scene"

@@ -1,0 +1,70 @@
+- main:
+  - heading "Menu" [level=1]
+  - paragraph
+  - heading "Orderable, from the page's own list" [level=2]
+  - heading "Fresh pasta" [level=3]
+  - paragraph
+  - list:
+    - listitem:
+      - list:
+        - listitem
+        - listitem
+      - group "Fresh fettuccine, quantity":
+        - button "Remove one Fresh fettuccine" [disabled]
+        - button "Add one Fresh fettuccine"
+    - listitem:
+      - list:
+        - listitem
+      - group "Spinach ravioli, quantity":
+        - button "Remove one Spinach ravioli" [disabled]
+        - button "Add one Spinach ravioli"
+    - listitem:
+      - list:
+        - listitem
+        - listitem
+      - group "Beetroot gnocchi, quantity":
+        - button "Remove one Beetroot gnocchi" [disabled]
+        - button "Add one Beetroot gnocchi"
+    - listitem
+  - heading "Sauces" [level=3]
+  - paragraph
+  - list:
+    - listitem:
+      - list:
+        - listitem
+        - listitem
+      - group "Tomato and basil, quantity":
+        - button "Remove one Tomato and basil" [disabled]
+        - button "Add one Tomato and basil"
+    - listitem:
+      - list:
+        - listitem
+        - listitem
+      - group "Walnut pesto, quantity":
+        - button "Remove one Walnut pesto" [disabled]
+        - button "Add one Walnut pesto"
+    - listitem:
+      - list:
+        - listitem
+        - listitem
+      - group "Arrabbiata, quantity":
+        - button "Remove one Arrabbiata" [disabled]
+        - button "Add one Arrabbiata"
+    - listitem
+  - heading "For a crowd" [level=3]
+  - list:
+    - listitem
+  - status
+  - button "Start again" [disabled]
+  - complementary "What the page hears (sg-change)":
+    - heading "What the page hears (sg-change)" [level=3]
+  - paragraph
+  - heading "A price list only, written from data (menu.items = [...])" [level=2]:
+  - heading "Workshops" [level=3]
+  - paragraph
+  - list:
+    - listitem:
+      - list:
+        - listitem
+    - listitem
+  - paragraph

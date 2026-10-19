@@ -1,0 +1,9 @@
+{
+  "about": "Known findings the accessibility checks allow, each with its reason, printed on every run so none is silent. main and heading: pages allowed to lack that landmark. controls: forced-colours findings, by the label the pass prints. A reason that names a DEBT row is a finding waiting to be fixed; delete the rule when it is.",
+  "rules": [
+    { "match": "^/packages/components/(dialog|drawer)/no-js\\.html$", "main": true, "reason": "DEBT 87: the no-JS fallback pages have no main landmark" },
+    { "match": "^/packages/recipes/site-shell/no-js\\.html$", "main": true, "reason": "DEBT 87: the no-JS fallback page has no main landmark" },
+    { "match": "^/packages/components/scroll-section/demo\\.html$", "main": true, "reason": "DEBT 87: the demo has no main landmark" },
+    { "match": "^/packages/components/otp/demo\\.html$", "controls": ["input#code"], "reason": "DEBT 88: under forced colours the real input paints its text over the first box" }
+  ]
+}

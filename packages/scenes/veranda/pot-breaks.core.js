@@ -34,7 +34,7 @@ const TAU = Math.PI * 2;
 /**
  * Build the break-flip map for a paragraph.
  *
- * @param {object} words  the paragraph, prepared:
+ * @param {Record<string, any>} words  the paragraph, prepared:
  *   { widths: number[], space?: number } — `widths` are the words' ink widths
  *   in reading order, in the same units `corridor` answers in (px); `space`
  *   is the width of the space between words (default 0).
@@ -42,7 +42,7 @@ const TAU = Math.PI * 2;
  *   a pot angle, radians in [0, TAU): one number per line the paragraph could
  *   hold, first line first (a single number for a one-band caller). It may be
  *   any shape (piecewise, plateaued); it is only ever sampled.
- * @param {object} [opts]
+ * @param {Object} [opts]
  * @param {number} [opts.samples=720]  how finely the corridor is sampled to
  *   bracket every crossing before bisection sharpens it
  * @returns {{ breaksAt, criticalAngles, quantize, breakStatesPerTurn }}

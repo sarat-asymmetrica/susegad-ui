@@ -13,8 +13,12 @@
 //    knocks it out of step;
 // 5. no request leaves the page; axe (WCAG 2.2 AA) on the demo in every
 //    register, light and dark; no console errors.
+//
+// Scene time is stepped, not waited for (tools/lib/virtual-time.mjs): the pages that move run on virtual frames, a sixtieth of a second
+// of the scene's time a step. On the real clock still: "no request leaves the page" (it watches the network) and axe.
 
 import { harness } from '../../../tools/lib/component-check.mjs';
+import { frames, openStepped, until } from '../../../tools/lib/virtual-time.mjs';
 
 const h = await harness();
 const { check } = h;
@@ -25,10 +29,12 @@ const open = async (path, opts) => {
     .catch(async () => { check(`ready: ${path}`, false, 'no sg-ready in 30 s'); await h.done(); });
   return r;
 };
+/** A page on virtual frames, stepped to ready: the same {ctx, page, errors} as `open`. */
+const step = (path, opts) => openStepped(h, path, opts);
 const orderOf = page => page.evaluate(() => Number(window.__piece.shadowRoot.querySelector('.stage').dataset.order));
 const grab = page => page.evaluate(() => {
   const cv = window.__piece.shadowRoot.querySelector('canvas'), d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
-  const s = 2, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), px = new Array(w * hh * 3);
+  const s = 2, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), px = new Uint8Array(w * hh * 3);
   for (let y = 0; y < hh; y++) for (let x = 0; x < w; x++) { const i = (y * s * cv.width + x * s) * 4, o = (y * w + x) * 3; px[o] = d[i]; px[o + 1] = d[i + 1]; px[o + 2] = d[i + 2]; }
   const el = window.__piece, st = el.shadowRoot.querySelector('.stage').getBoundingClientRect(), k = 1200 / st.width;
   const words = [...el.children].map(c => { const r = c.getBoundingClientRect(); return { x: (r.left - st.left) * k, y: (r.top - st.top) * k, w: r.width * k, h: r.height * k }; });
@@ -48,19 +54,19 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
 
 // 1. progress is synchrony
 {
-  const at = async p => { const { ctx, page } = await open(scene(`register=warm&progress=${p}&label=Syncing`)); await page.waitForTimeout(1200); const a = await orderOf(page); await page.waitForTimeout(3000); const b = await orderOf(page); const said = await page.evaluate(() => window.__piece.shadowRoot.querySelector('[role=status]').textContent); await ctx.close(); return { a, b, said }; };
+  const at = async p => { const { ctx, page } = await step(scene(`register=warm&progress=${p}&label=Syncing`)); await frames(page, 72); const a = await orderOf(page); await frames(page, 180); const b = await orderOf(page); await until(page, () => window.__piece.shadowRoot.querySelector('[role=status]').textContent !== '', { ms: 5000 }); /* said at most once a second, on a real timer */ const said = await page.evaluate(() => window.__piece.shadowRoot.querySelector('[role=status]').textContent); await ctx.close(); return { a, b, said }; };
   const lo = await at(0.2), hi = await at(0.8);
   check('progress: the status names the work', hi.said === 'Syncing: 80% done', `"${hi.said}"`);
   check('progress: 0.8 is more in step than 0.2', hi.a > lo.a + 0.2, `${lo.a} against ${hi.a}`);
   check('progress: time does not change how in step the bank is', Math.abs(lo.a - lo.b) < 0.002 && Math.abs(hi.a - hi.b) < 0.002, `${lo.a} then ${lo.b}; ${hi.a} then ${hi.b}`);
-  const { ctx, page } = await open(scene('register=warm'));
-  await page.waitForTimeout(1200); const a = await orderOf(page); await page.waitForTimeout(3000); const b = await orderOf(page); await ctx.close();
+  const { ctx, page } = await step(scene('register=warm'));
+  await frames(page, 72); const a = await orderOf(page); await frames(page, 180); const b = await orderOf(page); await ctx.close();
   check('control: with no progress, the swarm’s synchrony changes by itself', Math.abs(a - b) > 0.01, `${a} then ${b}`);
 }
 
 // 2. the still
 {
-  const stillOf = async (q, opts) => { const { ctx, page } = await open(scene(q), opts); await page.waitForTimeout(300); const g = await grab(page); await ctx.close(); return g; };
+  const stillOf = async (q, opts) => { const { ctx, page } = await step(scene(q), opts); await frames(page, 18); const g = await grab(page); await ctx.close(); return g; };
   const quiet = await stillOf('register=quiet'), reduced = await stillOf('register=warm', { reduced: true });
   check('the still: quiet and warm under reduced motion paint the same wave', diff(quiet, reduced, undefined, 6) < 0.002, `${pct(diff(quiet, reduced, undefined, 6))} differ`);
 }
@@ -68,8 +74,8 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
 // 3. calm under the words: the words sit in the middle, over the mangroves, where the fireflies are
 {
   const pair = async content => {
-    const { ctx, page } = await open(`/packages/scenes/khazan/demo.html?register=warm&place=center&content=${content}`);
-    await page.waitForTimeout(2500); const a = await grab(page); await page.waitForTimeout(700); const b = await grab(page);
+    const { ctx, page } = await step(`/packages/scenes/khazan/demo.html?register=warm&place=center&content=${content}`);
+    await frames(page, 150); const a = await grab(page); await frames(page, 42); const b = await grab(page);
     await ctx.close(); return [a, b];
   };
   const [w1, w2] = await pair(1), [b1, b2] = await pair(0);
@@ -81,16 +87,16 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
 
 // 4. playful: Enter knocks the bank out of step
 {
-  const { ctx, page, errors } = await open('/packages/scenes/khazan/demo.html?register=playful&content=0');
-  await page.waitForFunction(() => Number(window.__piece.shadowRoot.querySelector('.stage').dataset.order) > 0.85, null, { timeout: 60000 }).catch(() => {});
+  const { ctx, page, errors } = await step('/packages/scenes/khazan/demo.html?register=playful&content=0');
+  await until(page, () => Number(window.__piece.shadowRoot.querySelector('.stage').dataset.order) > 0.85, { ms: 120000 });
   const stage = page.locator('sg-scene').locator('.stage');
   await stage.focus();
   // the hand starts in the middle; walk it into the second clump of mangroves (x about 470)
   for (let k = 0; k < 4; k++) await page.keyboard.press('ArrowLeft');
-  await page.waitForTimeout(600);
+  await frames(page, 36);
   const before = await orderOf(page);
-  for (let k = 0; k < 8; k++) { await page.keyboard.press('Enter'); await page.waitForTimeout(60); }
-  await page.waitForTimeout(1200);
+  for (let k = 0; k < 8; k++) { await page.keyboard.press('Enter'); await frames(page, 4); }
+  await frames(page, 72);
   const after = await orderOf(page);
   check('playful: Enter sweeps the hand through the swarm and knocks it out of step', before > 0.8 && after < before - 0.03, `${before} before, ${after} after`);
   check('no console errors (playful)', errors.length === 0, errors.join(' | '));

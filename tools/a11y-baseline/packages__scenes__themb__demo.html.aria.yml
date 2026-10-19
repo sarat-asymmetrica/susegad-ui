@@ -1,0 +1,22 @@
+- main:
+  - heading "Themb" [level=1]
+  - paragraph
+  - img "A broad taro leaf seen from above in the rain, its veins inked pale on velvet green, with silver beads of water resting on it and gathering in the cup at its centre."
+  - heading "Monsoon stays" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - paragraph
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Words on the leaf" [checked]
+  - combobox "Renderer":
+    - option "auto" [selected]
+    - option "webgl"
+    - option "2d"
+  - button "Lose the WebGL context"
+  - button "Start again"
+  - paragraph

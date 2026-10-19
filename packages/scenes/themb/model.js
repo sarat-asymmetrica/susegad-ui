@@ -277,6 +277,7 @@ export const clearMemo = () => memo.clear();
  * The per-frame description. The renderer asks leafAt() for the water, since
  * the water depends on what hands did; the model only says which register and
  * which moment.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
  */
 export function model({ time = 0, seed = 1, register = 'warm', params = {} } = {}) {
   const look = LOOKS[register] || LOOKS.warm;

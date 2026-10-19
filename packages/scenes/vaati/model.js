@@ -347,6 +347,7 @@ export function settleGate() {
  * - `progress` set (0..1): time stands still at that fill; 1 is the finished bowl.
  * - quiet: the finished bowl, still.
  * - `tossAt` and `tossN` are set by the playful renderer when the bowl is tossed: the model time the toss began, and how many tosses so far.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
  */
 export function model({ time = 0, seed = 1, register = 'warm', params = {} } = {}) {
   const pieces = SHAPES[params.pieces] ? params.pieces : 'ravioli', sauce = SAUCES.includes(params.sauce) ? params.sauce : 'tomato';

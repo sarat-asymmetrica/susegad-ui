@@ -15,17 +15,15 @@
 //   no-press    the playful press does not give                     -> "press"
 
 import fs from 'node:fs';
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { keyHeldActivates } from '../../../tools/lib/engine.mjs';
 import { arrivalDelay } from '../../core/arrive.js';
 
 const BREAK = process.argv.find(a => a.startsWith('--break='))?.slice('--break='.length) ?? '';
 const shots = process.argv.includes('--shots');
 if (shots) fs.mkdirSync('.shots/arrive', { recursive: true });
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/event-list/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, browser, check, results } = h;
 
 const BREAKS = {
   'no-delay': ['css', 'animation-delay: var(--sg-arrive-delay, calc(', 'animation-delay: var(--sg-arrive-delay, 0ms); --unused: calc('],
@@ -37,7 +35,7 @@ const BREAKS = {
 if (BREAK && !BREAKS[BREAK]) { console.error(`unknown --break mode "${BREAK}"`); process.exit(2); }
 let broke = false;
 async function ctxFor(opts = {}) {
-  const ctx = await browser.newContext(opts);
+  const ctx = await h.context(opts);
   if (BREAK) {
     const [kind, from, to] = BREAKS[BREAK];
     const ok = u => (kind === 'css' ? /\/(menu|event-list|gallery|data-table)\/\1\.css$/ : /\/core\/arrive\.js$/).test(u.pathname);
@@ -242,13 +240,14 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   await kp.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
   const k = await kp.evaluate(() => { const b = document.activeElement, cs = getComputedStyle(b); return { input: document.documentElement.dataset.sgInput, active: b.matches(':active'), translate: cs.translate, scale: cs.scale }; });
   await kp.keyboard.up('Space'); await kp.keyboard.up('ArrowRight');
-  check('data-table playful: with an arrow held (data-sg-input=key) a press does not move', k.input === 'key' && k.active && k.translate === 'none' && k.scale === 'none', JSON.stringify(k));
+  const keyLit = await keyHeldActivates(browser); // Firefox (as driven here) does not put a key-held button in :active at all
+  if (!keyLit) h.skip(':active while a key is held', 'a bare button with an :active rule stays at rest under a held Space in this engine, so the press itself is not asked; nothing-moves still is');
+  check('data-table playful: with an arrow held (data-sg-input=key) a press does not move', k.input === 'key' && (k.active || !keyLit) && k.translate === 'none' && k.scale === 'none', JSON.stringify(k));
   await kctx.close();
 }
 
-await browser.close();
-server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`${results.length - failed}/${results.length} arrive checks pass${BREAK ? ` (--break=${BREAK}: ${broke ? 'the break was served' : 'THE BREAK WAS NEVER SERVED'})` : ''}`);
-if (BREAK && !broke) process.exit(2);
-process.exit(failed ? 1 : 0);
+await h.done({
+  summary: `${results.length - failed}/${results.length} arrive checks pass${BREAK ? ` (--break=${BREAK}: ${broke ? 'the break was served' : 'THE BREAK WAS NEVER SERVED'})` : ''}`,
+  exit: BREAK && !broke ? 2 : undefined,
+});

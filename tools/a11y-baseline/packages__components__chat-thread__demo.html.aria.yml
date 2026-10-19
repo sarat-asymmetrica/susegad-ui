@@ -1,0 +1,58 @@
+- main:
+  - heading "Chat thread" [level=1]
+  - paragraph
+  - 'region "Quiet: a ruled transcript"':
+    - heading "Quiet: a ruled transcript" [level=2]
+    - list "Conversation with Aldona Organics, quiet":
+      - listitem:
+      - listitem:
+        - paragraph
+      - listitem:
+        - paragraph
+      - listitem:
+        - blockquote
+        - paragraph
+        - img "Reacted with a thumbs up"
+      - listitem:
+      - listitem:
+        - paragraph
+        - img "Reacted with a heart"
+      - listitem:
+        - paragraph
+  - 'region "Warm: speech on paper"':
+    - heading "Warm: speech on paper" [level=2]
+    - list "Conversation with Aldona Organics, warm":
+      - listitem:
+      - listitem:
+        - paragraph
+      - listitem:
+        - paragraph
+      - listitem:
+        - blockquote
+        - paragraph
+        - img "Reacted with a thumbs up"
+      - listitem:
+      - listitem:
+        - paragraph
+        - img "Reacted with a heart"
+      - listitem:
+        - paragraph
+  - 'region "Playful: bright bubbles"':
+    - heading "Playful: bright bubbles" [level=2]
+    - list "Conversation with Aldona Organics, playful":
+      - listitem:
+      - listitem:
+        - paragraph
+      - listitem:
+        - paragraph
+      - listitem:
+        - blockquote
+        - paragraph
+        - img "Reacted with a thumbs up"
+      - listitem:
+      - listitem:
+        - paragraph
+        - img "Reacted with a heart"
+      - listitem:
+        - paragraph
+  - paragraph:

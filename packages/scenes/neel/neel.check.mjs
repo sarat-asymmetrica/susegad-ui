@@ -26,7 +26,7 @@ const open = async (path, opts) => {
 const printed = page => page.evaluate(() => window.__piece.shadowRoot.querySelector('.stage').dataset.printed);
 const grab = page => page.evaluate(() => {
   const el = window.__piece, cv = el.shadowRoot.querySelector('canvas'), d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
-  const s = 2, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), px = new Array(w * hh * 3);
+  const s = 2, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), px = new Uint8Array(w * hh * 3);
   let hash = 0;
   for (let y = 0; y < hh; y++) for (let x = 0; x < w; x++) { const i = (y * s * cv.width + x * s) * 4, o = (y * w + x) * 3; px[o] = d[i]; px[o + 1] = d[i + 1]; px[o + 2] = d[i + 2]; hash = (hash * 31 + d[i] * 3 + d[i + 1] * 5 + d[i + 2] * 7) >>> 0; }
   const st = el.shadowRoot.querySelector('.stage').getBoundingClientRect(), k = 1200 / st.width;

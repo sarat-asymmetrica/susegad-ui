@@ -1,0 +1,10 @@
+- main:
+  - heading "Sound switch" [level=1]
+  - paragraph
+  - group "Site sound":
+    - switch "Sound"
+    - switch "Also here (a second control, same switch)"
+  - group "In Marathi and Kannada":
+    - switch "आवाज"
+    - switch "ಧ್ವನಿ"
+  - status

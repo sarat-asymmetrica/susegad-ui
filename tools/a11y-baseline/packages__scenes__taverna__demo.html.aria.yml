@@ -1,0 +1,18 @@
+- main:
+  - heading "Taverna" [level=1]
+  - paragraph
+  - img "A rainy night seen through a tavern window: wooden bars, dark green bottles, ceramic jug, blackboard, and rain trickling down the glass"
+  - heading "Rain on Bottle Glass" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - paragraph
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - slider "Rain:": "0.6"
+  - slider "Lamp:": "0.85"
+  - slider "Condensation:": "0.5"
+  - checkbox "Dark"
+  - button "From the start"

@@ -338,10 +338,13 @@ test('a recipe outside packages/ gets a note on how to move it, and is not copie
   assert.deepEqual(warnings, ['recipes/old/registry.json is outside packages/, so the CLI cannot copy it. Move its folder to packages/recipes/old/ and change "../../packages/" to "../../" in its imports']);
 });
 
-// Deliberately not hermetic: this is the live gate on the repo's own manifests and budgets.
-test('the real repo builds from whatever manifests exist today', () => {
-  const { errors } = buildRegistry({ root: join(here, '..') });
-  assert.deepEqual(errors, []);
+// The live gate on the repo's own manifests and budgets is `node registry/build.mjs --check`, which `npm run gates` runs straight
+// after this suite. A test that built all 140 items a second time here cost about 21 s for the same verdict, so this one only
+// holds the committed index to its schema: quick, and still red when someone hand-edits the index into the wrong shape.
+test('the committed index of the real repo is well formed', () => {
+  const index = JSON.parse(readFileSync(join(here, 'registry.json'), 'utf8'));
+  assert.deepEqual(validate(index, schema.$defs.index, schema), []);
+  assert.ok(index.items.length > 100, 'the real index, not an empty one');
 });
 
 // Decision 0017: an item may need an npm package (three for stage3d). The CLI adds it to the

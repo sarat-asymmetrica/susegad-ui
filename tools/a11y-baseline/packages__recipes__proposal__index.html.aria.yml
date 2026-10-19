@@ -1,0 +1,160 @@
+- main:
+  - img "A Goan window in the monsoon: raindrops on fogged glass, with flooded paddy and palms beyond"
+  - heading "A booking site for the house at Aldona" [level=1]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - status:
+  - term
+  - definition
+  - term
+  - definition
+  - term
+  - definition
+  - term
+  - definition:
+  - paragraph
+  - region "Where things stand":
+    - heading "Where things stand" [level=2]
+    - paragraph:
+    - paragraph:
+  - region "Your rate card":
+    - heading "Your rate card" [level=2]
+    - 'table "The rate card: whole house, a night, before GST"':
+      - caption
+      - rowgroup:
+        - row "Season When Sunday to Thursday Friday and Saturday Shortest stay":
+          - columnheader "Season"
+          - columnheader "When"
+          - columnheader "Sunday to Thursday"
+          - columnheader "Friday and Saturday"
+          - columnheader "Shortest stay"
+      - rowgroup:
+        - row "Launch & monsoon provisional 1 April to 30 September ₹12,000 ₹16,000 3 nights":
+          - rowheader "Launch & monsoon provisional"
+          - cell "1 April to 30 September"
+          - cell "₹12,000"
+          - cell "₹16,000"
+          - cell "3 nights"
+        - row "Shoulder provisional 1 October to 19 December, 6 January to 31 January ₹20,000 ₹26,000 3 nights":
+          - rowheader "Shoulder provisional"
+          - cell "1 October to 19 December, 6 January to 31 January"
+          - cell "₹20,000"
+          - cell "₹26,000"
+          - cell "3 nights"
+        - row "Christmas week provisional 20 December to 5 January ₹40,000 ₹48,000 4 nights":
+          - rowheader "Christmas week provisional"
+          - cell "20 December to 5 January"
+          - cell "₹40,000"
+          - cell "₹48,000"
+          - cell "4 nights"
+        - row "Late season provisional 1 February to 31 March ₹20,000 ₹26,000 3 nights":
+          - rowheader "Late season provisional"
+          - cell "1 February to 31 March"
+          - cell "₹20,000"
+          - cell "₹26,000"
+          - cell "3 nights"
+    - paragraph
+    - paragraph
+    - 'table "Mon 16 Nov 2026 to Fri 20 Nov 2026: 4 nights, 2 guests"':
+      - caption
+      - rowgroup:
+        - row "Night Season Rate":
+          - columnheader "Night"
+          - columnheader "Season"
+          - columnheader "Rate"
+      - rowgroup:
+        - row "Mon 16 Nov 2026 Shoulder provisional ₹20,000":
+          - rowheader "Mon 16 Nov 2026"
+          - cell "Shoulder provisional"
+          - cell "₹20,000"
+        - row "Tue 17 Nov 2026 Shoulder ₹20,000":
+          - rowheader "Tue 17 Nov 2026"
+          - cell "Shoulder"
+          - cell "₹20,000"
+        - row "Wed 18 Nov 2026 Shoulder ₹20,000":
+          - rowheader "Wed 18 Nov 2026"
+          - cell "Shoulder"
+          - cell "₹20,000"
+        - row "Thu 19 Nov 2026 Shoulder ₹20,000":
+          - rowheader "Thu 19 Nov 2026"
+          - cell "Shoulder"
+          - cell "₹20,000"
+      - rowgroup:
+        - row "Before GST ₹80,000":
+          - rowheader "Before GST"
+          - cell "₹80,000"
+        - row "GST at 18% ₹14,400":
+          - rowheader "GST at 18%"
+          - cell "₹14,400"
+        - row "Total with GST ₹94,400":
+          - rowheader "Total with GST"
+          - cell "₹94,400"
+        - row "Refundable deposit provisional ₹15,000":
+          - rowheader "Refundable deposit provisional"
+          - cell "₹15,000"
+    - paragraph
+    - group
+    - note:
+      - paragraph
+      - paragraph:
+  - region "What it costs":
+    - heading "What it costs" [level=2]
+    - table:
+      - rowgroup:
+        - row "What you get Price":
+          - columnheader "What you get"
+          - columnheader "Price"
+      - rowgroup:
+        - row "Website. Your own domain, the rooms, the rate card and an enquiry form. ₹40,000":
+          - cell "Website. Your own domain, the rooms, the rate card and an enquiry form.":
+          - cell "₹40,000"
+        - row "Booking engine. Live availability, payment and a confirmation that sends itself. ₹55,000":
+          - cell "Booking engine. Live availability, payment and a confirmation that sends itself.":
+          - cell "₹55,000"
+    - paragraph:
+    - paragraph:
+  - region "The plan":
+    - heading "The plan" [level=2]
+    - slider "Walk through the plan": "0"
+    - status
+    - list:
+      - listitem:
+      - listitem:
+      - listitem:
+  - region "Who does what":
+    - heading "Who does what" [level=2]
+    - table:
+      - rowgroup:
+        - row "You Us":
+          - columnheader
+          - columnheader "You"
+          - columnheader "Us"
+      - rowgroup:
+        - row "Photographs Choosing them. The shot list.":
+          - cell "Photographs"
+          - cell "Choosing them."
+          - cell "The shot list."
+        - row "Replies to guests Approving every reply. Writing the first drafts.":
+          - cell "Replies to guests"
+          - cell "Approving every reply."
+          - cell "Writing the first drafts."
+  - region "Terms":
+    - heading "Terms" [level=2]
+    - list:
+      - listitem
+      - listitem
+      - listitem
+  - region "Saying yes":
+    - heading "Saying yes" [level=2]
+    - paragraph
+    - group "The option you choose":
+      - radio "Option 1, the website"
+      - radio "Option 2, the website with the booking engine"
+    - paragraph
+    - button "Undo last stroke" [disabled]
+    - button "Start again" [disabled]
+    - textbox "Type your full name to sign"
+    - paragraph
+    - status
+    - button "Print or save a signed copy"

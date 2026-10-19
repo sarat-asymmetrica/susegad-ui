@@ -1,0 +1,33 @@
+- main:
+  - heading "Form" [level=1]
+  - paragraph
+  - region "Ready":
+    - heading "Ready" [level=2]
+    - textbox "Your name"
+    - button "Send"
+  - region "Something to fix":
+    - heading "Something to fix" [level=2]
+    - textbox "Your name" [invalid]
+    - textbox "Email" [invalid]: sarat@
+    - button "Send"
+    - paragraph
+  - region "Sending":
+    - heading "Sending" [level=2]
+    - textbox "Your name": Sarat
+    - button "Send" [disabled]
+    - paragraph
+  - region "Sent":
+    - heading "Sent" [level=2]
+    - textbox "Your name": Sarat
+    - button "Send"
+    - paragraph
+  - region "Could not send":
+    - heading "Could not send" [level=2]
+    - textbox "Your name": Sarat
+    - button "Send"
+    - paragraph
+- status
+- alert:
+  - paragraph
+- region "Notifications":
+  - button "Dismiss: Couldn't send. The house's inbox is not answering. Your word"

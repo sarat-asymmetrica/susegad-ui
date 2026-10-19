@@ -1,0 +1,99 @@
+- main:
+  - heading "Consent notice" [level=1]
+  - paragraph:
+  - paragraph
+  - heading "In a form" [level=2]
+  - paragraph
+  - textbox "Your name": Maria Fernandes
+  - textbox "Your email address": maria@example.in
+  - group "What we do with your details":
+    - heading "What we do with your details" [level=3]
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - checkbox "I have read this, and I agree that Sample Tiatr Night may use my details in this way."
+  - button "Send"
+  - status
+  - heading "Three sample sites" [level=2]
+  - paragraph
+  - group "What we do with your details":
+    - heading "What we do with your details" [level=3]
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - checkbox "I have read this, and I agree that [site name] may use my details in this way."
+  - group "What we do with your details":
+    - heading "What we do with your details" [level=3]
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - checkbox "I have read this, and I agree that the Santa Cruz chapel committee may use my details in this way."
+  - group "What we do with your details":
+    - heading "What we do with your details" [level=3]
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - checkbox "I have read this, and I agree that Sample Tiatr Night may use my details in this way."
+  - heading "In Konkani" [level=2]
+  - paragraph
+  - group "तुमच्या तपशीलांचें आमी कितें करतात":
+    - heading "तुमच्या तपशीलांचें आमी कितें करतात" [level=3]
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - checkbox "म्हज्या तपशीलांचो [site name] हांगा सांगिल्ल्या तरेन वापर करपाक म्हजी संमती आसा. हें हांव वाचलें."
+  - group "Tumchea topxilanchem ami kitem kortat":
+    - heading "Tumchea topxilanchem ami kitem kortat" [level=3]
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - paragraph
+    - checkbox "Mhajea topxilancho [site name] hanga sangillea taren vapar korpak mhaji sommoti asa. Hem hanv vachlem."
+  - heading "The three registers, side by side" [level=2]
+  - region "Quiet":
+    - group "What we do with your details":
+      - heading "What we do with your details" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - checkbox "I have read this, and I agree that Sample Tiatr Night may use my details in this way."
+  - region "Warm":
+    - group "What we do with your details":
+      - heading "What we do with your details" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - checkbox "I have read this, and I agree that Sample Tiatr Night may use my details in this way."
+  - region "Playful":
+    - group "What we do with your details":
+      - heading "What we do with your details" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - checkbox "I have read this, and I agree that Sample Tiatr Night may use my details in this way."

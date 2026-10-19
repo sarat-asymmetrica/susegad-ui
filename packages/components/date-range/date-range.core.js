@@ -73,7 +73,7 @@ export function inWords(reason) {
 /**
  * What one day is: its night (free, taken, hold, owner, past, closed), whether
  * you can arrive or leave on it, and its price and band when rates are known.
- * @param {string} iso @param {{ occupied: Map<string,string>, today: string, window: object }} ctx @param {object} [rates]
+ * @param {string} iso @param {{ occupied: Map<string,string>, today: string, window: object }} ctx @param {any} [rates]
  */
 export function dayInfo(iso, ctx, rates) {
   const c = classifyDay(iso, ctx);

@@ -1,0 +1,22 @@
+- main:
+  - heading "Radio group" [level=1]
+  - paragraph
+  - group "Guests":
+    - radio "2" [checked]
+    - radio "4"
+    - radio "5"
+    - radio "6, the whole house"
+  - group "Arriving by":
+    - radio "Car. There is covered parking for two cars under the arches."
+    - radio "Train to Thivim, 20 minutes away"
+    - radio "Air to Mopa (GOX), 35 minutes away"
+    - radio "Boat (the river landing is closed in the monsoon)" [disabled]
+  - paragraph
+  - group "Language for your confirmation":
+    - radio "English" [checked]
+    - radio "मराठी"
+    - radio "ಕನ್ನಡ"
+    - radio "कोंकणी (देवनागरी)"
+    - radio "Konknni (Romi)"
+  - button "Send"
+  - status

@@ -1,0 +1,97 @@
+- main:
+  - heading "Person card" [level=1]
+  - paragraph:
+  - 'region "Quiet: a hairline card"':
+    - heading "Quiet: a hairline card" [level=2]
+    - article "Priyanka Naik":
+      - heading "Priyanka Naik" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Her notes":
+          - /url: https://example.com/priyanka
+    - article "Melwyn Fernandes":
+      - heading "Melwyn Fernandes" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Write to Melwyn":
+          - /url: mailto:melwyn@example.com
+    - article "Sarita Kamat":
+      - heading "Sarita Kamat" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Her studio":
+          - /url: https://example.com/sarita
+    - article "Ana D'Souza":
+      - heading "Ana D'Souza" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Her page":
+          - /url: https://example.com/ana
+      - img "Ana D'Souza"
+  - 'region "Warm: a soft card, the initials in the hand"':
+    - heading "Warm: a soft card, the initials in the hand" [level=2]
+    - article "Priyanka Naik":
+      - heading "Priyanka Naik" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Her notes":
+          - /url: https://example.com/priyanka
+    - article "Melwyn Fernandes":
+      - heading "Melwyn Fernandes" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Write to Melwyn":
+          - /url: mailto:melwyn@example.com
+    - article "Sarita Kamat":
+      - heading "Sarita Kamat" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Her studio":
+          - /url: https://example.com/sarita
+    - article "Ana D'Souza":
+      - heading "Ana D'Souza" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Her page":
+          - /url: https://example.com/ana
+      - img "Ana D'Souza"
+  - 'region "Playful: a colour disc, a small tilt"':
+    - heading "Playful: a colour disc, a small tilt" [level=2]
+    - article "Priyanka Naik":
+      - heading "Priyanka Naik" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Her notes":
+          - /url: https://example.com/priyanka
+    - article "Melwyn Fernandes":
+      - heading "Melwyn Fernandes" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Write to Melwyn":
+          - /url: mailto:melwyn@example.com
+    - article "Sarita Kamat":
+      - heading "Sarita Kamat" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Her studio":
+          - /url: https://example.com/sarita
+    - article "Ana D'Souza":
+      - heading "Ana D'Souza" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph:
+        - link "Her page":
+          - /url: https://example.com/ana
+      - img "Ana D'Souza"
+  - paragraph:

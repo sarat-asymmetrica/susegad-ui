@@ -1,0 +1,25 @@
+- main:
+  - heading "Player" [level=1]
+  - paragraph:
+  - region "Plain, with a drawing poster and captions":
+    - heading "Plain, with a drawing poster and captions" [level=2]
+    - button "Play": ▶
+    - slider "Seek": "0"
+    - button "Turn captions off": CC
+    - button "Mute"
+  - region "The ink treatment, with a poster and two annotations":
+    - heading "The ink treatment, with a poster and two annotations" [level=2]
+    - button "Play": ▶
+    - slider "Seek": "0"
+    - button "Mute"
+  - region "Every register":
+    - heading "Every register" [level=2]
+    - button "Play": ▶
+    - slider "Seek": "0"
+    - button "Mute"
+    - button "Play": ▶
+    - slider "Seek": "0"
+    - button "Mute"
+    - button "Play": ▶
+    - slider "Seek": "0"
+    - button "Mute"

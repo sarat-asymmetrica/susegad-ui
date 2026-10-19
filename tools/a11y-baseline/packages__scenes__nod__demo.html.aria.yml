@@ -1,0 +1,15 @@
+- main:
+  - heading "Nod" [level=1]
+  - paragraph
+  - img "A glass of chai beside a phone showing a drafted reply waiting for approval"
+  - heading "A helper that sounds like you" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - paragraph
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - button "From the start"

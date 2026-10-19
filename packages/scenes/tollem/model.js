@@ -204,7 +204,7 @@ export const clearMemo = () => memo.clear();
 const rgb01 = hex => hexToRgb(hex).map(v => v / 255);
 const flat = (list, n, fill, fn) => Array.from({ length: n }, (_, i) => (list[i] ? fn(list[i]) : fill)).flat();
 
-/** @param {{ time: number, seed?: number|string, register?: string, params?: object, touches?: object[], calm?: object[] }} input */
+/** @param {{ time: number, seed?: number|string, register?: string, params?: Record<string, any>, touches?: Record<string, any>[], calm?: Record<string, any>[] }} input */
 export function model(input) {
   const time = Math.max(0, Number(input.time) || 0), seed = input.seed ?? 1, params = input.params || {};
   const register = REGISTERS[input.register] ? input.register : 'warm', reg = REGISTERS[register];

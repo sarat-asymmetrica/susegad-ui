@@ -77,6 +77,8 @@ export function reserve(dims, width, ratio) {
  *   shape   (top, bottom) -> { x, w } | null: the room beside the floats for that band of lines (null: none, step down)
  *   bottom  the lowest edge of any float plus its gap: the column is at least this tall
  *
+ * @param {{ x: number, y: number, w: number, h?: number }} col
+ * @param {Array<Record<string, any>>} [floats]
  * @param {{ gap?: number, ratio?: number }} [opts] `gap` is the default margin (px, default 12)
  */
 export function flowColumn(col, floats = [], { gap = 12, ratio = 4 / 3 } = {}) {

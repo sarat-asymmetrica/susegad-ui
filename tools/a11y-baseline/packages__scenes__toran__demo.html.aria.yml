@@ -1,0 +1,17 @@
+- main:
+  - heading "Toran" [level=1]
+  - paragraph
+  - img "A doorway with a marigold garland"
+  - heading "Come in" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Text over the doorway" [checked]
+  - button "New garland"
+  - button "Start again"
+  - paragraph

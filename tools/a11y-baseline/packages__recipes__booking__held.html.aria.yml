@@ -1,0 +1,7 @@
+- main:
+  - heading "Nothing held: this is a prototype" [level=1]
+  - paragraph
+  - paragraph
+  - paragraph:
+    - link "Back to the booking form":
+      - /url: ./index.html

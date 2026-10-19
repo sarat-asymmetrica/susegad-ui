@@ -4,18 +4,15 @@
 //
 //   node packages/components/loader/loader.check.mjs
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/loader/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, check } = h;
 const url = `${server.url}/packages/components/loader/demo.html`;
 
 // ── without JavaScript: the words are simply there ──
 {
-  const ctx = await browser.newContext({ javaScriptEnabled: false });
+  const ctx = await h.context({ javaScriptEnabled: false });
   const page = await ctx.newPage();
   await page.goto(url);
   check('no JS: the words show', (await page.locator('sg-loader').nth(1).textContent()).includes('Checking the calendar'));
@@ -23,7 +20,7 @@ const url = `${server.url}/packages/components/loader/demo.html`;
 }
 
 for (const register of ['quiet', 'warm', 'playful']) {
-  const ctx = await browser.newContext({ reducedMotion: register === 'quiet' ? 'reduce' : 'no-preference' });
+  const ctx = await h.context({ reducedMotion: register === 'quiet' ? 'reduce' : 'no-preference' });
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(String(e)));
@@ -58,6 +55,4 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-if (results.some(r => !r.ok)) process.exit(1);
+await h.done();

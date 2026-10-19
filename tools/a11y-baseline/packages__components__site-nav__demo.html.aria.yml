@@ -1,0 +1,97 @@
+- main:
+  - heading "Site nav" [level=1]
+  - paragraph
+  - 'region "Quiet: a hairline rule"':
+    - heading "Quiet: a hairline rule" [level=2]
+    - navigation "Main, quiet":
+      - link "Casa Studio":
+        - /url: "#top"
+      - group:
+        - list:
+          - listitem:
+            - link "Home":
+              - /url: "#home"
+          - listitem:
+            - link "Work":
+              - /url: "#work"
+          - listitem:
+            - link "Notes":
+              - /url: "#notes"
+          - listitem:
+            - link "Now":
+              - /url: "#now"
+          - listitem:
+            - link "Say hello":
+              - /url: "#say-hello"
+    - navigation "Main, quiet, narrow":
+      - link "Casa Studio":
+        - /url: "#top"
+      - group
+  - 'region "Warm: written on the paper"':
+    - heading "Warm: written on the paper" [level=2]
+    - navigation "Main, warm":
+      - link "Casa Studio":
+        - /url: "#top"
+      - group:
+        - list:
+          - listitem:
+            - link "Home":
+              - /url: "#home"
+          - listitem:
+            - link "Work":
+              - /url: "#work"
+          - listitem:
+            - link "Notes":
+              - /url: "#notes"
+          - listitem:
+            - link "Now":
+              - /url: "#now"
+          - listitem:
+            - link "Say hello":
+              - /url: "#say-hello"
+    - navigation "Main, warm, narrow":
+      - link "Casa Studio":
+        - /url: "#top"
+      - group
+  - 'region "Playful: stamped tabs"':
+    - heading "Playful: stamped tabs" [level=2]
+    - navigation "Main, playful":
+      - link "Casa Studio":
+        - /url: "#top"
+      - group:
+        - list:
+          - listitem:
+            - link "Home":
+              - /url: "#home"
+          - listitem:
+            - link "Work":
+              - /url: "#work"
+          - listitem:
+            - link "Notes":
+              - /url: "#notes"
+          - listitem:
+            - link "Now":
+              - /url: "#now"
+          - listitem:
+            - link "Say hello":
+              - /url: "#say-hello"
+    - navigation "Main, playful, narrow":
+      - link "Casa Studio":
+        - /url: "#top"
+      - group
+  - heading "Marked from the address, when the server hasn't" [level=2]
+  - navigation "Main, marked from the address":
+    - link "Casa Studio":
+      - /url: "#top"
+    - group:
+      - list:
+        - listitem:
+          - link "Stamp":
+            - /url: ../stamp/demo.html
+        - listitem:
+          - link "Site nav":
+            - /url: ./demo.html
+        - listitem:
+          - link "Badge":
+            - /url: ../badge/demo.html
+  - paragraph:

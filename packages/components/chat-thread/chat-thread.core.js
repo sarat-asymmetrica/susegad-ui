@@ -100,7 +100,7 @@ export function runs(items) {
  * The thread's markup, for a build step: redaction happens here, before any
  * HTML exists. Messages are { from: 'me'|'them', who, text, time, status?,
  * reply?: { who, text }, reaction?: '❤️' }; a { day } item is a date divider.
- * @param {object[]} items
+ * @param {Record<string, any>[]} items
  * @param {{ label?: string, redact?: object, register?: string }} [opts]
  */
 export function renderThread(items, { label = STRINGS.label, redact: ro = {}, register } = {}) {

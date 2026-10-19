@@ -1,0 +1,18 @@
+- main:
+  - heading "Kairi" [level=1]
+  - paragraph
+  - img "Order progress"
+  - heading "Your order is being printed" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Text over the cloth" [checked]
+  - checkbox "Set progress"
+  - slider "Progress": "0.4"
+  - button "Another border"
+  - paragraph

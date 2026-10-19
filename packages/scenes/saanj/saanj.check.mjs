@@ -11,8 +11,14 @@
 // 4. playful: the drawing takes focus, the arrow keys fly a hawk you can see,
 //    and Enter startles the flock, with no errors;
 // 5. axe (WCAG 2.2 AA) on the demo in every register, light and dark.
+//
+// Scene time is stepped, not waited for (tools/lib/virtual-time.mjs): the 24 seconds of the calm zone are 1,440 virtual
+// frames. On the real clock still: the stills (nothing moves), "no request leaves the page" (it watches the network),
+// the keys, and axe.
 
 import { harness } from '../../../tools/lib/component-check.mjs';
+import { frames, openStepped } from '../../../tools/lib/virtual-time.mjs';
+import { loaded, pollUntil, rafs, stable } from '../../../tools/lib/wait.mjs';
 
 const h = await harness();
 const { check } = h;
@@ -40,18 +46,19 @@ const birdInk = (page, box) => page.evaluate(box => {
   }
   return n;
 }, box);
-const hash = page => page.evaluate(() => {
+const hashFn = () => {
   const cv = window.__piece.shadowRoot.querySelector('canvas'), d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
   let s = 0; for (let i = 0; i < d.length; i += 16) s = (s * 31 + d[i] * 3 + d[i + 1] * 5 + d[i + 2] * 7) >>> 0; return s;
-});
+};
+const hash = page => page.evaluate(hashFn);
 
 // 1. the flock flies round the words
 {
   const run = async q => {
-    const { ctx, page, errors } = await open(demo(q));
-    await page.waitForTimeout(600);
+    const { ctx, page, errors } = await openStepped(h, demo(q), { ms: 60000 });
+    await frames(page, 36); // 0.6 s in
     let total = 0;
-    for (let k = 0; k < 48; k++) { total += await birdInk(page, BOX); await page.waitForTimeout(500); }
+    for (let k = 0; k < 48; k++) { total += await birdInk(page, BOX); await frames(page, 30); } // 48 looks, half a second of the scene's time apart
     await ctx.close();
     return { total, errors };
   };
@@ -77,9 +84,9 @@ const hash = page => page.evaluate(() => {
 {
   const still = async seed => {
     const { ctx, page, errors } = await open(demo(`register=warm&content=0&seed=${seed}`), { reduced: true });
-    // settle first: a resize after the first paint repaints the still once more, later on a loaded machine
-    let prev = -1, now = await hash(page);
-    for (let k = 0; k < 20 && now !== prev; k++) { await page.waitForTimeout(300); prev = now; now = await hash(page); }
+    // settle first: a resize after the first paint repaints the still once more, later on a loaded machine; the picture's own hash
+    // has not changed for twenty frames
+    const settled = await stable(page, hashFn, { frames: 20, ms: 30000 }), now = settled.value;
     const out = { hash: now, birds: await birdInk(page, { x: 0, y: 0, w: 1200, h: 440 }), errors };
     await ctx.close();
     return out;
@@ -93,18 +100,18 @@ const hash = page => page.evaluate(() => {
 
 // 3. no request leaves the page
 {
-  const count = async open => {
+  const count = async (open, control = false) => {
     const out = [];
     const { ctx, page } = await open();
     await ctx.route(/^https?:\/\/(?!127\.0\.0\.1|localhost)/, r => { out.push(new URL(r.request().url()).host); r.abort(); });
     await page.reload();
-    await page.waitForTimeout(1500);
+    await loaded(page, { ready: !control, quiet: 1500 });
     await ctx.close();
     return [...new Set(out)];
   };
   const ours = await count(() => open(demo('register=playful')));
   check('no request leaves the page', ours.length === 0, ours.join(', ') || 'none');
-  const theirs = await count(() => h.openHtml('saanj-fonts-control', '<!doctype html><html lang="en"><title>control</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalam&display=swap"><p>control</p></html>'));
+  const theirs = await count(() => h.openHtml('saanj-fonts-control', '<!doctype html><html lang="en"><title>control</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalam&display=swap"><p>control</p></html>'), true);
   check('control: a page with a Google Fonts link is caught', theirs.length > 0, theirs.join(', ') || 'nothing caught');
 }
 
@@ -117,13 +124,13 @@ const hash = page => page.evaluate(() => {
   await page.evaluate(() => window.__piece.pause());
   const before = await hash(page);
   await page.keyboard.press('ArrowUp');
-  await page.waitForTimeout(300);
+  await pollUntil(async () => (await hash(page)) !== before, { ms: 5000, every: 50 }); // the hawk is drawn into the paused sky; the clause reads the hashes
   const after = await hash(page);
   check('playful: an arrow key brings the hawk into the paused sky, where you can see it', before !== after, `${before} then ${after}`);
   await page.evaluate(() => window.__piece.play());
-  for (let k = 0; k < 4; k++) { await page.keyboard.press('ArrowUp'); await page.waitForTimeout(100); }
+  for (let k = 0; k < 4; k++) { await page.keyboard.press('ArrowUp'); await rafs(page, 6); }
   await page.keyboard.press('Enter');
-  await page.waitForTimeout(500);
+  await rafs(page, 30); // the startle has had half a second of frames to throw anything it was going to
   check('no console errors (playful keys)', errors.length === 0, errors.join(' | '));
   await ctx.close();
 }

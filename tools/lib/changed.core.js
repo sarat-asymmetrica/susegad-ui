@@ -7,9 +7,11 @@
 //   - it touches the folder the check lives in (not for the shared folders that only hold
 //     checks of several pieces, see GENERIC), or the check itself;
 //   - it touches a registry item that owns the check, or an item that item depends on,
-//     however far down the chain (registry `dependencies` are item names);
+//     however far down the chain (registry `dependencies` are item names, and `checkDeps` are the
+//     items its demo, page modules and checks load without installing them: registry/edges.mjs derives them);
 //   - it touches something the check is known to cover (COVERS);
-//   - it touches a component, and the check is the microinteraction check (TOUCH_CHECK).
+//   - it touches a component, and the check is the microinteraction check (TOUCH_CHECK);
+//   - it touches the registry index (a new or removed item), and the check walks every item (REGISTRY_WALKERS).
 //
 // With a `context` (what each check loads: tools/lib/changed-deps.mjs reads it from the imports and
 // package-lock.json), two shared primitives are narrowed:
@@ -20,6 +22,9 @@
 //     theirs: context.everyAllPackages). Any other changed dependency selects the checks that load it,
 //     browser or Node-only, and a note names what no browser check loads.
 // Without a context both still select everything, as before.
+//
+// Prose (.md) is the exception to all of this: it selects its own folder's checks and the docs site's, never
+// everything and never an item's dependents; the run's private records select nothing.
 
 /** A change under any of these selects every check. Entries ending in "/" are folders; the others are exact files. */
 export const SHARED = [
@@ -67,10 +72,24 @@ export const COVERS = {
   'packages/components/overlays.check.mjs': ['popover', 'tooltip', 'action-menu', 'dialog', 'drawer', 'toast'],
 };
 
+/**
+ * The registry index, and the checks that walk every item in it (apps/docs/site.check.mjs: every item reachable, one live drawing
+ * per scene page). A new piece is a new entry in the index, so a change to it selects them; an edit inside an existing piece does not change
+ * which pages exist and selects them only through the rules above.
+ */
+export const REGISTRY_INDEX = 'registry/registry.json';
+export const REGISTRY_WALKERS = ['apps/docs/site.check.mjs'];
+
 /** The library-wide microinteraction check: it presses every interactive component. */
 export const TOUCH_CHECK = 'tools/touch.check.mjs';
 const TOUCH_OWN = 'tools/touch.';
 
+/** The docs site: it renders the repo's prose, so its checks run when any .md file changes. */
+const DOCS_SITE = 'apps/docs';
+/** Prose the site never renders (the run's own records and the agents' kernels): a change there selects nothing. */
+const PRIVATE_PROSE = ['docs/LEDGER.md', 'docs/GOAL', 'docs/RUNBOOK.md', 'docs/runs/', 'docs/reviews/', 'docs/requests/', 'docs/briefs/', '.claude/'];
+
+const isProse = f => f.endsWith('.md');
 const norm = p => p.replaceAll('\\', '/').replace(/^\.\//, '');
 const dirOf = p => (p.includes('/') ? p.slice(0, p.lastIndexOf('/')) : '');
 const under = (p, dir) => p === dir || p.startsWith(`${dir}/`);
@@ -79,21 +98,26 @@ const under = (p, dir) => p === dir || p.startsWith(`${dir}/`);
 export const itemDir = item => dirOf(norm(item.manifest));
 
 /**
- * Items that depend on any of `roots`, transitively. Returns name -> { root, via }: the changed item it
- * ends in and the item it hangs off one step down. Unknown names are ignored; cycles are safe.
+ * Items that depend on any of `roots`, transitively, by `dependencies` (installed with it) or `checkDeps` (only its
+ * demo, pages or checks load it). Returns name -> { root, via, loads }: the changed item it ends in, the item it hangs
+ * off one step down, and whether that last step is a demo/page/check edge. Unknown names are ignored; cycles are safe.
  */
 export function dependentsOf(items, roots) {
-  const users = new Map(); // name -> items that list it as a dependency
-  for (const it of items) for (const d of it.dependencies ?? []) (users.get(d) ?? users.set(d, []).get(d)).push(it.name);
+  const users = new Map(); // name -> { name, loads } for each item that lists it as a dependency
+  const use = (d, user, loads) => (users.get(d) ?? users.set(d, []).get(d)).push({ name: user, loads });
+  for (const it of items) {
+    for (const d of it.dependencies ?? []) use(d, it.name, false);
+    for (const d of it.checkDeps ?? []) if (!(it.dependencies ?? []).includes(d)) use(d, it.name, true);
+  }
   const out = new Map();
   const seen = new Set(roots);
   const queue = [...roots].map(r => ({ name: r, root: r }));
   while (queue.length) {
     const { name, root } = queue.shift();
-    for (const user of users.get(name) ?? []) {
+    for (const { name: user, loads } of users.get(name) ?? []) {
       if (seen.has(user)) continue;
       seen.add(user);
-      out.set(user, { root, via: name });
+      out.set(user, { root, via: name, loads });
       queue.push({ name: user, root });
     }
   }
@@ -138,11 +162,21 @@ export function sharedHits(files, { shared = SHARED, context } = {}) {
   return { allReason: null, libs, packages, notes };
 }
 
-/** Why a check loads a changed tools/lib file or package (none: []). loads: context.loads(check). */
-function loadReasons(check, loads, libs, packages) {
+/** The fixture a file under tools/fixtures/ belongs to: a folder (tools/fixtures/touch) or a loose file. */
+const FIXTURES = 'tools/fixtures/';
+const fixtureOf = f => (f.startsWith(FIXTURES) ? `${FIXTURES}${f.slice(FIXTURES.length).split('/')[0]}` : null);
+
+/**
+ * Why a check loads a changed file or package (none: []). loads: context.loads(check). files: the diff's code files that are
+ * not already followed some other way: tools/lib files, but also an app's core, a fixture folder or tools/publish, whatever
+ * the check's imports reach. A file under tools/fixtures/ is read by name from a path string, so the fixture folder stands for it.
+ */
+function loadReasons(check, loads, files, packages) {
   if (!loads) return [];
   const out = [];
-  for (const f of libs) {
+  for (const f of files) {
+    const fx = fixtureOf(f);
+    if (fx && loads.files.has(fx)) { out.push(`reads ${fx}/, which changed (${f})`); continue; }
     if (!loads.files.has(f)) continue;
     const from = loads.files.get(f);
     out.push(`imports ${f}${from && from !== check ? ` (through ${from})` : ''}, which changed`);
@@ -154,12 +188,19 @@ function loadReasons(check, loads, libs, packages) {
 /**
  * @param {{ changed: string[], checks: string[], items: object[], shared?: string[], context?: object }} input
  *   changed: repo-relative paths in the diff; checks: repo-relative paths of every check;
- *   items: registry/registry.json items; context: what each check loads (see the header)
+ *   items: registry/registry.json items; context: what each check loads (see the header);
+ *   baseItemNames: the item names in the base's registry index, to tell a new or removed item from an edit (every edit to a piece
+ *   changes its hash in the index); left out, any change to the index counts
  * @returns {{ all: boolean, allReason: string|null, selected: { check: string, reasons: string[] }[], notes: string[] }}
  */
-export function selectChecks({ changed, checks, items, shared = SHARED, context }) {
+export function selectChecks({ changed, checks, items, shared = SHARED, context, baseItemNames }) {
   const files = [...new Set(changed.map(norm))].filter(Boolean);
-  const { allReason, libs, packages, notes } = sharedHits(files, { shared, context });
+  // Prose is read by people, not imported by a page: it never selects everything and never reaches an item's
+  // dependents. It selects the checks in its own folder (a sample document a check builds) and the docs site's
+  // checks, which render it; the run's private records (PRIVATE_PROSE) never select the docs site.
+  const code = files.filter(f => !isProse(f));
+  const prose = files.filter(f => isProse(f) && !PRIVATE_PROSE.some(p => f.startsWith(p)));
+  const { allReason, libs, packages, notes } = sharedHits(code, { shared, context });
   if (allReason) return { all: true, allReason, selected: checks.map(check => ({ check, reasons: [allReason] })), notes };
 
   // Which items did the diff touch (a file under the item's folder, or one of its listed files)?
@@ -167,25 +208,45 @@ export function selectChecks({ changed, checks, items, shared = SHARED, context 
   for (const it of items) {
     const dir = itemDir(it);
     const own = new Set((it.files ?? []).map(f => norm(f.path)));
-    const f = files.find(x => (dir && under(x, dir)) || own.has(x));
+    const f = code.find(x => (dir && under(x, dir)) || own.has(x));
     if (f) touched.set(it.name, f);
   }
   const dependents = dependentsOf(items, [...touched.keys()]);
   const byName = new Map(items.map(i => [i.name, i]));
   const touchedComponent = [...touched].find(([name]) => byName.get(name).type === 'component')
-    ?? files.map(f => [null, f]).find(([, f]) => /^packages\/components\/[^/]+\/./.test(f)); // a component folder not in the registry yet
+    ?? code.map(f => [null, f]).find(([, f]) => /^packages\/components\/[^/]+\/./.test(f)); // a component folder not in the registry yet
 
   const dependencyReason = name => {
-    const { root, via } = dependents.get(name);
-    return `${name} depends on ${root}${via === root ? '' : ` (via ${via})`}, which changed`;
+    const { root, via, loads } = dependents.get(name);
+    return `${name}${loads ? "'s demo or page loads" : ' depends on'} ${root}${via === root ? '' : ` (via ${via})`}, which changed`;
   };
+
+  // the index holds a hash for every file of every piece, so any edit to a piece changes it: select the walkers only for an item gained or lost
+  let indexMoved = null;
+  if (files.includes(REGISTRY_INDEX)) {
+    const now = new Set(items.map(i => i.name));
+    const was = baseItemNames && new Set(baseItemNames);
+    const diff = was && [...[...now].filter(n => !was.has(n)).map(n => `+${n}`), ...[...was].filter(n => !now.has(n)).map(n => `-${n}`)];
+    if (!was) indexMoved = `${REGISTRY_INDEX} (the registry index) changed and the base's index is unknown: a new or removed item must show up on the site`;
+    else if (diff.length) indexMoved = `${REGISTRY_INDEX} (the registry index) gained or lost ${diff.join(', ')}: a new or removed item must show up on the site`;
+  }
 
   const selected = [];
   for (const check of checks) {
     const reasons = [];
     const dir = dirOf(check);
     if (files.includes(check)) reasons.push('the check itself changed');
-    reasons.push(...loadReasons(check, context?.loads?.(check), libs, packages));
+    reasons.push(...loadReasons(check, context?.loads?.(check), [...libs, ...code.filter(f => !libs.includes(f))], packages));
+    // a check that loads a file of an item (import('/packages/components/badge/badge.js'), a page that names a scene)
+    // runs when anything in that item changes, as for an item's own checks: the loaded file is not the only one that matters
+    const loaded = context?.loads?.(check)?.files;
+    if (loaded) {
+      for (const [name, file] of touched) {
+        const idir = itemDir(byName.get(name));
+        const via = idir && [...loaded.keys()].find(f => under(f, idir));
+        if (via && !under(check, idir)) reasons.push(`loads ${via}, in ${name}, which changed (${file})`);
+      }
+    }
     if (!GENERIC.has(dir)) {
       const f = files.find(x => under(x, dir));
       if (f) reasons.push(`${f} is in ${dir}/`);
@@ -196,6 +257,8 @@ export function selectChecks({ changed, checks, items, shared = SHARED, context 
       if (touched.has(it.name) && !reasons.some(r => r.includes(`in ${dir}/`))) reasons.push(`${touched.get(it.name)} changed ${it.name}`);
       if (dependents.has(it.name)) reasons.push(dependencyReason(it.name));
     }
+    if (prose.length && under(dir, DOCS_SITE)) reasons.push(`${prose[0]} is prose the docs site renders`);
+    if (REGISTRY_WALKERS.includes(check) && indexMoved) reasons.push(indexMoved);
     for (const name of COVERS[check] ?? []) {
       if (touched.has(name)) reasons.push(`covers ${name}, which changed (${touched.get(name)})`);
       else if (dependents.has(name)) reasons.push(`covers ${dependencyReason(name)}`);
@@ -215,7 +278,7 @@ export function selectChecks({ changed, checks, items, shared = SHARED, context 
  * @returns {{ check: string, reasons: string[] }[]}
  */
 export function selectNodeChecks({ changed, shared = SHARED, nodeChecks = NODE_CHECKS, context }) {
-  const files = [...new Set(changed.map(norm))].filter(Boolean);
+  const files = [...new Set(changed.map(norm))].filter(f => f && !isProse(f)); // prose is no gate's input (see selectChecks)
   const { allReason, libs, packages } = sharedHits(files, { shared, context });
   const out = [];
   for (const [check, inputs] of Object.entries(nodeChecks)) {

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A11y fixture: forced vanish</title>
+<style>
+/* a round icon button drawn only by a gradient and a shadow: forced colours strips both, and nothing is left */
+.icon{width:40px;height:40px;border:0;padding:0;background:linear-gradient(135deg,#c33,#36c);box-shadow:0 0 0 2px #444;border-radius:50%}
+/* an author colour kept by forced-color-adjust: none, laid on the page ground that forced colours still replaces */
+.keep{forced-color-adjust:none;color:#fff;font:700 24px sans-serif}
+</style>
+</head>
+<body>
+<main>
+<h1>Forced vanish</h1>
+<p class="keep">White words on a white ground</p>
+<button class="icon" type="button" aria-label="Round"></button>
+</main>
+</body>
+</html>

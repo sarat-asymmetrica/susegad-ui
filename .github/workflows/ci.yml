@@ -10,6 +10,11 @@ name: CI
 # Firefox checks each hung until GitHub's six-hour limit; a hang now costs
 # minutes, and the summary job still reports what every shard saw.
 
+# A private branch is tested here through a pull request from a ci/<branch>
+# branch (tools/publish/export.mjs --ci-branch in the private repo prepares it,
+# the owner pushes it). pull_request has no branch filter, so any head branch
+# runs, ci/* included; the summary says when it was one. Do not also trigger on
+# push for ci/**: the push and the PR would each run the whole matrix.
 on:
   push:
     branches: [main]
@@ -40,6 +45,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Production dependencies only: a high or critical advisory there fails the
+      # job; advisories in dev tooling (wrangler and its dependencies) do not.
+      - name: npm audit (production dependencies, high and above)
+        run: npm audit --omit=dev --audit-level=high
       - id: pw
         run: echo "version=$(node -p "require('playwright/package.json').version")" >> "$GITHUB_OUTPUT"
       - id: browsers
@@ -51,20 +60,21 @@ jobs:
         run: npx playwright install --with-deps chromium
       - if: steps.browsers.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
-      # npm test with a per-file limit. node --test only reads --test-timeout
-      # before the file globs (after them it is taken as one more glob), and it
-      # is not allowed in NODE_OPTIONS, so the command is package.json's own
-      # with the flag put in front.
-      - name: npm test (each test file at most 5 minutes)
+      # The unit and tools tests with a per-file limit. node --test only reads
+      # --test-timeout before the file globs (after them it is taken as one more
+      # glob), and it is not allowed in NODE_OPTIONS, so each command is
+      # package.json's own with the flag put in front.
+      - name: npm test (test:unit and test:tools, each test file at most 5 minutes)
         shell: bash
         run: |
-          script=$(node -p "require('./package.json').scripts.test")
-          [[ $script == "node --test "* ]] || { echo "::error::package.json's test script no longer starts with 'node --test': $script"; exit 1; }
-          eval "node --test --test-timeout=300000 ${script#node --test }"
-      - run: node registry/build.mjs --check
-      - run: node tools/cem.mjs --check
-      - run: node tools/check-skill-coverage.mjs
-      - run: node tools/skill-inventory.mjs --check
+          for name in test:unit test:tools; do
+            script=$(node -p "require('./package.json').scripts['$name']")
+            [[ $script == "node --test "* ]] || { echo "::error::package.json's $name script no longer starts with 'node --test': $script"; exit 1; }
+            eval "node --test --test-timeout=300000 ${script#node --test }"
+          done
+      # Every whole-repo artifact check and lint, once (registry, cem, skill
+      # inventory, copy, motif, canvas text, conformance, the mutant guard).
+      - run: npm run repo-check
 
   # The browser checks, one job per engine and shard, so a slow or failing
   # shard never stops the others from running or being reported. Chromium is a
@@ -145,8 +155,16 @@ jobs:
           path: tails
           merge-multiple: true
       - shell: bash
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           {
+            if [[ $HEAD_REF == ci/* ]]; then
+              echo "## Private-branch run: \`$HEAD_REF\`"
+              echo "$PR_TITLE. A test export of a private branch, not a release candidate."
+              echo
+            fi
             echo "## Browser checks"
             for e in chromium webkit firefox; do
               for s in 1 2 3 4; do

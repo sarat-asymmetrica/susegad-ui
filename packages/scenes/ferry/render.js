@@ -143,10 +143,17 @@ export function createRenderer(host, { register, scene, invalidate }) {
       }
       g.globalAlpha = 1;
       // a current running across the river: a smoother, lighter band, the pen skipping over it
-      const band = [];
-      for (let x = -20; x <= W + 20; x += 30) band.push([x, currentY(x) - 9]);
-      for (let x = W + 20; x >= -20; x -= 30) band.push([x, currentY(x) + 9 + x * 0.012]);
-      g.save(); g.filter = 'blur(6px)'; g.fillStyle = dark ? 'rgba(200,210,230,0.08)' : 'rgba(255,252,240,0.45)'; g.fill(toPath(band)); g.restore();
+      // Drawn as stacked fills, each wider and fainter, so it is soft in every engine (a canvas blur is kept by WebKit and drawn unblurred, docs/BROWSERS.md).
+      // The stack follows a 6 px Gaussian smoothing of the 18 px band: layer k covers the band grown by GROW[k], alphas chosen so that the
+      // overlaid alphas add up to the smoothed profile at each layer's rim.
+      const tint = dark ? 'rgba(200,210,230,' : 'rgba(255,252,240,', top = dark ? 0.08 : 0.45;
+      let outer = 0;
+      for (let k = CURRENT_GROW.length - 1; k >= 0; k--) {
+        // each layer lifts the running alpha from `outer` (what the wider layers made) to this ring's target
+        const target = top * CURRENT_PROFILE[k], a = Math.max(0, 1 - (1 - target) / (1 - outer));
+        g.fillStyle = `${tint}${a.toFixed(4)})`; g.fill(currentLayer(k));
+        outer = target;
+      }
       canoe(g);
     }
     // the route, dotted in pencil, stop to stop
@@ -191,6 +198,20 @@ export function createRenderer(host, { register, scene, invalidate }) {
     else ink(g, [[px, py0], [px, L.y + 6 * k]], { width: 2.2 * k + 0.6, color: tone('#3a3530', 0.3), alpha: 0.95, jitter: 0.2, seed: 14, taper: 0 });
   }
 
+  // the current's soft edge: how far each stacked layer grows past the 18 px band, and the share of full strength the ring it adds
+  // holds, which is a 6 px Gaussian smoothing of the band read at the ring's middle
+  const CURRENT_GROW = [-6, -3, 0, 3, 6, 9, 12, 15];
+  const erf = x => { const t = 1 / (1 + 0.3275911 * Math.abs(x)), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return x < 0 ? -y : y; };
+  const phi = z => (1 + erf(z / Math.SQRT2)) / 2;
+  const CURRENT_PROFILE = CURRENT_GROW.map((e, k) => { const mid = ((k ? 9 + CURRENT_GROW[k - 1] : 0) + 9 + e) / 2; return phi((9 - mid) / 6) - phi((-9 - mid) / 6); });
+  // each layer's outline, built once: the band does not move
+  const currentLayers = [];
+  const currentLayer = k => currentLayers[k] ??= (() => {
+    const band = [], grow = CURRENT_GROW[k];
+    for (let x = -20; x <= W + 20; x += 30) band.push([x, currentY(x) - 9 - grow]);
+    for (let x = W + 20; x >= -20; x -= 30) band.push([x, currentY(x) + 9 + grow + x * 0.012]);
+    return toPath(band);
+  })();
   /** Where the current runs: a long sweep across the middle of the river. */
   const currentY = x => 440 + x * 0.1 - Math.sin(x / 260) * 26;
 

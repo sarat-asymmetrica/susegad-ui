@@ -1,0 +1,16 @@
+- main:
+  - heading "Depth photo" [level=1]
+  - paragraph
+  - heading "Rack focus and dolly" [level=2]
+  - img "An ink and wash drawing of a plate of golden puffs on a red laterite ledge, with a grey-green sea, whitecaps and dark rocks behind it."
+  - button "Focus on the sea"
+  - button "Focus on the plate"
+  - slider "Focus depth": "0.21"
+  - status
+  - slider "Camera in": "0"
+  - status
+  - paragraph
+  - paragraph:
+  - heading "The same picture in a wide frame" [level=2]
+  - img "The same drawing, cropped wide, with the plate in focus and the sea soft behind it."
+  - paragraph:

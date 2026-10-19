@@ -140,6 +140,7 @@ export function timeline(register) {
  * - `progress` set (0..1): exactly that much is sorted, time stands still,
  *   and the book is shut only at 1.
  * - quiet: the end, still.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
  */
 export function model({ time = 0, seed = 1, register = 'warm', params = {} } = {}) {
   const D = desk(seed), tl = timeline(register);

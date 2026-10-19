@@ -19,17 +19,26 @@
     "posters/hero.webp",
     "posters/hero.jpg",
     "README.md",
-    "KONKANI-FOR-READER.md"
+    "KONKANI-FOR-READER.md",
+    "sw.js",
+    "offline.html",
+    "gom-deva/offline.html",
+    "gom-latn/offline.html"
   ],
   "dependencies": [
     "agenda",
+    "banner",
+    "consent",
+    "core-intl-kok",
     "core-lazy",
     "core-strings",
     "lang",
+    "offline",
     "person-card",
     "scene-pahat",
     "site-footer",
     "speakers",
+    "ticket",
     "tokens",
     "venue"
   ],

@@ -11,8 +11,14 @@
 // 4. playful: Enter grows a new banyan;
 // 5. no request leaves the page; axe (WCAG 2.2 AA) on the demo in every
 //    register, light and dark; no console errors.
+//
+// Scene time is stepped, not waited for (tools/lib/virtual-time.mjs): the growing pages run on virtual frames, so
+// "three seconds" is 180 frames however busy the machine is. On the real clock still: the stills (nothing moves),
+// "no request leaves the page" (it watches the network), the Enter test, and axe.
 
 import { harness } from '../../../tools/lib/component-check.mjs';
+import { loaded, stillSettled } from '../../../tools/lib/wait.mjs';
+import { frames, openStepped } from '../../../tools/lib/virtual-time.mjs';
 
 const h = await harness();
 const { check } = h;
@@ -23,9 +29,10 @@ const open = async (path, opts) => {
     .catch(async () => { check(`ready: ${path}`, false, 'no sg-ready in 30 s'); await h.done(); });
   return r;
 };
+const stepped = (path, opts) => openStepped(h, path, { ms: 90000, ...opts });
 const grab = page => page.evaluate(() => {
   const cv = window.__piece.shadowRoot.querySelector('canvas'), d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
-  const s = 2, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), px = new Array(w * hh * 3);
+  const s = 2, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), px = new Uint8Array(w * hh * 3);
   for (let y = 0; y < hh; y++) for (let x = 0; x < w; x++) { const i = (y * s * cv.width + x * s) * 4, o = (y * w + x) * 3; px[o] = d[i]; px[o + 1] = d[i + 1]; px[o + 2] = d[i + 2]; }
   const el = window.__piece, st = el.shadowRoot.querySelector('.stage').getBoundingClientRect(), k = 1200 / st.width;
   const words = [...el.children].map(c => { const r = c.getBoundingClientRect(); return { x: (r.left - st.left) * k, y: (r.top - st.top) * k, w: r.width * k, h: r.height * k }; });
@@ -45,21 +52,21 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
 
 // 1. progress holds
 {
-  const { ctx, page } = await open(scene('register=warm&progress=0.4&label=Setting%20up'));
-  await page.waitForTimeout(1200);
-  const a = await grab(page); await page.waitForTimeout(3000); const b = await grab(page);
+  const { ctx, page } = await stepped(scene('register=warm&progress=0.4&label=Setting%20up'));
+  await frames(page, 72); // 1.2 s of the scene's time
+  const a = await grab(page); await frames(page, 180); const b = await grab(page); // and three seconds more
   const said = await page.evaluate(() => window.__piece.shadowRoot.querySelector('[role=status]').textContent);
   await ctx.close();
   check('progress=0.4: the growth holds still over three seconds', diff(a, b, undefined, 0) === 0 && Math.abs(a.grown - 0.4) < 0.01, `${pct(diff(a, b, undefined, 0))} changed; grown ${a.grown}`);
   check('progress=0.4: the status names the work', said === 'Setting up: 40% done', `"${said}"`);
-  const free = await open(scene('register=warm'));
-  await free.page.waitForTimeout(8000); const c = await grab(free.page); await free.page.waitForTimeout(3000); const d = await grab(free.page); await free.ctx.close();
+  const free = await stepped(scene('register=warm'));
+  await frames(free.page, 480); const c = await grab(free.page); await frames(free.page, 180); const d = await grab(free.page); await free.ctx.close(); // 8 s in, then 3 s more
   check('control: with no progress, the tree grows', d.grown > c.grown && diff(c, d) > 0.005, `grown ${c.grown} to ${d.grown}; ${pct(diff(c, d))} changed`);
 }
 
 // 2. the still
 {
-  const stillOf = async (q, opts) => { const { ctx, page } = await open(scene(q), opts); await page.waitForTimeout(400); const g = await grab(page); await ctx.close(); return g; };
+  const stillOf = async (q, opts) => { const { ctx, page } = await open(scene(q), opts); await stillSettled(page); const g = await grab(page); await ctx.close(); return g; };
   const quiet = await stillOf('register=quiet'), reduced = await stillOf('register=warm', { reduced: true }), early = await stillOf('register=warm&progress=0.2');
   check('the still: quiet and warm under reduced motion paint the same grown tree', quiet.grown === 1 && diff(quiet, reduced, undefined, 0) === 0, `grown ${quiet.grown}; ${pct(diff(quiet, reduced, undefined, 0))} differ`);
   check('control: a tree a fifth grown differs from the still', diff(quiet, early) > 0.05, pct(diff(quiet, early)));
@@ -68,9 +75,9 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
 // 3. calm: grown and still under the words
 {
   const pair = async content => {
-    const { ctx, page } = await open(`/packages/scenes/vad/demo.html?register=warm&place=center&content=${content}`);
-    // the canopy round the middle grows from about ten seconds in
-    await page.waitForTimeout(11000); const a = await grab(page); await page.waitForTimeout(4000); const b = await grab(page);
+    const { ctx, page } = await stepped(`/packages/scenes/vad/demo.html?register=warm&place=center&content=${content}`);
+    // the canopy round the middle grows from about ten seconds in: 11 s of the scene's time, then 4 s more
+    await frames(page, 660); const a = await grab(page); await frames(page, 240); const b = await grab(page);
     await ctx.close(); return [a, b];
   };
   const [w1, w2] = await pair(1), [b1, b2] = await pair(0);
@@ -86,7 +93,9 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
   const seedBefore = await page.evaluate(() => window.__piece.seed);
   const before = await grab(page);
   await page.locator('sg-scene').locator('.stage').focus();
-  await page.keyboard.press('Enter'); await page.waitForTimeout(600);
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(s => window.__piece.seed !== s, seedBefore, { timeout: 15000 }).catch(() => {}); // the clause reads the seeds
+  await stillSettled(page); // and the new tree is drawn
   const after = await grab(page), seedAfter = await page.evaluate(() => window.__piece.seed);
   check('playful: Enter grows a new banyan (a new seed, a different tree)', seedAfter !== seedBefore && diff(before, after) > 0.05, `seed ${seedBefore} to ${seedAfter}; ${pct(diff(before, after))} changed`);
   check('no console errors (playful)', errors.length === 0, errors.join(' | '));
@@ -98,7 +107,7 @@ const pct = v => `${(v * 100).toFixed(2)}%`;
   const out = [];
   const { ctx, page, errors } = await open('/packages/scenes/vad/demo.html?register=warm');
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1|localhost)/, r => { out.push(new URL(r.request().url()).host); r.abort(); });
-  await page.reload(); await page.waitForTimeout(1500);
+  await page.reload(); await loaded(page, { quiet: 1500 });
   check('no request leaves the page', out.length === 0, out.join(', ') || 'none');
   check('no console errors (demo)', errors.length === 0, errors.join(' | '));
   await ctx.close();

@@ -1,0 +1,37 @@
+- main:
+  - heading "A walk down the veranda" [level=1]
+  - paragraph
+  - img "A drawing of a Goan veranda seen along its length: laterite pillars and a built-in seat on the right, a lime-washed wall with a teak door and a shuttered window on the left, a brass lamp hanging from the roof, and the garden and paddy beyond."
+  - complementary "Note on the near pillar":
+    - paragraph
+    - button "Move this note to another place. Now on the near pillar. Arrow keys choose the next place": ✥
+  - complementary "Note on the shuttered window":
+    - paragraph
+    - button "Move this note to another place. Now on the shuttered window. Arrow keys choose the next place": ✥
+  - complementary "Note on the brass lamp":
+    - paragraph
+    - button "Move this note to another place. Now on the brass lamp. Arrow keys choose the next place": ✥
+  - complementary "Note on the teak door":
+    - paragraph
+    - button "Move this note to another place. Now on the teak door. Arrow keys choose the next place": ✥
+  - complementary "Note on the mango tree":
+    - paragraph
+    - button "Move this note to another place. Now on the mango tree. Arrow keys choose the next place": ✥
+  - heading "Come and sit" [level=2]
+  - paragraph
+  - button "Move the words"
+  - list "Notes on the veranda":
+    - listitem:
+      - button "Remove the note on the near pillar": Remove
+    - listitem:
+      - button "Remove the note on the shuttered window": Remove
+    - listitem:
+      - button "Remove the note on the brass lamp": Remove
+    - listitem:
+      - button "Remove the note on the teak door": Remove
+    - listitem:
+      - button "Remove the note on the mango tree": Remove
+  - status
+  - status
+  - paragraph
+  - paragraph

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smoke fixture: late 1500</title>
+</head>
+<body>
+<main>
+<h1>Smoke fixture: late 1500</h1>
+<p>One scene that announces sg-ready, and a second that a script adds after 1500 ms; it is never defined, so sg-ready never fires for it.</p>
+<sg-scene id="a" name="painted" style="display:block;height:40px"></sg-scene>
+<script>
+document.getElementById("a").dispatchEvent(new CustomEvent("sg-ready", { bubbles: true, composed: true }));
+setTimeout(() => { const s = document.createElement("sg-scene"); s.setAttribute("name", "added-at-1500"); s.style.cssText = "display:block;height:40px"; document.querySelector("main").append(s); }, 1500);
+</script>
+</main>
+</body>
+</html>

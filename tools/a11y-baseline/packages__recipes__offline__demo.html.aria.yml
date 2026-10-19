@@ -1,0 +1,17 @@
+- main:
+  - heading "No connection right now" [level=1]
+  - paragraph
+  - region "Still here for you":
+    - heading "Still here for you" [level=2]
+    - list:
+      - listitem
+      - listitem
+  - region "Waiting for a connection":
+    - heading "Waiting for a connection" [level=2]
+    - list:
+      - listitem
+      - listitem
+      - listitem
+  - paragraph:
+    - button "Try again"
+    - button "Back"

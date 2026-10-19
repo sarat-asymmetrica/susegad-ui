@@ -1,0 +1,17 @@
+- main:
+  - heading "Chiro" [level=1]
+  - paragraph
+  - img "A compound wall of cut red laterite blocks up close, pitted and chipped, with lime-grey joints, a patch of old plaster, moss in the joints and red earth at its foot."
+  - heading "Built from the ground it stands on" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Words on it" [checked]
+  - button "The year again"
+  - button "A new wall"
+  - paragraph

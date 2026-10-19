@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A11y fixture: canvas good</title>
+<style>body{margin:0}.stage{position:relative;width:100%;max-width:640px;height:240px}canvas{position:absolute;inset:0;width:100%;height:100%}.cap{position:absolute;left:24px;top:90px;margin:0;font:16px sans-serif;color:#fff}</style>
+</head>
+<body>
+<main>
+<h1>Canvas good</h1>
+<div class="stage"><canvas width="640" height="240"></canvas><p class="cap">A caption that reads well</p></div>
+</main>
+<script>const c=document.querySelector('canvas').getContext('2d');c.fillStyle='#101820';c.fillRect(0,0,640,240);</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+- main:
+  - heading "Field note" [level=1]
+  - paragraph
+  - textbox "Your name" [invalid]
+  - textbox "Email" [invalid]: sarat@
+  - textbox "Phone (optional)" [invalid]: "98220"
+  - spinbutton "Guests" [invalid]: "9"
+  - textbox "Dates" [invalid]: 12 to 15 October
+  - checkbox "I have read the house rules" [invalid]
+  - button "Send enquiry"

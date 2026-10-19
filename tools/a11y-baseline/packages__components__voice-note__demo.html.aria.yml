@@ -1,0 +1,29 @@
+- main:
+  - heading "Voice note" [level=1]
+  - paragraph
+  - region "Quiet":
+    - heading "Quiet" [level=2]
+    - button "Play voice message, from Aaji's storybook, quiet"
+    - slider "Position in the voice message": "0"
+    - paragraph
+  - region "Warm":
+    - heading "Warm" [level=2]
+    - button "Play voice message, from Aaji's storybook, warm"
+    - slider "Position in the voice message": "0"
+    - paragraph
+  - region "Playful":
+    - heading "Playful" [level=2]
+    - button "Play voice message, from Aaji's storybook, playful"
+    - slider "Position in the voice message": "0"
+    - paragraph
+  - paragraph:
+  - region "In a chat thread, with a stand-in waveform":
+    - heading "In a chat thread, with a stand-in waveform" [level=2]
+    - list "A voice message from Aldona Organics":
+      - listitem:
+        - button "Play voice message, from Maya"
+        - slider "Position in the voice message": "0"
+        - paragraph
+      - listitem:
+        - paragraph
+    - paragraph:

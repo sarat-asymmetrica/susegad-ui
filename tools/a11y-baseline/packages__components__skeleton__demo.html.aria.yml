@@ -1,0 +1,17 @@
+- main:
+  - heading "Skeleton" [level=1]
+  - paragraph
+  - button "Content arrives"
+  - button "Start loading again"
+  - heading "Card" [level=2]
+  - status
+  - heading "List" [level=2]
+  - status
+  - heading "Text" [level=2]
+  - status
+  - heading "Media" [level=2]
+  - status
+  - heading "Already loaded" [level=2]
+  - status
+  - paragraph
+  - paragraph

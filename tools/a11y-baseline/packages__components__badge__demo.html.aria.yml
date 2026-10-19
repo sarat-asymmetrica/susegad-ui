@@ -1,0 +1,34 @@
+- main:
+  - heading "Badge" [level=1]
+  - paragraph
+  - heading "Tones" [level=2]
+  - heading "Still happening" [level=2]
+  - paragraph
+  - heading "In Marathi, Kannada and Konkani" [level=2]
+  - heading "In running text and on a sunk ground" [level=2]
+  - paragraph
+  - heading "In a table" [level=2]
+  - table "Bookings this month":
+    - caption
+    - rowgroup:
+      - row "Guest Dates Status":
+        - columnheader "Guest"
+        - columnheader "Dates"
+        - columnheader "Status"
+    - rowgroup:
+      - row "Anjali Naik 12 to 15 Oct Paid":
+        - cell "Anjali Naik"
+        - cell "12 to 15 Oct"
+        - cell "Paid"
+      - row "Rohan D'Souza 20 to 22 Oct Deposit due":
+        - cell "Rohan D'Souza"
+        - cell "20 to 22 Oct"
+        - cell "Deposit due"
+      - row "Meera Kulkarni 26 to 31 Oct Payment failed":
+        - cell "Meera Kulkarni"
+        - cell "26 to 31 Oct"
+        - cell "Payment failed"
+      - row "Farid Shaikh 2 to 4 Nov Checking payment":
+        - cell "Farid Shaikh"
+        - cell "2 to 4 Nov"
+        - cell "Checking payment"

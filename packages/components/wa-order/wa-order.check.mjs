@@ -19,20 +19,18 @@
 //   unnamed      the date field has no label                            -> "axe"
 
 import fs from 'node:fs';
-import { createRequire } from 'node:module';
-import { localeEnv, pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { tab } from '../../../tools/lib/tab.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { localeEnv } from '../../../tools/lib/engine.mjs';
 import { contrastReport } from '../../../tools/lib/contrast.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
+import { rafs, stable } from '../../../tools/lib/wait.mjs';
 
-const AXE = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
 const BREAK = process.argv.find(a => a.startsWith('--break='))?.slice('--break='.length) ?? '';
 const shots = process.argv.includes('--shots');
 if (shots) fs.mkdirSync('.shots/wa-order', { recursive: true });
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch({ env: localeEnv() }); // a date field's day-month order is the browser's own locale, not the context's
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ launch: { env: localeEnv() } }); // a date field's day-month order is the browser's own locale, not the context's
+const { server, check, results } = h;
 const PAGE = (reg, extra = '') => `${server.url}/packages/components/wa-order/demo.html?register=${reg}${extra}`;
 
 const BREAKS = {
@@ -49,7 +47,7 @@ const BREAKS = {
 if (BREAK && !BREAKS[BREAK]) { console.error(`unknown --break mode "${BREAK}"`); process.exit(2); }
 const served = new Set();
 async function ctxFor(opts = {}) {
-  const ctx = await browser.newContext({ timezoneId: 'Asia/Kolkata', locale: 'en-IN', ...opts });
+  const ctx = await h.context({ timezoneId: 'Asia/Kolkata', locale: 'en-IN', ...opts });
   // 2 October 2026, 2:30 pm in Goa: the day the notice is counted from
   await ctx.clock.setFixedTime(new Date('2026-10-02T14:30:00+05:30'));
   // nothing leaves the machine: a tap on the send link opens a stub, never WhatsApp
@@ -99,7 +97,7 @@ const MESSAGE = [
   '',
   'Thank you!',
 ].join('\n');
-const view = p => p.evaluate(() => {
+const viewFn = () => {
   const o = document.getElementById('order');
   const a = o.querySelector('a.sg-wa-send');
   const href = a.getAttribute('href');
@@ -115,7 +113,16 @@ const view = p => p.evaluate(() => {
     menuLink: !o.querySelector('.sg-wa-menu-link').hidden ? o.querySelector('.sg-wa-menu-link').getAttribute('href') : null,
     min: o.querySelector('input[type=date]').min,
   };
-});
+};
+const view = p => p.evaluate(viewFn);
+/** The composer has taken what was just done to it: its message, link and lines have not changed for three frames. */
+const taken = p => stable(p, viewFn, { frames: 3 });
+/** The "written" line has been stamped and its own animation (if the register has one) has run out. */
+const stamped = async p => {
+  await p.waitForFunction(() => document.querySelector('#order .sg-wa-written')?.textContent, null, { timeout: 5000 }).catch(() => {});
+  await p.evaluate(() => Promise.race([Promise.all(document.getAnimations().filter(a => a.effect?.target?.closest?.('.sg-wa-written')).map(a => a.finished.catch(() => {}))), new Promise(r => setTimeout(r, 5000))]));
+  await rafs(p, 2);
+};
 async function fillAll(p, over = {}) {
   const v = { date: '2026-10-04', slot: 'Morning (9 to 12)', area: 'Porvorim', name: 'Anjali', dietary: 'No nuts', notes: 'Ring twice please 🍝', ...over };
   const f = n => `#order [name=${n}]`;
@@ -164,24 +171,38 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   await p.click('#menu [data-id=fettuccine] .sg-menu-plus');
   await p.click('#menu [data-id=fettuccine] .sg-menu-plus');
   await p.click('#menu [data-id=ravioli] .sg-menu-plus');
-  await p.waitForTimeout(80);
+  await taken(p);
   v = await view(p);
   check(`${reg}: the dishes appear in the message as they are chosen, with units and tags`, v.preview.startsWith('Hello Sample Pasta Studio! I would like to order:\n\n2 × Fresh fettuccine (10 pieces, egg-less, veg): ₹900\n1 × Spinach ravioli (serves 2, veg): ₹520\n\nEstimated total: ₹1,420.') && !v.empty, JSON.stringify(v.preview.slice(0, 160)));
   check(`${reg}: still missing the day and a name: no link yet, and it says what is first`, !v.href && v.disabled === 'true' && v.reason === 'Pick the day you want it.' && v.menuLink === null, JSON.stringify({ href: v.href, r: v.reason }));
 
   // keyboard: the walk through the composer, ending on the link
-  await p.focus('#order [name=date]');
-  const order = [];
-  for (let i = 0; i < 11; i++) { order.push(await p.evaluate(() => { const a = document.activeElement; return a.name || a.className || a.localName; })); await p.keyboard.press('Tab'); }
-  // a date input is several stops of its own (day, month, year, the picker): count it once
-  const walk = order.filter((n, i) => i === 0 || n !== order[i - 1]);
+  // the date input takes a Tab per day, month, year and picker where the engine has them (Chromium: four), one where it does not,
+  // so walk until the send link, not for a count
+  const walkToSend = async () => {
+    await p.focus('#order [name=date]');
+    const order = [];
+    for (let i = 0; i < 14; i++) {
+      order.push(await p.evaluate(() => { const a = document.activeElement; return a.name || a.className || a.localName; }));
+      if (order.at(-1) === 'sg-wa-send') break;
+      await tab(p);
+    }
+    return order.filter((n, i) => i === 0 || n !== order[i - 1]); // a date input is several stops of its own where the engine has them: count it once
+  };
+  const walk = await walkToSend();
   const radio = await p.evaluate(() => document.querySelector('#order input[type=radio]:checked').name);
-  check(`${reg}: Tab walks the fields in reading order and ends on the send link`, walk.join(',') === `date,slot,${radio},area,name,dietary,notes,sg-wa-send`, walk.join(','));
+  const want = `date,slot,${radio},area,name,dietary,notes,sg-wa-send`;
+  check(`${reg}: Tab walks the fields in reading order and ends on the send link`, walk.join(',') === want, walk.join(','));
+  // control: with the notes field taken out of the tab order the same walk must read differently
+  await p.evaluate(() => { document.querySelector('#order [name=notes]').tabIndex = -1; });
+  const broken = await walkToSend();
+  await p.evaluate(() => { document.querySelector('#order [name=notes]').removeAttribute('tabindex'); });
+  check(`${reg}: control: the walk with the notes field out of the tab order does not read as the right order`, broken.join(',') !== want && !broken.includes('notes'), broken.join(','));
 
   // pressing the link too early takes you to the first thing missing, and says it in words
   await p.focus('#order a.sg-wa-send');
   await p.keyboard.press('Enter');
-  await p.waitForTimeout(60);
+  await p.waitForFunction(() => document.activeElement.name === 'date' && document.getElementById('order').hasAttribute('data-tried'), null, { timeout: 5000 }).catch(() => {}); // the clause reads it out below
   const early = await p.evaluate(() => ({ focus: document.activeElement.name, tried: document.getElementById('order').hasAttribute('data-tried'), msg: document.querySelector('#order [name=date]').validationMessage, opened: false }));
   check(`${reg}: keyboard: pressing the link too early moves focus to the first missing field and says what is missing`, early.focus === 'date' && early.tried && early.msg === 'Pick the day you want it.', JSON.stringify(early));
 
@@ -198,11 +219,12 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   await p.focus('#order [name=date]');
   await p.keyboard.type('04102026');
   const typed = await p.evaluate(() => document.querySelector('#order [name=date]').value);
-  check(`${reg}: keyboard: a date typed by hand (04102026) is kept as it is typed`, typed === '2026-10-04', typed || 'empty');
+  const dateUi = await p.evaluate(() => document.querySelector('#order [name=date]').type === 'date');
+  if (!dateUi) h.skip('typing a date by hand', 'this build has no <input type="date">: it falls back to a text field, so there are no day, month and year parts to type into'); else check(`${reg}: keyboard: a date typed by hand (04102026) is kept as it is typed`, typed === '2026-10-04', typed || 'empty');
 
   // everything filled in
   await fillAll(p);
-  await p.waitForTimeout(60);
+  await taken(p);
   v = await view(p);
   check(`${reg}: the message is exactly what the seller will read`, v.preview === MESSAGE, v.preview === MESSAGE ? '' : JSON.stringify(v.preview));
   check(`${reg}: the link's address decodes to the preview, word for word (emoji, ×, ₹ and line breaks included), to the right number`, v.href && v.decoded === v.preview && v.digits === '919000012345' && v.disabled === null && v.role === null, JSON.stringify({ digits: v.digits, same: v.decoded === v.preview }));
@@ -218,12 +240,12 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   // pickup, by keyboard
   await p.focus('#order input[type=radio]:checked');
   await p.keyboard.press('ArrowRight');
-  await p.waitForTimeout(60);
+  await taken(p);
   v = await view(p);
   const areaHidden = await p.evaluate(() => document.querySelector('#order [name=area]').closest('sg-field').hidden);
   check(`${reg}: pickup (arrow key on the radio) hides the area, drops the address from the message, and the link stays good`, areaHidden && /^Pickup: I will collect it$/m.test(v.preview) && !/Porvorim|Delivery/.test(v.preview) && v.href && v.decoded === v.preview, JSON.stringify(v.preview.split('\n').slice(7, 10)));
   await p.keyboard.press('ArrowLeft');
-  await p.waitForTimeout(60);
+  await taken(p);
   v = await view(p);
   check(`${reg}: back to delivery brings the area back, with what was typed`, v.preview === MESSAGE && v.decoded === MESSAGE);
 
@@ -235,7 +257,8 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   await pop.waitForLoadState('domcontentloaded').catch(() => {});
   const popUrl = pop.url();
   await pop.close();
-  await p.waitForTimeout(80);
+  await stamped(p);
+  await taken(p);
   v = await view(p);
   const opened = await p.evaluate(() => window.__opened);
   check(`${reg}: the tap opens that exact link in WhatsApp's address`, popUrl === v.href, popUrl.slice(0, 60));
@@ -247,24 +270,26 @@ for (const reg of ['quiet', 'warm', 'playful']) {
 
   // the menu changing under it
   await p.click('#menu [data-id=pesto] .sg-menu-plus');
-  await p.waitForTimeout(60);
+  await taken(p);
   v = await view(p);
   check(`${reg}: a dish added in the menu reaches the message and the link at once`, /1 × Walnut pesto \(1 jar, veg, contains nuts\): ₹340/.test(v.preview) && /Estimated total: ₹1,760\./.test(v.preview) && v.decoded === v.preview);
   await p.click('#menu .sg-menu-clear');
-  await p.waitForTimeout(60);
+  await taken(p);
   v = await view(p);
   check(`${reg}: starting again in the menu empties the message and takes the link away`, !v.href && v.empty && v.reason === 'Choose something from the menu first.' && v.menuLink === '#menu', JSON.stringify({ href: v.href, r: v.reason }));
 
   // a register swap keeps what was typed
   await p.click('#menu [data-id=fettuccine] .sg-menu-plus');
   await p.evaluate(r => { document.documentElement.dataset.register = r === 'quiet' ? 'warm' : 'quiet'; }, reg);
-  await p.waitForTimeout(500);
+  await p.waitForFunction(r => document.getElementById('order').dataset.skin === (r === 'quiet' ? 'warm' : 'quiet') && document.getElementById('menu').dataset.skin === (r === 'quiet' ? 'warm' : 'quiet'), reg, { timeout: 20000 }).catch(() => {}); // both skins swapped; the clause reads what survived
+  await taken(p);
   check(`${reg}: a register change keeps the fields, and the message`, await p.evaluate(() => document.querySelector('#order [name=name]').value === 'Anjali' && document.querySelector('#order [name=area]').value === 'Porvorim' && document.querySelector('#order .sg-wa-text').textContent.includes('1 × Fresh fettuccine')));
 
   if (reg === 'warm') {
     await p.evaluate(() => { document.documentElement.dataset.register = 'warm'; });
     await p.waitForFunction(() => document.getElementById('order').dataset.skin === 'warm');
-    await p.waitForTimeout(300);
+    await p.waitForFunction(() => document.querySelector('#order .sg-wa-rule path'), null, { timeout: 20000 }).catch(() => {}); // the hand-ruled line is drawn; the clause counts its paths
+    await rafs(p, 2);
     const w = await p.evaluate(() => { const o = document.getElementById('order'); const r = o.querySelector('.sg-wa-rule'); const t = o.querySelector('.sg-wa-title').getBoundingClientRect(); const rb = r?.getBoundingClientRect(); return { rule: !!r, paths: r?.querySelectorAll('path').length, hidden: r?.getAttribute('aria-hidden'), gap: rb ? Math.round(rb.top - t.bottom) : null, font: getComputedStyle(o.querySelector('.sg-wa-text')).fontFamily.split(',')[0] }; });
     check('warm: the message is on ruled paper in the hand, its title ruled under by hand (drawn beside the heading, not in it)', w.rule && w.paths === 1 && w.hidden === 'true' && Math.abs(w.gap) <= 12 && /Kalam/.test(w.font), JSON.stringify(w));
   }
@@ -287,9 +312,11 @@ for (const reg of ['quiet', 'warm', 'playful']) {
     o.append(m);
     document.body.append(o);
     m.items = [{ items: [{ name: 'Masala chai', price: 20, unit: 'a cup' }] }];
-    await new Promise(r => setTimeout(r, 100));
+    const frame = () => new Promise(r => requestAnimationFrame(r));
+    const until = async (ok, tries = 300) => { for (let i = 0; i < tries && !ok(); i++) await frame(); };
+    await until(() => m.querySelector('.sg-menu-plus'));
     m.querySelector('.sg-menu-plus').click();
-    await new Promise(r => setTimeout(r, 100));
+    await until(() => o.querySelector('.sg-wa-text')?.textContent.includes('Masala'));
     const t = o.querySelector('.sg-wa-text').textContent;
     const out = { text: t, digits: o.querySelector('a.sg-wa-send') ? 'link' : null, noFor: !o.hasAttribute('for') };
     o.remove();
@@ -303,20 +330,21 @@ for (const reg of ['quiet', 'warm', 'playful']) {
 async function sendOnce(p) {
   await p.click('#menu [data-id=fettuccine] .sg-menu-plus');
   await fillAll(p, { date: '2026-10-04' });
-  await p.waitForTimeout(60);
+  await taken(p);
   await p.evaluate(() => document.querySelector('#order a.sg-wa-send').addEventListener('click', e => e.preventDefault()));
-  await p.click('#order a.sg-wa-send');
+  await p.click('#order a.sg-wa-send'); // straight from the last field, no blur first: leaving the field must not cost the press its click (WebKit dropped it when the link's text node was replaced)
+  await p.waitForFunction(() => document.querySelector('#order .sg-wa-written')?.textContent, null, { timeout: 2000 }).catch(() => {}); // the stamp is what is asked about next: let the press land
 }
 for (const reduced of [false, true]) {
   const ctx = await ctxFor({ viewport: { width: 1280, height: 1100 }, reducedMotion: reduced ? 'reduce' : 'no-preference' });
   const p = await open(ctx, 'playful');
   await sendOnce(p);
   // the send key's own 90 ms press and release (CSS transitions on the key, touch contract) are not the stamp
-  const anims = await p.evaluate(() => document.getAnimations().filter(a => a.effect?.target?.closest?.('sg-wa-order') && !(a instanceof CSSTransition && a.effect.target.classList.contains('sg-wa-send'))).map(a => ({ target: a.effect.target.className, dur: a.effect.getTiming().duration, iter: a.effect.getTiming().iterations })));
+  const anims = await p.evaluate(() => document.getAnimations().filter(a => a.effect?.target?.closest?.('.sg-wa-written')) /* only the written line's own: the menu's count bump from the earlier plus click may still be running */.map(a => ({ target: a.effect.target.className, dur: a.effect.getTiming().duration, iter: a.effect.getTiming().iterations })));
   if (!reduced) {
     check('playful: the "written" line stamps in once (one short animation, a finite run)', anims.length === 1 && anims[0].target === 'sg-wa-written' && anims[0].iter === 1 && anims[0].dur <= 400, JSON.stringify(anims));
-    await p.waitForTimeout(600);
-    check('playful: and it is over (nothing left running)', (await p.evaluate(() => document.getAnimations().filter(a => a.effect?.target?.closest?.('sg-wa-order')).length)) === 0);
+    await p.evaluate(() => Promise.race([Promise.all(document.getAnimations().filter(a => a.effect?.target?.closest?.('.sg-wa-written')).map(a => a.finished.catch(() => {}))), new Promise(r => setTimeout(r, 5000))])); // a run that never ends is still running after the bound, and the clause says so
+    check('playful: and it is over (nothing left running)', (await p.evaluate(() => document.getAnimations().filter(a => a.effect?.target?.closest?.('.sg-wa-written')).length)) === 0);
   } else {
     check('reduced motion: playful says it is written with no animation at all', anims.length === 0, JSON.stringify(anims));
   }
@@ -333,7 +361,7 @@ for (const reg of ['quiet', 'warm', 'playful']) {
     await fillAll(p);
     await p.evaluate(() => document.querySelector('#order a.sg-wa-send').addEventListener('click', e => e.preventDefault()));
     await p.click('#order a.sg-wa-send');
-    await p.waitForTimeout(500);
+    await stamped(p);
     const done = await contrastReport(p, 'sg-wa-order#order', { ruled: 'sg-field textarea' });
     const bad = [...empty.failures, ...done.failures], skipped = [...empty.skipped, ...done.skipped];
     check(`contrast ${reg}/${theme}: empty and finished states meet 4.5:1 (3:1 when large), from painted colours`, empty.checked > 12 && done.checked > 20 && bad.length === 0 && skipped.length === 0,
@@ -346,19 +374,19 @@ for (const reg of ['quiet', 'warm', 'playful']) {
 for (const reg of ['quiet', 'warm', 'playful']) {
   const ctx = await ctxFor({ viewport: { width: 1280, height: 1100 } });
   const p = await open(ctx, reg);
-  await p.addScriptTag({ content: AXE });
   // the dishes arrive on the tala in warm and playful (menu.css, core-arrive); axe reads the page at rest, not mid-fade
   await p.evaluate(() => Promise.race([Promise.all(document.getAnimations().filter(a => a.animationName === 'sg-arrive').map(a => a.finished.catch(() => {}))), new Promise(r => setTimeout(r, 2500))]));
-  const run = () => p.evaluate(async () => (await axe.run(document, { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] })).violations.map(x => `${x.id}: ${x.nodes.map(n => n.target.join(' ')).slice(0, 2).join(' | ')}`));
+  const run = () => h.axe(p);
   const states = { empty: await run() };
   await p.click('#menu [data-id=fettuccine] .sg-menu-plus');
   await p.focus('#order a.sg-wa-send'); await p.keyboard.press('Enter'); // too early: the date is flagged
-  await p.waitForTimeout(100);
+  await p.waitForFunction(() => document.getElementById('order').hasAttribute('data-tried'), null, { timeout: 5000 }).catch(() => {});
+  await rafs(p, 3);
   states.flagged = await run();
   await fillAll(p);
   await p.evaluate(() => document.querySelector('#order a.sg-wa-send').addEventListener('click', e => e.preventDefault()));
   await p.click('#order a.sg-wa-send');
-  await p.waitForTimeout(400);
+  await stamped(p);
   states.written = await run();
   const all = Object.entries(states).flatMap(([k, v]) => v.map(x => `${k}: ${x}`));
   check(`axe ${reg}: nothing chosen, flagged, and written states have no violations (WCAG 2.2 AA)`, all.length === 0, all.join('; '));
@@ -373,9 +401,9 @@ for (const reg of ['quiet', 'warm', 'playful']) {
     await p.tap('#menu [data-id=fettuccine] .sg-menu-plus');
     await p.tap('#menu [data-id=fettuccine] .sg-menu-plus');
     await p.tap('#menu .sg-menu-continue');
-    await p.waitForTimeout(150);
+    await stable(p, () => [scrollX, scrollY], { frames: 5 }); // it scrolls to the order; fill once it has arrived
     await fillAll(p, { notes: 'Ring twice' });
-    await p.waitForTimeout(80);
+    await taken(p);
     const r = await p.evaluate(() => {
       const o = document.getElementById('order');
       const box = e => e.getBoundingClientRect();
@@ -389,7 +417,7 @@ for (const reg of ['quiet', 'warm', 'playful']) {
     // edge makes a phone widen its layout and shrink the page, and nothing at rest shows it)
     await p.evaluate(() => { window.__wide = 0; const tick = () => { window.__wide = Math.max(window.__wide, document.documentElement.scrollWidth); requestAnimationFrame(tick); }; tick(); });
     await p.tap('#order a.sg-wa-send', { noWaitAfter: true });
-    await p.waitForTimeout(150);
+    await stamped(p); // the whole stamp, not the first 150 ms of it
     const widest = await p.evaluate(() => window.__wide);
     check(`phone ${reg}: pressing Send never widens the page past the screen, even mid-stamp`, widest <= 390, `widest scrollWidth ${widest}`);
     for (const pg of ctx.pages()) if (pg !== p && pg.url().startsWith('https://wa.me/')) await pg.close();
@@ -412,7 +440,7 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   const p = await open(ctx, 'warm');
   await p.click('#menu [data-id=fettuccine] .sg-menu-plus');
   await fillAll(p, { area: null });
-  await p.waitForTimeout(60);
+  await taken(p);
   const v = await view(p);
   const state = await p.evaluate(() => { const a = document.querySelector('#order [name=area]'); return { areaShown: !a.closest('[hidden]'), required: a.required, ways: [...document.querySelectorAll('#order input[type=radio]')].filter(r => !r.closest('[hidden]')).length }; });
   check('pickup-only: no area to fill, nothing required that is hidden, no delivery choice', !state.areaShown && !state.required && state.ways === 0, JSON.stringify(state));
@@ -421,11 +449,10 @@ for (const reg of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-server.close();
 const failed = results.filter(r => !r.ok).length;
 const expected = BREAK ? BREAKS[BREAK].map(([f]) => `${BREAK}:${f}`) : [];
 const allServed = expected.every(k => served.has(k));
-console.log(`${results.length - failed}/${results.length} wa-order checks pass${BREAK ? ` (--break=${BREAK}: ${allServed ? 'the break was served' : 'THE BREAK WAS NEVER SERVED'})` : ''}`);
-if (BREAK && !allServed) process.exit(2);
-process.exit(failed ? 1 : 0);
+await h.done({
+  summary: `${results.length - failed}/${results.length} wa-order checks pass${BREAK ? ` (--break=${BREAK}: ${allServed ? 'the break was served' : 'THE BREAK WAS NEVER SERVED'})` : ''}`,
+  exit: BREAK && !allServed ? 2 : undefined,
+});

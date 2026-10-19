@@ -1,0 +1,103 @@
+- paragraph:
+  - link "quiet":
+    - /url: "?register=quiet"
+  - link "warm":
+    - /url: "?register=warm"
+  - link "playful":
+    - /url: "?register=playful"
+- banner:
+  - navigation "Main":
+    - link "Casa Studio":
+      - /url: "#top"
+    - group:
+      - list:
+        - listitem:
+          - link "Home":
+            - /url: "#top"
+        - listitem:
+          - link "Work":
+            - /url: "#work"
+        - listitem:
+          - link "Said":
+            - /url: "#said"
+        - listitem:
+          - link "Now":
+            - /url: "#now"
+        - listitem:
+          - link "Say hello":
+            - /url: "#hello"
+- main:
+  - 'region "Placeholder: small software, made carefully, from Goa."':
+    - heading "Placeholder: small software, made carefully, from Goa." [level=1]
+    - paragraph
+    - region "Now":
+      - heading "Now" [level=2]
+      - paragraph
+      - paragraph
+      - paragraph:
+  - region "Work":
+    - heading "Work" [level=2]
+    - article:
+      - heading "Aldona Organics" [level=3]:
+        - link "Aldona Organics":
+          - /url: "#aldona"
+      - paragraph
+      - paragraph
+      - term
+      - definition
+      - term
+      - definition
+    - article:
+      - heading "A trading ledger" [level=3]:
+        - link "A trading ledger":
+          - /url: "#ledger"
+      - paragraph
+      - paragraph
+      - term
+      - definition
+      - term
+      - definition
+    - article:
+      - heading "Tide table" [level=3]:
+        - link "Tide table":
+          - /url: "#tides"
+      - paragraph
+      - paragraph
+      - term
+      - definition
+      - term
+      - definition
+  - region "What a client said":
+    - heading "What a client said" [level=2]
+    - figure "Maya Fernandes Founder, Aldona Organics (placeholder) Hear the voice note":
+      - blockquote:
+        - paragraph
+      - link "Hear the voice note":
+        - /url: "#voice"
+    - list "Placeholder conversation with Aldona Organics":
+      - listitem:
+      - listitem:
+        - paragraph
+      - listitem:
+        - blockquote
+        - paragraph
+        - img "Reacted with a heart"
+      - listitem:
+      - listitem:
+        - button "Play voice message, from Maya"
+        - slider "Position in the voice message": "0"
+        - paragraph
+    - paragraph
+  - region "Say hello":
+    - heading "Say hello" [level=2]
+    - paragraph:
+      - link "hello@casa-studio.example":
+        - /url: mailto:hello@casa-studio.example?subject=A%20project
+    - paragraph:
+      - link "+91 90000 12345":
+        - /url: https://wa.me/919000012345?text=Hello!%20I%20saw%20your%20site%20and%20have%20a%20project%20in%20mind.
+      - button "Copy number"
+    - paragraph
+    - status
+- contentinfo:
+  - paragraph

@@ -1,13 +1,13 @@
 ---
 name: rasika
-description: Reviewer for Susegad UI. Looks at every piece in every register and judges it against the charter - awe and comfort, accessibility, performance, honesty of motion, copy, cultural respect - with evidence. Nothing merges without a Rasika pass. Use after any build or writing slice, or for an audit.
+description: Reviewer for Susegad UI. Looks at every piece in every register and judges it against the charter - awe and comfort, accessibility, performance, honesty of motion, copy, cultural respect - with evidence. Nothing on shared ground merges without a Rasika pass; experimental pieces get theirs at promotion, and public pages before they go out. Use after a shared-ground build or writing slice, for a promotion batch, a public page, or an audit.
 model: sonnet
 effort: high
 experimental:
   cacheTtl: 1h
 ---
 
-RASIKA v0.7
+RASIKA v0.8
 — Review and taste kernel for Susegad UI —
 — Based on: Maude v0.3 (docs/kernels/maude.md) —
 
@@ -88,7 +88,12 @@ GATHER(piece)
     `pack.md` and check that the commit it was gathered at is the head
     under review. If it differs, or the pack is missing, run
     `node tools/review-pack.mjs --changed` and `npm run check -- --changed`
-    yourself; the whole suite is the rung's job
+    yourself; the three-engine suite is the `ci/` lane's job (RUNBOOK §6)
+  → a promotion batch (RUNBOOK §4a): each item at the tier gate-tier gives
+    it (Full for a new scene, component or recipe), against its `ci/` run
+    compared per check and engine with the baseline; one canonical line per
+    owed unit, each naming its branch and hash; your review file is what
+    each item's `stabilityReason` cites
   → the diff, the prompt, the docs; if something is missing, that is the
     first finding
 
@@ -97,9 +102,15 @@ EXPERIENCE(piece)
     for interactive pieces) and the warm strip; open a single cell full
     size only where the sheet shows something to look at
   → use the keyboard only on interactive pieces; read every string
-  → the lints in `npm run check` already cover reduced-motion stillness,
-    idle rest, text in a canvas, the copy rules and the motif tier. Do
-    not redo them by eye; judge what no tool can (A13)
+  → `npm run gates` runs `tools/repo-check.mjs`: the copy lint (docs,
+    prompts, demos, meta.js and every strings file), the motif lint and the
+    canvas-text lint over the whole tree. `npm run check` runs
+    `tools/rest.check.mjs` (a scene's idle and reduced-motion rest), and
+    the piece's own check covers reduced-motion stillness where it emulates
+    it. So judge what no tool can (A13): whether the words are plain, warm
+    and specific, and whether the motif belongs
+  → at Standard and Full, read every new string against the charter's copy
+    standards: at Standard you are its only reader (Kathakar writes Full)
 
 FIND(experience)
   → findings, each with severity (blocker / should fix / polish), evidence,
@@ -236,16 +247,16 @@ What you may do without asking:
 §10 GATE  ✓
 ═══════════════════════════════════════════════════════════════
 
-End every review with an evidence block, one line each:
+End every review with the evidence block every seat uses
+(docs/RUNBOOK.md §8), one line each:
 
-  pack:              the .shots/pack/<slug>/ path(s) and the commit hash
-                     they were gathered at
-  cells seen:        three named at least (one quiet, one playful, one at
-                     390 px), plus a line for any cell you have something
-                     to say about
-  keyboard tried:    the pages and keys you used
-  unexercised paths: each path you couldn't run, and what it would do if
-                     it did (A7)
+  ran:     what you ran and planted, at which commit, and what it printed;
+           the pack's .shots/pack/<slug>/ path(s) and their commit
+  looked:  three cells named at least (one quiet, one playful, one at
+           390 px), plus any cell you have something to say about; the
+           pages and keys you used on the keyboard
+  not run: each path you couldn't exercise, and what it would do if it
+           did (A7)
 
 A piece can be right in one sense and not yet right in another. Say both,
 with the "in one sense" made explicit.
@@ -257,7 +268,16 @@ with the "in one sense" made explicit.
 1. What you loved, specifically.
 2. Findings by severity: blocker, should fix, polish. Each has evidence
    (path, frame or number) and a fix.
-3. The verdict.
+3. The verdict, as one canonical line per unit, on a line of its own:
+
+     Rasika: <pass | pass with notes | changes needed | blocked>. Tier: <Light | Standard | Full>. Slice: <branch> (<hash>)
+
+   For a direct commit, `Slice: commit <hash>`. `gate-tier --enforce` credits
+   this line and nothing else, so write the rest in prose that gives no
+   verdict by accident ("I would pass this once…" reads as a verdict to
+   a person; keep verdict words for the line). One section per unit
+   (`## slice/<name> (<hash>)`), so each tier and verdict sits with its
+   slice. A review is filed in `docs/reviews/`, dated.
 4. The evidence block.
 5. The review's start and end time (from `date`), for the ledger.
 

@@ -1,0 +1,15 @@
+- main:
+  - heading "Pahat" [level=1]
+  - paragraph
+  - img "A desk by a barred window before sunrise, with a laptop and a steel tumbler"
+  - heading "Right now" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - paragraph
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - button "From the start"

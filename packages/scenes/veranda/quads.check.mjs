@@ -34,24 +34,23 @@
 // --break: quads left on when they are not painting (3), blank textures (2), a dropped line (1), measuring in quiet (4), a quad painter
 // that draws every texture again every frame (6).
 
-import { chromium } from 'playwright';
 import os from 'node:os';
-import { startServer } from '../../../tools/serve.mjs';
-import { engineName, pickEngine } from '../../../tools/lib/engine.mjs';
-import { gpuOf, skipLine } from '../../../tools/lib/gpu.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { skipLine } from '../../../tools/lib/gpu.mjs';
+import { TIMERS_SCRIPT, pollUntil, rafs, stable } from '../../../tools/lib/wait.mjs';
 
 const BREAK = process.argv.includes('--break');
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); if (!ok) console.log('      what was measured is in the brackets; the numbered note at the top of this file says what the check protects'); };
-const server = await startServer({ quiet: true });
-const ENGINE = engineName(), CHROMIUM = ENGINE === 'chromium';
-const browser = await pickEngine().launch(CHROMIUM ? { args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] } : {});
+const GPU_FLAGS = ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist']; // Chromium's; the harness gives other engines none
+const h = await harness({ args: GPU_FLAGS, axe: 'not axe-checked anywhere yet: this page is not in tools/smoke.mjs (docs/DEBT.md); this check asks about drawing and layout' });
+const { server, browser, results } = h;
+const check = (name, ok, detail = '') => { h.check(name, ok, detail); if (!ok) console.log('      what was measured is in the brackets; the numbered note at the top of this file says what the check protects'); };
+const ENGINE = h.engine, CHROMIUM = ENGINE === 'chromium';
 // The live clauses need Chromium's WebGL readback AND a renderer the library will draw live on: a software one (a CI runner, or
 // SG_FORCE_SOFTWARE_GL=1) gets the 2D tier, so they skip with the no-GPU line (tools/lib/gpu.mjs). Another engine skips as it always did.
-const gate = await gpuOf(browser);
+const gate = await h.gpu();
 const LIVE = CHROMIUM && !gate.gpu.software;
 const skip = name => {
-  if (!CHROMIUM) return console.log(`skip  ${name}  (needs the live WebGL readback: Chromium only; this run is ${ENGINE})`);
+  if (!CHROMIUM) return h.skip(name, 'needs the live WebGL readback: Chromium only');
   gate.skipped.push(name); console.log(skipLine(name, gate.gpu));
 };
 const TYPE_TIER = /\/type\/(index|measure|operators|layout\.[a-z]+)\.js|\/type\/vendor\/pretext\.js/;
@@ -75,9 +74,10 @@ const BREAKS = {
   noQuads: [/matka-view\.js$/, s => s.replace(/quads = live3\.createTextQuads\([^\n]*\);/, 'quads = null;')], // the perf baseline: the same page with no quads (not a break)
 };
 async function open({ browser: b = browser, query = 'register=warm', reduced = false, forced = false, noGL = false, js = true, block = null, scheme = 'light', width = 1280, height = 900, dpr = 1, patches = [], baseline = [], delayFonts = 0, fontPct = 0, init = null } = {}) {
-  const context = await b.newContext({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference', forcedColors: forced ? 'active' : 'none', colorScheme: scheme, deviceScaleFactor: dpr, javaScriptEnabled: js });
+  const context = await h.context({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference', forcedColors: forced ? 'active' : 'none', colorScheme: scheme, deviceScaleFactor: dpr, javaScriptEnabled: js }, b);
   const requests = [], errors = [];
   context.on('request', r => requests.push(r.url()));
+  await context.addInitScript(TIMERS_SCRIPT); // the stage's debounces and settle timers are what 'at rest' means here
   if (noGL) await context.addInitScript("const g = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function (t, ...a) { return /webgl/.test(t) ? null : g.call(this, t, ...a); };");
   if (delayFonts) await context.route(u => /\.woff2$/.test(u.pathname), async r => { await new Promise(res => setTimeout(res, delayFonts)); r.continue(); });
   if (block) await context.route(u => block.test(u.pathname), r => r.abort());
@@ -94,10 +94,14 @@ async function open({ browser: b = browser, query = 'register=warm', reduced = f
   if (js) {
     await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000 });
     if (!fontPct) await page.waitForFunction(() => window.__stage.matka?.pose, null, { timeout: 30000 });
-    await page.waitForTimeout(600);
-  } else await page.waitForTimeout(1500);
+    await atRest({ page });
+  } else await page.waitForLoadState('networkidle').catch(() => {}); // no script runs: the requests are all there is, and they have been made
   return { context, page, requests, errors };
 }
+/** The stage's state, as far as these clauses read it: which flow it is in, how the pot is painted. */
+const STANCE = () => { const s = window.__stage, m = s?.matka; return [s?.dataset.flow, m?.paint, m?.mode, m?.quads ? m.quads.visible : null]; };
+/** At rest: none of the stage's short timers pending and its state unchanged for `frames` frames. A slow machine waits longer, not less. */
+const atRest = (p, frames = 6) => stable(p.page, STANCE, { frames, ms: 30000, timers: true });
 /** What a person would see of the words, per line: the span's own ink colour, whether it is inside the pane, and its text. Runs in the page. */
 const READ = () => {
   const m = window.__stage.matka, card = m.card.getBoundingClientRect(), spans = [...m.card.querySelectorAll('span[data-line]')];
@@ -161,7 +165,7 @@ if (!LIVE) skip('the quads show the words'); else {
     const before = await p.page.evaluate(READ);
     await p.page.evaluate(() => { const gl = window.__stage.matka.canvas.getContext('webgl2'); window.__lose = gl.getExtension('WEBGL_lose_context'); window.__lose.loseContext(); });
     await p.page.waitForFunction(() => window.__stage.matka.paint === 'spans', null, { timeout: 5000 }).catch(() => {});
-    await p.page.waitForTimeout(300);
+    await rafs(p.page, 3);
     const lost = await p.page.evaluate(READ);
     rows.push({ what: 'a lost WebGL context', ok: before.paint === 'quads' && lost.paint === 'spans' && visibleWords(lost) && !lost.quads?.visible, r: lost });
     await p.page.evaluate(() => window.__lose.restoreContext());
@@ -204,14 +208,14 @@ if (!LIVE) skip('selecting a line shows'); else {
   const info = await p.page.evaluate(async () => {
     const m = window.__stage.matka; m.hold(true, 1.6);
     for (const t0 = performance.now(); performance.now() - t0 < 15000 && !(m.pose?.step === 4 && m.paint === 'quads');) await new Promise(r => requestAnimationFrame(r));
-    await new Promise(r => setTimeout(r, 300));
+    for (let i = 0; i < 18; i++) await new Promise(r => requestAnimationFrame(r)); // the pose has held for a few frames
     const sp = m.card.querySelectorAll('span[data-line]')[1].getBoundingClientRect(), c = m.card.getBoundingClientRect();
     const ink = getComputedStyle(m.card.querySelector('p')).color;
     return { ink, box: { x: sp.left, y: sp.top, w: sp.width, h: sp.height }, clip: { x: Math.floor(c.left), y: Math.floor(c.top), width: Math.ceil(c.width), height: Math.ceil(c.height) } };
   });
   const a = await p.page.screenshot({ clip: info.clip });
   await p.page.evaluate(() => { const s = window.__stage.matka.card.querySelectorAll('span[data-line]')[1]; getSelection().selectAllChildren(s); });
-  await p.page.waitForTimeout(250);
+  await rafs(p.page, 4); // the highlight is painted
   const b = await p.page.screenshot({ clip: info.clip });
   const probe = await p.context.newPage();
   const r = await probe.evaluate(async ([a, b, info]) => {
@@ -259,7 +263,7 @@ if (!LIVE) skip('selecting a line shows'); else {
   }
   // the words are on the page, as written and visible, at every moment while the delayed faces load
   {
-    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const context = await h.context({ viewport: { width: 1280, height: 900 } });
     await context.route(u => /\.woff2$/.test(u.pathname), async r => { await new Promise(res => setTimeout(res, 2500)); r.continue(); });
     for (const key of BREAK ? ['clearEarly'] : []) { const [re, fn] = BREAKS[key]; await context.route(u => re.test(u.pathname), async r => { const res = await r.fetch(); r.fulfill({ response: res, body: fn(await res.text()) }); }); }
     const page = await context.newPage(), samples = [];
@@ -268,6 +272,7 @@ if (!LIVE) skip('selecting a line shows'); else {
       const r = await page.evaluate(() => { const p = document.querySelector('p[data-flow]'); const m = window.__stage?.matka; return { has: !!p, text: p ? p.textContent.replace(/\s+/g, ' ').trim().length : 0, shown: !!p && p.getClientRects().length > 0 && getComputedStyle(p).visibility !== 'hidden', laid: !!m?.pose }; }).catch(() => null);
       if (r) samples.push(r);
       if (r?.laid) break;
+      // sampling, kept: 'at every moment' is the claim, and the moments are the real clock's (one look every 100 ms while the faces are held)
       await page.waitForTimeout(100);
     }
     const before = samples.filter(x => x.has && !x.laid);
@@ -286,7 +291,7 @@ if (!LIVE) skip('selecting a line shows'); else {
   const rows = [];
   for (const pct of [200, 400]) for (const query of ['register=warm', 'register=quiet']) {
     const p = await open({ query, fontPct: pct, patches: ['noClipReport'] });
-    await p.page.waitForTimeout(1500);
+    await atRest(p, 30);
     const r = await p.page.evaluate(() => {
       const para = document.querySelector('p[data-flow]'), st = document.querySelector('sg-veranda-stage'), rects = [];
       const walker = document.createTreeWalker(para, NodeFilter.SHOW_TEXT);
@@ -309,7 +314,7 @@ if (!LIVE) skip('stacked: at 150%, 200% and 300% text the paragraph is plain tex
   const rows = [];
   for (const pct of [150, 200, 300]) {
     const p = await open({ fontPct: pct, patches: ['noTeardown'] });
-    await p.page.waitForTimeout(2500);
+    await atRest(p, 30);
     const r = await p.page.evaluate(() => {
       const para = document.querySelector('p[data-flow]'), st = document.querySelector('sg-veranda-stage'), pic = st.querySelector('.stage').getBoundingClientRect(), box = para.getBoundingClientRect(), rects = [];
       const walker = document.createTreeWalker(para, NodeFilter.SHOW_TEXT);
@@ -319,6 +324,7 @@ if (!LIVE) skip('stacked: at 150%, 200% and 300% text the paragraph is plain tex
     });
     // no flip-flop: the stage keeps its state for three more seconds
     const flows = new Set();
+    // sampling, kept: 'it does not flip-flop' is ten looks over three seconds of the real clock
     for (let k = 0; k < 10; k++) { flows.add(await p.page.evaluate(() => document.querySelector('sg-veranda-stage').dataset.flow)); await p.page.waitForTimeout(300); }
     rows.push({ pct, ...r, steady: flows.size === 1 }); await p.context.close();
   }
@@ -346,7 +352,7 @@ if (!LIVE) skip('no leak, no wasted pot: after 30 stack and unstack cycles the s
     await p.page.setViewportSize({ width: 1280, height: 900 });
     await p.page.waitForFunction(() => window.__stage.matka?.pose && window.__stage.dataset.flow === 'live', null, { timeout: 15000 }).catch(() => {});
   }
-  await p.page.waitForTimeout(800);
+  await atRest(p, 30);
   const end = await p.page.evaluate(() => ({ flow: document.querySelector('sg-veranda-stage').dataset.flow, paint: window.__stage.matka?.paint, lines: window.__stage.matka?.card.querySelectorAll('span[data-line]').length ?? 0 }));
   await p.context.close();
   // the context kept for a quick re-attach is kept for a moment only: a stage that stays stacked holds none
@@ -355,14 +361,15 @@ if (!LIVE) skip('no leak, no wasted pot: after 30 stack and unstack cycles the s
   await q0.page.waitForFunction(() => document.querySelector('sg-veranda-stage').dataset.flow === 'flat', null, { timeout: 15000 }).catch(() => {});
   const spare = () => q0.page.evaluate(async () => (await import('/packages/scenes/veranda/matka-view.js')).spareHeld());
   const heldAtOnce = await spare();
-  await q0.page.waitForTimeout(9500);
+  // released within 9.5 s of stacking (the hold is 8 s): ask until it is, no longer than that
+  await pollUntil(async () => !(await spare()), { ms: 9500, every: 250 });
   const heldLater = await spare();
   await q0.context.close();
   // and a pane that does not fit is never built
   const built = [];
   for (const pct of [200, 300]) {
     const q = await open({ fontPct: pct, patches: ['buildThenStack'], init: "window.__built = 0; new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) if (n.nodeType === 1 && (n.matches?.('canvas.matka-cv') || n.querySelector?.('canvas.matka-cv'))) window.__built++; }).observe(document, { subtree: true, childList: true });" });
-    await q.page.waitForTimeout(1500);
+    await atRest(q, 30);
     built.push({ pct, n: await q.page.evaluate(() => window.__built) }); await q.context.close();
   }
   check('no leak, no wasted pot: after 30 stack and unstack cycles the stage is live with the quads painting and no WebGL-contexts warning; a stacked stage gives its context back, and a pane that does not fit is never built',
@@ -374,7 +381,7 @@ if (!LIVE) skip('no leak, no wasted pot: after 30 stack and unstack cycles the s
 if (!LIVE) skip('no frame stalls'); else {
   const cpu = () => os.cpus().reduce((a, c) => { for (const k in c.times) a[k === 'idle' ? 'idle' : 'busy'] += c.times[k]; return a; }, { idle: 0, busy: 0 });
   // uncapped, so a frame's time is its cost and not the 16.7 ms any frame that fits in one reads
-  const fast = await chromium.launch({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--disable-gpu-vsync', '--disable-frame-rate-limit'] });
+  const fast = await h.launch({ args: [...GPU_FLAGS, '--disable-gpu-vsync', '--disable-frame-rate-limit'] });
   const frames = async (opts, ms) => {
     const p = await open({ ...opts, browser: fast }), c0 = cpu();
     const r = await p.page.evaluate(async ms => {
@@ -398,7 +405,5 @@ if (!LIVE) skip('no frame stalls'); else {
     `without: p50 ${f(A.p50)} p95 ${f(A.p95)} ms, ${A.long} frames over 33 ms, layout median ${f(A.layMed)} ms, a frame's own JS median ${f(A.tick50)} p95 ${f(A.tick95)} ms; with: p50 ${f(B.p50)} p95 ${f(B.p95)} ms, ${B.long} over, layout median ${f(B.layMed)} ms, frame JS median ${f(B.tick50)} p95 ${f(B.tick95)} ms; CPU busy ${without.map(x => x.busy).join('/')}% without, ${withQ.map(x => x.busy).join('/')}% with (all runs, on this machine's GPU)`);
 }
 
-await browser.close(); await server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
-process.exit(BREAK ? 0 : failed ? 1 : 0);
+await h.done({ summary: `${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`, expectRed: BREAK, allRed: BREAK });

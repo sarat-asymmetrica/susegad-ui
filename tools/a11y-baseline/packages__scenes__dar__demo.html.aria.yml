@@ -1,0 +1,15 @@
+- main:
+  - heading "Dar" [level=1]
+  - paragraph
+  - img "The front door of a Goan house, with a brass key hanging on a hook beside it"
+  - heading "Yours to keep" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - paragraph
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - button "From the start"

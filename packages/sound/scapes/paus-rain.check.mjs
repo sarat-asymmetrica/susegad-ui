@@ -8,16 +8,15 @@
 // AudioContext exists and the oscillator pool never grows past its cap even
 // under playful's heaviest rain; turning the switch off stops new voices.
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { pageHas } from '../../../tools/lib/engine.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "this check drives the scene test page tools/harness/scene.html, not a demo page; tools/smoke.mjs axes the registry's demo pages (it lists no paus or rampon page), so no axe check reads it" });
+const { server, browser, check } = h;
+const hasAudio = await pageHas(browser, "typeof AudioContext === 'function'"); // without one every count below is zero and the zeros would pass
 const page = `${server.url}/tools/harness/scene.html?name=paus&register=playful&intensity=1`;
 
-const ctx = await browser.newContext();
+const ctx = await h.context();
 const p = await ctx.newPage();
 const errors = [];
 p.on('pageerror', e => errors.push(String(e)));
@@ -62,6 +61,8 @@ await p.waitForTimeout(600);
 const dropsFired = await p.evaluate(() => window.__drops);
 check('the drops event fires as Paus animates', dropsFired > 0, `${dropsFired} events`);
 
+if (!hasAudio) h.skip('the AudioContext, oscillator-pool and switch-off checks', "this build has no AudioContext, so no context can be made, counted or heard; a count of zero would pass for want of one");
+else {
 const before = await p.evaluate(() => window.__acCount);
 check('before any gesture, with the switch off: no AudioContext', before === 0, `${before} contexts`);
 
@@ -88,14 +89,11 @@ await p.evaluate(async () => {
 await p.waitForTimeout(400);
 const stillOne = await p.evaluate(() => window.__acCount);
 check('turning the switch off reuses the same context (no leak of a second one)', stillOne === after.contexts, `${stillOne} contexts`);
+}
 
 await p.evaluate(() => window.__detach());
 check('destroy() runs cleanly', true);
 check('no console or page errors', errors.length === 0, errors.join(' | '));
 
 await ctx.close();
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

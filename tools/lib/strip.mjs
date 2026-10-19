@@ -1,11 +1,12 @@
 // The maths and layout behind tools/strip.mjs and tools/onion.mjs. Pure and dependency-free, so the
-// tools run it inside the browser on canvas ImageData (like diff.mjs does with pixeldiff.mjs) and
-// node:test runs it on plain arrays. Tested in strip.test.mjs.
+// tools run it inside the browser on canvas ImageData and node:test runs it on plain arrays. Tested in
+// strip.test.mjs. The pixel maths (luminance, per-step change, the median, the onion blends) moved to
+// pixels.mjs and is re-exported here, so the tools' one import path still serves it.
 //
 // Nothing here touches a page. The tools capture frames; this file says when they were taken, how
 // they are laid out, what changed between them, and what that means in words.
 
-import { pixelDistance, comparePixels } from './pixeldiff.mjs';
+export { meanLuminance, analyseFrames, medianFrame, onionAlphas, onionBlend, onionDiff } from './pixels.mjs';
 
 /** The harness clock ticks 1/60 s per frame, so a time lands only on a whole frame. */
 export const FPS = 60;
@@ -111,98 +112,6 @@ export function headerLines(m) {
 export function cellLabel(cell) {
   const t = fmtS(cell.t);
   return cell.changed == null ? `${t} · first frame` : `${t} · ${pct(cell.changed)} changed`;
-}
-
-// ── pixels ────────────────────────────────────────────────────────────────
-
-/** Mean luminance of an RGBA buffer, 0 (black) to 1 (white); Rec. 709 weights on the sRGB values. */
-export function meanLuminance(data) {
-  let sum = 0;
-  const px = data.length / 4;
-  for (let i = 0; i < data.length; i += 4) sum += 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
-  return px ? sum / px / 255 : 0;
-}
-
-/**
- * Per cell: mean luminance, and how much of the picture changed against the cell before
- * (share of pixels, their count, and the box round them).
- * @param {{ data: ArrayLike<number> }[]} frames RGBA frames of one size
- */
-export function analyseFrames(frames, width, height, { threshold = 0.02 } = {}) {
-  return frames.map((f, i) => {
-    const luminance = meanLuminance(f.data);
-    if (i === 0) return { luminance, changed: null, changedPixels: null, bbox: null };
-    const r = comparePixels(frames[i - 1].data, f.data, width, height, { threshold });
-    return { luminance, changed: r.ratio, changedPixels: r.changed, bbox: r.bbox };
-  });
-}
-
-/** The still background: the per-pixel, per-channel median of the frames. */
-export function medianFrame(frames, width, height) {
-  const n = frames.length, out = new Uint8ClampedArray(width * height * 4), v = new Array(n);
-  if (!n) return out;
-  for (let i = 0; i < out.length; i++) {
-    if ((i & 3) === 3) { out[i] = 255; continue; }
-    for (let k = 0; k < n; k++) {
-      const x = frames[k].data[i];
-      let j = k;
-      while (j > 0 && v[j - 1] > x) { v[j] = v[j - 1]; j--; }
-      v[j] = x;
-    }
-    out[i] = n & 1 ? v[n >> 1] : Math.round((v[n / 2 - 1] + v[n / 2]) / 2);
-  }
-  return out;
-}
-
-/** Opacity of each frame, oldest faintest, newest solid. */
-export function onionAlphas(n, floor = 0.2) {
-  return Array.from({ length: n }, (_, i) => (n === 1 ? 1 : floor + ((1 - floor) * i) / (n - 1)));
-}
-
-/**
- * The onion: the still background, then each frame's moving pixels laid over it, oldest first, at
- * rising opacity. Where a frame agrees with the background nothing is drawn, so a still scene
- * stays exact and a moving thing leaves a trail whose spacing shows its path and easing.
- * @returns {Uint8ClampedArray} RGBA
- */
-export function onionBlend(frames, background, width, height, alphas = onionAlphas(frames.length), threshold = 0.02) {
-  const out = new Uint8ClampedArray(background);
-  const px = width * height;
-  frames.forEach((f, k) => {
-    const a = alphas[k], d = f.data;
-    for (let p = 0, i = 0; p < px; p++, i += 4) {
-      if (pixelDistance(d[i], d[i + 1], d[i + 2], 255, background[i], background[i + 1], background[i + 2], 255) <= threshold) continue;
-      out[i] = out[i] * (1 - a) + d[i] * a;
-      out[i + 1] = out[i + 1] * (1 - a) + d[i + 1] * a;
-      out[i + 2] = out[i + 2] * (1 - a) + d[i + 2] * a;
-    }
-  });
-  return out;
-}
-
-/**
- * The onion's `--diff` form: only what changes. A faded copy of the last frame, and over it
- * every step's changed pixels in vermilion, older steps fainter (the step into frame k is drawn at
- * alpha[k]). Uses pixeldiff's distance and threshold, so a pixel counts as changed exactly when
- * `comparePixels` would count it.
- */
-export function onionDiff(frames, width, height, alphas = onionAlphas(frames.length), threshold = 0.02) {
-  const last = frames[frames.length - 1].data, px = width * height, out = new Uint8ClampedArray(px * 4);
-  for (let p = 0, i = 0; p < px; p++, i += 4) {
-    const l = 0.299 * last[i] + 0.587 * last[i + 1] + 0.114 * last[i + 2];
-    out[i] = out[i + 1] = out[i + 2] = 255 - (255 - l) * 0.25;
-    out[i + 3] = 255;
-  }
-  for (let k = 1; k < frames.length; k++) {
-    const a = alphas[k], A = frames[k - 1].data, B = frames[k].data;
-    for (let p = 0, i = 0; p < px; p++, i += 4) {
-      if (pixelDistance(A[i], A[i + 1], A[i + 2], A[i + 3], B[i], B[i + 1], B[i + 2], B[i + 3]) <= threshold) continue;
-      out[i] = out[i] * (1 - a) + 227 * a;
-      out[i + 1] = out[i + 1] * (1 - a) + 66 * a;
-      out[i + 2] = out[i + 2] * (1 - a) + 52 * a;
-    }
-  }
-  return out;
 }
 
 // ── facts ─────────────────────────────────────────────────────────────────

@@ -1,0 +1,22 @@
+- main:
+  - heading "The veranda" [level=1]
+  - paragraph
+  - paragraph:
+    - link "the veranda staged":
+      - /url: stage.html
+    - link "words in the veranda":
+      - /url: words.html
+    - link "a walk down the veranda":
+      - /url: walk.html
+  - img "A drawing of a Goan veranda: laterite pillars and a built-in seat on the right, a teak door and a shuttered window on the left, a brass lamp hanging from the roof, and a garden and paddy beyond"
+  - heading "Come and sit" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - paragraph
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - button "Sun back where it was"

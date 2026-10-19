@@ -249,6 +249,7 @@ export function createDrops(seed = 1, { quality = 1, rate = 85, calm = [] } = {}
  * The per-frame description of the window. Pure: the same inputs always give
  * the same data. The drops are a stepper (see createDrops) that the renderer
  * owns, because a simulation carries state from one frame to the next.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
  */
 export function model({ time = 0, seed = 1, register = 'warm', params = {} } = {}) {
   const look = LOOKS[register] || LOOKS.warm;

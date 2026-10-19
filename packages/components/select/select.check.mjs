@@ -4,19 +4,15 @@
 //
 //   node packages/components/select/select.check.mjs
 
-import { engineName, pickEngine, unsupportedIn } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const engine = engineName();
-const browser = await pickEngine(engine).launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/select/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, browser, check, engine } = h;
 const url = `${server.url}/packages/components/select/demo.html`;
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
 async function open({ js = true, register = 'warm', reduced = false } = {}) {
-  const ctx = await browser.newContext({ javaScriptEnabled: js, reducedMotion: reduced ? 'reduce' : 'no-preference' });
+  const ctx = await h.context({ javaScriptEnabled: js, reducedMotion: reduced ? 'reduce' : 'no-preference' });
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(String(e)));
@@ -65,7 +61,7 @@ async function open({ js = true, register = 'warm', reduced = false } = {}) {
     // entirely native here. The rest of this block still needs a chosen
     // value to test the drawing and the form, so it's set with
     // selectOption() (a real, if not keyboard, interaction) instead.
-    unsupportedIn(engine, 'arrow-key navigation inside an open native <select> picker', 'ArrowDown/Enter do not move the selection or close the popover');
+    h.skip('arrow-key navigation inside an open native <select> picker', 'ArrowDown/Enter do not move the selection or close the popover');
     await page.keyboard.press('Escape');
     await wait(150);
     await page.selectOption('#room', { index: 1 });
@@ -100,7 +96,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
   const { page, ctx, errors } = await open({ register, reduced: true });
   await page.focus('#guests');
   if (engine === 'firefox') {
-    unsupportedIn(engine, 'arrow-key navigation inside an open native <select> picker', 'see the with-JavaScript block above');
+    h.skip('arrow-key navigation inside an open native <select> picker', 'see the with-JavaScript block above');
     await page.selectOption('#guests', '3');
     const closed = await page.evaluate(() => [...document.querySelectorAll('select')].every(s => !s.matches(':open')));
     check(`${register}, reduced motion: choose (via selectOption, not the keyboard), every other picker stays closed`, await page.inputValue('#guests') === '3' && closed && errors.length === 0, errors.join(' | '));
@@ -115,6 +111,4 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-if (results.some(r => !r.ok)) process.exit(1);
+await h.done();

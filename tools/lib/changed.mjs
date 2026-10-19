@@ -26,9 +26,14 @@ export function changedFiles({ cwd, base, env = process.env }) {
   return { base: ref, mergeBase, files: [...new Set([...tracked, ...untracked])].sort() };
 }
 
+/** The item names in the registry index at `ref`, or undefined when it cannot be read (the caller then treats any index change as a new item). */
+export function itemNamesAt(cwd, ref) {
+  try { return JSON.parse(git(cwd, ['show', `${ref}:registry/registry.json`])).items.map(i => i.name); } catch { return undefined; }
+}
+
 /** Select from the repo as it stands: git for the diff, registry/registry.json for the items. */
 export function selectForDiff({ root, checks, base, env }) {
   const diff = changedFiles({ cwd: root, base, env });
   const items = JSON.parse(fs.readFileSync(path.join(root, 'registry', 'registry.json'), 'utf8')).items;
-  return { ...diff, ...selectChecks({ changed: diff.files, checks, items }), node: selectNodeChecks({ changed: diff.files }) };
+  return { ...diff, ...selectChecks({ changed: diff.files, checks, items, baseItemNames: itemNamesAt(root, diff.mergeBase) }), node: selectNodeChecks({ changed: diff.files }) };
 }

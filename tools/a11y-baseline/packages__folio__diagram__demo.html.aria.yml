@@ -1,0 +1,41 @@
+- main:
+  - heading "Diagram" [level=1]
+  - paragraph
+  - heading "Step through it" [level=2]
+  - paragraph
+  - figure "How a booking at Casa Exemplo travels":
+    - img "How a booking at Casa Exemplo travels": Casa Exemplo Booking portal Owner Caretaker Guest books a stay asks to hold readies the house confirms
+    - button "Previous step" [disabled]
+    - status
+    - button "Next step"
+    - 'list "How a booking at Casa Exemplo travels: Steps"':
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+  - group
+  - heading "Flows, running down" [level=2]
+  - paragraph
+  - figure "Where the monsoon rain goes":
+    - img "Where the monsoon rain goes": The house Roof Gutter Tank Garden Kitchen runs off fills overflows after the filter
+    - group
+  - group
+  - heading "A loop back, and numbers on a narrow page" [level=2]
+  - paragraph
+  - figure "How a direct booking reaches you":
+    - img "How a direct booking reaches you": Guest Your site Your bank Razorpay chooses dates pays confirms, with the house manual the payment, less the fee
+    - button "Previous step" [disabled]
+    - status
+    - button "Next step"
+    - 'list "How a direct booking reaches you: Steps"':
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+  - group
+  - heading "Lines both ways" [level=2]
+  - paragraph
+  - figure "Who talks to whom during a stay":
+    - img "Who talks to whom during a stay": Guest Caretaker Owner Cleaner day to day every evening books
+    - group
+  - group

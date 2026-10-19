@@ -54,7 +54,7 @@ export const ROOMS = {
 /**
  * The quote for a stay, ready to show: grouped lines, GST on its own line,
  * the total, the deposit, and whether any of it is provisional.
- * @param {string|null} arrival @param {string|null} departure @param {number} guests @param {object} [rates]
+ * @param {string|null} arrival @param {string|null} departure @param {number} guests @param {any} [rates]
  */
 export function quoteView(arrival, departure, guests = 2, rates = RATES, room = 'whole') {
   if (!arrival) return { state: 'empty', message: STRINGS.empty };

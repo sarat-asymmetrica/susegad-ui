@@ -1,0 +1,19 @@
+- main:
+  - heading "Field" [level=1]
+  - paragraph
+  - heading "A line of text" [level=2]
+  - textbox "Your name": Sarat Chandran
+  - textbox "Town":
+    - /placeholder: e.g. Aldona
+  - textbox "Phone or email" [invalid]: sarat@
+  - paragraph
+  - textbox "Booking code": VQ-2026-10
+  - combobox "Room":
+    - option "Choose a room"
+    - option "Garden room" [selected]
+    - option "Loft"
+    - option "Courtyard suite"
+  - button "Check these"
+  - heading "A longer message" [level=2]
+  - textbox "Anything else": We are four adults and a nine-year-old who loves swimming. Is the pool shallow at one end? We would like to arrive after lunch.
+  - button "Send"

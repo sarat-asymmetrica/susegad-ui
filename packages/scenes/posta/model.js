@@ -89,7 +89,7 @@ export const DESTINATIONS = [
  * afternoon. Progress is not a counter here, it is the day.
  *
  * @param {number} progress 0 to 1
- * @returns {object} the beam polygon and the colour of the light
+ * @returns {Record<string, any>} the beam polygon and the colour of the light
  */
 export function sunbeamAt(progress = 0) {
   const p = clamp(progress, 0, 1);
@@ -321,6 +321,7 @@ export function makeRackData(seed = 1) {
 
 /**
  * Pure frame model.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
  */
 export function model({
   time = 0,

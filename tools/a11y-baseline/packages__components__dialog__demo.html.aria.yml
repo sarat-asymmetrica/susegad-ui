@@ -1,0 +1,9 @@
+- main:
+  - heading "Dialog" [level=1]
+  - paragraph:
+  - paragraph
+  - link "Ask the house":
+    - /url: ./no-js.html
+  - link "Confirm a hold":
+    - /url: ./no-js.html
+  - button "Ask the house, no script needed"

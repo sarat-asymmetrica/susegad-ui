@@ -1,0 +1,19 @@
+- main:
+  - heading "Posta" [level=1]
+  - paragraph
+  - img "Mail sorted"
+  - heading "The Sorting Desk" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - paragraph
+  - paragraph
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Drive progress"
+  - slider "Cubbies sorted" [disabled]: "6"
+  - button "From the start"
+  - button "A new desk"

@@ -1,0 +1,24 @@
+- main:
+  - heading "Empty state" [level=1]
+  - paragraph
+  - paragraph
+  - region "No bookings yet":
+    - heading "No bookings yet" [level=2]
+    - paragraph
+    - link "Share your listing":
+      - /url: "#share"
+    - link "Check your rates":
+      - /url: "#rates"
+    - img "A Goan window in the monsoon: raindrops on fogged glass, with flooded paddy and palms beyond"
+    - button "Pause animation"
+    - status
+  - paragraph
+  - region "No messages":
+    - heading "No messages" [level=2]
+    - paragraph
+    - button "Write a welcome note"
+    - img "A Goan window in the monsoon: raindrops on fogged glass, with flooded paddy and palms beyond"
+    - button "Pause animation"
+    - status
+  - complementary:
+    - paragraph

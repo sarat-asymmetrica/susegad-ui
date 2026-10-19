@@ -1,0 +1,46 @@
+- main:
+  - heading "Bubble" [level=1]
+  - paragraph
+  - region "Quiet":
+    - heading "Quiet" [level=2]
+    - figure "Crow says":
+      - paragraph
+    - figure "Crow thinks":
+      - paragraph
+    - figure "Bread man shouts":
+      - paragraph
+    - figure "Crow says":
+      - paragraph
+    - figure "मासळी विकपी म्हणटा":
+      - paragraph
+    - figure "Cat thinks":
+      - paragraph:
+  - region "Warm":
+    - heading "Warm" [level=2]
+    - figure "Crow says":
+      - paragraph
+    - figure "Crow thinks":
+      - paragraph
+    - figure "Bread man shouts":
+      - paragraph
+    - figure "Crow says":
+      - paragraph
+    - figure "मासळी विकपी म्हणटा":
+      - paragraph
+    - figure "Cat thinks":
+      - paragraph:
+  - region "Playful":
+    - heading "Playful" [level=2]
+    - figure "Crow says":
+      - paragraph
+    - figure "Crow thinks":
+      - paragraph
+    - figure "Bread man shouts":
+      - paragraph
+    - figure "Crow says":
+      - paragraph
+    - figure "मासळी विकपी म्हणटा":
+      - paragraph
+    - figure "Cat thinks":
+      - paragraph:
+  - paragraph

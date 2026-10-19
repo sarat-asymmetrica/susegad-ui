@@ -1,0 +1,17 @@
+- main:
+  - heading "Saanj" [level=1]
+  - paragraph
+  - img "Dusk over flooded paddy fields: a sky going from apricot to rose to indigo, a line of coconut palms in ink, and a murmuration of starlings wheeling above them."
+  - heading "Come home at dusk" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Words over the sky" [checked]
+  - checkbox "Words at the top"
+  - button "Start again"
+  - button "New evening"

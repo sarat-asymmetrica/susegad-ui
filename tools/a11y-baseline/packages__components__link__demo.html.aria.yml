@@ -1,0 +1,24 @@
+- main:
+  - heading "Link" [level=1]
+  - paragraph
+  - heading "On its own" [level=2]
+  - link "See the rooms":
+    - /url: "#rooms"
+  - link "Book now, for the monsoon rate":
+    - /url: "#book"
+  - heading "In a sentence" [level=2]
+  - paragraph:
+    - link "see the rooms":
+      - /url: "#rooms"
+    - link "write to us on WhatsApp":
+      - /url: "#contact"
+  - heading "Visited" [level=2]
+  - link "A link already visited":
+    - /url: "#seen"
+  - heading "In Marathi, Kannada and Konkani" [level=2]
+  - link "खोल्या पहा":
+    - /url: "#rooms"
+  - link "ಕೊಠಡಿಗಳನ್ನು ನೋಡಿ":
+    - /url: "#rooms"
+  - link "Quart polleak":
+    - /url: "#rooms"

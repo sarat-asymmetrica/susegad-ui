@@ -474,6 +474,7 @@ export function sandpiperBehaviors(time = 0, seed = 1, count = 4) {
 /**
  * Pure frame model:
  * Computes landscape, crystallization, heaps, lighting, and register dynamics.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
  */
 export function model({
   time = 0,

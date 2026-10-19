@@ -66,13 +66,13 @@ export const REFRAIN_AT = 0.56;
  * which hold spot at 0) are untouched by it and stay exactly as settled as they
  * were.
  *
- * @param {object} o
+ * @param {Object} o
  * @param {number} [o.song] song progress 0..1, or -1 when nothing is being sung
  * @param {number} [o.landed] seconds since the curtain landed
  * @param {number} [o.time] free running time, used when no song is on
  * @param {number} [o.spot] the spotlight 0..1, the gate on every moving part
  * @param {number} [o.curtain] curtain 0 up, 1 down
- * @returns {object} the performance, all values 0 when the stage is still
+ * @returns {Record<string, any>} the performance, all values 0 when the stage is still
  */
 export function performanceAt({ song = -1, landed = -1, time = 0, spot = 0, curtain = 0, quiet = false } = {}) {
   const singing = song >= 0;
@@ -214,14 +214,14 @@ export function nextPhase(t) {
 /**
  * The pure model function for Kantar.
  *
- * @param {object} options
+ * @param {Object} options
  * @param {number} [options.time=0] - Elapsed animation time in seconds
  * @param {number|string} [options.seed=1] - Deterministic random seed
  * @param {'quiet'|'warm'|'playful'} [options.register='warm'] - Interaction register
- * @param {object} [options.params={}] - User-provided parameters (progress, set, spot)
+ * @param {Record<string, any>} [options.params={}] - User-provided parameters (progress, set, spot)
  * @param {number} [options.W=1200] - Canvas logical width
  * @param {number} [options.H=800] - Canvas logical height
- * @returns {object} The complete stage state for rendering
+ * @returns {Record<string, any>} The complete stage state for rendering
  */
 export function model({
   time = 0,

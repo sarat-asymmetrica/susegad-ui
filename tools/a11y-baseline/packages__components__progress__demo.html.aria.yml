@@ -1,0 +1,18 @@
+- main:
+  - heading "Progress" [level=1]
+  - region "Values":
+    - heading "Values" [level=2]
+    - progressbar "Checking your details"
+    - progressbar "Uploading photos"
+    - progressbar "Sending your booking"
+    - progressbar "Invoice saved"
+  - region "When the amount is not known":
+    - heading "When the amount is not known" [level=2]
+    - progressbar "Waiting for the bank to confirm"
+  - region "Moves only when the value moves":
+    - heading "Moves only when the value moves" [level=2]
+    - progressbar "Importing guests"
+    - button "Import the next 10%"
+  - region "No visible label":
+    - heading "No visible label" [level=2]
+    - progressbar "Storage used"

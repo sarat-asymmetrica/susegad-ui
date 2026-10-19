@@ -1,0 +1,55 @@
+{
+  "name": "ticket",
+  "type": "component",
+  "stability": "experimental",
+  "title": "Ticket",
+  "description": "A registration's ticket: the name, the event, the time in IST (in words, in English or in Konkani), an id made on the visitor's own device (no 0, O, 1, I or L, because it is read aloud at a door), and the id as a QR code with its text beside it; the code holds the id and nothing else, and a test decodes it to prove the picture and the text agree. It can be saved as a PNG through packages/export/png.js, in the page's language and on paper whatever the theme, and the saved picture decodes to the same id. It is kept only on the visitor's device (localStorage, every read and write wrapped; no email address is kept) so it opens again later, offline too. A new ticket ends in one finishing moment kept in its own small file so a shared success moment can take it over: a settle, one sentence said aloud with the id a character at a time, and focus on the heading. Quiet is a hairline card, warm a paper ticket ruled in pencil and torn along a pencil line, playful a ticket with bites and a perforated tear.",
+  "version": "0.1.0",
+  "useFor": [
+    "ticket",
+    "event",
+    "registration",
+    "confirmation"
+  ],
+  "files": [
+    "ticket.js",
+    "ticket.core.js",
+    "ticket.strings.js",
+    "ticket.png.js",
+    "ticket.finish.js",
+    "ticket.css",
+    "skins/quiet.js",
+    "skins/warm.js",
+    "skins/playful.js",
+    "ticket.prompt.md",
+    "ticket.docs.md"
+  ],
+  "dependencies": [
+    "core-component",
+    "core",
+    "core-intl",
+    "core-intl-kok",
+    "core-strings",
+    "core-announce",
+    "qr",
+    "export",
+    "sound",
+    "tokens"
+  ],
+  "registers": [
+    "quiet",
+    "warm",
+    "playful"
+  ],
+  "prompt": "ticket.prompt.md",
+  "docs": "ticket.docs.md",
+  "budget": {
+    "jsBytes": 45056,
+    "reason": "Decision 0009: the element and its pure core (the id, the record, the words and the time in three languages, storage that never throws), the picture maker (ticket.png.js), the finishing moment (ticket.finish.js), the strings in three languages (Devanagari costs three bytes a letter) and a skin per register. The QR, the PNG export and the sound are the qr, export and sound pieces, counted with theirs. 39.4 KB today with comments (raised from 40 KB to 44 KB on 8 October 2026 for the event id, the expiry and the Forget button), about 11% to spare."
+  },
+  "motif": {
+    "origin": "none",
+    "tier": "everyday",
+    "gloss": "No cultural motif: a ticket and its stub, with nothing drawn from a tradition."
+  }
+}

@@ -1,0 +1,199 @@
+/* Front door 4: the home page's bands for the first reader, the showcase, the page for teams and the developer's door.
+   Colour and type come from the tokens and the register's --r-* properties, as in docs.css; nothing here sets a colour of its own. */
+
+/* ── hero ─────────────────────────────────────────────────────────── */
+.mast .lede-2 { margin-top: 12px; color: var(--ink); }
+.dev-line { margin: 18px 0 0; font-size: 14.5px; color: var(--ink-2); }
+.dev-line a { color: var(--ink); text-underline-offset: 3px; }
+
+/* ── a band of the home page ──────────────────────────────────────── */
+.band, .devs-home, .newest { border-top: var(--r-rule) solid var(--ink); padding-block: 28px clamp(28px, 4vw, 44px); }
+.band .section-head + *, .devs-home .section-head + * { margin-top: 22px; }
+.more-link { margin: 18px 0 0; font-size: 15px; }
+.more-link a { color: var(--ink); text-underline-offset: 3px; }
+.more-link a::after { content: " →"; }
+
+/* ── showcase cards (home strip and /showcase) ───────────────────── */
+.show-grid {
+  list-style: none; padding: 0; margin: 18px 0 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 28px 24px;
+}
+.show-card { min-width: 0; display: flex; flex-direction: column; }
+.show-poster {
+  display: block; aspect-ratio: 16 / 10; overflow: hidden; border-radius: 3px; margin-bottom: 12px;
+  background: color-mix(in oklab, var(--ink) 5%, var(--paper));
+  box-shadow: var(--r-lift); border: var(--r-mount-edge);
+  transition: transform var(--r-dur) var(--r-ease);
+}
+.show-poster picture { display: block; height: 100%; }
+.show-poster img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+.show-card:hover .show-poster { transform: translateY(var(--r-lift-hover)); }
+.show-card:focus-within .show-poster { outline: 2px solid var(--focus); outline-offset: 3px; }
+.show-title { font-family: var(--display); font-weight: 400; font-size: 21px; line-height: 1.2; margin: 0; }
+.show-title a { color: var(--ink); text-decoration: none; }
+.show-title a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.show-line { margin: 6px 0 0; font-size: 14.5px; line-height: 1.5; color: var(--ink-2); flex: 1 0 auto; }
+.show-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 12px 0 0; }
+.show-acts .copy { min-height: 36px; text-transform: none; letter-spacing: 0.01em; font-size: 13.5px; border-color: var(--rule-strong); }
+.show-how { font-size: 14px; color: var(--ink-2); text-underline-offset: 3px; }
+.show-group { margin-top: clamp(28px, 4vw, 44px); border-top: 1px solid var(--rule); padding-top: 20px; }
+.show-group-title { font-family: var(--display); font-weight: 400; font-size: clamp(24px, 2.6vw, 32px); margin: 0; }
+.show-help { color: var(--ink-2); max-width: 62ch; font-size: 15px; margin: 14px 0 0; }
+.show-next { margin-top: clamp(36px, 5vw, 56px); border-top: var(--r-rule) solid var(--ink); padding-top: 24px; max-width: 62ch; }
+.show-next h2 { font-family: var(--display); font-weight: 400; font-size: clamp(26px, 3vw, 36px); margin: 0; }
+.show-next p { color: var(--ink-2); }
+
+/* ── one look, three moods ────────────────────────────────────────── */
+.moods { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 24px clamp(28px, 4vw, 56px); align-items: center; }
+.moods-text p { color: var(--ink-2); margin: 14px 0 0; max-width: 56ch; }
+.moods .specimens { margin: 0; }
+
+/* ── three ways to use it ─────────────────────────────────────────── */
+.way-list { list-style: none; padding: 0; margin: 22px 0 0; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr); gap: 28px clamp(24px, 3vw, 40px); }
+.way { border-top: 1px solid var(--rule); padding-top: 16px; min-width: 0; }
+.way h3 { font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.15; margin: 0; }
+.way p { color: var(--ink-2); margin: 10px 0 0; }
+.way-link { font-size: 15px; }
+.way-link a { color: var(--ink); text-underline-offset: 3px; }
+.way-link a::after { content: " →"; }
+
+/* the words to hand over: on the inland letter, like every prompt on the site */
+.note-card {
+  margin: 16px 0 0; background: var(--inland); color: var(--inland-ink); padding: 18px 20px 16px;
+  outline: var(--r-letter-edge); outline-offset: -7px; border-radius: 1px; transform: rotate(var(--r-letter-tilt));
+}
+[data-register="quiet"] .note-card { background: transparent; color: var(--ink); border: 1px solid var(--rule); }
+.note-card .note-text { margin: 0; font-size: 15.5px; line-height: 1.6; color: inherit; overflow-wrap: anywhere; }
+.note-card .note-acts { margin: 14px 0 0; }
+.note-card .copy.btn { text-transform: none; letter-spacing: 0.01em; font-size: 14px; min-height: 40px; padding-inline: 16px; border-color: currentColor; color: inherit; }
+.note-card .copy.btn:hover { background: var(--inland-ink); color: var(--inland); }
+
+/* ── drawn in Goa ─────────────────────────────────────────────────── */
+.goa-strip { list-style: none; padding: 0; margin: 22px 0 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+.goa-strip a { display: block; color: var(--ink); text-decoration: none; }
+.goa-pic { display: block; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 3px; box-shadow: var(--r-lift); border: var(--r-mount-edge); background: color-mix(in oklab, var(--ink) 5%, var(--paper)); transition: transform var(--r-dur) var(--r-ease); }
+.goa-pic picture { display: block; height: 100%; }
+.goa-pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.goa-strip a:hover .goa-pic { transform: translateY(var(--r-lift-hover)); }
+.goa-strip a:focus-visible { outline: none; }
+.goa-strip a:focus-visible .goa-pic { outline: 2px solid var(--focus); outline-offset: 3px; }
+.goa-name { display: block; margin-top: 8px; font-family: var(--r-hand); font-weight: var(--r-hand-weight); font-size: calc(17px * var(--r-hand-scale)); }
+[data-register="quiet"] .goa-name { font-family: var(--body); font-size: 14px; }
+
+/* ── facts (home's "what you can count on", the page for teams) ──── */
+.facts { list-style: none; padding: 0; margin: 20px 0 0; }
+.facts li { color: var(--ink-2); border-top: 1px solid var(--rule); padding: 14px 0 0; margin: 0 0 14px; }
+.facts strong { color: var(--ink); font-weight: 600; }
+.facts a { color: var(--ink); text-underline-offset: 3px; }
+.facts-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 clamp(20px, 3vw, 36px); }
+.facts-grid strong { display: block; font-family: var(--display); font-weight: 400; font-size: 20px; margin-bottom: 6px; }
+
+/* ── the page for teams ───────────────────────────────────────────── */
+.teams-get, .teams-cost, .teams-dev, .teams-faq { max-width: 70ch; margin-top: clamp(28px, 4vw, 44px); border-top: var(--r-rule) solid var(--ink); padding-top: 22px; }
+.teams-get h2, .teams-cost h2, .teams-dev h2, .teams-faq h2 { font-family: var(--display); font-weight: 400; font-size: clamp(26px, 3vw, 36px); margin: 0; }
+.teams-cost p, .teams-dev > p { color: var(--ink-2); }
+.teams-agent { font-size: 15px; }
+.teams-agent a { color: var(--ink); text-underline-offset: 3px; }
+.faq > summary { min-height: 44px; }
+.faq p { color: var(--ink-2); margin: 4px 0 14px; }
+.teams-contact { margin: clamp(28px, 4vw, 44px) 0 0; font-size: 15px; color: var(--ink-2); }
+.teams-contact a { color: var(--ink); text-underline-offset: 3px; }
+
+/* ── the developer's door ─────────────────────────────────────────── */
+.devs-shelf, .devs-two { margin-top: clamp(28px, 4vw, 44px); border-top: var(--r-rule) solid var(--ink); padding-top: 22px; }
+.devs-shelf h2, .devs-two h2 { font-family: var(--display); font-weight: 400; font-size: clamp(26px, 3vw, 36px); margin: 0; }
+.devs-grid { list-style: none; padding: 0; margin: 18px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px clamp(20px, 3vw, 36px); }
+.devs-grid li { border-top: 1px solid var(--rule); padding-top: 12px; min-width: 0; }
+.devs-grid h3 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 0; }
+.devs-grid h3 a { color: var(--ink); text-underline-offset: 3px; }
+.devs-grid p { color: var(--ink-2); font-size: 14.5px; margin: 6px 0 0; }
+.devs-two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px clamp(24px, 4vw, 56px); }
+.devs-list { list-style: none; padding: 0; margin: 14px 0 0; }
+.devs-list li { border-top: 1px solid var(--rule); padding: 10px 0; color: var(--ink-2); font-size: 15px; }
+.devs-list a { color: var(--ink); font-weight: 600; text-underline-offset: 3px; }
+.devs-two + .ideas { margin-top: clamp(28px, 4vw, 44px); }
+
+/* the nav marks the section of a page it does not name (the indexes behind /developers) */
+.nav a[aria-current="true"] { color: var(--ink); border-bottom-color: currentColor; }
+
+/* ── narrower screens ─────────────────────────────────────────────── */
+@media (max-width: 1000px) {
+  .way-list { grid-template-columns: 1fr 1fr; }
+  .way-agent { grid-column: 1 / -1; }
+  .facts-grid { grid-template-columns: 1fr 1fr; }
+  .goa-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .devs-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 700px) {
+  .moods { grid-template-columns: 1fr; }
+  .way-list, .facts-grid, .devs-grid, .devs-two { grid-template-columns: 1fr; }
+  .goa-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .show-grid-home { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .show-poster, .goa-pic { transition: none; }
+  .show-card:hover .show-poster, .goa-strip a:hover .goa-pic { transform: none; }
+}
+
+/* On a phone door.css stacks the hero as a column in a set order; the developer's line goes last, after the paragraphs. */
+.mast-text .dev-line { order: 7; }
+
+/* For developers: the doors are a compact shelf here, not the hero they were on the old home page */
+.devs-home .doors { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px clamp(16px, 2vw, 28px); }
+.devs-home .door-art { aspect-ratio: 3 / 2; }
+.devs-home .door-title { font-size: 21px; }
+.devs-home .door-line { font-size: 14px; }
+.devs-home .door-small { grid-column: 1 / -1; }
+.devs-home .door-small .door-art { display: none; }
+@media (max-width: 1000px) { .devs-home .doors { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* The home page keeps to five screens at 1440 (site.check): a steadier rhythm between bands, and square scene pictures */
+.band, .devs-home, .newest { padding-block: 24px clamp(24px, 3vw, 36px); }
+.goa-pic { aspect-ratio: 1 / 1; }
+.mast { padding-block: clamp(32px, 5.5vw, 76px) clamp(28px, 4vw, 52px); }
+
+/* A scene's "Use this scene" lines wrap inside their box instead of scrolling sideways: a reader copying them sees every
+   character, and the copy button still takes the exact text */
+.use-code { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* For teams: the words in one column, real pages from the showcase beside them */
+.teams-layout { display: grid; grid-template-columns: minmax(0, 70ch) minmax(0, 1fr); gap: 0 clamp(32px, 5vw, 72px); align-items: start; }
+.teams-main { grid-column: 1; grid-row: 1; min-width: 0; }
+.teams-pics { grid-column: 2; grid-row: 1; position: sticky; top: 24px; margin-top: clamp(28px, 4vw, 44px); padding-top: 22px; }
+.teams-pics-title { font-family: var(--r-hand); font-weight: var(--r-hand-weight); font-size: calc(19px * var(--r-hand-scale)); color: var(--ink-2); margin: 0 0 12px; }
+[data-register="quiet"] .teams-pics-title { font-family: var(--body); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; }
+.teams-pics ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 18px; }
+.teams-pics a { display: block; color: var(--ink); text-decoration: none; }
+.teams-pics a:hover .show-poster { transform: translateY(var(--r-lift-hover)); }
+.teams-pics a:focus-visible { outline: none; }
+.teams-pics a:focus-visible .show-poster { outline: 2px solid var(--focus); outline-offset: 3px; }
+.teams-pic-name { display: block; font-family: var(--display); font-size: 18px; margin-top: -4px; }
+@media (max-width: 1000px) {
+  .teams-layout { grid-template-columns: 1fr; }
+  .teams-pics { grid-column: 1; grid-row: 2; position: static; }
+  .teams-pics ul { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) { .teams-pics ul { grid-template-columns: 1fr; } }
+
+/* On a phone (door.css's 620 px column): picture, title, what this is, the two buttons, then the rest. Rasika, front door 4
+   review, finding 1: the sentence that says what Susegad is has to be on the first screen, above the buttons it explains. */
+@media (max-width: 620px) {
+  .mast-text .lede:not(.lede-2) { order: 3; margin-top: 14px; font-size: 17px; }
+  .mast-text .cta { order: 4; margin-top: 16px; }
+  .mast-text .lede-2 { order: 5; font-size: 16px; }
+  .mast-text .dev-line { order: 6; }
+  .mast-text .gloss { order: 7; }
+  .mast-line { font-size: calc(16px * var(--r-hand-scale)); margin-top: 6px; }
+  /* the nav scrolls sideways (door 3); a fade at its right edge says there is more */
+  .nav { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); }
+  /* a shorter phone home (review finding 6): four scenes, not six */
+  .goa-strip li:nth-child(n+5) { display: none; }
+}
+
+/* Five screens at 1440 with the fuller words: a little less air between bands, and scene pictures at 4:3 */
+.band, .devs-home, .newest { padding-block: 22px clamp(22px, 2.6vw, 30px); }
+.goa-pic { aspect-ratio: 4 / 3; }
+@media (max-width: 620px) {
+  /* four whole pages on a phone home, then "See all" (the showcase has every one) */
+  .show-grid-home .show-card:nth-child(n+5) { display: none; }
+}

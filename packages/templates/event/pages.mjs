@@ -7,33 +7,40 @@
 // Run it from the project folder `susegad create` made. Plain Node, no dependencies, and
 // optional: the pages are ordinary files, so a site that edits them by hand never needs it.
 
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { COPY, DAY, LANGS, REGISTER, SCHEDULE, SITE, SPEAKERS, VENUE } from './strings.js';
+import { BANNER, COPY, DAY, LANGS, REGISTER, SCHEDULE, SCOPE, SITE, SPEAKERS, TICKET_AT, VENUE, EVENT_ID } from './strings.js';
 import { strings } from './susegad/core/strings.js';
 import { BY_LANG } from './susegad/core/strings.table.js';
+import { isKonkani, dayPartWord } from './susegad/core/intl.kok.js';
+import { renderConsent } from './susegad/components/consent/consent.core.js';
+import { offlinePage } from './susegad/recipes/offline/offline.page.js';
+import { kindOf } from './susegad/recipes/offline/offline.core.js';
+import { swSource } from './susegad/recipes/offline/build.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
 const esc = s => String(s).replace(/[&<>"]/g, c => ESC[c]);
 
-/** 15:00 is "3 pm" and 10:30 is "10:30 am", the way the agenda says them. */
-function clock(hhmm, t) {
+/** 15:00 is "3 pm" and 10:30 is "10:30 am", the way the agenda says them. A Konkani page says the part of the day first: "सांजे 7:00". */
+function clock(hhmm, t, tag) {
   const [h, m] = hhmm.split(':').map(Number);
   const hour = h % 12 || 12;
+  if (isKonkani(tag)) return `${dayPartWord(h, tag)} ${hour}:${String(m).padStart(2, '0')}`;
   return `${hour}${m ? ':' + String(m).padStart(2, '0') : ''} ${h < 12 ? t.am : t.pm}`;
 }
 
 const stamp = hhmm => `${DAY}T${hhmm}:00+05:30`;
 const shared = tag => strings(BY_LANG, tag);
 
-function sessionHtml(s, c) {
+function sessionHtml(s, c, tag) {
   const t = c.time, speaker = s.speaker && c.speakers[s.speaker];
   const who = speaker ? speaker.name : s.who === 'organisers' ? c.organisers : '';
   const where = [`<span class="sg-session-room">${esc(c.rooms[s.room])}</span>`, s.track ? `<span class="sg-session-track">${esc(c.tracks[s.track])}</span>` : ''].filter(Boolean).join(' ');
   return `        <li class="sg-session" id="${s.id}"${s.kind ? ` data-kind="${s.kind}"` : ''} data-start="${DAY}T${s.start}" data-end="${DAY}T${s.end}">
-          <p class="sg-session-time"><time datetime="${stamp(s.start)}">${clock(s.start, t)}</time> ${esc(t.to)} <time datetime="${stamp(s.end)}">${clock(s.end, t)}</time> <abbr title="${esc(t.istFull)}">${esc(t.ist)}</abbr></p>
+          <p class="sg-session-time"><time datetime="${stamp(s.start)}">${clock(s.start, t, tag)}</time> ${esc(t.to)} <time datetime="${stamp(s.end)}">${clock(s.end, t, tag)}</time> <abbr title="${esc(t.istFull)}">${esc(t.ist)}</abbr></p>
           <h4 class="sg-session-title">${esc(c.sessions[s.id])}</h4>${who ? `\n          <p class="sg-session-who">${esc(who)}</p>` : ''}
           <p class="sg-session-where">${where}</p>
         </li>`;
@@ -71,7 +78,13 @@ ${alternates.join('\n')}
 <link rel="stylesheet" href="${up}susegad/tokens/fonts.css">
 <link rel="stylesheet" href="${up}susegad/tokens/tokens.css">
 <link rel="stylesheet" href="${up}susegad/core/lazy.css">
+<link rel="stylesheet" href="${up}susegad/components/banner/banner.css">
 <link rel="stylesheet" href="${up}susegad/components/lang/lang.css">
+<link rel="stylesheet" href="${up}susegad/components/check/check.css">
+<link rel="stylesheet" href="${up}susegad/components/field-note/field-note.css">
+<link rel="stylesheet" href="${up}susegad/components/consent/consent.css">
+<link rel="stylesheet" href="${up}susegad/components/qr/qr.css">
+<link rel="stylesheet" href="${up}susegad/components/ticket/ticket.css">
 <link rel="stylesheet" href="${up}susegad/components/person-card/person-card.css">
 <link rel="stylesheet" href="${up}susegad/components/site-footer/site-footer.css">
 <link rel="stylesheet" href="${up}susegad/recipes/agenda/recipe.css">
@@ -83,11 +96,14 @@ ${alternates.join('\n')}
 <body>
 <a class="skip" href="#main">${esc(c.skip)}</a>
 
+<sg-banner id="${BANNER.id}" until="${BANNER.until}">${esc(c.banner.text)}</sg-banner>
+
 <header class="bar">
   <p class="brand"><a href="${up}index.html">${esc(c.site.name)}</a></p>
   <nav class="bar-links" aria-label="${esc(words.mainNav)}">
     <a href="#agenda">${esc(c.agenda.heading)}</a>
     <a href="#speakers">${esc(c.speakers.heading)}</a>
+    <a href="#register">${esc(c.register.heading)}</a>
     <a href="#venue">${esc(v.heading)}</a>
   </nav>
 ${LANGS.length < 2 ? '' : `  <sg-lang>
@@ -130,7 +146,7 @@ ${LANGS.length < 2 ? '' : `  <sg-lang>
     <section class="sg-agenda-day" aria-labelledby="day1">
       <h3 id="day1"><time datetime="${DAY}">${esc(c.agenda.day)}</time></h3>
       <ol class="sg-agenda-sessions">
-${SCHEDULE.map(s => sessionHtml(s, c)).join('\n')}
+${SCHEDULE.map(s => sessionHtml(s, c, lang.tag)).join('\n')}
       </ol>
     </section>
   </section>
@@ -143,6 +159,20 @@ ${SPEAKERS.map(id => speakerHtml(id, c)).join('\n')}
   </section>
 
   <!-- data-lat, data-lng and data-name are written once; the page's script makes the two map links from them -->
+  <!-- Registration. A valid send fires sg-register ({ name, email }) and never leaves the page; page.js answers it by making the ticket on this device; the consent notice is the library's, and a legal read of it is yours to get before going live -->
+  <section class="sg-register" id="register" aria-labelledby="register-h">
+    <h2 id="register-h">${esc(c.register.heading)}</h2>
+    <p class="lede">${esc(c.register.lede)}</p>
+    <sg-ticket id="ticket" event="${esc(c.site.name)}" event-id="${EVENT_ID}" at="${TICKET_AT}"></sg-ticket>
+    <form class="sg-register-form" action="#" method="post" data-sample="${esc(c.register.sample)}">
+      <p class="sg-register-field"><label for="reg-name">${esc(c.register.name)}</label> <input id="reg-name" name="name" autocomplete="name" required></p>
+      <p class="sg-register-field"><label for="reg-email">${esc(c.register.email)}</label> <input id="reg-email" name="email" type="email" autocomplete="email" required></p>
+${renderConsent({ lang: lang.tag, id: 'register-consent', values: c.register.consent }).split('\n').map(l => '      ' + l).join('\n')}
+      <p><button class="button" type="submit" disabled>${esc(c.register.submit)}</button></p>
+      <noscript><p class="sg-register-noscript"${lang.tag.startsWith('en') ? '' : ' lang="en"'}>${esc(c.register.noscript ?? COPY['en-IN'].register.noscript)}</p></noscript>
+      <p class="sg-register-status" role="status"></p>
+    </form>
+  </section>
   <section class="sg-venue" id="venue" aria-labelledby="venue-h" data-lat="${VENUE.lat}" data-lng="${VENUE.lng}" data-name="${esc(v.name)}">
     <h2 id="venue-h">${esc(v.heading)}</h2>
     <div class="sg-venue-top">
@@ -211,8 +241,51 @@ ${['step', 'lift', 'toilet'].map(k => `          <div><dt>${esc(v[k][0])}</dt><d
 `;
 }
 
-/** [relative path, text] for each page. */
-export const pages = () => LANGS.map(l => [join(l.folder, 'index.html'), renderPage(l)]);
+/**
+ * The worker's version: a hash of every file it may keep (pages, offline pages, styles, scripts, fonts, pictures), so any
+ * change to any of them gives the worker a new version, and visitors get the new files on their next visit after it
+ * updates. Nothing to bump by hand. strings.js, pages.mjs and the worker itself are not served, so they are left out.
+ * The pages written in this same run are hashed from memory, so the hash does not depend on the order they are written.
+ */
+function contentVersion(written) {
+  const skip = new Set(['sw.js', 'strings.js', 'pages.mjs', 'susegad.json', 'package.json']);
+  const files = [];
+  const walk = dir => {
+    for (const e of readdirSync(join(here, dir), { withFileTypes: true })) {
+      const rel = dir ? `${dir}/${e.name}` : e.name;
+      if (e.isDirectory()) { if (e.name !== 'node_modules' && !e.name.startsWith('.')) walk(rel); continue; }
+      if (skip.has(rel) || written.has(rel) || !kindOf(`/${rel}`)) continue;
+      files.push(rel);
+    }
+  };
+  walk('');
+  const h = createHash('sha256');
+  const all = [...files.map(rel => [rel, readFileSync(join(here, rel))]), ...[...written].map(([rel, text]) => [rel, Buffer.from(text)])].sort((a, b) => (a[0] < b[0] ? -1 : 1));
+  for (const [rel, buf] of all) {
+    // text is hashed with LF line ends, so the same files give the same version on every machine
+    const text = /\.(html|css|m?js|svg)$/.test(rel) ? Buffer.from(buf.toString('utf8').replace(/\r\n/g, '\n')) : buf;
+    h.update(`${rel}\n${text.length}\n`).update(text);
+  }
+  return h.digest('hex').slice(0, 12);
+}
+
+/** What the offline worker needs at install, besides the offline pages: the files an offline page draws itself with, and the two files the page loads only when Save as picture is pressed (a page that has not yet been pressed would not have asked for them, and a new version of the worker starts with an empty cache). */
+const PRECACHE = ['look.js', 'susegad/tokens/fonts.css', 'susegad/tokens/tokens.css', 'susegad/recipes/offline/recipe.css', 'susegad/recipes/offline/retry.js', 'susegad/components/ticket/ticket.png.js', 'susegad/export/png.js'];
+
+/** The offline page for a language: the same words as the recipe's, addressed from the site's folder. */
+const offlineFor = lang => offlinePage({ lang: lang.tag, base: SCOPE, register: REGISTER, siteName: COPY[lang.tag].site.name, styles: PRECACHE.filter(f => f.endsWith('.css')), look: 'look.js' });
+
+/** The folder of each language mapped to its offline page, "" for the first (the default). */
+const offlinePages = () => Object.fromEntries(LANGS.map((l, i) => [i ? l.folder : '', [l.folder, 'offline.html'].filter(Boolean).join('/')]));
+
+/** [relative path, text] for each file pages.mjs writes: the pages, their offline pages, and the worker. */
+export const pages = () => {
+  const written = new Map([
+    ...LANGS.map(l => [[l.folder, 'index.html'].filter(Boolean).join('/'), renderPage(l)]),
+    ...LANGS.map(l => [[l.folder, 'offline.html'].filter(Boolean).join('/'), offlineFor(l)]),
+  ]);
+  return [...written, ['sw.js', swSource({ version: contentVersion(written), scope: SCOPE, offlinePages: offlinePages(), precache: PRECACHE })]];
+};
 
 if (import.meta.main ?? process.argv[1]?.split('\\').join('/').endsWith('/pages.mjs')) {
   const check = process.argv.includes('--check');

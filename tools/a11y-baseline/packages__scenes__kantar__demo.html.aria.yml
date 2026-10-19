@@ -1,0 +1,26 @@
+- main:
+  - heading "Kantar" [level=1]
+  - paragraph
+  - img "A painted tiatr stage with proscenium arch, footlights, orchestra pit, and three alternating backdrops behind a heavy red velvet curtain.":
+    - status
+  - heading "Scene one: the church square" [level=2]
+  - paragraph
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark theme"
+  - combobox "Backdrop":
+    - option "Show timeline" [selected]
+    - option "0: Church square"
+    - option "1: Beach at dusk"
+    - option "2: Balcão at night"
+  - slider "Curtain": "0"
+  - checkbox "Auto" [checked]
+  - button "Next phase"
+  - heading "Songs from the pit" [level=2]
+  - list:
+    - listitem
+    - listitem
+    - listitem

@@ -1,0 +1,8 @@
+- main:
+  - heading "Stepper" [level=1]
+  - paragraph
+  - paragraph
+  - group "Your dates":
+    - textbox "Arriving": 2026-10-16
+    - textbox "Leaving": 2026-10-19
+  - button "Next: Who is coming"

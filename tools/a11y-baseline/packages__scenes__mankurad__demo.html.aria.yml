@@ -1,0 +1,18 @@
+- main:
+  - heading "Mankurad" [level=1]
+  - paragraph
+  - img "Order progress"
+  - heading "Mangoes in May" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Words over the drawing" [checked]
+  - checkbox "Show progress"
+  - slider "Progress" [disabled]: "0.4"
+  - button "Tell it again"
+  - paragraph

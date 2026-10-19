@@ -1,0 +1,106 @@
+- main:
+  - heading "Postcard" [level=1]
+  - paragraph
+  - 'region "Quiet: an index card"':
+    - heading "Quiet: an index card" [level=2]
+    - article:
+      - heading "Aldona Organics" [level=3]:
+        - link "Aldona Organics":
+          - /url: "#aldona-quiet"
+      - paragraph
+      - paragraph
+      - term
+      - definition
+      - term
+      - definition
+    - article:
+      - heading "Tide table" [level=3]:
+        - link "Tide table":
+          - /url: "#tides-quiet"
+      - paragraph
+      - paragraph
+      - term
+      - definition
+      - term
+      - definition
+    - paragraph:
+    - article:
+      - heading "A trading ledger" [level=3]:
+        - link "A trading ledger":
+          - /url: "#ledger-quiet"
+      - paragraph
+      - paragraph
+      - term
+      - definition
+      - term
+      - definition
+      - paragraph:
+  - 'region "Warm: a picture postcard, back side"':
+    - heading "Warm: a picture postcard, back side" [level=2]
+    - article:
+      - heading "Aldona Organics" [level=3]:
+        - link "Aldona Organics":
+          - /url: "#aldona-warm"
+      - paragraph
+      - paragraph
+      - term
+      - definition
+      - term
+      - definition
+    - article:
+      - heading "Tide table" [level=3]:
+        - link "Tide table":
+          - /url: "#tides-warm"
+      - paragraph
+      - paragraph
+      - term
+      - definition
+      - term
+      - definition
+    - paragraph:
+    - article:
+      - heading "A trading ledger" [level=3]:
+        - link "A trading ledger":
+          - /url: "#ledger-warm"
+      - paragraph
+      - paragraph
+      - term
+      - definition
+      - term
+      - definition
+      - paragraph:
+  - 'region "Playful: hover or focus to turn it over"':
+    - heading "Playful: hover or focus to turn it over" [level=2]
+    - article:
+      - heading "Aldona Organics" [level=3]:
+        - link "Aldona Organics":
+          - /url: "#aldona-playful"
+      - paragraph
+      - paragraph
+      - term
+      - definition
+      - term
+      - definition
+    - article:
+      - heading "Tide table" [level=3]:
+        - link "Tide table":
+          - /url: "#tides-playful"
+      - paragraph
+      - paragraph
+      - term
+      - definition
+      - term
+      - definition
+    - paragraph:
+    - article:
+      - heading "A trading ledger" [level=3]:
+        - link "A trading ledger":
+          - /url: "#ledger-playful"
+      - paragraph
+      - paragraph
+      - term
+      - definition
+      - term
+      - definition
+      - paragraph:
+  - paragraph:

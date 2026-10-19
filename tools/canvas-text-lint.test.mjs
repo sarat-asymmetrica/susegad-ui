@@ -39,7 +39,4 @@ test('the CLI exits non-zero on the broken fixture, zero on the clean one', () =
   assert.ok(green.includes('0 finding(s)'));
 });
 
-test('the whole tree passes: the decided exceptions cover every canvas text in scope', () => {
-  const findings = lintFiles(scope());
-  assert.deepEqual(findings, []);
-});
+// The whole tree (the decided exceptions cover every canvas text in scope) runs once in tools/repo-check.mjs.

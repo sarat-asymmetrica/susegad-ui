@@ -1,0 +1,16 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soak fixture: documents leak</title>
+<!-- Must FAIL the soak on documents (red first). Every second an iframe is made, loaded and removed, but its contentDocument is
+     kept: the document stays alive after its frame is gone, as an unmounted scene iframe that something still references does. -->
+<style>html, body { margin: 0; background: #f4efe6; color: #2a2118; font: 16px system-ui }</style>
+<div>documents leak</div>
+<script>
+  const kept = [];
+  setInterval(() => {
+    const f = document.createElement('iframe');
+    f.addEventListener('load', () => { kept.push(f.contentDocument); f.remove(); });
+    document.body.append(f);
+  }, 1000);
+</script>

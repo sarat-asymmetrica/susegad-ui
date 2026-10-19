@@ -237,6 +237,7 @@ export function ants(geo, since) {
  * The frame, as plain data. With `progress` set (0..1), the line is drawn
  * exactly that far and time does not move it: the scene shows state, so it
  * only moves when the work moves. Quiet is always the finished still.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} args
  */
 export function model({ time = 0, seed = 1, register = 'warm', params = {}, W = 1000, H = 1000 }) {
   const geo = geometry(seed, params.grid ?? null, W, H);

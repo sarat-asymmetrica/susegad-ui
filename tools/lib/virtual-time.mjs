@@ -32,6 +32,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { contextOptions } from './engine.mjs';
+import { markReady, markRead, span } from './profile.mjs'; // SG_PROFILE=1 only; otherwise these do nothing
 
 export const HOLD_SCRIPT = `(() => {
   const raf = window.requestAnimationFrame.bind(window), caf = window.cancelAnimationFrame.bind(window);
@@ -107,19 +108,21 @@ export async function openReal(h, path, { reduced = false, routes = [], ms = 400
 }
 
 /** Step `n` virtual frames (n / 60 s of the scene's time). */
-export const frames = (page, n) => page.evaluate(n => window.__fast.step(n), n);
+export const frames = (page, n) => span('step', () => page.evaluate(n => window.__fast.step(n), n), { weak: true });
 
 /**
  * Step frames, `batch` at a time, until `cond` (a page function, given `arg`) holds, or `ms` of real time pass.
  * Returns whether it held.
  */
-export async function until(page, cond, { arg, ms = 30000, batch = 6 } = {}) {
-  const t0 = Date.now();
-  while (!(await page.evaluate(cond, arg))) {
-    if (Date.now() - t0 > ms) return false;
-    await frames(page, batch);
-  }
-  return true;
+export function until(page, cond, { arg, ms = 30000, batch = 6 } = {}) {
+  return span('step', async () => {
+    const t0 = Date.now();
+    while (!(await page.evaluate(cond, arg))) {
+      if (Date.now() - t0 > ms) return false;
+      await frames(page, batch);
+    }
+    return true;
+  }, { weak: true });
 }
 
 /**
@@ -140,11 +143,16 @@ export async function openStepped(h, path, { reduced = false, routes = [], setup
   const page = await ctx.newPage(), errors = [], pageErrors = [];
   page.on('pageerror', e => { errors.push(String(e)); pageErrors.push(String(e).slice(0, 90)); });
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
+  // Playwright's default polling is requestAnimationFrame, which never fires on a held page: a predicate that is false at the
+  // first look waits out its whole timeout (mankurad's status wait lost 5 s a run). Poll on a timer, which stays real.
+  const waitForFunction = page.waitForFunction.bind(page);
+  page.waitForFunction = (fn, arg, opts) => waitForFunction(fn, arg, { polling: 50, ...opts });
   await page.goto(`${h.server.url}${path}`);
-  if (!(await until(page, () => window.__ready === true, { ms }))) {
+  if (!(await span('step-ready', () => until(page, () => window.__ready === true, { ms })))) {
     h.check(`ready: ${path}`, false, `no sg-ready in ${ms / 1000} s`);
     await h.done();
   }
+  await markReady(page);
   return { ctx, page, errors, pageErrors };
 }
 
@@ -154,7 +162,10 @@ export async function openStepped(h, path, { reduced = false, routes = [], setup
  * (the element's children, in those units). `data` is a copy of the .stage dataset, taken in the same
  * evaluate, so the month or the stage and the pixels are one frame even on the real clock.
  */
-export async function grabPixels(page, { stride = 2, units = [1200, 800] } = {}) {
+export function grabPixels(page, opts) {
+  return span('grab', async () => { const g = await grabPixelsRaw(page, opts); await markRead(page); return g; });
+}
+async function grabPixelsRaw(page, { stride = 2, units = [1200, 800] } = {}) {
   const g = await page.evaluate(([s, ux, uy]) => {
     const el = window.__piece, cv = el.shadowRoot.querySelector('canvas'), d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
     const w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), px = new Uint8Array(w * hh * 3);
@@ -179,10 +190,12 @@ export function hashPixels({ px }) {
  * It stops on the frame that sets window.__frozen, not on a round number of frames after it: a scene that keeps
  * refining while frozen (abri's sheen, a few levels a frame) would otherwise be drawn further than a real page's.
  */
-export async function untilFrozen(page, { ms = 120000, batch = 120 } = {}) {
-  const t0 = Date.now();
-  while (!(await page.evaluate(n => window.__fast.toFrozen(n), batch))) if (Date.now() - t0 > ms) return false;
-  return true;
+export function untilFrozen(page, { ms = 120000, batch = 120 } = {}) {
+  return span('step', async () => {
+    const t0 = Date.now();
+    while (!(await page.evaluate(n => window.__fast.toFrozen(n), batch))) if (Date.now() - t0 > ms) return false;
+    return true;
+  }, { weak: true });
 }
 
 /**
@@ -193,7 +206,7 @@ export async function untilFrozen(page, { ms = 120000, batch = 120 } = {}) {
 export async function frozenAt(h, path, { at = [], routes = [], grab = {}, ms = 120000 } = {}) {
   const { ctx, page } = await openStepped(h, path, { routes });
   const imgs = [];
-  for (const t of at) { await page.evaluate(t => window.__fast.toTime(t), t); imgs.push(await grabPixels(page, grab)); }
+  for (const t of at) { await span('step', () => page.evaluate(t => window.__fast.toTime(t), t), { weak: true }); imgs.push(await grabPixels(page, grab)); }
   if (!(await untilFrozen(page, { ms }))) h.check(`frozen: ${path}`, false, `never froze in ${ms / 1000} s`);
   imgs.push(await grabPixels(page, grab));
   await ctx.close();

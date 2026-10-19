@@ -4,16 +4,12 @@
 //
 //   node packages/export/export.check.mjs
 
-import { engineName, launchArgs, pickEngine, unsupportedIn } from '../../tools/lib/engine.mjs';
-import { startServer } from '../../tools/serve.mjs';
+import { harness } from '../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const engine = engineName();
-const browser = await pickEngine(engine).launch({ args: launchArgs(engine, ['--use-fake-ui-for-media-stream', '--autoplay-policy=no-user-gesture-required']) }); // Chromium switches: WebKit on Linux refuses to start on an option it does not know
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ args: ['--use-fake-ui-for-media-stream', '--autoplay-policy=no-user-gesture-required'], axe: "tools/smoke.mjs axes /packages/export/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" }); // Chromium switches: the harness gives other engines none
+const { server, check } = h;
 
-const ctx = await browser.newContext();
+const ctx = await h.context();
 const page = await ctx.newPage();
 const errors = [];
 const requests = [];
@@ -38,7 +34,7 @@ check('the PNG decodes back as an image', pngNatural > 0, `naturalWidth ${pngNat
 
 const webmError = await page.evaluate(() => window.__webmError);
 if (webmError) {
-  unsupportedIn(engine, 'WebM export (MediaRecorder)', webmError);
+  h.skip('WebM export (MediaRecorder)', webmError);
 } else {
   const webmBytes = await page.evaluate(() => window.__webmBytes);
   check('a WebM was produced, a real size', webmBytes > 500, `${webmBytes} bytes`);
@@ -92,6 +88,4 @@ check('nothing was fetched from another origin', requests.every(u => u.startsWit
 check('no console errors', errors.length === 0, errors.join(' | '));
 
 await ctx.close();
-await browser.close();
-await server.close();
-if (results.some(r => !r.ok)) process.exit(1);
+await h.done();

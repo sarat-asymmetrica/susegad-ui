@@ -1,0 +1,32 @@
+- main:
+  - heading "Words in the veranda" [level=1]
+  - paragraph
+  - img "A drawing of a Goan veranda seen along its length: laterite pillars and a built-in seat on the right, a lime-washed wall with a teak door and a shuttered window on the left, a brass lamp hanging from the roof, and the garden and paddy beyond."
+  - paragraph
+  - heading "Come and sit" [level=2]
+  - paragraph
+  - button "Move the words"
+  - status
+  - status
+  - form "Put a note on the veranda":
+    - combobox "A note":
+      - option "Tea is at four." [selected]
+      - option "Mind the step down to the garden."
+      - option "The lamp is lit at dusk."
+      - option "This door sticks in the rains."
+      - option "Sit here for the paddy."
+      - option "The best place to hear the rain."
+      - option "Ask for the mango pickle."
+      - option "Swept every morning, by hand."
+    - combobox "Stick it to":
+      - option "the shuttered window" [selected]
+      - option "the teak door"
+      - option "the near pillar"
+      - option "the balcão seat"
+      - option "the brass lamp"
+      - option "the mango tree"
+    - button "Put the note there"
+    - link "Copy this view":
+      - /url: http://127.0.0.1:PORT/packages/scenes/veranda/words.html
+  - paragraph
+  - paragraph

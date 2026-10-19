@@ -1,0 +1,35 @@
+- main:
+  - heading "Banner" [level=1]
+  - paragraph:
+  - heading "Four sample sites" [level=2]
+  - paragraph:
+  - region "Announcement":
+    - button "Dismiss this announcement"
+  - region "Announcement":
+    - button "Dismiss this announcement"
+  - region "Announcement":
+    - button "Dismiss this announcement"
+  - region "Announcement":
+    - button "Dismiss this announcement"
+  - heading "In Konkani" [level=2]
+  - paragraph
+  - region "सूचना":
+    - button "ही सूचना बंद करचीं"
+  - region "Suchona":
+    - button "Hi suchona bond korchi"
+  - heading "The three registers, side by side" [level=2]
+  - region "Quiet":
+    - region "Announcement":
+      - button "Dismiss this announcement"
+    - paragraph
+  - region "Warm":
+    - region "Announcement":
+      - button "Dismiss this announcement"
+    - paragraph
+  - region "Playful":
+    - region "Announcement":
+      - button "Dismiss this announcement"
+    - paragraph
+  - paragraph:
+    - button "Show them all again"
+  - status

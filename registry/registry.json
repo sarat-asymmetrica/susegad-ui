@@ -91,28 +91,28 @@
       "files": [
         {
           "path": "packages/components/action-menu/action-menu.core.js",
-          "bytes": 3286,
-          "hash": "sha256-f586ccbd2080d357c9407fb7dabe55e3681a89529c1e28ff452fa68aeb35f0ec"
+          "bytes": 5075,
+          "hash": "sha256-ffad249f5ada966832baac594ce77fb52653d1533f8262a1cf8e5009975e2339"
         },
         {
           "path": "packages/components/action-menu/action-menu.css",
-          "bytes": 10297,
-          "hash": "sha256-ba5fa39cfd861e4885a36b9687552ca2b63a3fd079996980f07c7358a72f2a5d"
+          "bytes": 10465,
+          "hash": "sha256-2e4d8e7dedb2879ab1dc7700a2187ef95d23b44943bddf9e84a58071afb41b8c"
         },
         {
           "path": "packages/components/action-menu/action-menu.docs.md",
-          "bytes": 10792,
-          "hash": "sha256-6406d831beb4c6431c9a25617e605ed92a07b225878e854d389fcac0e30c4670"
+          "bytes": 12234,
+          "hash": "sha256-c902dda7e95d5fd4273e0f4ba1ccdd916baff084f8347360e7583e07e18037f1"
         },
         {
           "path": "packages/components/action-menu/action-menu.js",
-          "bytes": 8296,
-          "hash": "sha256-7130212ba14097dade071ee95f3bee1d8abe34e10f29d58ab09e1be6f5c6ee07"
+          "bytes": 9645,
+          "hash": "sha256-b1f973435bb3a527a06a2601064b1bbd19f7f61f5a430dc4ef350dec3be7a998"
         },
         {
           "path": "packages/components/action-menu/action-menu.prompt.md",
-          "bytes": 7195,
-          "hash": "sha256-2e54ca1de5d4f26a0d5af052eb5d59cce9d2f999f18cea69ac1c3622c8780209"
+          "bytes": 7488,
+          "hash": "sha256-ce1633270686e50b3aae7b669415ebce43467a5ec6601df9ffbb6951be2cc6d9"
         },
         {
           "path": "packages/components/action-menu/skins/playful.js",
@@ -151,10 +151,13 @@
       },
       "docs": "packages/components/action-menu/action-menu.docs.md",
       "prompt": "packages/components/action-menu/action-menu.prompt.md",
-      "bytes": 42508,
-      "jsBytes": 14224,
-      "codeBytes": 8570,
-      "hash": "sha256-ae41a0e32517fa4f645758c0384f2e58cc338c577f45dbac3e073ee858cf9a8c"
+      "bytes": 47549,
+      "jsBytes": 17362,
+      "codeBytes": 9840,
+      "checkDeps": [
+        "button"
+      ],
+      "hash": "sha256-798e05a2d6b4b1585ea7be67e3dab33b65236891a8aad140bb289e1a03704869"
     },
     {
       "name": "agenda",
@@ -300,6 +303,91 @@
       "hash": "sha256-0c4ab762bcf33050238281fb218a556d8f30d18937a720a713045dcabc951313"
     },
     {
+      "name": "banner",
+      "type": "component",
+      "title": "Banner",
+      "description": "An announcement across the top of a page: 'Closed for the monsoon, back 1 October'. The words are the site's own and sit in the element, so the page reads without script. A cross dismisses it, and the dismissal is remembered for that visitor in localStorage with a try/catch around every read and write, so it still renders and dismisses with no storage. Said once through announce(), never for a banner that arrives dismissed or out of date. An optional until date is read in IST (a date alone is through the end of that day) and after it the banner shows nothing; an empty <time datetime> is filled with the date in words in the page's language, in English or in Konkani through core-intl. Quiet is a strip with one hairline, warm a sheet with a seeded pencil rule, playful bunting strung along the bottom.",
+      "version": "0.1.0",
+      "stability": "experimental",
+      "manifest": "packages/components/banner/registry.json",
+      "files": [
+        {
+          "path": "packages/components/banner/banner.core.js",
+          "bytes": 5086,
+          "hash": "sha256-3d8be64bd05875559a52e1657f6475b1ee526311363f64308e1521744d0924fe"
+        },
+        {
+          "path": "packages/components/banner/banner.css",
+          "bytes": 5865,
+          "hash": "sha256-fc0fccb0fa4c49f5fb5a16dd9134f45690363ef3062ac9087064fecb4c37cbb4"
+        },
+        {
+          "path": "packages/components/banner/banner.docs.md",
+          "bytes": 12685,
+          "hash": "sha256-271e5b76e2ca146c927d7683d06102632d97dca3996ab55d6a3850e3d111d7dc"
+        },
+        {
+          "path": "packages/components/banner/banner.js",
+          "bytes": 7940,
+          "hash": "sha256-054a0372f661e4d006679772d9882730c867cdbbcce981d49b5c5aa0c2a1fbb7"
+        },
+        {
+          "path": "packages/components/banner/banner.prompt.md",
+          "bytes": 5587,
+          "hash": "sha256-3ca7ba88712cb5fa1d129c8190ce015430e351d53571696dd7194fce16708b58"
+        },
+        {
+          "path": "packages/components/banner/banner.strings.js",
+          "bytes": 1581,
+          "hash": "sha256-969d04e03d9f280d1f84b2c3b5c209b0f267aa521cf8910718f56185233f39ab"
+        },
+        {
+          "path": "packages/components/banner/skins/playful.js",
+          "bytes": 4302,
+          "hash": "sha256-cbb531a791a3e2d9cad6c5da206ef8c99bd56db082f5b154678e2a6f0dc6e0c1"
+        },
+        {
+          "path": "packages/components/banner/skins/quiet.js",
+          "bytes": 455,
+          "hash": "sha256-2bd03479f9bc31861664fd5ca9a040b5dccf7bdf90b02e11aea4c06ce27d3bc5"
+        },
+        {
+          "path": "packages/components/banner/skins/warm.js",
+          "bytes": 3410,
+          "hash": "sha256-295b1429487d3fbede43ff15b63091ee9abfa76949ca81d100db068824f3337e"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-announce",
+        "core-component",
+        "core-intl",
+        "core-intl-kok",
+        "core-strings",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "Paper bunting strung over a lane for a feast, the flags of a village festa; drawn in the playful register only, with no figure and no ritual."
+      },
+      "budget": {
+        "jsBytes": 24576,
+        "reason": "Decision 0009: the element and its pure core (the phases, a store that never throws, IST expiry, the dates in words, focus after a dismissal) with the strings in three languages (Devanagari costs three bytes a letter), and a skin per register, the largest being the seeded bunting. 21.3 KB today with comments, about 13% to spare."
+      },
+      "docs": "packages/components/banner/banner.docs.md",
+      "prompt": "packages/components/banner/banner.prompt.md",
+      "bytes": 46911,
+      "jsBytes": 22774,
+      "codeBytes": 14930,
+      "hash": "sha256-68d54681afab0b701c864a7ca21e646cdb8cc9e470c15d0be898206fe0ca2a57"
+    },
+    {
       "name": "bloom",
       "type": "component",
       "title": "Bloom",
@@ -403,8 +491,8 @@
       "files": [
         {
           "path": "packages/recipes/booking/booking.core.js",
-          "bytes": 7028,
-          "hash": "sha256-737430266ead42565b30b9457594308ba312006d6bbb15a8122b353c8ff99dd3"
+          "bytes": 7025,
+          "hash": "sha256-25359b5568d0ec6c2200bd7bf5ace298e7950a16654eb68ef8697c1aa5370474"
         },
         {
           "path": "packages/recipes/booking/held.html",
@@ -471,10 +559,10 @@
       },
       "docs": "packages/recipes/booking/README.md",
       "prompt": "packages/recipes/booking/recipe.prompt.md",
-      "bytes": 44158,
-      "jsBytes": 15680,
+      "bytes": 44155,
+      "jsBytes": 15677,
       "codeBytes": 12035,
-      "hash": "sha256-1d0150e62f30965d8381d5954ed4a0aa479d78f1b01dbf1b8d239d6247386b24"
+      "hash": "sha256-88b789d1be5224b7da06b066ece67c620da5ec32c3fdceb24b2fd4cb5f2f0946"
     },
     {
       "name": "bubble",
@@ -662,8 +750,8 @@
       "files": [
         {
           "path": "packages/components/chat-thread/chat-thread.core.js",
-          "bytes": 10786,
-          "hash": "sha256-e2e19719b0291845fad7b22f882b5e57bf3a5fa5cdee9eeb1f4ae1a73cc15683"
+          "bytes": 10799,
+          "hash": "sha256-9487315c88437a738513fc4d72bf3390598f2f1e486703ed963a7facf62e8a25"
         },
         {
           "path": "packages/components/chat-thread/chat-thread.css",
@@ -723,10 +811,10 @@
       },
       "docs": "packages/components/chat-thread/chat-thread.docs.md",
       "prompt": "packages/components/chat-thread/chat-thread.prompt.md",
-      "bytes": 47219,
-      "jsBytes": 19552,
+      "bytes": 47232,
+      "jsBytes": 19565,
       "codeBytes": 14100,
-      "hash": "sha256-2c5c49c718bbcfc31334772aa62d1494f152ab0105fe3d9e3b498ef30cc5418d"
+      "hash": "sha256-857718449cd779f63bd4455c179d7b2e666806651ce5888036aa9b485f6ffcea"
     },
     {
       "name": "check",
@@ -974,6 +1062,90 @@
       "hash": "sha256-9d05a3de6a7fc3d5a9784c83be68d53d7ac1ea1ee44486412dbe7131b817a3a5"
     },
     {
+      "name": "consent",
+      "type": "component",
+      "title": "Consent notice",
+      "description": "A draft, not yet reviewed by a lawyer: the plain notice a form shows before it keeps someone's details, written for India's DPDP Act in words a visitor can follow: what is collected, why, for how long, whom to ask, how to withdraw, and a line where the site says where to complain, ending in a native required checkbox that is never pre-ticked. The site gives its own values; one it leaves out shows as a visible, highlighted [placeholder] and the console says so once, so a sample is never published by mistake. The same markup is a pure function (renderConsent) for a build script, so the notice can be plain HTML and read with no script. English, and Konkani in both scripts. Sending without the tick marks the box, moves focus to it and says why. Quiet is a hairline block, warm boxes it in seeded pencil strokes, playful makes it a ticket with a perforated tear line. A starting point, not legal advice: a legal read is the site's to get before it goes live.",
+      "version": "0.1.0",
+      "stability": "experimental",
+      "manifest": "packages/components/consent/registry.json",
+      "files": [
+        {
+          "path": "packages/components/consent/consent.core.js",
+          "bytes": 4613,
+          "hash": "sha256-2003b6f8926e15fe51801decfc9a90b2c3cd3a20fb765de8a1642bb735595014"
+        },
+        {
+          "path": "packages/components/consent/consent.css",
+          "bytes": 5908,
+          "hash": "sha256-880d363c78f7d603672c84838412e77cfa35c577b3d643def0bc313a1471a69c"
+        },
+        {
+          "path": "packages/components/consent/consent.docs.md",
+          "bytes": 15656,
+          "hash": "sha256-f1ca924915f044142e33c84b389367bfffa547d22d346164e6e203d7d7c156d2"
+        },
+        {
+          "path": "packages/components/consent/consent.js",
+          "bytes": 4407,
+          "hash": "sha256-60042dd8419e6fed311d0223ac50bba958a9e3db6eaf4e16252b2f11bf7ac76d"
+        },
+        {
+          "path": "packages/components/consent/consent.prompt.md",
+          "bytes": 5851,
+          "hash": "sha256-d8c12be079bc5bd84e5c418c01b78247aa7c952bfb915feea9e8d4bbd8142792"
+        },
+        {
+          "path": "packages/components/consent/consent.strings.js",
+          "bytes": 6709,
+          "hash": "sha256-432c77da63317f133bf1273880eea3aff315940adae8035dc5911edeb2407e08"
+        },
+        {
+          "path": "packages/components/consent/skins/playful.js",
+          "bytes": 3308,
+          "hash": "sha256-3db71a5443adc1ac59130cbc1323e2f66ac23ebcf1e37bdaa2db2cf49ab79147"
+        },
+        {
+          "path": "packages/components/consent/skins/quiet.js",
+          "bytes": 160,
+          "hash": "sha256-136fc04d42ec7a19c8b09f9be209e14b9c22bf8b5834fcd9e2e0367d1ce2502e"
+        },
+        {
+          "path": "packages/components/consent/skins/warm.js",
+          "bytes": 3503,
+          "hash": "sha256-8617d5ee57ccef8b38cf34614a0ab000d08dbee96d98b9e9f1323d21d296ff03"
+        }
+      ],
+      "dependencies": [
+        "check",
+        "core",
+        "core-component",
+        "core-strings",
+        "field-note",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif: a notice and a ticket stub, with nothing drawn from a tradition."
+      },
+      "budget": {
+        "jsBytes": 24576,
+        "reason": "Decision 0009: the element and its pure core (the notice, the placeholders, the escaping, the same markup for a build script), the strings in three languages (Devanagari costs three bytes a letter, and the notice is long), and a skin per register: a pencil frame and a ticket. The checkbox and the note are the check and field-note pieces, counted with theirs. 22.7 KB today with comments, about 8% to spare."
+      },
+      "docs": "packages/components/consent/consent.docs.md",
+      "prompt": "packages/components/consent/consent.prompt.md",
+      "bytes": 50115,
+      "jsBytes": 22700,
+      "codeBytes": 14412,
+      "hash": "sha256-7bac24d4ae397b05835d58bf1808233cafef78fdc49b506ed9c64bf500435f50"
+    },
+    {
       "name": "core",
       "type": "package",
       "title": "Core",
@@ -1210,6 +1382,46 @@
       "jsBytes": 10570,
       "codeBytes": 6488,
       "hash": "sha256-b82b9562fa27deca8c04ccf358cefc5cc450e4b0eb944911b5c988f2c4ff2a56"
+    },
+    {
+      "name": "core-intl-kok",
+      "type": "package",
+      "title": "Core: Konkani dates and hours",
+      "description": "Days, months and the hours of the day in Konkani, in Devanagari and in Romi, the same in every engine. formatKonkani(at, { locale: 'gom-Deva', time: true }) reads 'शेनवार 21 नोव्हेंबर, सांजे 7:00' and 'gom-Latn' reads 'Sonvar 21 Novembr, sanje 7:00', in IST whatever the visitor's zone. The tag is mapped gom to kok with its script kept, the engine's own words are probed (Chromium has only a root pattern for Devanagari Konkani and WebKit has no gom alias) and a table of ICU's forms answers when the probe fails. The parts of the day (सकाळीं, दनपारां, सांजे, राती) always come from the table. Draft words, for a native reader. Pure; the formatter can be swapped, so tests fake the engine.",
+      "version": "0.1.0",
+      "stability": "experimental",
+      "manifest": "packages/core/intl-kok.registry.json",
+      "files": [
+        {
+          "path": "packages/core/intl.kok.docs.md",
+          "bytes": 3968,
+          "hash": "sha256-1d14b31070a0d623e4456456f39902d5f8f94ac58c9a37081966ed4ceeb09f4e"
+        },
+        {
+          "path": "packages/core/intl.kok.js",
+          "bytes": 7619,
+          "hash": "sha256-f12671129622ab632b110c05baa5d8c11bef6ad0105b11770b656eaccb805707"
+        }
+      ],
+      "dependencies": [
+        "core-intl",
+        "core-strings"
+      ],
+      "registers": [],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "The days and months as Goan Konkani says them; words only, nothing drawn."
+      },
+      "budget": {
+        "jsBytes": 8192,
+        "reason": "A pure core: two small tables (days, months and the four parts of the day, in two scripts; Devanagari costs three bytes a letter) and the probe. 7.6 KB today with comments, so about 7% to spare."
+      },
+      "docs": "packages/core/intl.kok.docs.md",
+      "bytes": 11587,
+      "jsBytes": 7619,
+      "codeBytes": 4081,
+      "hash": "sha256-09fe13a9388f37d11e709b4fbbfab2c46842313736462ec148ce9c09650a1bd4"
     },
     {
       "name": "core-lazy",
@@ -1515,8 +1727,8 @@
       "files": [
         {
           "path": "packages/components/date-range/date-range.core.js",
-          "bytes": 10179,
-          "hash": "sha256-a68357f48cefed15f6524f9022cd199a329380b506acafde9b0efa287784cffa"
+          "bytes": 10176,
+          "hash": "sha256-21aed43c4255e2d59a078a4ccac703c2e503c28da1e7ef06a1bfe06ebb57703c"
         },
         {
           "path": "packages/components/date-range/date-range.css",
@@ -1583,10 +1795,10 @@
       },
       "docs": "packages/components/date-range/date-range.docs.md",
       "prompt": "packages/components/date-range/date-range.prompt.md",
-      "bytes": 67590,
-      "jsBytes": 40056,
+      "bytes": 67587,
+      "jsBytes": 40053,
       "codeBytes": 33162,
-      "hash": "sha256-9a7413779118d14e0684e1ae056bfcf8605d7acabf42d74efe0d7a268f012985"
+      "hash": "sha256-cda21bf79b66b8e54ca0e8a531d8dabb435610f167ea2b2a6cd2153a5c050402"
     },
     {
       "name": "depth-photo",
@@ -1604,8 +1816,8 @@
         },
         {
           "path": "packages/stage3d/depth-photo/depth-photo.core.js",
-          "bytes": 3839,
-          "hash": "sha256-85df58fdefae3d76361d1cf4a414a98133fe72cecdb0f2da48be05047c79850a"
+          "bytes": 3852,
+          "hash": "sha256-cbd876ae245b46a34acba0354081d25ef9c56469b5ebca0d853637ae766a5e5a"
         },
         {
           "path": "packages/stage3d/depth-photo/depth-photo.css",
@@ -1679,10 +1891,10 @@
       },
       "docs": "packages/stage3d/depth-photo/depth-photo.docs.md",
       "prompt": "packages/stage3d/depth-photo/depth-photo.prompt.md",
-      "bytes": 61253,
-      "jsBytes": 46058,
+      "bytes": 61266,
+      "jsBytes": 46071,
       "codeBytes": 35109,
-      "hash": "sha256-0e88def5bfa9b954dfd583dc1b39e7ecd98a6799d68a701cf05ce431b8fbd6ad"
+      "hash": "sha256-8f6474fd6347d8e20b0dfaf3f7b19668983d2915fff27ace463eade0c0577ec9"
     },
     {
       "name": "dialog",
@@ -2389,6 +2601,11 @@
           "hash": "sha256-b8c57c3d925fd6918b96960f7835c3b82ef5e011e282a6253c3ed80068b5daf9"
         },
         {
+          "path": "packages/export/gif.stream.js",
+          "bytes": 13224,
+          "hash": "sha256-ff71363dc825412367116413c2981ec55c441bc27d5f4abf4ae0902e476216a1"
+        },
+        {
           "path": "packages/export/index.js",
           "bytes": 538,
           "hash": "sha256-3fc95a796182417830a0ff9ef6896f28c81f29f622f280296dddd8947b80484a"
@@ -2400,8 +2617,8 @@
         },
         {
           "path": "packages/export/README.md",
-          "bytes": 3472,
-          "hash": "sha256-54883447dbffbd9be3e8194a366c0c14828b0c5d3a31a8d0e6731425bce4aa4d"
+          "bytes": 4438,
+          "hash": "sha256-97aa528c26294759df2e670e03233da2e9c07e15b5f3cce477d8215b3224a409"
         },
         {
           "path": "packages/export/webm.js",
@@ -2417,14 +2634,17 @@
         "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
       },
       "budget": {
-        "jsBytes": 21000,
-        "reason": "Not a component (no registers, no skins): the whole package's behaviour, at roughly the component figure (0009) since export code runs the same way, a little over it once the real GCE/LZW fix and the pacing fix (webm.js) landed. index.js 0.5 KB, png.js 2.1 KB, webm.js 5.3 KB, gif.js 3.5 KB (the browser edges) plus gif.core.js 8.4 KB (the tested palette/LZW core, its own concern, like a component's *.core.js under 0010): 19.8 KB measured, budgeted with a little headroom."
+        "jsBytes": 36000,
+        "reason": "Adds gif.stream.js (13.5 KB, the frame-at-a-time encoder the picture postcard needs: a streaming histogram, an indexer with a kept lookup, a resumable LZW and sliced frames) to the 19.8 KB below, with headroom. Not a component (no registers, no skins): the whole package's behaviour, at roughly the component figure (0009) since export code runs the same way, a little over it once the real GCE/LZW fix and the pacing fix (webm.js) landed. index.js 0.5 KB, png.js 2.1 KB, webm.js 5.3 KB, gif.js 3.5 KB (the browser edges) plus gif.core.js 8.4 KB (the tested palette/LZW core, its own concern, like a component's *.core.js under 0010): 19.8 KB measured, budgeted with a little headroom."
       },
       "docs": "packages/export/README.md",
-      "bytes": 23539,
-      "jsBytes": 20067,
-      "codeBytes": 12065,
-      "hash": "sha256-9da3dc659b427a37501f7711fb4952ac2a9721844f5f53594a322d3ed90c11b2"
+      "bytes": 37729,
+      "jsBytes": 33291,
+      "codeBytes": 20427,
+      "checkDeps": [
+        "scene-kolam"
+      ],
+      "hash": "sha256-1e94ecf18601e97d9b7283cb8ca64262aaade96598191098c68c6cf9ba13b216"
     },
     {
       "name": "field",
@@ -2506,6 +2726,9 @@
       "bytes": 49291,
       "jsBytes": 21758,
       "codeBytes": 15343,
+      "checkDeps": [
+        "field-note"
+      ],
       "hash": "sha256-e02f4eb549d960c00c3dda97d1ab994171dc0aaf1e157eb1e38018b709e337e6"
     },
     {
@@ -2808,6 +3031,9 @@
       "bytes": 57006,
       "jsBytes": 43021,
       "codeBytes": 35326,
+      "checkDeps": [
+        "scene-kolam"
+      ],
       "hash": "sha256-53ee3d5a9ec7fc13d0effc381c3e23d72c4bd358fddc7db315dbad7787846eb5"
     },
     {
@@ -3026,6 +3252,9 @@
       "bytes": 35900,
       "jsBytes": 13909,
       "codeBytes": 9688,
+      "checkDeps": [
+        "field"
+      ],
       "hash": "sha256-d18cbfc598d410a29ccb10dfc29161e3816882f26f83ca16dbe9ed79d8b009a5"
     },
     {
@@ -3203,8 +3432,8 @@
         },
         {
           "path": "packages/image/layout.core.js",
-          "bytes": 8304,
-          "hash": "sha256-923b160be4c5526daf747db1442719f51d3f89a7937cd09c39ac117fe0593df8"
+          "bytes": 8416,
+          "hash": "sha256-62c269907a709fe7f9c848ebd5e21f1c896b5bd9eea7ed5a07986608d182fce5"
         },
         {
           "path": "packages/image/measure.js",
@@ -3232,10 +3461,10 @@
       },
       "docs": "packages/image/image.docs.md",
       "prompt": "packages/image/image.prompt.md",
-      "bytes": 52121,
-      "jsBytes": 33644,
+      "bytes": 52233,
+      "jsBytes": 33756,
       "codeBytes": 20549,
-      "hash": "sha256-11c69e9b44a5232fd9895221eb01bf0170f7c5eda42d711a03e97a6e90fc9397"
+      "hash": "sha256-70aea90da4e0763dfefd0c829521a38037fadae7766e2b617b7539c806fca113"
     },
     {
       "name": "kantar-curtain",
@@ -3969,6 +4198,91 @@
       "hash": "sha256-dd49707cc1d34078291d58a1b6ebd8ce44321c16d8e5f2ea6ad8e0947004cc2b"
     },
     {
+      "name": "offline",
+      "type": "recipe",
+      "title": "Offline",
+      "description": "A small service worker for a static site and the page that registers it, so after one visit the site's pages open again with no connection and a page never opened shows a kind 'no connection' page in the visitor's language. It keeps only the site's own pages and the files they need (styles, scripts, fonts, pictures), fetched with GET from its own address, and never a response marked no-store or private; no response to a form, nothing from another address, and no personal data: a ticket is made on the device and drawn from the device's own storage, never cached (decision 0028). The worker is one classic script made from a pure, tested file of rules; the first visit is enough because the page tells the worker what it used. English and Konkani in both scripts.",
+      "version": "0.1.0",
+      "stability": "experimental",
+      "manifest": "packages/recipes/offline/registry.json",
+      "files": [
+        {
+          "path": "packages/recipes/offline/build.mjs",
+          "bytes": 2294,
+          "hash": "sha256-58590389df7c25f42da6c543c9c6cbd32d58a7291736ea9e1eaac72fa4239f62"
+        },
+        {
+          "path": "packages/recipes/offline/offline.core.js",
+          "bytes": 5763,
+          "hash": "sha256-4f8a5ada43f3c50ca4d2520d761c8a4e6d3b235acaad905fe97f8c91574b9d51"
+        },
+        {
+          "path": "packages/recipes/offline/offline.js",
+          "bytes": 2046,
+          "hash": "sha256-3dbcb13722983fe2d1d8c2afab3dad99ff68182dd98d75d0e140f1e9ccf9404b"
+        },
+        {
+          "path": "packages/recipes/offline/offline.page.js",
+          "bytes": 2855,
+          "hash": "sha256-558b756b428e8c287ad5cef735feac4719960aadc87573afcae88b41f87cc8af"
+        },
+        {
+          "path": "packages/recipes/offline/README.md",
+          "bytes": 7080,
+          "hash": "sha256-a1783f10971f6f4b6f2ff2b5a5a4be165f86800d5516180563c6ecb51eb27df0"
+        },
+        {
+          "path": "packages/recipes/offline/recipe.css",
+          "bytes": 2757,
+          "hash": "sha256-97816d8fd8d91039e47c78a16f61c508891da2ce1773aa7a2a685cf877b8f2cc"
+        },
+        {
+          "path": "packages/recipes/offline/recipe.prompt.md",
+          "bytes": 4092,
+          "hash": "sha256-f21d2e1232d7f15991b576a743ac8996623136b96034289d4002bfb44df40afe"
+        },
+        {
+          "path": "packages/recipes/offline/recipe.strings.js",
+          "bytes": 3660,
+          "hash": "sha256-102899b7ba9a58512ca13f31184a17542fb3b534f2c6a7023e7de03d430e3691"
+        },
+        {
+          "path": "packages/recipes/offline/retry.js",
+          "bytes": 678,
+          "hash": "sha256-7c33a7520789e32d1276af0d462228d4802d97617731407edcaee2cd6c3abd2c"
+        },
+        {
+          "path": "packages/recipes/offline/sw.template.js",
+          "bytes": 3487,
+          "hash": "sha256-e5f273110bd91d810fe5a1489b3cab41c75a10d41ac79452e2697868b69c61ae"
+        }
+      ],
+      "dependencies": [
+        "core-strings",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif; shared infrastructure, nothing drawn from a tradition."
+      },
+      "budget": {
+        "jsBytes": 24576,
+        "reason": "Decision 0028: the rules (offline.core.js), the worker handlers and the builder (sw.template.js, build.mjs), the page script and the offline page with its words in three languages (Devanagari costs three bytes a letter). 20.6 KB today with comments, about 16% to spare."
+      },
+      "docs": "packages/recipes/offline/README.md",
+      "prompt": "packages/recipes/offline/recipe.prompt.md",
+      "bytes": 34712,
+      "jsBytes": 20783,
+      "codeBytes": 11580,
+      "hash": "sha256-29674cf054ed33b0379254bf6fe9d471ebfd66d4e0c64a3759baf8a6548f488c"
+    },
+    {
       "name": "otp",
       "type": "component",
       "title": "One-time code",
@@ -4128,6 +4442,105 @@
       "hash": "sha256-bcbd2cfee5bba6c5284b78288e8dc1b16636b2f9089a99a40ab08e7d70e94868"
     },
     {
+      "name": "picture-postcard",
+      "type": "recipe",
+      "title": "Picture postcard",
+      "description": "A postcard of Goa with a typed name on it: a 3:2 card with a picture drawn by one of the library's scenes, the name set under it in any script, a perforated stamp and a postmark with an event's words, and a line saying where to make your own. Saved as a PNG, or as a three-second looping GIF of 30 frames under 5 MB, or handed to the share sheet with the file where the browser has one. Everything is drawn in the browser: nothing is sent anywhere, the same name makes the same card, and the GIF is made a frame at a time, shows its progress, can be cancelled and never freezes the page. The event's words are one config file.",
+      "version": "0.1.0",
+      "stability": "experimental",
+      "manifest": "packages/recipes/picture-postcard/registry.json",
+      "files": [
+        {
+          "path": "packages/recipes/picture-postcard/events/conclave-2026.js",
+          "bytes": 257,
+          "hash": "sha256-766a74cda09019509fd8f01e68a6803ea4dab63b1a5683371d404fb5988ecacf"
+        },
+        {
+          "path": "packages/recipes/picture-postcard/events/goa-oct-2026.js",
+          "bytes": 264,
+          "hash": "sha256-5c53599ab4d98574b2168f28713d7dd6dbdd22f6d7df2d3320e4565513fb819d"
+        },
+        {
+          "path": "packages/recipes/picture-postcard/index.html",
+          "bytes": 2950,
+          "hash": "sha256-98dcd512a3a0756d016b88bdbfef08901b311fa6680e6af9a0b66d432ceadd6c"
+        },
+        {
+          "path": "packages/recipes/picture-postcard/postcard.core.js",
+          "bytes": 17726,
+          "hash": "sha256-13bf0b5efbb1fc3c10294393efd1ddaee7cba03cd35d4ecc3aa4e10a20e3982f"
+        },
+        {
+          "path": "packages/recipes/picture-postcard/postcard.draw.js",
+          "bytes": 19936,
+          "hash": "sha256-22a66f8458c04eb5feab8a53f4d4b73d5b971829f5b13f503983aca6ac04f97b"
+        },
+        {
+          "path": "packages/recipes/picture-postcard/README.md",
+          "bytes": 5511,
+          "hash": "sha256-d0abd70a0a1f13e3b6faac3c4f6d74bbdfa7be18af61927abe86874b3dda3a6f"
+        },
+        {
+          "path": "packages/recipes/picture-postcard/recipe.css",
+          "bytes": 4365,
+          "hash": "sha256-9af55f6b6ea0d4c6ed0f051d35c13b847a4f3bafbf950e384d6eceb069fe7e7d"
+        },
+        {
+          "path": "packages/recipes/picture-postcard/recipe.js",
+          "bytes": 16687,
+          "hash": "sha256-0dd326fa5e1a3f69e22be3f63d3e3db21e99fca011895edcdb761fca671c3268"
+        },
+        {
+          "path": "packages/recipes/picture-postcard/recipe.prompt.md",
+          "bytes": 6599,
+          "hash": "sha256-a7d825d3f931a81db430d3e5b6b9e01ff85a58d2326ae16b0638f97812be6477"
+        },
+        {
+          "path": "packages/recipes/picture-postcard/scenes.js",
+          "bytes": 4113,
+          "hash": "sha256-d07f9d0293901042dbe26b048016d589b085cf5a64cddbfcf52a5fb8d0fa6706"
+        },
+        {
+          "path": "packages/recipes/picture-postcard/words.js",
+          "bytes": 2381,
+          "hash": "sha256-99b4724db6a47f562f9115c71a276422d41bedbd1daa02e81f835e514cfe9ae7"
+        }
+      ],
+      "dependencies": [
+        "engine",
+        "export",
+        "scene-dar",
+        "scene-ferry",
+        "scene-mithagar",
+        "scene-posta",
+        "scene-rampon",
+        "scene-saanj",
+        "scene-tinto",
+        "tokens",
+        "type"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "motif": {
+        "origin": "goa",
+        "tier": "everyday",
+        "gloss": "A postcard from Goa, in the way of the old Indian post office: a stamp and a round postmark over the corner, a picture of an ordinary Goan place, a name written under it. No deity imagery, no religious figures; the scenes are everyday and regional places."
+      },
+      "budget": {
+        "jsBytes": 61440,
+        "reason": "Recipe code only, the scenes and the export package (with its GIF encoder) counted in their own budgets: the maker and its page wiring with the nudge, the fallbacks and the late-font redraw, the pure core (layout, name fitting, scripts, the placeholder), the drawing (paper, stamp, postmark), the scene list, the words the maker says, the event words. 60.2 KB today, up from 49 KB with the page round (the words, the empty name, share text, the late-font redraw)."
+      },
+      "docs": "packages/recipes/picture-postcard/README.md",
+      "prompt": "packages/recipes/picture-postcard/recipe.prompt.md",
+      "bytes": 80789,
+      "jsBytes": 61364,
+      "codeBytes": 41243,
+      "hash": "sha256-ac71a883e04543f3cd09fc5a620394382895a3533c011e26ab5257eeeaae7a85"
+    },
+    {
       "name": "player",
       "type": "component",
       "title": "Player",
@@ -4229,6 +4642,10 @@
       "bytes": 62847,
       "jsBytes": 44494,
       "codeBytes": 31520,
+      "checkDeps": [
+        "export",
+        "scene-kolam"
+      ],
       "hash": "sha256-eba81f180497169c5f3fe34727e54b60333ade0e71a524f2522be8b3a73d1c63"
     },
     {
@@ -4242,28 +4659,28 @@
       "files": [
         {
           "path": "packages/components/popover/popover.core.js",
-          "bytes": 1248,
-          "hash": "sha256-9d2ff5fd2dd96cc96059394526bdb4f1441cf49c8e22c083a926c8cf80cc7b0d"
+          "bytes": 3037,
+          "hash": "sha256-76fbbd33f4fe0958cdb34cae2e95dde18d19af960f4046eb2235d6f41933bf84"
         },
         {
           "path": "packages/components/popover/popover.css",
-          "bytes": 6624,
-          "hash": "sha256-b248f2a1d58837c6500fc1647f82e78c08e46727af1dea316fc324cf4dbc608d"
+          "bytes": 6789,
+          "hash": "sha256-85758411eeed11ba94a59ef472699c925c662ecb3b8719733e6e18abce7fc284"
         },
         {
           "path": "packages/components/popover/popover.docs.md",
-          "bytes": 9793,
-          "hash": "sha256-fe2ab48900ccdf5a69618f2e4774154db0ec73c9f34bd58efc2671997ff2cd58"
+          "bytes": 11345,
+          "hash": "sha256-eb3f014585a349b40fd9a76cf4121825ea92e8b88269fb212aaf4f8487872868"
         },
         {
           "path": "packages/components/popover/popover.js",
-          "bytes": 4084,
-          "hash": "sha256-c01f10cb03baf23d34f6dd492b4767b8d6ee9779c2dda7e27d72b1ea44eef3b9"
+          "bytes": 5749,
+          "hash": "sha256-da497612c742c0795cd60089b1e48302259137366910ffd0f2a751b6ab4d5022"
         },
         {
           "path": "packages/components/popover/popover.prompt.md",
-          "bytes": 5735,
-          "hash": "sha256-b6258cd4589f5d91c34cc4495ed390731cb4f0cb4fdebbfd8bbcd7f09ce67e4d"
+          "bytes": 6107,
+          "hash": "sha256-95abd83d964104c48152d509ee9b5f25168ab6f2351b90b22afc5c0ecaa79c3b"
         },
         {
           "path": "packages/components/popover/skins/playful.js",
@@ -4302,10 +4719,13 @@
       },
       "docs": "packages/components/popover/popover.docs.md",
       "prompt": "packages/components/popover/popover.prompt.md",
-      "bytes": 28173,
-      "jsBytes": 6021,
-      "codeBytes": 3491,
-      "hash": "sha256-093492b94816c4cb43d36fe80c44407dac9e4e56aa3f485d477a6ad270400a7c"
+      "bytes": 33716,
+      "jsBytes": 9475,
+      "codeBytes": 5017,
+      "checkDeps": [
+        "button"
+      ],
+      "hash": "sha256-30cdd7cc727e24edddcfccd5a20ed53f32ce31a78ae12ccc02b8f7c62bea4dbf"
     },
     {
       "name": "postcard",
@@ -4383,6 +4803,9 @@
       "bytes": 36588,
       "jsBytes": 9427,
       "codeBytes": 5660,
+      "checkDeps": [
+        "stamp"
+      ],
       "hash": "sha256-ab6f6d3c9b6b9ffc112df67e77041719b62d08ab63e6586d3453d884325bdda4"
     },
     {
@@ -4596,6 +5019,9 @@
       "bytes": 72111,
       "jsBytes": 19430,
       "codeBytes": 15581,
+      "checkDeps": [
+        "folio"
+      ],
       "hash": "sha256-52623870ab40a5bb3b5e8760eb3fbe58615c3059747ec36fc23b8e99b855154f"
     },
     {
@@ -4762,6 +5188,9 @@
       "bytes": 21407,
       "jsBytes": 7520,
       "codeBytes": 5098,
+      "checkDeps": [
+        "voice-note"
+      ],
       "hash": "sha256-bb97afdf67e52f2fca743c23f98ad6baf18d79bb5983beb56dd1089e925256bf"
     },
     {
@@ -5152,8 +5581,8 @@
         },
         {
           "path": "packages/scenes/chai/model.js",
-          "bytes": 5213,
-          "hash": "sha256-90b316086a767ead77bf42b379cf3de393aa21432aafb84ee5269c44dd23c13e"
+          "bytes": 5346,
+          "hash": "sha256-33914c6e83c1d7cbd1bc644b1e258b9efb32ee16ea392aeed15d25e842d7749b"
         },
         {
           "path": "packages/scenes/chai/render.js",
@@ -5185,10 +5614,10 @@
         "jsBytes": 40960
       },
       "prompt": "packages/scenes/chai/chai.prompt.md",
-      "bytes": 31942,
-      "jsBytes": 27014,
+      "bytes": 32075,
+      "jsBytes": 27147,
       "codeBytes": 22946,
-      "hash": "sha256-30935803f0ef2e06c4037777fa6553a11dd84e07eea3591dfde118f85b05736e"
+      "hash": "sha256-ea3321e3ec9ba3227f71496b88e63497c53baa90aed1b103c7adbc6dcc462d35"
     },
     {
       "name": "scene-chiro",
@@ -5345,13 +5774,13 @@
         },
         {
           "path": "packages/scenes/ferry/model.js",
-          "bytes": 6278,
-          "hash": "sha256-4c1970f681f04967f33fbdf99d3210b6091e70427caf68b54305a6070d243dbb"
+          "bytes": 6403,
+          "hash": "sha256-5c2f5f3b88e2c13036d4e089039063eebec0bf65b89bf52d24508f5002869f3c"
         },
         {
           "path": "packages/scenes/ferry/render.js",
-          "bytes": 31939,
-          "hash": "sha256-652a43288320124e48ef3f1a705d3f6f952533602de1c9e29c792e605972b86b"
+          "bytes": 33576,
+          "hash": "sha256-0527f7af03b1683485fa231e9614e3413a2002a48ebbb777bd02ca76f5d843bb"
         }
       ],
       "dependencies": [
@@ -5379,10 +5808,10 @@
         "reason": "a whole river view drawn by hand: far bank, jetties, posts, near bank, a canoe and the ferry, in ink and in hairline"
       },
       "prompt": "packages/scenes/ferry/ferry.prompt.md",
-      "bytes": 49075,
-      "jsBytes": 43691,
-      "codeBytes": 37479,
-      "hash": "sha256-67b003034e4f8b5eb0c15649735c93b6d920201df017bb361fbea50bb3a31d19"
+      "bytes": 50837,
+      "jsBytes": 45453,
+      "codeBytes": 38350,
+      "hash": "sha256-c026e34d5f17702a06b735f400c631411b0d9d87416f4f1eb33b3f14cd001099"
     },
     {
       "name": "scene-ghat",
@@ -5410,8 +5839,8 @@
         },
         {
           "path": "packages/scenes/ghat/model.js",
-          "bytes": 20691,
-          "hash": "sha256-186a4841ade941692d8b9d146853f1f99f2988e5784d3afdc84f83f1b14e2235"
+          "bytes": 20816,
+          "hash": "sha256-f528c7f4a1a4aff4049e0d03a0af5900df5d93b471fe1d7c714b5427bec19267"
         },
         {
           "path": "packages/scenes/ghat/render.js",
@@ -5444,10 +5873,10 @@
         "reason": "The plate's terrain, drainage, contour, road and lettering code, ported line for line."
       },
       "prompt": "packages/scenes/ghat/ghat.prompt.md",
-      "bytes": 61277,
-      "jsBytes": 55194,
+      "bytes": 61402,
+      "jsBytes": 55319,
       "codeBytes": 47671,
-      "hash": "sha256-5b2054b07d37057e201bd8fb3c54225193cf09eec8cd6330b71c7e54ff4f0470"
+      "hash": "sha256-e776fd7d830e1f6f587095012130c0adcd9026d815402d29603cd6c0ef3ee6e8"
     },
     {
       "name": "scene-kairi",
@@ -5475,8 +5904,8 @@
         },
         {
           "path": "packages/scenes/kairi/model.js",
-          "bytes": 10005,
-          "hash": "sha256-487cba3e2ac5ac162145c1d75d6a98c4667dcc76e037ffe9731b33eb7f4d6b81"
+          "bytes": 10130,
+          "hash": "sha256-d783ff75e49f21967a27eef51feff97e7648304672bdd58faf195a15d525b6e3"
         },
         {
           "path": "packages/scenes/kairi/render.js",
@@ -5508,10 +5937,10 @@
         "jsBytes": 40960
       },
       "prompt": "packages/scenes/kairi/kairi.prompt.md",
-      "bytes": 37157,
-      "jsBytes": 31060,
+      "bytes": 37282,
+      "jsBytes": 31185,
       "codeBytes": 25652,
-      "hash": "sha256-038542865ea3d211db7c82b8f87675f6fc7c2fbeccd723af578850dc6b6d5ab2"
+      "hash": "sha256-da922f980a96c13edd175b5786729a93ebd6f776b06b12407d434e1d510d575f"
     },
     {
       "name": "scene-kantar",
@@ -5539,8 +5968,8 @@
         },
         {
           "path": "packages/scenes/kantar/model.js",
-          "bytes": 12894,
-          "hash": "sha256-ad31b36b1dbbcf49e95fe9e9ce817d9ba3e8692bd45c4ffd2dd3c313ed9f2272"
+          "bytes": 12933,
+          "hash": "sha256-150fcb9d7e77eae6518f7616f3f32169bfc447fc7f9b4df15f25f7b79ab76b80"
         },
         {
           "path": "packages/scenes/kantar/render.js",
@@ -5575,10 +6004,10 @@
         "reason": "The singer performs, the house sits in the front row and answers her, the pit plays in the same beat, and the painted flats carry form and shadows. Under the 64 KB ceiling in decision 0003."
       },
       "prompt": "packages/scenes/kantar/kantar.prompt.md",
-      "bytes": 64933,
-      "jsBytes": 57313,
+      "bytes": 64972,
+      "jsBytes": 57352,
       "codeBytes": 43221,
-      "hash": "sha256-13222d4a3977fed5d0e131cbf38d51700e85a27d7398d0329ec79c7154768aff"
+      "hash": "sha256-c5878d7c9729c8c58081cc0776c3c080280207ab15ffb5c3499acca2ccb26ffc"
     },
     {
       "name": "scene-khazan",
@@ -5606,8 +6035,8 @@
         },
         {
           "path": "packages/scenes/khazan/model.js",
-          "bytes": 9864,
-          "hash": "sha256-b6c28daad1d028694e814b855b5e19cbe8be433136f755fe075108c4b73aacdb"
+          "bytes": 9993,
+          "hash": "sha256-74b02c1e8a9d0957eae80111a9d85a909a587148d12e4445caf27f36ebd667d2"
         },
         {
           "path": "packages/scenes/khazan/render.js",
@@ -5639,10 +6068,10 @@
         "jsBytes": 40960
       },
       "prompt": "packages/scenes/khazan/khazan.prompt.md",
-      "bytes": 42969,
-      "jsBytes": 37056,
+      "bytes": 43098,
+      "jsBytes": 37185,
       "codeBytes": 30181,
-      "hash": "sha256-6a0462a79f52ba50185d0ba6be10541f8356e5bef320b294290efda680c578d4"
+      "hash": "sha256-f0f6769d87b0eea199248f7c4dea0f745bf2c7bfa88f5297c30f85a0c70e4420"
     },
     {
       "name": "scene-kolam",
@@ -5670,8 +6099,8 @@
         },
         {
           "path": "packages/scenes/kolam/model.js",
-          "bytes": 12026,
-          "hash": "sha256-59c7a3c3df2a85c1fed2a7eda379ea1a787af8b04311188e1a24a1bad493a8e0"
+          "bytes": 12149,
+          "hash": "sha256-2f74c35723cf27a6ce0e689a104293d9531b8531e96fed4e6413f249b9294ec3"
         },
         {
           "path": "packages/scenes/kolam/render.js",
@@ -5703,10 +6132,10 @@
         "jsBytes": 40960
       },
       "prompt": "packages/scenes/kolam/kolam.prompt.md",
-      "bytes": 44414,
-      "jsBytes": 38131,
+      "bytes": 44537,
+      "jsBytes": 38254,
       "codeBytes": 31504,
-      "hash": "sha256-d0cf9a5ef8f94e22aba7d88fe26038d99dc16ea09b93f50d4f9e113c677e2001"
+      "hash": "sha256-0843fc2aab97f3fedfd7360b2398e1842a565c497bc59da3b613f8ad67166c92"
     },
     {
       "name": "scene-mankurad",
@@ -5734,8 +6163,8 @@
         },
         {
           "path": "packages/scenes/mankurad/model.js",
-          "bytes": 11766,
-          "hash": "sha256-63776fddb1a0cfb96a4186d4615176242ae11eae4fa9f1d8b9c885f15a1c476b"
+          "bytes": 11899,
+          "hash": "sha256-d39022c2aff551a689cc12833c642fd3882001adaaf27780be63707e21e9b407"
         },
         {
           "path": "packages/scenes/mankurad/render.js",
@@ -5767,10 +6196,10 @@
         "reason": "The plate's painters and sprite cache for a whole short story, ported line for line."
       },
       "prompt": "packages/scenes/mankurad/mankurad.prompt.md",
-      "bytes": 50675,
-      "jsBytes": 45310,
+      "bytes": 50808,
+      "jsBytes": 45443,
       "codeBytes": 39074,
-      "hash": "sha256-dae57a322ed0ceeddd4147fc6cdf2d8aee83555cf55d30af2710d943b1f5c153"
+      "hash": "sha256-ef409c73a8a6db9504a1fa1464729a65f9da499b1096640926cdf62a89b523be"
     },
     {
       "name": "scene-maun",
@@ -5798,8 +6227,8 @@
         },
         {
           "path": "packages/scenes/maun/model.js",
-          "bytes": 4678,
-          "hash": "sha256-07b26ef7da7d9bebd5c903beacf1d3623c4c7da82d98bcb535b561f5a1686b12"
+          "bytes": 4803,
+          "hash": "sha256-26421ad05873e5e084ec82c3e73799bf8010947bee14aa9660a73970a8edb737"
         },
         {
           "path": "packages/scenes/maun/render.js",
@@ -5831,10 +6260,10 @@
         "jsBytes": 40960
       },
       "prompt": "packages/scenes/maun/maun.prompt.md",
-      "bytes": 25451,
-      "jsBytes": 20254,
+      "bytes": 25576,
+      "jsBytes": 20379,
       "codeBytes": 16106,
-      "hash": "sha256-1f2c0a7be4c8a1ac278bba2738eeaeffec9a5835c63d63239e0dd8abf5211833"
+      "hash": "sha256-966b2bdbd3b05cfe9b490755747cea299e003201b69b552a88714e7add77b2ec"
     },
     {
       "name": "scene-mithagar",
@@ -5862,8 +6291,8 @@
         },
         {
           "path": "packages/scenes/mithagar/model.js",
-          "bytes": 16355,
-          "hash": "sha256-14ba07f2da27d21b7bcc491daf87c51c79f9edbbe450a2198dddabc92ffc042a"
+          "bytes": 16480,
+          "hash": "sha256-5124e2a20f36022d7138edee215897636c7b9f3ffd783d720b1a913d21bba8f6"
         },
         {
           "path": "packages/scenes/mithagar/render.js",
@@ -5897,10 +6326,10 @@
         "reason": "The field reflects one continuous sky sampled per pan, the salt takes the ground as a moving front, a raker works the near pan, and the sky and bunds are cached so the scene runs at the baseline. Under the 64 KB ceiling in decision 0003."
       },
       "prompt": "packages/scenes/mithagar/mithagar.prompt.md",
-      "bytes": 55855,
-      "jsBytes": 49652,
+      "bytes": 55980,
+      "jsBytes": 49777,
       "codeBytes": 39226,
-      "hash": "sha256-7d020545315bc3b378c7dfdd28a4a0d3d34d53cbeb3a86cba256d16a66b4a216"
+      "hash": "sha256-a84b45499bea7368c74e01d45f00496c4edc0d680689bff6a705043b5c92dd8a"
     },
     {
       "name": "scene-mosaico",
@@ -5987,8 +6416,8 @@
         },
         {
           "path": "packages/scenes/neel/model.js",
-          "bytes": 13448,
-          "hash": "sha256-e5c42e431101d85fb9056123e3503b750272f0254ccf75e5c05841a4cc6c7027"
+          "bytes": 13573,
+          "hash": "sha256-f247e8bd19cd82266443a4a933526180409cafedc838dd09ca36973e000b5116"
         },
         {
           "path": "packages/scenes/neel/neel.prompt.md",
@@ -6025,10 +6454,10 @@
         "jsBytes": 40960
       },
       "prompt": "packages/scenes/neel/neel.prompt.md",
-      "bytes": 40969,
-      "jsBytes": 34865,
+      "bytes": 41094,
+      "jsBytes": 34990,
       "codeBytes": 28663,
-      "hash": "sha256-50adcab0acdca6fbf56d55f91daa76e08f88f176fbf7a437f16e00a045c75e97"
+      "hash": "sha256-004d419b91bc90df0f78119cf5229ca72347420bc53009a3b0fad7947fa16a15"
     },
     {
       "name": "scene-nod",
@@ -6178,8 +6607,8 @@
         },
         {
           "path": "packages/scenes/paus/model.js",
-          "bytes": 12879,
-          "hash": "sha256-256095ad4a9417a4c80fbb75590e52512e09dd08abfbabaf87b1863b53efebd0"
+          "bytes": 13004,
+          "hash": "sha256-6e239ebd64efb12ab7d1a6f40630ada111a23c550ef2ca58db72a9f7d76864f8"
         },
         {
           "path": "packages/scenes/paus/paus.prompt.md",
@@ -6216,10 +6645,10 @@
         "reason": "The heavy baseline scene: drop simulation, fog mask, dusk palette, three registers."
       },
       "prompt": "packages/scenes/paus/paus.prompt.md",
-      "bytes": 67214,
-      "jsBytes": 58958,
+      "bytes": 67339,
+      "jsBytes": 59083,
       "codeBytes": 49861,
-      "hash": "sha256-2e138c3f76ed18e65c26269eb7b73bb7122f21cb0159fc51eca460c003ebdfb0"
+      "hash": "sha256-2cde85a3e454e825971d8a76bc15a097db2157ee5fc86c28c2969f9ea54e4332"
     },
     {
       "name": "scene-posta",
@@ -6242,8 +6671,8 @@
         },
         {
           "path": "packages/scenes/posta/model.js",
-          "bytes": 11720,
-          "hash": "sha256-c01969c19a3c17e7abee7cb6368fa5282009373d86f0bc6e36e1e27f95dae97c"
+          "bytes": 11858,
+          "hash": "sha256-6026bd907f7951ab56fb013713b3744481851130a0d3093bef7cdd806fd1d868"
         },
         {
           "path": "packages/scenes/posta/posta.prompt.md",
@@ -6283,10 +6712,10 @@
         "reason": "The room now carries a customer at the window and a beam that swings and narrows with the day, and the three contact sounds are shaped per voice instead of being one beep. Under the 64 KB ceiling in decision 0003."
       },
       "prompt": "packages/scenes/posta/posta.prompt.md",
-      "bytes": 59301,
-      "jsBytes": 52447,
+      "bytes": 59439,
+      "jsBytes": 52585,
       "codeBytes": 43245,
-      "hash": "sha256-9a14883199df1989bbd445cbd4f68faef6367cd6a6f5ee39fd95b970b471b267"
+      "hash": "sha256-7ef3d307bf57a870348e53cf4e4cfe106727a934776c1ec19c767a800b3f2564"
     },
     {
       "name": "scene-prahar",
@@ -6309,8 +6738,8 @@
         },
         {
           "path": "packages/scenes/prahar/model.js",
-          "bytes": 6637,
-          "hash": "sha256-81c3531cb596c1a68cc73e50912d502fe352123ef152787421fc32614fd5442e"
+          "bytes": 6762,
+          "hash": "sha256-1bf0f786dc9ddf77ef6aaeeb9c50d8468576e263ee2bcb35a33177a05c5b733e"
         },
         {
           "path": "packages/scenes/prahar/prahar.prompt.md",
@@ -6347,10 +6776,10 @@
         "jsBytes": 40960
       },
       "prompt": "packages/scenes/prahar/prahar.prompt.md",
-      "bytes": 38614,
-      "jsBytes": 32778,
+      "bytes": 38739,
+      "jsBytes": 32903,
       "codeBytes": 26770,
-      "hash": "sha256-aee33ea0766db8582ad1f39925ca5e7e36b81406790f7150109bf9c7a7cc56bb"
+      "hash": "sha256-f87de488e277de994cd5a5d79a2ca4f29af20d32090463614e4eb2cac215ed0d"
     },
     {
       "name": "scene-rampon",
@@ -6502,8 +6931,8 @@
         },
         {
           "path": "packages/scenes/shet/model.js",
-          "bytes": 17002,
-          "hash": "sha256-390597432eee966c78b5c6faadbad50e4a045678eba418f2c68c7dbedad099a6"
+          "bytes": 17127,
+          "hash": "sha256-da25d9398bc69bf25727fd6a902fb0a0d80c207d363cb744ddb286c7483683e8"
         },
         {
           "path": "packages/scenes/shet/render.js",
@@ -6548,15 +6977,15 @@
         "reason": "A year in a field, the plate's own code: its still is under 64 KB of code (first sight), the whole year under 96 KB of source, comments kept."
       },
       "prompt": "packages/scenes/shet/shet.prompt.md",
-      "bytes": 103357,
-      "jsBytes": 97310,
+      "bytes": 103482,
+      "jsBytes": 97435,
       "codeBytes": 80616,
       "tier": "scape",
       "entry": [
         "packages/scenes/shet/index.js"
       ],
       "firstSightBytes": 56680,
-      "hash": "sha256-a704b2ba8af945e568c9ac95d114740376e64bbe440c17b973555aa24e91edbe"
+      "hash": "sha256-c20b31f8ab79a77a84f7f716a6cd2df4e15226f030a422d65cd20c36fce849a7"
     },
     {
       "name": "scene-taverna",
@@ -6579,8 +7008,8 @@
         },
         {
           "path": "packages/scenes/taverna/model.js",
-          "bytes": 10496,
-          "hash": "sha256-d1efd32b8241535c9729c273d872901f813fb53c3bdc6e2adb9d09da31f1064c"
+          "bytes": 10509,
+          "hash": "sha256-69bdf4c7635cde5dbf4db7dcf7f3a7c282c8716a7d99f4b6b5c12087fe06c266"
         },
         {
           "path": "packages/scenes/taverna/render.js",
@@ -6620,10 +7049,10 @@
         "reason": "Adds the person crossing the alley under a lantern, the bar shadows it throws across the sill, and a struck-glass chime instead of a single tone. Under the 64 KB ceiling in decision 0003."
       },
       "prompt": "packages/scenes/taverna/taverna.prompt.md",
-      "bytes": 58610,
-      "jsBytes": 52491,
+      "bytes": 58623,
+      "jsBytes": 52504,
       "codeBytes": 43846,
-      "hash": "sha256-30c9c55f6a56454fc006f21bc70d8e686120c29ff47dfbece64fd36ea4e2bf15"
+      "hash": "sha256-143c04a3f6de7704b91671ee03cfb982c9b03190b96ed2306b8345c3abd4e197"
     },
     {
       "name": "scene-themb",
@@ -6646,8 +7075,8 @@
         },
         {
           "path": "packages/scenes/themb/model.js",
-          "bytes": 13411,
-          "hash": "sha256-47f2eefcbb4f3f7b73c1224fa019455118681866d16677039a067f4d01cb8b19"
+          "bytes": 13536,
+          "hash": "sha256-23d922bcfad1840b0d5dbdaa542f3ece61cf9a89fc86e9e0c22f0f6d9532faaf"
         },
         {
           "path": "packages/scenes/themb/render.js",
@@ -6685,10 +7114,10 @@
         "reason": "Two complete renderers: the WebGL shader and a full 2D fallback, with the plate's physics."
       },
       "prompt": "packages/scenes/themb/themb.prompt.md",
-      "bytes": 48083,
-      "jsBytes": 41134,
+      "bytes": 48208,
+      "jsBytes": 41259,
       "codeBytes": 34600,
-      "hash": "sha256-97a7223222f277c8f57280175102434e386f380c8b3daa0848b2e4107b63234b"
+      "hash": "sha256-2314d9439580550e5ae709966d710789313effe70e953e04b41790d8f801abba"
     },
     {
       "name": "scene-tinto",
@@ -6711,8 +7140,8 @@
         },
         {
           "path": "packages/scenes/tinto/model.js",
-          "bytes": 10888,
-          "hash": "sha256-65a3e5c27b3ea6e818cd0a7f8e458c6849e112a19edb386c607e90db01aa5683"
+          "bytes": 11013,
+          "hash": "sha256-f1fad83992ab1ec2f1f9ee496c3909a7e7b53819b34ceb81b6227a065b96bef8"
         },
         {
           "path": "packages/scenes/tinto/render.js",
@@ -6756,10 +7185,10 @@
         "reason": "Seventeen vignettes ported line for line from the plate, and words in the world: the chalkboard, the plaques and the lazy type tier (the tier and Pretext are counted apart)."
       },
       "prompt": "packages/scenes/tinto/tinto.prompt.md",
-      "bytes": 71421,
-      "jsBytes": 63106,
+      "bytes": 71546,
+      "jsBytes": 63231,
       "codeBytes": 51933,
-      "hash": "sha256-2eeecde6f8582fb2233bf2705e90ae25dd0a36a6aff0e7c608892af8ccab00bb"
+      "hash": "sha256-4ce395b0b87741d5c1b439a7cd8e01d495749208e7b9c725217780a2fe3ae6b9"
     },
     {
       "name": "scene-tollem",
@@ -6782,8 +7211,8 @@
         },
         {
           "path": "packages/scenes/tollem/model.js",
-          "bytes": 13493,
-          "hash": "sha256-2179568109b8dbabcdccdb776e55e0d70a36e3c015f86146917a6e302dd906c8"
+          "bytes": 13532,
+          "hash": "sha256-0f045b280e2198bae5308f0c39de5b7ea23d7a2861e1b70279143a0089c5eae4"
         },
         {
           "path": "packages/scenes/tollem/render.js",
@@ -6821,10 +7250,10 @@
         "reason": "Two complete renderers: the WebGL shader and a full 2D fallback."
       },
       "prompt": "packages/scenes/tollem/tollem.prompt.md",
-      "bytes": 53600,
-      "jsBytes": 44446,
+      "bytes": 53639,
+      "jsBytes": 44485,
       "codeBytes": 38950,
-      "hash": "sha256-e91ffe9ff51f63f4b84881a8901760f8ad9097610deabecfac2aeee8b0ca4038"
+      "hash": "sha256-ef616de5017d6345624d5bb2819b136ded05f5695b293375a86a2606b1ea359a"
     },
     {
       "name": "scene-toran",
@@ -6912,8 +7341,8 @@
         },
         {
           "path": "packages/scenes/vaati/model.js",
-          "bytes": 22263,
-          "hash": "sha256-4ac2993cf1546d0d0ce96def7740a78d26b04ba0ed6e0a5f6d4e389733adc24a"
+          "bytes": 22388,
+          "hash": "sha256-b2f67ad406743adfe6c606f7d940a79ecae582f41729b45d9777ffb044c2ab3f"
         },
         {
           "path": "packages/scenes/vaati/render.js",
@@ -6946,10 +7375,10 @@
         "reason": "four pasta shapes, and every drawing in three hands (hairline, ink and wash, flat poster), plus the pour, the toss and the settle signal"
       },
       "prompt": "packages/scenes/vaati/vaati.prompt.md",
-      "bytes": 56476,
-      "jsBytes": 48076,
+      "bytes": 56601,
+      "jsBytes": 48201,
       "codeBytes": 40561,
-      "hash": "sha256-8b1a9bd14756fa029851840aea8b383932f591b560976c2ff2c1e937d3001bae"
+      "hash": "sha256-5f0edb25e425bad09826ca549009f6c627cea8bb98c6b12df851057c83532846"
     },
     {
       "name": "scene-vad",
@@ -6972,8 +7401,8 @@
         },
         {
           "path": "packages/scenes/vad/model.js",
-          "bytes": 11629,
-          "hash": "sha256-e1f97432186590ffcb65ed6413eacde2f95ba37524734d1b4a8ae877ff0bb06f"
+          "bytes": 11754,
+          "hash": "sha256-88e7948ea3c7e176429351461c9476511fd9b34afdd2f4796935054580eaee4f"
         },
         {
           "path": "packages/scenes/vad/render.js",
@@ -7011,10 +7440,10 @@
         "jsBytes": 40960
       },
       "prompt": "packages/scenes/vad/vad.prompt.md",
-      "bytes": 43075,
-      "jsBytes": 36260,
+      "bytes": 43200,
+      "jsBytes": 36385,
       "codeBytes": 29655,
-      "hash": "sha256-9a84ce8569d3919ba309ee9bbc4ae6bfb1e960a7816e0995ac5e5956c26a8aeb"
+      "hash": "sha256-920e38ca1ce8003694bb1357ad996f20c010328d63cb94fe46174be6eef864b3"
     },
     {
       "name": "scene-vahi",
@@ -7037,8 +7466,8 @@
         },
         {
           "path": "packages/scenes/vahi/model.js",
-          "bytes": 10511,
-          "hash": "sha256-3ab1dd2012f1b8d5c3bdd07091ccfa42d81f019454b03073588a8e0cb54ca6a2"
+          "bytes": 10636,
+          "hash": "sha256-b29d5b8f156e860adc1a6149701929948477dab31c740672746b1aa0446dfb22"
         },
         {
           "path": "packages/scenes/vahi/render.js",
@@ -7075,10 +7504,10 @@
         "reason": "four kinds of paper, the book that closes, a pen, a clip and a string, each painted by hand in ink and in hairline"
       },
       "prompt": "packages/scenes/vahi/vahi.prompt.md",
-      "bytes": 63859,
-      "jsBytes": 58122,
+      "bytes": 63984,
+      "jsBytes": 58247,
       "codeBytes": 50546,
-      "hash": "sha256-da4b74a080020d19102cc0e049d9c582529d2b8ba968a2e730cdd7cbb90aacc2"
+      "hash": "sha256-64d3e71603346edc4ed04311f9a95787aa0893fcae05bce388576c31443f988d"
     },
     {
       "name": "scene-vel",
@@ -7229,6 +7658,10 @@
         "packages/scenes/veranda/index.js"
       ],
       "firstSightBytes": 58634,
+      "checkDeps": [
+        "depth-photo",
+        "veranda-stage"
+      ],
       "hash": "sha256-2c6489312994ceca85a4d3b3c2fba510f4bfa4d70958cf3c8d1599795deb77e7"
     },
     {
@@ -7305,6 +7738,9 @@
       "bytes": 25687,
       "jsBytes": 9679,
       "codeBytes": 4321,
+      "checkDeps": [
+        "scene-paus"
+      ],
       "hash": "sha256-c907b04a270f9ef4254c4d096b30214eb2039c9f72dd3a5fa30fbeac549675c4"
     },
     {
@@ -7323,8 +7759,8 @@
         },
         {
           "path": "packages/components/select/select.docs.md",
-          "bytes": 10297,
-          "hash": "sha256-8ef1da48da60e22b63e1edc924e163bd8983d3754ddf9c146498b409acd0b1f4"
+          "bytes": 10357,
+          "hash": "sha256-be50f0ae7b62bbbf8cb994c2c622ce3398c17e2b265ed6e0ae99b068ded61e31"
         },
         {
           "path": "packages/components/select/select.js",
@@ -7375,10 +7811,10 @@
       },
       "docs": "packages/components/select/select.docs.md",
       "prompt": "packages/components/select/select.prompt.md",
-      "bytes": 29116,
+      "bytes": 29176,
       "jsBytes": 4688,
       "codeBytes": 3161,
-      "hash": "sha256-dcce2f7646ef24743cf37a88249f783812e129c397d736a401f2f011be2d772d"
+      "hash": "sha256-e0d0f29915d37a968547e0ea1adfd541170eaea063460608b96d9309d5c52759"
     },
     {
       "name": "signature",
@@ -7401,8 +7837,8 @@
         },
         {
           "path": "packages/components/signature/signature.docs.md",
-          "bytes": 12948,
-          "hash": "sha256-e1456287993f4611e949151ca44c9a523dd11239f643d8684df25dda812c72cc"
+          "bytes": 13007,
+          "hash": "sha256-c69108a8a01091d0803b92fccfcc02420ac8f3aad25bce3d2a3e7ffc7267339a"
         },
         {
           "path": "packages/components/signature/signature.js",
@@ -7462,10 +7898,10 @@
       },
       "docs": "packages/components/signature/signature.docs.md",
       "prompt": "packages/components/signature/signature.prompt.md",
-      "bytes": 48091,
+      "bytes": 48150,
       "jsBytes": 25117,
       "codeBytes": 18931,
-      "hash": "sha256-b762d41f3850934afc92c7c5aaee7a65082d1b5a2260cce9a269ba2b9286d872"
+      "hash": "sha256-b6079ea8be22a94fb2b7e1ae1c2f9380532fb213c0916006661dab46975582a4"
     },
     {
       "name": "site-footer",
@@ -7565,8 +8001,8 @@
         },
         {
           "path": "packages/components/site-nav/site-nav.docs.md",
-          "bytes": 7891,
-          "hash": "sha256-25ab5974acaeae319794f81f735a36c3e60a20a36ee5eedc2adcf654452930de"
+          "bytes": 7950,
+          "hash": "sha256-b28569a37b20ed07318b825c400110ea970d5b71f31af949138d440ed86e4a5b"
         },
         {
           "path": "packages/components/site-nav/site-nav.js",
@@ -7616,10 +8052,14 @@
       },
       "docs": "packages/components/site-nav/site-nav.docs.md",
       "prompt": "packages/components/site-nav/site-nav.prompt.md",
-      "bytes": 27338,
+      "bytes": 27397,
       "jsBytes": 8623,
       "codeBytes": 5858,
-      "hash": "sha256-a9f213fd113e5ce8f8f5af3cc686584373693d6ca7cf667a11a8ac2320533104"
+      "checkDeps": [
+        "badge",
+        "stamp"
+      ],
+      "hash": "sha256-c38efc387472d29fea76bf8b5fc993427bb4ae0190a3a6d9e3e40b6ab8ce6aab"
     },
     {
       "name": "site-shell",
@@ -7632,13 +8072,13 @@
       "files": [
         {
           "path": "packages/recipes/site-shell/index.html",
-          "bytes": 5268,
-          "hash": "sha256-452db290f84f58fd898b33189b023129527f054a32ad53782f9434e74ada3b8d"
+          "bytes": 5454,
+          "hash": "sha256-b71b9a2db4510f026d3b2df3868e9e4d10b4e601947672247c114b150bf1826a"
         },
         {
           "path": "packages/recipes/site-shell/no-js.html",
-          "bytes": 735,
-          "hash": "sha256-cca3062417b519a948bf73a69007cd6affc8087ad26c72deb6bad9fb87811479"
+          "bytes": 806,
+          "hash": "sha256-25e3b1034648589ed104314ffa6b8f5496af5d968bb48a2f9d8c0c2d4eb31bf4"
         },
         {
           "path": "packages/recipes/site-shell/README.md",
@@ -7694,10 +8134,10 @@
       },
       "docs": "packages/recipes/site-shell/README.md",
       "prompt": "packages/recipes/site-shell/recipe.prompt.md",
-      "bytes": 19925,
+      "bytes": 20182,
       "jsBytes": 4144,
       "codeBytes": 2162,
-      "hash": "sha256-d4519811874a217915c1a1bb3ff1eea6da0e94464dc92b63199287742b0c21c4"
+      "hash": "sha256-27e023ece3fa81fd5967c5ceb9e59c5c3b415199a2feae0a372dd340fa82bd2a"
     },
     {
       "name": "skeleton",
@@ -7920,6 +8360,10 @@
       "bytes": 5815,
       "jsBytes": 5815,
       "codeBytes": 3589,
+      "checkDeps": [
+        "scene-rampon",
+        "sound-scape-rampon-koel"
+      ],
       "hash": "sha256-9811071a7f50725cfc0dcdb067376686e33f8e34263504ccf4276589d867406c"
     },
     {
@@ -7958,6 +8402,10 @@
       "bytes": 4615,
       "jsBytes": 4615,
       "codeBytes": 2983,
+      "checkDeps": [
+        "scene-paus",
+        "sound-scape-paus-rain"
+      ],
       "hash": "sha256-e6c998ae353dcf4579c1aab4a91427dee0798ad82843aba20412e1cfa3c842dc"
     },
     {
@@ -7996,8 +8444,8 @@
         },
         {
           "path": "packages/components/sound-switch/sound-switch.docs.md",
-          "bytes": 9877,
-          "hash": "sha256-cf6d219c244bb479969c727bd1cb4406dcfdb27edfe40651760c435a20a56348"
+          "bytes": 9936,
+          "hash": "sha256-b69daed30ee072526dc08aae1f435ea5f37296b08c7b3da8427ee73684b704e5"
         },
         {
           "path": "packages/components/sound-switch/sound-switch.js",
@@ -8031,10 +8479,10 @@
       },
       "docs": "packages/components/sound-switch/sound-switch.docs.md",
       "prompt": "packages/components/sound-switch/sound-switch.prompt.md",
-      "bytes": 28228,
+      "bytes": 28287,
       "jsBytes": 7465,
       "codeBytes": 4537,
-      "hash": "sha256-8aedaaa2912269397ba0b67d5c1929793de5138c1e79c39b703496bafc9301c3"
+      "hash": "sha256-990e723dcc90fd337aa388e4264523e009313a5bcc8af46cf9b80b977f49cb3b"
     },
     {
       "name": "speakers",
@@ -8298,8 +8746,8 @@
         },
         {
           "path": "packages/components/stepper/stepper.docs.md",
-          "bytes": 10140,
-          "hash": "sha256-2f1ebb944029ac455b1d53f90e77519bd50a243294efd2807c0439422fd56161"
+          "bytes": 10366,
+          "hash": "sha256-04b2331581a71b3a149b1afbcbd43ea24f9d3466f2718dab9f992d2ae0b941f3"
         },
         {
           "path": "packages/components/stepper/stepper.js",
@@ -8336,10 +8784,10 @@
       },
       "docs": "packages/components/stepper/stepper.docs.md",
       "prompt": "packages/components/stepper/stepper.prompt.md",
-      "bytes": 36498,
+      "bytes": 36724,
       "jsBytes": 18163,
       "codeBytes": 14304,
-      "hash": "sha256-104da842435994e595cd35c81d4e4370535bb7cefbdf68a06ee3c82b86efd065"
+      "hash": "sha256-995664e5b184f7f0d838d7bdde7ed00052e7208c2642e8ed2a2364a12dd84409"
     },
     {
       "name": "storybook-spread",
@@ -8602,8 +9050,8 @@
         },
         {
           "path": "packages/components/tabs/tabs.docs.md",
-          "bytes": 9122,
-          "hash": "sha256-0d9d313f020095c891fdf800b87979a9202f6ffe8fd86cfe1ed1de49906d6f37"
+          "bytes": 9181,
+          "hash": "sha256-eefc1c3267d16dc33c6c0ef4f1cfd1dea3fd77c259cd6cb23d1cb3033cb5e1d7"
         },
         {
           "path": "packages/components/tabs/tabs.js",
@@ -8638,10 +9086,10 @@
       },
       "docs": "packages/components/tabs/tabs.docs.md",
       "prompt": "packages/components/tabs/tabs.prompt.md",
-      "bytes": 30248,
+      "bytes": 30307,
       "jsBytes": 11601,
       "codeBytes": 7422,
-      "hash": "sha256-a68a3f80059470bec1fdc85b7b312c58fdc6860515284ac0129fbe2e857413ca"
+      "hash": "sha256-295ba55de03a7a2b4ba09491b74e81a8605524c7388b83051b2cd1c54909234a"
     },
     {
       "name": "template-event",
@@ -8654,28 +9102,43 @@
       "files": [
         {
           "path": "packages/templates/event/gom-deva/index.html",
-          "bytes": 23041,
-          "hash": "sha256-d06d5cab5dfb149f1d73fcbb5dca07a31383e7eeda4b11f7c4d57c153ef59b64"
+          "bytes": 28235,
+          "hash": "sha256-7b8c7fa61540edfe4c724d4c56d80ad1923efbcb7c74b7429220f3d7425c146a"
+        },
+        {
+          "path": "packages/templates/event/gom-deva/offline.html",
+          "bytes": 2227,
+          "hash": "sha256-56555867f6d4825f6389d240f45ac548123a66fd03249d638d79b8409dfd20d7"
         },
         {
           "path": "packages/templates/event/gom-latn/index.html",
-          "bytes": 16859,
-          "hash": "sha256-04bc1a025c50f5839c31f5b3c2c9b7e0c0b1369f9d804f2dd84a35cdb7665f37"
+          "bytes": 20624,
+          "hash": "sha256-9045de18b023950ec2e299b883eece2f333df154229e35e7879db219309564d0"
+        },
+        {
+          "path": "packages/templates/event/gom-latn/offline.html",
+          "bytes": 1619,
+          "hash": "sha256-431798b9270a6e798f803227ad5892784dc29709da02b3392c9270df70ab7fbc"
         },
         {
           "path": "packages/templates/event/index.html",
-          "bytes": 16451,
-          "hash": "sha256-7329a50396f537e999a74bd89c305b7d34c725bd0fb14bb8a0ce2ef5ff56c7ca"
+          "bytes": 20114,
+          "hash": "sha256-579fc59291477c62fb7b0ba5ff2f98ef3cfb1d3f295dd69aca0c6953b94d80a2"
         },
         {
           "path": "packages/templates/event/KONKANI-FOR-READER.md",
-          "bytes": 24556,
-          "hash": "sha256-8b1136efffc0fe15a1abe24933ed90bcd11407372e4024ad8b70d3c629b6e13c"
+          "bytes": 37449,
+          "hash": "sha256-6730b2e44248a2c7311bc3217f4302b8c2cdd6f268f55adbbeda9c4200e90130"
         },
         {
           "path": "packages/templates/event/look.js",
           "bytes": 444,
           "hash": "sha256-d7dc4c4225fc72da6548e3a81e2434ea13b4b9967902bf68fed4ef53c47d303d"
+        },
+        {
+          "path": "packages/templates/event/offline.html",
+          "bytes": 1616,
+          "hash": "sha256-6357984e0decb5266989eeddcee94e93ecae2bfe2346c59dfe25a9201ff10170"
         },
         {
           "path": "packages/templates/event/package.json",
@@ -8684,13 +9147,13 @@
         },
         {
           "path": "packages/templates/event/page.js",
-          "bytes": 1259,
-          "hash": "sha256-fd5e6b07992d174b21e7f61bb89577efdc362c2d127adcb023f696408f3069d6"
+          "bytes": 2986,
+          "hash": "sha256-882fda7b009052b2d520f050a8f0b8a811463c0da594a8e72cbcd31cd62fc762"
         },
         {
           "path": "packages/templates/event/pages.mjs",
-          "bytes": 11482,
-          "hash": "sha256-4c17914f143aa06d55524b07009b74d45e4f5743e235f791d28203c6ac60c335"
+          "bytes": 17206,
+          "hash": "sha256-b6761b975cde5a814aca3fd59f49821c82d5b0fe28b5a6e4b56e1a8a5ee5a643"
         },
         {
           "path": "packages/templates/event/posters/hero.avif",
@@ -8709,29 +9172,39 @@
         },
         {
           "path": "packages/templates/event/README.md",
-          "bytes": 7398,
-          "hash": "sha256-34fc24d38da0299934e3160b8fff006ff3b17005c966597deb1a1784adb5e490"
+          "bytes": 10111,
+          "hash": "sha256-efcf531c14c1bca67c6ccda8fce95c6a3d1619b00e5c75eb0cf93068170a11e7"
         },
         {
           "path": "packages/templates/event/site.css",
-          "bytes": 3981,
-          "hash": "sha256-623c70b2d3d2c1afdba2e803d544e3a2d857422fe520be1ce941ff2916ccc516"
+          "bytes": 4872,
+          "hash": "sha256-de800c2efe8503de492c00312bdf14ee8d80e71c0a492defeb974be88893abed"
         },
         {
           "path": "packages/templates/event/strings.js",
-          "bytes": 29057,
-          "hash": "sha256-4432edd8c66dfe18a69b72564e229c352399b16522dd317921a2a785a4d250da"
+          "bytes": 34173,
+          "hash": "sha256-0e25020ba2050b5ba392e8a762e130297e77e02e1fe18d6c46fa4361e95f29bf"
+        },
+        {
+          "path": "packages/templates/event/sw.js",
+          "bytes": 9857,
+          "hash": "sha256-fce9779fc53798ea28beff583456ddabcf9f3bfb59b9e9c706c41211f6302be1"
         }
       ],
       "dependencies": [
         "agenda",
+        "banner",
+        "consent",
+        "core-intl-kok",
         "core-lazy",
         "core-strings",
         "lang",
+        "offline",
         "person-card",
         "scene-pahat",
         "site-footer",
         "speakers",
+        "ticket",
         "tokens",
         "venue"
       ],
@@ -8753,10 +9226,10 @@
         "reason": "Mostly words, not code: strings.js holds the whole page in three languages (about 12 KB in English alone, and Devanagari takes three bytes a letter), plus the optional page writer (pages.mjs). The code is the page script (about 1.6 KB), the look reader and the writer, a few KB between them."
       },
       "docs": "packages/templates/event/README.md",
-      "bytes": 290886,
-      "jsBytes": 42242,
-      "codeBytes": 32495,
-      "hash": "sha256-cc7dfdf35d9be087b785bf3c65fd8d5b5c614e6b26e4263d5a9dfef3bfa9243a"
+      "bytes": 347891,
+      "jsBytes": 64666,
+      "codeBytes": 45658,
+      "hash": "sha256-36ac4290a15126b7b7d80d7aa3c11647920725cfc866a744dbf521e8ca3437f5"
     },
     {
       "name": "three-named",
@@ -8804,6 +9277,110 @@
       "jsBytes": 538931,
       "codeBytes": 538326,
       "hash": "sha256-e372e38b0fd06c8a390d6b72fa4a9b17869260c93ab05a844de03b61778f2abb"
+    },
+    {
+      "name": "ticket",
+      "type": "component",
+      "title": "Ticket",
+      "description": "A registration's ticket: the name, the event, the time in IST (in words, in English or in Konkani), an id made on the visitor's own device (no 0, O, 1, I or L, because it is read aloud at a door), and the id as a QR code with its text beside it; the code holds the id and nothing else, and a test decodes it to prove the picture and the text agree. It can be saved as a PNG through packages/export/png.js, in the page's language and on paper whatever the theme, and the saved picture decodes to the same id. It is kept only on the visitor's device (localStorage, every read and write wrapped; no email address is kept) so it opens again later, offline too. A new ticket ends in one finishing moment kept in its own small file so a shared success moment can take it over: a settle, one sentence said aloud with the id a character at a time, and focus on the heading. Quiet is a hairline card, warm a paper ticket ruled in pencil and torn along a pencil line, playful a ticket with bites and a perforated tear.",
+      "version": "0.1.0",
+      "stability": "experimental",
+      "manifest": "packages/components/ticket/registry.json",
+      "files": [
+        {
+          "path": "packages/components/ticket/skins/playful.js",
+          "bytes": 3866,
+          "hash": "sha256-0c70f8ce9c990ae350c438c8e66bf217c349ad38ccc7f37cb57b7031dd73eabe"
+        },
+        {
+          "path": "packages/components/ticket/skins/quiet.js",
+          "bytes": 170,
+          "hash": "sha256-889a433bd33ea9fbe5baef942a3883f1e1785d71f4883d3afddb98c35404fdb6"
+        },
+        {
+          "path": "packages/components/ticket/skins/warm.js",
+          "bytes": 4611,
+          "hash": "sha256-5c9cb2d2b2f0bab75f32c315b8595ae867b4946fe394d82756ca72a369bd1522"
+        },
+        {
+          "path": "packages/components/ticket/ticket.core.js",
+          "bytes": 8102,
+          "hash": "sha256-b65b91490153f7d90bd05c1740877b38e334e3f296f9cced11bbaae404e6aaf1"
+        },
+        {
+          "path": "packages/components/ticket/ticket.css",
+          "bytes": 8377,
+          "hash": "sha256-a3443e0d882615e8eb1087456e8de4c8ca967dd48596f58bb415a37d9611c3e5"
+        },
+        {
+          "path": "packages/components/ticket/ticket.docs.md",
+          "bytes": 18330,
+          "hash": "sha256-e9619f3ab59d32b42fb54244ddd3661a1f193a0134a9f8d96c0262ce825dce88"
+        },
+        {
+          "path": "packages/components/ticket/ticket.finish.js",
+          "bytes": 1838,
+          "hash": "sha256-f2f7fccf1d19d542b13715af1c744f565d51c2bd12a2d0921a5ea55366230e3b"
+        },
+        {
+          "path": "packages/components/ticket/ticket.js",
+          "bytes": 9292,
+          "hash": "sha256-bd7b26e190067060372ec6810c6465c7e4daa51019240a34fcb27b989ca6e15a"
+        },
+        {
+          "path": "packages/components/ticket/ticket.png.js",
+          "bytes": 6136,
+          "hash": "sha256-3e45552468851fc477e971f3b3945e7b7a616fea1640f4db80a6d0ab4869b66e"
+        },
+        {
+          "path": "packages/components/ticket/ticket.prompt.md",
+          "bytes": 5385,
+          "hash": "sha256-9667232031659014aac5e2bf269d67e4b06bcff035ef6d65594004cd78da7b8b"
+        },
+        {
+          "path": "packages/components/ticket/ticket.strings.js",
+          "bytes": 5419,
+          "hash": "sha256-6f4b617a459039732e371c027547454719d6c1ad7d2252ac551c78b892fb2e1d"
+        }
+      ],
+      "dependencies": [
+        "core",
+        "core-announce",
+        "core-component",
+        "core-intl",
+        "core-intl-kok",
+        "core-strings",
+        "export",
+        "qr",
+        "sound",
+        "tokens"
+      ],
+      "registers": [
+        "quiet",
+        "warm",
+        "playful"
+      ],
+      "useFor": [
+        "confirmation",
+        "event",
+        "registration",
+        "ticket"
+      ],
+      "motif": {
+        "origin": "none",
+        "tier": "everyday",
+        "gloss": "No cultural motif: a ticket and its stub, with nothing drawn from a tradition."
+      },
+      "budget": {
+        "jsBytes": 45056,
+        "reason": "Decision 0009: the element and its pure core (the id, the record, the words and the time in three languages, storage that never throws), the picture maker (ticket.png.js), the finishing moment (ticket.finish.js), the strings in three languages (Devanagari costs three bytes a letter) and a skin per register. The QR, the PNG export and the sound are the qr, export and sound pieces, counted with theirs. 39.4 KB today with comments (raised from 40 KB to 44 KB on 8 October 2026 for the event id, the expiry and the Forget button), about 11% to spare."
+      },
+      "docs": "packages/components/ticket/ticket.docs.md",
+      "prompt": "packages/components/ticket/ticket.prompt.md",
+      "bytes": 71526,
+      "jsBytes": 39434,
+      "codeBytes": 25470,
+      "hash": "sha256-119a9afe4129a5c1f51f928eaadbde8c520d4f38fd5674001d93a3f428c58c98"
     },
     {
       "name": "tile-band",
@@ -9241,28 +9818,28 @@
         },
         {
           "path": "packages/components/tooltip/tooltip.core.js",
-          "bytes": 2043,
-          "hash": "sha256-89a0d7c78b20346cd4ad9814161767008a1408e9e370604ac12058e6570e8267"
+          "bytes": 4496,
+          "hash": "sha256-fa60ef16c1669254ef4f0a7051c07c5b67a2f9aa5a184851f221428c1b7d10d1"
         },
         {
           "path": "packages/components/tooltip/tooltip.css",
-          "bytes": 7112,
-          "hash": "sha256-e9dd7743b0811a7cf19e3f76cb5871948bb1076f818f7cad12dbc46969055b0e"
+          "bytes": 8270,
+          "hash": "sha256-447431a62c31d1f3c54715f5e4e7e45455427ae8cdd638a9a5fdc77a78b2f0cc"
         },
         {
           "path": "packages/components/tooltip/tooltip.docs.md",
-          "bytes": 11264,
-          "hash": "sha256-574e4a2fa637cca22fc58bdc88503dd040b49ed908c8c5b47c8c44a9a22a9b50"
+          "bytes": 13606,
+          "hash": "sha256-bfe8cd2633970a061cc099aad40fb406ccb4934f8dab4eac02fe45b940a27562"
         },
         {
           "path": "packages/components/tooltip/tooltip.js",
-          "bytes": 7932,
-          "hash": "sha256-ce0b1fdcd6fc5b8377d4409e0718e46ea3ea9309bb9ea96f67387e61a3af35da"
+          "bytes": 12148,
+          "hash": "sha256-7b1c3b0f1b2826166f34f8b44e04fad11c5f808f7a3282ec127e14275bc50c29"
         },
         {
           "path": "packages/components/tooltip/tooltip.prompt.md",
-          "bytes": 6014,
-          "hash": "sha256-23d6aaa5d5932438dd91e5181a8e64d536e986758dbea70934588c9b8470d42d"
+          "bytes": 6456,
+          "hash": "sha256-1fc15ac404fab81eef8af6e153098e9d5cdb74246123fa020fa03a213487800c"
         }
       ],
       "dependencies": [
@@ -9286,10 +9863,13 @@
       },
       "docs": "packages/components/tooltip/tooltip.docs.md",
       "prompt": "packages/components/tooltip/tooltip.prompt.md",
-      "bytes": 35011,
-      "jsBytes": 10621,
-      "codeBytes": 6377,
-      "hash": "sha256-affe7ae1514b5ade19accd0256bf152a65d447d8409a62a2dfc1f05e4cd44483"
+      "bytes": 45622,
+      "jsBytes": 17290,
+      "codeBytes": 9675,
+      "checkDeps": [
+        "button"
+      ],
+      "hash": "sha256-7f824d6879a2484d192d00f473b0e123528dea30dec559b4acc8e0a8199aee9c"
     },
     {
       "name": "transitions",
@@ -9312,8 +9892,8 @@
         },
         {
           "path": "packages/transitions/page.docs.md",
-          "bytes": 3710,
-          "hash": "sha256-2d3c62200d5d1cce2d99217b75fcece3cd74e361d6002d3804a3138b379cb518"
+          "bytes": 5218,
+          "hash": "sha256-e020f0d09baa5a5cc2f425e876bf356c432d9365c660a092a66dffc3dd9e36ce"
         },
         {
           "path": "packages/transitions/page.js",
@@ -9322,8 +9902,8 @@
         },
         {
           "path": "packages/transitions/page.prompt.md",
-          "bytes": 3822,
-          "hash": "sha256-86d90256111ca5ac1aeab1281c4aa83119a04843526a349ae088a134da6f85ee"
+          "bytes": 3888,
+          "hash": "sha256-84624e717cce7ae6630d2baacb301952768fc69468c6b20e541cb860ad70f271"
         }
       ],
       "dependencies": [
@@ -9341,10 +9921,10 @@
       },
       "docs": "packages/transitions/page.docs.md",
       "prompt": "packages/transitions/page.prompt.md",
-      "bytes": 12341,
+      "bytes": 13915,
       "jsBytes": 3090,
       "codeBytes": 764,
-      "hash": "sha256-b47214b74242144a732f5694b31bf6e34bf84c9443054687e44e646538c4c23f"
+      "hash": "sha256-fe0163fa4597b3ac7e6e3a14bf206e0414a8eac7b4e07e3b3c08b8e722298c83"
     },
     {
       "name": "tumble",
@@ -9512,8 +10092,8 @@
         },
         {
           "path": "packages/type/README.md",
-          "bytes": 21239,
-          "hash": "sha256-568a291074281be8588ae325af655e521c610c5ce9c6e879a805c3cd8c8c0d41"
+          "bytes": 21156,
+          "hash": "sha256-53ec271037a3c74da6099d219248c74d6ca60a1feba69505807925daf2e305dc"
         },
         {
           "path": "packages/type/stacks.js",
@@ -9540,10 +10120,10 @@
         "reason": "The oracle door for pages without a usable OffscreenCanvas (Safari before 17: a detached DOM canvas stand-in, NoMeasuringCanvas) raises it from 57344 to 61440 (57798 raw JS bytes on 9 October), under the owner's flexible-budgets ruling; to be optimized later. Rung 3 (shapes as data and text zones: ellipse, polygon, shapeOf, boundsOf, layZones, about 10 KB with their comments) raises it from 49152 to 57344; to be optimized later. On the tree merged with the text gate (stacks.js) the item counts 53932 raw JS bytes of 10 files (29172 of code), 94 percent of the budget. Before that: A pure layout core (layout.core.js), the oracle boundary (measure.js) and the DOM edge (lines, junctions and surfaces), budgeted apart from Pretext's own bytes (decisions 0010 and 0019); the raise to 49152 is the pure named operators (layout.operators.js, 12 KB) with generous headroom while the foundations go in, a shared core budgeted apart like the first (decisions 0010 and 0029); to be optimized later."
       },
       "docs": "packages/type/README.md",
-      "bytes": 80190,
+      "bytes": 80107,
       "jsBytes": 58951,
       "codeBytes": 31536,
-      "hash": "sha256-c1b2944e84f6aec4ed83ab1305d9173747076145ba60f0857a586912b80db33b"
+      "hash": "sha256-201e950d95afea0368c8c313ab842fe595033503d989fde3278fd9d5594cb926"
     },
     {
       "name": "venue",
@@ -9630,8 +10210,8 @@
         },
         {
           "path": "packages/scenes/veranda/pot-breaks.core.js",
-          "bytes": 9773,
-          "hash": "sha256-8d4ac5d749e26e024e1b5ff7c05ac84b9211f8ae64de11ebe6a1ba4429618ecf"
+          "bytes": 9786,
+          "hash": "sha256-e06a31cd143b7cdccdb68cbc173b08f352d64d96fea90563b27393ab2f44cbbd"
         },
         {
           "path": "packages/scenes/veranda/stage-element.js",
@@ -9676,10 +10256,10 @@
       },
       "docs": "packages/scenes/veranda/veranda-stage.docs.md",
       "prompt": "packages/scenes/veranda/veranda-stage.prompt.md",
-      "bytes": 131244,
-      "jsBytes": 115455,
+      "bytes": 131257,
+      "jsBytes": 115468,
       "codeBytes": 76942,
-      "hash": "sha256-30ed01dcde831326512e1b44895392b0fed6a42d9bd59f086d0558c880f55389"
+      "hash": "sha256-af5e0a7bf75701aa6a70cedb654f65dcf7262b34b97fcc5fe94494e4824e2caa"
     },
     {
       "name": "voice-note",
@@ -9727,13 +10307,13 @@
         },
         {
           "path": "packages/components/voice-note/voice-note.docs.md",
-          "bytes": 10320,
-          "hash": "sha256-9845472e0c2766812ea3836c47eddb866ef5357ed1990cfd79349cb717101b9e"
+          "bytes": 10379,
+          "hash": "sha256-f59835c7f21aaf6529658732ab30a4d32af5b42364f675224c2b7880cf0f6ae9"
         },
         {
           "path": "packages/components/voice-note/voice-note.js",
-          "bytes": 5846,
-          "hash": "sha256-b5340bd4effc75a72a9893c8aa5f1ae826f6a9e1e7127390601d31870c91e466"
+          "bytes": 7056,
+          "hash": "sha256-540d2febf3466e77d8f97dd258c95f952983b154f79edfa9397e7c40132ee133"
         },
         {
           "path": "packages/components/voice-note/voice-note.prompt.md",
@@ -9765,10 +10345,14 @@
       },
       "docs": "packages/components/voice-note/voice-note.docs.md",
       "prompt": "packages/components/voice-note/voice-note.prompt.md",
-      "bytes": 36943,
-      "jsBytes": 17082,
-      "codeBytes": 12334,
-      "hash": "sha256-32f0099a4f14f3cfc0c72c950ccf37b8d87674c6b3bbfa7a48455f380a88c134"
+      "bytes": 38212,
+      "jsBytes": 18292,
+      "codeBytes": 12905,
+      "checkDeps": [
+        "chat-thread",
+        "storybook-spread"
+      ],
+      "hash": "sha256-65b9284fe53c09dd76f2ac7bce2f7128342ab72e51a40e51766d745e18146c4c"
     },
     {
       "name": "wa-order",
@@ -9806,13 +10390,13 @@
         },
         {
           "path": "packages/components/wa-order/wa-order.docs.md",
-          "bytes": 14561,
-          "hash": "sha256-33e5cf51ac56a7eb476929dc68f12cd77c1c26938a2c3893c95d1412471f741e"
+          "bytes": 14620,
+          "hash": "sha256-bdbd68eff82455c4e1c3681a18574f0779082edf2f240a4c415523b5d9cbcfe4"
         },
         {
           "path": "packages/components/wa-order/wa-order.js",
-          "bytes": 14017,
-          "hash": "sha256-2b898f03c9aea72316ea4b75e3992b0f61513557945e559e0fe209ea22d52ad8"
+          "bytes": 14228,
+          "hash": "sha256-b825f211eb62fabeb0d975822d5579b577550f2360f5824507c1fe113e263916"
         },
         {
           "path": "packages/components/wa-order/wa-order.prompt.md",
@@ -9846,10 +10430,10 @@
       },
       "docs": "packages/components/wa-order/wa-order.docs.md",
       "prompt": "packages/components/wa-order/wa-order.prompt.md",
-      "bytes": 63332,
-      "jsBytes": 30003,
-      "codeBytes": 22318,
-      "hash": "sha256-1cc63c0a90f80ec694ba70ff98b82f82a72f3a577771b977219b78db1fd9195f"
+      "bytes": 63602,
+      "jsBytes": 30214,
+      "codeBytes": 22403,
+      "hash": "sha256-17e4e17db4825e1202585189d61f9624af726f7452d21cd5d4005c583b5cdd28"
     }
   ]
 }

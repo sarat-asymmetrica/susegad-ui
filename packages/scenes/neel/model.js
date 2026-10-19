@@ -248,6 +248,7 @@ export function pressAt(seed, count, x, y) {
  * The per-frame description: the plan, and the printer's own clock (scene
  * time scaled by the register's pace). With progress set, exactly that share
  * of the impressions is down, the block is home, and the scene rests.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
  */
 export function model({ time = 0, seed = 1, register = 'warm', params = {} } = {}) {
   const look = LOOKS[register] || LOOKS.warm;

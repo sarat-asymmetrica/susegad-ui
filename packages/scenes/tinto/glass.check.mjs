@@ -31,9 +31,11 @@
 
 import { readFileSync } from 'node:fs';
 import { harness } from '../../../tools/lib/component-check.mjs';
-import { contextOptions } from '../../../tools/lib/engine.mjs';
+import { contextOptions, grantsPermission, unsupportedIn } from '../../../tools/lib/engine.mjs';
 import { room, offsetOf, placeOf, STEP, BIG_STEP } from '../../core/movable.core.js';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
+import { loaded, stable } from '../../../tools/lib/wait.mjs';
+import { frames as stepFrames, openStepped, until, untilFrozen } from '../../../tools/lib/virtual-time.mjs';
 
 const h = await harness();
 const { check, browser, server, engine } = h;
@@ -44,36 +46,71 @@ const want = n => !process.env.GATE || process.env.GATE.split(',').includes(n); 
 const PLACES = [[1, 0], [0.5, 0.5], [0.12, 0.95]]; // the top right, the middle, the bottom left
 
 /**
- * Open `path` in a fresh context. `patch` maps a repo path to [from, to] pairs and `raw` a repo path to a whole
- * replacement body; the page gets those instead of the real files.
+ * Open `path` in a fresh context, on virtual frames (tools/lib/virtual-time.mjs): the scene's time is stepped, not waited
+ * for, and `wait: 'frozen'` steps to the frame that freezes the harness clock. `patch` maps a repo path to [from, to] pairs
+ * and `raw` a repo path to a whole replacement body; the page gets those instead of the real files. `real: true` keeps the
+ * real clock, for what watches the network (which files the page asks for, the requests that leave it) and for axe.
  */
-async function openAt(path, { width = 1280, height = 900, reduced = false, patch = {}, raw = {}, requests = null, root = null, wait = 'ready' } = {}) {
-  const errors = [];
-  const ctx = await browser.newContext(contextOptions(engine, { viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference', permissions: ['clipboard-read', 'clipboard-write'] }));
-  const serve = (file, body) => ctx.route(`**/${file}*`, r => r.fulfill({ contentType: file.endsWith('.css') ? 'text/css' : file.endsWith('.html') ? 'text/html; charset=utf-8' : 'text/javascript; charset=utf-8', body }));
+async function openAt(path, { width = 1280, height = 900, reduced = false, patch = {}, raw = {}, requests = null, root = null, wait = 'ready', real = false } = {}) {
+  const routes = [];
+  const serve = (file, body) => routes.push([`**/${file}*`, r => r.fulfill({ contentType: file.endsWith('.css') ? 'text/css' : file.endsWith('.html') ? 'text/html; charset=utf-8' : 'text/javascript; charset=utf-8', body })]);
   for (const [file, pairs] of Object.entries(patch)) {
     let body = src(file);
     for (const [from, to] of pairs) {
       if (!body.includes(from)) throw new Error(`patch for ${file} did not apply: ${from}`);
       body = body.replace(from, to);
     }
-    await serve(file, body);
+    serve(file, body);
   }
-  for (const [file, body] of Object.entries(raw)) await serve(file, body);
-  if (requests) ctx.on('request', r => requests.push(r.url()));
+  for (const [file, body] of Object.entries(raw)) serve(file, body);
+  const permissions = ['clipboard-read', 'clipboard-write'];
+  const setup = async ctx => {
+    if (requests) ctx.on('request', r => requests.push(r.url()));
+    if (root) await ctx.addInitScript(r => { document.addEventListener('DOMContentLoaded', () => { document.documentElement.style.fontSize = r; }); }, root);
+  };
+  if (!real) {
+    const o = await openStepped(h, path, { reduced, routes, setup, ms: 40000, view: { viewport: { width, height }, permissions } });
+    if (wait === 'frozen' && !(await untilFrozen(o.page, { ms: 60000 }))) o.errors.push('never __frozen');
+    return o;
+  }
+  const errors = [];
+  const ctx = await browser.newContext(contextOptions(engine, { viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference', permissions }));
+  for (const [url, handler] of routes) await ctx.route(url, handler);
+  await setup(ctx);
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(String(e)));
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
-  if (root) await page.addInitScript(r => { document.addEventListener('DOMContentLoaded', () => { document.documentElement.style.fontSize = r; }); }, root);
   await page.goto(`${server.url}${path}`);
   const flag = wait === 'frozen' ? '__frozen' : '__ready';
   await page.waitForFunction(f => window[f] === true, flag, { timeout: 40000 }).catch(() => errors.push(`never ${flag}`));
   return { ctx, page, errors };
 }
-const frames = (page, n = 2) => page.evaluate(k => new Promise(r => { const f = i => (i ? requestAnimationFrame(() => f(i - 1)) : r()); f(k); }), n);
+const held = page => page.evaluate(() => window.__tools?.held === true);
+/** n frames: stepped on a held page (n sixtieths of a second of the scene's time), real animation frames otherwise. */
+const frames = async (page, n = 2) => (await held(page))
+  ? stepFrames(page, n)
+  : page.evaluate(k => new Promise(r => { const f = i => (i ? requestAnimationFrame(() => f(i - 1)) : r()); f(k); }), n);
+/** Wait for a page condition: stepped on a held page, polled otherwise. Answers whether it held within `ms`. */
+async function waitFor(page, cond, ms = 15000) {
+  if (await held(page)) return until(page, cond, { ms });
+  return page.waitForFunction(cond, null, { timeout: ms }).then(() => true, () => false);
+}
+/** `stable` (a page value unchanged for n frames in a row), stepped on a held page. */
+async function steady(page, fn, { frames: n = 12, ms = 15000 } = {}) {
+  if (!(await held(page))) return stable(page, fn, { frames: n, ms });
+  const t0 = Date.now();
+  let last, same = 0, v;
+  for (;;) {
+    v = JSON.stringify(await page.evaluate(fn)) ?? 'undefined';
+    if (v === last) same++; else { same = 0; last = v; }
+    if (same >= n) return { ok: true, value: v === 'undefined' ? undefined : JSON.parse(v) };
+    if (Date.now() - t0 > ms) return { ok: false, value: v === 'undefined' ? undefined : JSON.parse(v) };
+    await stepFrames(page, 1);
+  }
+}
 /** Wait until the movable module has attached (the grip exists and is shown), then two frames. */
 async function grown(page) {
-  const ok = await page.waitForFunction(() => { const g = window.__piece?.shadowRoot?.querySelector('.grip'); return !!g && !g.hidden; }, null, { timeout: 15000 }).then(() => true, () => false);
+  const ok = await waitFor(page, () => { const g = window.__piece?.shadowRoot?.querySelector('.grip'); return !!g && !g.hidden; });
   await frames(page);
   return ok;
 }
@@ -87,6 +124,8 @@ const geometry = async page => ({ ...(await page.evaluate(() => {
   const say = [...sr.querySelectorAll('[role=status]')].at(-1)?.textContent ?? '';
   return { stage: box(sr.querySelector('.stage')), panel: box(p), grip: g ? box(g) : null, gripShown: !!g && !g.hidden, transform: p.style.transform, said: say, at: el.wordsAt, stacked: sr.querySelector('.frame').classList.contains('stacked') };
 })), ...await (async () => { const o = await sidewaysScroll(page); return { scrollW: o.scrollWidth, clientW: o.viewWidth }; })() });
+/** The layout, as far as the phone and quiet clauses read it: it has stopped moving when this has not changed for a few frames. */
+const laidOut = () => { const sr = window.__piece.shadowRoot, g = sr.querySelector('.grip'); return [!!g, g && !g.hidden, sr.querySelector('.frame').classList.contains('stacked'), sr.querySelector('.panel').style.transform, document.documentElement.scrollWidth]; };
 /** Where the slotted words really are, in logical units (not what the element says it measured). */
 const wordBoxes = page => page.evaluate(() => {
   const el = window.__piece, s = el.shadowRoot.querySelector('.stage').getBoundingClientRect(), k = 1200 / s.width;
@@ -95,7 +134,7 @@ const wordBoxes = page => page.evaluate(() => {
 /** The canvas at one moment, downsampled 4x. */
 const grab = page => page.evaluate(() => {
   const cv = window.__piece.shadowRoot.querySelector('canvas'), g = cv.getContext('2d'), d = g.getImageData(0, 0, cv.width, cv.height).data;
-  const s = 4, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), out = new Array(w * hh * 3);
+  const s = 4, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), out = new Uint8Array(w * hh * 3);
   for (let y = 0; y < hh; y++) for (let x = 0; x < w; x++) { const i = (y * s * cv.width + x * s) * 4, o = (y * w + x) * 3; out[o] = d[i]; out[o + 1] = d[i + 1]; out[o + 2] = d[i + 2]; }
   return { w, h: hh, kx: 1200 / w, ky: 800 / hh, px: out };
 });
@@ -130,8 +169,10 @@ if (want('1')) {
   // main's core as it stood at 654935d, kept as a file: the public repository has no history to `git show` it from
   const MAIN = (() => { try { return readFileSync(new URL('../../../tools/fixtures/tinto-glass/scene-element.main-654935d.js', import.meta.url), 'utf8'); } catch (e) { return null; } })();
   check('main’s core (654935d) is readable for the pixel comparison', !!MAIN, MAIN ? `${MAIN.length} chars` : 'the fixture file is missing');
+  // On the real clock: a frozen picture compared pixel for pixel is not repeatable on stepped frames in WebKit (1 run in 6 paints
+  // 141 pixels of the canvas differently at the same 4.000 s: the frames race ahead of an async load; Chromium: 6 of 6 equal).
   const shot = async (register, opts) => {
-    const { ctx, page, errors } = await openAt(`${HARNESS}&register=${register}&freeze=4`, { wait: 'frozen', ...opts });
+    const { ctx, page, errors } = await openAt(`${HARNESS}&register=${register}&freeze=4`, { wait: 'frozen', real: true, ...opts });
     const png = await page.locator('#box').screenshot();
     const hasGrip = await page.evaluate(() => !!window.__piece.shadowRoot.querySelector('.grip'));
     await ctx.close();
@@ -163,11 +204,11 @@ if (want('1')) {
     }
   }
   // the module is not even fetched
-  const asked = [], { ctx, page } = await openAt(`${HARNESS}&register=warm`, { requests: asked });
+  const asked = [], { ctx, page } = await openAt(`${HARNESS}&register=warm`, { requests: asked, real: true });
   await frames(page, 4);
   check('without movable, movable.js is never requested', !asked.some(u => /movable/.test(u)), asked.filter(u => /movable/.test(u)).join(', ') || 'no request');
   await ctx.close();
-  const withIt = [], w = await openAt(`${HARNESS}&register=warm&movable=`, { requests: withIt });
+  const withIt = [], w = await openAt(`${HARNESS}&register=warm&movable=`, { requests: withIt, real: true });
   const got = await grown(w.page);
   check('with movable, movable.js is requested and the grip appears', got && withIt.some(u => /movable\.js/.test(u)), `grip shown: ${got}`);
   await w.ctx.close();
@@ -184,7 +225,7 @@ async function roomAt(place, patch = {}) {
     const { ctx, page, errors } = await openAt(`${HARNESS}&register=warm&freeze=${t}&movable=`, { patch });
     const got = await grown(page);
     const d = await dragTo(page, ...place);
-    await page.waitForFunction(() => window.__frozen === true, null, { timeout: 40000 });
+    if (!(await untilFrozen(page, { ms: 60000 }))) shots.errors = [...(shots.errors ?? []), `never frozen at ${t} s`];
     await frames(page, 4);
     shots.push(await grab(page));
     if (t === 4) {
@@ -286,7 +327,7 @@ async function glassContrast(register, theme, place, patch = {}) {
   });
   const worst = [];
   for (let k = 0; k < 3; k++) {
-    await page.waitForTimeout(350);
+    await frames(page, 21); // three readings a stretch of frames apart (21 is 350 ms at 60 a second): the picture behind the glass moves between them
     for (const l of lines.lines) {
       const png = await page.screenshot({ clip: { x: l.x, y: l.y, width: l.w, height: l.h } });
       const r = await page.evaluate(async ([b64, ink]) => {
@@ -338,8 +379,9 @@ if (want('4')) {
 const SHOWS_STACKED = { 'packages/core/movable.js': [["const want = reg !== 'quiet' && !frame.classList.contains('stacked') && !panel.hidden && canMove(r);", "const want = reg !== 'quiet' && !panel.hidden && canMove(r);"]] };
 async function flat(width, height, { root = null, patch = {}, words = '0.5,0.5' } = {}) {
   const { ctx, page, errors } = await openAt(`${GLASS}&register=warm&words=${words}`, { width, height, root, patch });
-  await frames(page, 6);
-  await page.waitForTimeout(600);
+  // the movable module is attached (the grip exists, shown or not) and the layout has held for twelve frames
+  await waitFor(page, () => !!window.__piece?.shadowRoot?.querySelector('.grip'));
+  await steady(page, laidOut, { frames: 12, ms: 15000 });
   const g = await geometry(page);
   const named = await page.getByRole('button', { name: 'Move the words' }).count();
   const wordsSeen = await page.evaluate(vw => { const el = document.getElementById('glass'), b = el.shadowRoot.querySelector('.stage').getBoundingClientRect(); return [...el.children].every(c => { const r = c.getBoundingClientRect(); return r.width > 0 && r.right <= vw + 1 && r.left >= -1; }); }, (await sidewaysScroll(page)).viewWidth);
@@ -361,7 +403,7 @@ async function flat(width, height, { root = null, patch = {}, words = '0.5,0.5' 
   check('200%: on a desktop the words stay inside the picture and nothing scrolls sideways, at 200% browser zoom and at 200% text', [zoom, text].every(r => r.scrollW <= r.clientW && r.wordsSeen), `zoom: scroll ${zoom.scrollW}/${zoom.clientW}, grip ${zoom.gripShown}; text: scroll ${text.scrollW}/${text.clientW}, grip ${text.gripShown}`);
   // quiet never moves
   const q = await openAt(`${GLASS}&register=quiet&words=0.5,0.5`);
-  await frames(q.page, 6); await q.page.waitForTimeout(500);
+  await steady(q.page, laidOut, { frames: 12, ms: 15000 }); // quiet attaches nothing: ready, then the layout holding is all there is to wait for
   const qg = await geometry(q.page);
   check('quiet: no grip, no glass and no transform, whatever words-at says', !qg.gripShown && qg.transform === '' && await q.page.evaluate(() => getComputedStyle(document.getElementById('glass').shadowRoot.querySelector('.panel')).backdropFilter === 'none'), `grip ${qg.gripShown}, transform "${qg.transform}"`);
   await q.ctx.close();
@@ -436,7 +478,9 @@ async function postcard(patch = {}) {
   check('postcard: nothing is announced while the words are dragged, one sg-words-moved when they are let go', p.duringDrag === 0 && p.afterDrop.length === 1 && typeof p.afterDrop[0].x === 'number' && p.afterDrop[0].home === false, `${p.duringDrag} during, ${p.afterDrop.length} after: ${JSON.stringify(p.afterDrop)}`);
   const m = /[?&]words=([\d.]+),([\d.]+)/.exec(p.url);
   check('postcard: the address follows the drop (?words=x,y, comma kept), and matches where the words are', !!m && near(p.dropped, +m[1], +m[2]) && p.afterDrop[0] && Math.abs(p.afterDrop[0].x - +m[1]) < 0.001, `${p.url.replace(/^https?:\/\/[^/]+/, '')} vs ${JSON.stringify(p.dropped)}`);
-  check('postcard: "Copy this view" copies the address as it stands, and says Link copied', p.clip === p.url && p.copied === 'Link copied' && p.href === p.url, `clipboard ${p.clip === p.url ? 'equals the address' : p.clip}; says "${p.copied}"`);
+  const canRead = grantsPermission(engine, 'clipboard-read'); // WebKit and Firefox cannot be granted clipboard-read, so the copy is asked about without reading it back
+  if (!canRead) unsupportedIn(engine, 'reading the clipboard back after "Copy this view"', 'no clipboard-read grant in this engine; the words and the link are still asked'); 
+  check(`postcard: "Copy this view" ${canRead ? 'copies the address as it stands, and' : ''} says Link copied`, (!canRead || p.clip === p.url) && p.copied === 'Link copied' && p.href === p.url, `clipboard ${p.clip === p.url ? 'equals the address' : p.clip}; says "${p.copied}"`);
   check('postcard: a shared link opens with the words where the sender left them, at another width', m && near(p.sharedAt, +m[1], +m[2]), `at ${JSON.stringify(p.sharedAt)} in a 1000 px window`);
   check('postcard: Home takes the place out of the address', !/words=/.test(p.homeUrl), p.homeUrl.replace(/^https?:\/\/[^/]+/, ''));
   check('no console errors (postcard)', !p.errors.length, p.errors.join(' | '));
@@ -448,7 +492,7 @@ async function postcard(patch = {}) {
 // ── axe, and no request leaves the page ───────────────────────────────────────
 for (const register of ['quiet', 'warm', 'playful']) {
   for (const theme of ['light', 'dark']) {
-    const { ctx, page, errors } = await openAt(`${GLASS}&register=${register}&theme=${theme}`);
+    const { ctx, page, errors } = await openAt(`${GLASS}&register=${register}&theme=${theme}`, { real: true });
     if (register !== 'quiet') await grown(page); else await frames(page, 4);
     const v = await h.axe(page);
     check(`axe: glass, ${register}, ${theme}`, v.length === 0, v.join('; ') || '0 violations');
@@ -457,7 +501,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
   }
 }
 {
-  const { ctx, page } = await openAt(`${GLASS}&register=warm&theme=dark&words=0.3,0.3`);
+  const { ctx, page } = await openAt(`${GLASS}&register=warm&theme=dark&words=0.3,0.3`, { real: true });
   await grown(page);
   await page.locator('sg-scene .grip').focus();
   const focusedName = await page.evaluate(() => { let a = document.activeElement; while (a?.shadowRoot?.activeElement) a = a.shadowRoot.activeElement; return a?.getAttribute('aria-label'); });
@@ -467,7 +511,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
   const v2 = await h.axe(page);
   check('axe: glass, warm, dark, after the keys have moved the words', v2.length === 0, v2.join('; ') || '0 violations');
   await ctx.close();
-  const phone = await openAt(`${GLASS}&register=warm`, { width: 390, height: 844 });
+  const phone = await openAt(`${GLASS}&register=warm`, { width: 390, height: 844, real: true });
   await frames(phone.page, 6);
   const v3 = await h.axe(phone.page);
   check('axe: glass, warm, at 390 px', v3.length === 0, v3.join('; ') || '0 violations');
@@ -475,9 +519,9 @@ for (const register of ['quiet', 'warm', 'playful']) {
 }
 {
   const out = new Set();
-  const { ctx, page } = await openAt(`${GLASS}&register=playful`);
+  const { ctx, page } = await openAt(`${GLASS}&register=playful`, { real: true });
   page.on('request', r => { const u = new URL(r.url()); if (!['127.0.0.1', 'localhost'].includes(u.hostname) && u.protocol.startsWith('http')) out.add(u.host); });
-  await page.reload(); await grown(page); await page.waitForTimeout(800);
+  await page.reload(); await grown(page); await loaded(page, { quiet: 800 });
   check('no request leaves the page (glass, playful)', out.size === 0, [...out].join(', ') || 'none');
   await ctx.close();
 }

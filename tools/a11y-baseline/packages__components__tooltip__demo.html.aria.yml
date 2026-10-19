@@ -1,0 +1,11 @@
+- button "Hover this, flush against the top of the page"
+- main:
+  - heading "Tooltip" [level=1]
+  - paragraph:
+  - heading "On a plain button" [level=2]
+  - button "Free cancellation"
+  - heading "In a sentence" [level=2]
+  - paragraph:
+    - button "monsoon rate"
+  - heading "In Marathi, Kannada and Konkani" [level=2]
+  - button "मोफत रद्द करणे"

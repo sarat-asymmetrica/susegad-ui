@@ -1,0 +1,152 @@
+- main:
+  - heading "Ticket" [level=1]
+  - paragraph
+  - heading "Make one" [level=2]
+  - paragraph
+  - textbox "Name": Maria Fernandes
+  - button "Register"
+  - button "Forget this ticket"
+  - heading "Three sample sites" [level=2]
+  - paragraph
+  - region "Your ticket":
+    - heading "Your ticket" [level=3]
+    - paragraph
+    - term
+    - definition
+    - term
+    - definition
+    - term
+    - definition:
+    - img "QR code for ticket K7QD-M3PX. It holds the ticket id and nothing else."
+    - paragraph:
+    - paragraph
+    - paragraph
+    - paragraph
+    - button "Save as picture"
+    - button "Forget this ticket"
+    - status
+  - region "Your ticket":
+    - heading "Your ticket" [level=3]
+    - paragraph
+    - term
+    - definition
+    - term
+    - definition
+    - term
+    - definition:
+    - img "QR code for ticket F4ST-2N8W. It holds the ticket id and nothing else."
+    - paragraph:
+    - paragraph
+    - paragraph
+    - paragraph
+    - button "Save as picture"
+    - button "Forget this ticket"
+    - status
+  - region "Your ticket":
+    - heading "Your ticket" [level=3]
+    - paragraph
+    - term
+    - definition
+    - term
+    - definition
+    - term
+    - definition:
+    - img "QR code for ticket T7AT-R9XB. It holds the ticket id and nothing else."
+    - paragraph:
+    - paragraph
+    - paragraph
+    - paragraph
+    - button "Save as picture"
+    - button "Forget this ticket"
+    - status
+  - heading "In Konkani" [level=2]
+  - paragraph
+  - region "तुमचें तिकीट":
+    - heading "तुमचें तिकीट" [level=3]
+    - paragraph
+    - term
+    - definition
+    - term
+    - definition
+    - term
+    - definition:
+    - img "तिकीट K7QD-M3PX खातीर क्यूआर कोड. ताका तिकिटाचो क्रमांक सोडल्यार कांयच ना."
+    - paragraph:
+    - paragraph
+    - paragraph
+    - paragraph
+    - button "चित्र म्हणून सांबाळचें"
+    - button "Forget this ticket"
+    - status
+  - region "Tumchem tikit":
+    - heading "Tumchem tikit" [level=3]
+    - paragraph
+    - term
+    - definition
+    - term
+    - definition
+    - term
+    - definition:
+    - img "Tikit K7QD-M3PX khatir kyuar kod. Taka tikitacho kromank sodlear kainch na."
+    - paragraph:
+    - paragraph
+    - paragraph
+    - paragraph
+    - button "Chitr mhunn sambollchem"
+    - button "Forget this ticket"
+    - status
+  - heading "The three registers, side by side" [level=2]
+  - region "Quiet":
+    - region "Your ticket":
+      - heading "Your ticket" [level=3]
+      - paragraph
+      - term
+      - definition
+      - term
+      - definition
+      - term
+      - definition:
+      - img "QR code for ticket K7QD-M3PX. It holds the ticket id and nothing else."
+      - paragraph:
+      - paragraph
+      - paragraph
+      - paragraph
+      - button "Save as picture"
+      - button "Forget this ticket"
+      - status
+  - region "Warm":
+    - region "Your ticket":
+      - heading "Your ticket" [level=3]
+      - paragraph
+      - term
+      - definition
+      - term
+      - definition
+      - term
+      - definition:
+      - img "QR code for ticket K7QD-M3PX. It holds the ticket id and nothing else."
+      - paragraph:
+      - paragraph
+      - paragraph
+      - paragraph
+      - button "Save as picture"
+      - button "Forget this ticket"
+      - status
+  - region "Playful":
+    - region "Your ticket":
+      - heading "Your ticket" [level=3]
+      - paragraph
+      - term
+      - definition
+      - term
+      - definition
+      - term
+      - definition:
+      - img "QR code for ticket K7QD-M3PX. It holds the ticket id and nothing else."
+      - paragraph:
+      - paragraph
+      - paragraph
+      - paragraph
+      - button "Save as picture"
+      - button "Forget this ticket"
+      - status

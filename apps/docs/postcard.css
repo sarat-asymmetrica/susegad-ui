@@ -1,0 +1,111 @@
+/* The /postcard page: the name field, the scene picker, the live card and the buttons.
+   Colour, type and the register come from docs.css (the --r-* properties) and the tokens; nothing here sets a colour of
+   its own. The card itself is paper and ink, drawn on a canvas, the same in every theme and register. */
+
+.pc { padding-block: 8px clamp(36px, 6vw, 72px); }
+.pc .s-head { max-width: 40rem; }
+
+/* one column on a phone, in reading order: the name, the card under it, the scenes, the buttons, what was said.
+   From 56rem the card sits to the right and stays in view while the rest scrolls. */
+.pc-maker { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; margin-top: 22px; align-items: start; min-width: 0; }
+.pc-maker > * { min-width: 0; }
+@media (min-width: 56rem) {
+  .pc-maker { grid-template-columns: minmax(0, 25rem) minmax(0, 1fr); gap: 22px clamp(28px, 4vw, 56px); }
+  .pc-maker > * { grid-column: 1; }
+  .pc-maker > .pc-preview { grid-column: 2; grid-row: 1 / span 4; position: sticky; top: 20px; }
+}
+
+/* the name */
+.pc-name label, .pc-scenes legend { display: block; padding: 0; font: 600 15px/1.3 var(--body); color: var(--ink); margin: 0 0 7px; }
+.pc-name input {
+  display: block; inline-size: 100%; min-height: 56px; padding: 0 16px; margin: 0;
+  font: 400 20px/1.3 var(--body); color: var(--ink); background: var(--mount);
+  border: var(--r-rule) solid var(--rule-strong); border-radius: 6px;
+}
+.pc-name input::placeholder { color: var(--ink-3); opacity: 1; }
+.pc-hint { margin: 8px 0 0; font-size: 14.5px; line-height: 1.5; color: var(--ink-2); }
+
+/* the card */
+.pc-preview { margin: 0; }
+.pc-preview canvas, .pc-preview img {
+  display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 2;
+  border: 1px solid var(--rule); border-radius: 3px; box-shadow: var(--r-lift);
+  background: #f3ebdc;
+}
+.pc-preview img[hidden] { display: none; }
+
+/* the scenes: a thumbnail each, picked by a native radio, and a button for the next */
+.pc-scenes { border: 0; margin: 0; padding: 0; min-inline-size: 0; }
+.pc-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(6.4rem, 1fr)); gap: 12px 10px; }
+.pc-thumb { position: relative; display: flex; flex-direction: column; gap: 5px; cursor: pointer; min-width: 0; }
+.pc-thumb input { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.pc-thumb-pic {
+  display: block; aspect-ratio: 3 / 2; overflow: hidden; border-radius: 3px; background: color-mix(in oklab, var(--ink) 6%, var(--paper));
+  border: 1px solid var(--rule); outline: 0 solid transparent; outline-offset: 2px;
+  transition: outline-color var(--r-dur), transform var(--r-dur) var(--r-ease);
+}
+.pc-thumb-pic picture { display: block; block-size: 100%; }
+.pc-thumb-pic img { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; }
+.pc-thumb-name { font-size: 13.5px; line-height: 1.3; color: var(--ink-2); }
+.pc-thumb:hover .pc-thumb-pic { transform: translateY(var(--r-lift-hover, -1px)); }
+.pc-thumb input:checked + .pc-thumb-pic { outline: 3px solid var(--ink); border-color: transparent; }
+.pc-thumb input:checked ~ .pc-thumb-name { color: var(--ink); font-weight: 600; }
+.pc-thumb input:focus-visible + .pc-thumb-pic { outline: 3px solid var(--focus); outline-offset: 3px; }
+.pc-thumb input:disabled { cursor: default; }
+.pc-thumb input:disabled ~ * { opacity: 0.6; }
+.pc-another {
+  display: grid; place-items: center; min-height: 48px; padding: 6px; cursor: pointer; text-align: center;
+  font: 500 15px/1.25 var(--body); color: var(--ink); background: transparent;
+  border: 1.5px dashed var(--rule-strong); border-radius: 3px;
+}
+.pc-another:hover { border-style: solid; border-color: var(--ink); }
+.pc-another:disabled { opacity: 0.6; cursor: default; }
+.pc-another:active:not(:disabled) { background: color-mix(in oklab, var(--ink) 10%, transparent); }
+
+/* the buttons: four, two by two, each at least 48 px tall, each named for the file it makes */
+.pc-acts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.pc-btn {
+  min-height: 48px; padding: 8px 12px; cursor: pointer; font: 500 16px/1.2 var(--body); letter-spacing: 0.01em;
+  color: var(--ink); background: transparent; border: var(--r-rule) solid var(--ink); border-radius: var(--r-pill);
+  transition: background-color var(--r-dur), color var(--r-dur), transform var(--r-dur) var(--r-ease);
+}
+.pc-btn-main { background: var(--ink); color: var(--paper); }
+.pc-btn:hover:not(:disabled) { background: var(--ink); color: var(--paper); transform: translateY(var(--r-lift-hover, -1px)); }
+.pc-btn-main:hover:not(:disabled) { background: transparent; color: var(--ink); }
+[data-register="quiet"] .pc-btn-main { background: transparent; color: var(--ink); border-width: 2px; }
+[data-register="quiet"] .pc-btn-main:hover:not(:disabled) { background: var(--ink); color: var(--paper); }
+[data-register="playful"] .pc-btn-main { background: var(--accent-fill); color: var(--on-accent); border-color: var(--accent-fill); }
+[data-register="playful"] .pc-btn-main:hover:not(:disabled) { background: transparent; color: var(--accent); border-color: var(--accent-fill); }
+.pc-btn:disabled { opacity: 0.55; cursor: default; }
+/* a press answers inside one frame (docs/contributing/touch-contract.md) */
+.pc-btn:active:not(:disabled) { transition: none; transform: none; background: color-mix(in oklab, var(--ink) 78%, var(--paper)); color: var(--paper); }
+[data-register="quiet"] .pc-btn:active:not(:disabled) { transform: translateY(1px); }
+[data-register="playful"] .pc-btn:active:not(:disabled) { transform: scale(0.97); background: color-mix(in oklab, var(--accent-fill) 80%, var(--ink)); color: var(--on-accent); }
+
+.pc-progress { display: flex; align-items: center; gap: 12px; }
+.pc-progress[hidden] { display: none; }
+.pc-progress progress { flex: 1; min-width: 0; block-size: 14px; accent-color: var(--accent-fill); }
+.pc-progress .pc-btn { flex: none; min-width: 6.5rem; }
+
+.pc-note { margin: 0; font-size: 14.5px; line-height: 1.5; color: var(--ink-2); }
+.pc-note[hidden] { display: none; }
+.pc-status { margin: 0; min-height: 3.1em; font-size: 15.5px; line-height: 1.5; color: var(--ink); }
+
+/* what the page says under the maker */
+.pc-after { max-width: 40rem; margin-top: clamp(24px, 4vw, 40px); padding-top: 20px; border-top: 1px solid var(--rule); display: grid; gap: 12px; }
+.pc-after p { margin: 0; }
+.pc-privacy { font-size: 17px; color: var(--ink); }
+.pc-own, .pc-about { font-size: 15.5px; color: var(--ink-2); }
+.pc-own a, .pc-about a { color: var(--ink); text-underline-offset: 3px; overflow-wrap: anywhere; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pc-btn, .pc-btn:active, .pc-thumb-pic, .pc-thumb:hover .pc-thumb-pic { transition: none; transform: none; }
+}
+
+/* the page's own title is a little smaller than a section's, so the name field is on the first screen of a phone */
+.pc .s-title { font-size: clamp(34px, 6.5vw, 58px); line-height: 1.08; }
+.pc .lede { font-size: 18px; }
+
+/* press and hold: the finished picture, shown after a save for a phone that downloaded nothing (an in-app browser) */
+.pc-hold-img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 2; margin-top: 10px; border: 1px solid var(--rule); border-radius: 3px; box-shadow: var(--r-lift); background: #f3ebdc; -webkit-touch-callout: default; }
+.pc-hold-img[hidden] { display: none; }

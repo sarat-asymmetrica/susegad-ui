@@ -5,9 +5,10 @@
 //
 //   node packages/components/event-card/event-card.check.mjs
 
-import { harness, settle } from '../../../tools/lib/component-check.mjs';
+import { harness, settle, tabTo } from '../../../tools/lib/component-check.mjs';
 import { contextOptions } from '../../../tools/lib/engine.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
+import { rafs, stable } from '../../../tools/lib/wait.mjs';
 
 const { server, browser, engine, check, open, openHtml, axe, axeNoJs, done } = await harness();
 const DEMO = '/packages/components/event-card/demo.html';
@@ -121,7 +122,7 @@ const read = page => page.evaluate(() => [...document.querySelectorAll('sg-event
 {
   // the timer is paused off screen and the card catches up when it is seen again
   const { ctx, page } = await clockPage(IST('2026-10-04T10:59:59'), PAGE(`<div style="height:3000px"></div>${CARD()}`));
-  await page.waitForTimeout(100);
+  await rafs(page, 3); // the observer has had its first delivery: the card is known to be off screen
   await page.clock.runFor(3 * 3600 * 1000);
   const away = (await read(page))[0].phase;
   await page.evaluate(() => document.querySelector('sg-event-card').scrollIntoView());
@@ -164,18 +165,20 @@ const read = page => page.evaluate(() => [...document.querySelectorAll('sg-event
 }
 
 // ── the keyboard ───────────────────────────────────────────────────────
-async function tabTo(page, sel, max = 12) {
-  for (let i = 0; i < max; i++) {
-    await page.keyboard.press('Tab');
-    if (await page.evaluate(s => document.activeElement?.matches(s), sel)) return i + 1;
-  }
-  return 0;
-}
+// tabTo: Tab as far as the engine can press it (tools/lib/tab.mjs; WebKit leaves links out of the tab order)
 for (const register of ['quiet', 'warm', 'playful']) {
   const { ctx, page } = await clockPage(IST('2026-10-02T10:00'), PAGE(CARD(), { register }));
   const presses = await tabTo(page, 'a.book');
   const ring = await page.evaluate(() => { const s = getComputedStyle(document.activeElement); return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) >= 2; });
   check(`${register}: Tab reaches "Save my seat" (${presses} presses) and it shows a focus ring`, presses > 0 && ring, `presses ${presses}, ring ${ring}`);
+  await ctx.close();
+}
+{
+  // control: the same probe on a booking link taken out of the tab order must read red, in every engine
+  const { ctx, page } = await clockPage(IST('2026-10-02T10:00'), PAGE(CARD()));
+  await page.evaluate(() => { document.querySelector('a.book').tabIndex = -1; });
+  const presses = await tabTo(page, 'a.book', 12);
+  check('control: a booking link with tabindex -1 is not reached by the keyboard probe', presses === 0, `${presses} presses`);
   await ctx.close();
 }
 {
@@ -197,27 +200,29 @@ for (const register of ['quiet', 'warm', 'playful']) {
   const html = PAGE(CARD(), { register: 'playful' });
   const { ctx, page } = await clockPage(IST('2026-10-02T10:00'), html);
   const stub = () => page.evaluate(() => { const s = getComputedStyle(document.querySelector('.sg-event-stub')); return { t: s.transform, tear: document.querySelector('sg-event-card').dataset.tear }; });
+  // the stub's transform has stopped moving: unchanged for four frames once the animations have run out
+  const calm = () => stable(page, () => getComputedStyle(document.querySelector('.sg-event-stub')).transform, { frames: 4 });
   const rest = await stub();
   await page.hover('.sg-event-price');
   await settle(page);
-  await page.waitForTimeout(80);
+  await calm();
   const torn = await stub();
   const loops = await page.evaluate(() => document.getAnimations().filter(a => a.effect?.getComputedTiming().iterations === Infinity).length);
   await page.mouse.move(2, 2);
   await settle(page);
-  await page.waitForTimeout(80);
+  await calm();
   const back = await stub();
   check('playful: at rest the stub is flat; on hover it lifts at the free corner and stays there; off the card it settles back', rest.t === 'none' && torn.t.startsWith('matrix(') && torn.t !== 'none' && back.t === 'none', `${rest.t} | ${torn.t} | ${back.t}`);
   check('playful: nothing loops (no infinite animation)', loops === 0, `${loops}`);
   await tabTo(page, 'a.book');
-  await settle(page); await page.waitForTimeout(80);
+  await settle(page); await calm();
   const focused = await stub();
   check('playful: keyboard focus on the card tears it as well as hover', focused.t.startsWith('matrix('), focused.t);
   await ctx.close();
 
   const r = await clockPage(IST('2026-10-02T10:00'), html, { reduced: true });
   await r.page.hover('.sg-event-price');
-  await settle(r.page); await r.page.waitForTimeout(80);
+  await settle(r.page); await rafs(r.page, 3);
   const still = await r.page.evaluate(() => getComputedStyle(document.querySelector('.sg-event-stub')).transform);
   check('playful with reduced motion: the stub stays flat on hover', still === 'none', still);
   await r.ctx.close();
@@ -225,7 +230,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
   // the tear is a check that can fail: the same probe on the warm skin (which has no tear) must read flat
   const w = await clockPage(IST('2026-10-02T10:00'), PAGE(CARD(), { register: 'warm' }));
   await w.page.hover('.sg-event-price');
-  await settle(w.page); await w.page.waitForTimeout(80);
+  await settle(w.page); await rafs(w.page, 3);
   const warmHover = await w.page.evaluate(() => getComputedStyle(document.querySelector('.sg-event-stub')).transform);
   check('control: the warm ticket does not tear on hover, so the playful probe above can tell them apart', warmHover === 'none', warmHover);
   await w.ctx.close();

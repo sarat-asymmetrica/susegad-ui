@@ -1,0 +1,9 @@
+- main:
+  - heading "Kantar interlude" [level=1]
+  - paragraph
+  - heading "Step 1 of 2" [level=2]
+  - paragraph
+  - button "Confirm and continue"
+  - button "Run again, with a 3s wait"
+  - button "Run again, instant work"
+  - log

@@ -1,0 +1,35 @@
+- main:
+  - heading "Select" [level=1]
+  - paragraph
+  - combobox "Guests":
+    - option "1"
+    - option "2" [selected]
+    - option "3"
+    - option "4"
+  - combobox "Room":
+    - option "Choose a room" [selected]
+    - option "Balcão, with the veranda"
+    - option "Sotão, under the roof"
+    - option "Quintal, by the well"
+  - combobox "How you are arriving"
+  - combobox "Letters from us in":
+    - option "English" [selected]
+    - option "कोंकणी (देवनागरी)"
+    - option "Konknni (Romi)"
+    - option "मराठी"
+    - option "ಕನ್ನಡ"
+  - combobox "Season" [disabled]:
+    - option "Monsoon, June to September" [selected]
+  - paragraph
+  - button "Check the stay"
+  - status
+  - heading "Chosen, and wrong" [level=2]
+  - combobox "Dinner on the first night":
+    - option "No dinner"
+    - option "Chicken xacuti with poee" [selected]
+    - option "Fish curry rice"
+  - combobox "Room for the second night" [invalid]:
+    - option "Choose a room" [selected]
+    - option "Balcão, with the veranda"
+    - option "Sotão, under the roof"
+  - paragraph

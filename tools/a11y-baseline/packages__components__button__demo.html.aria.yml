@@ -1,0 +1,17 @@
+- main:
+  - heading "Button" [level=1]
+  - paragraph
+  - heading "Plain and accent" [level=2]
+  - button "Book now"
+  - button "See the rooms"
+  - link "A link, styled the same":
+    - /url: "#rooms"
+  - button "Disabled" [disabled]
+  - heading "In a form, with a real submit" [level=2]
+  - button "Clear"
+  - button "Send the request"
+  - status
+  - heading "In Marathi, Kannada and Konkani" [level=2]
+  - button "आता बुक करा"
+  - button "ಈಗ ಕಾಯ್ದಿರಿಸಿ"
+  - button "Book atam"

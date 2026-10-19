@@ -1,0 +1,25 @@
+- main:
+  - heading "Makers’ Weekend, Panjim" [level=1]
+  - paragraph
+  - region "The venue":
+    - heading "The venue" [level=2]
+    - paragraph
+    - heading "Finding it" [level=3]
+    - paragraph
+    - paragraph:
+      - link "Open in a web map":
+        - /url: https://www.google.com/maps/search/?api=1&query=15.4989,73.8278
+    - region "Getting there":
+      - heading "Getting there" [level=3]
+      - list:
+        - listitem:
+        - listitem:
+        - listitem:
+    - region "Access":
+      - heading "Access" [level=3]
+      - term
+      - definition
+      - term
+      - definition
+      - term
+      - definition

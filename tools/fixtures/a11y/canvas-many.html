@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A11y fixture: canvas many</title>
+<style>body{margin:0}.stage{position:relative;width:100%;max-width:640px;height:300px}canvas{position:absolute;inset:0;width:100%;height:100%}.words{position:absolute;inset:0;display:grid;grid-template-columns:repeat(10,1fr);grid-auto-rows:30px;margin:0;font:14px sans-serif;color:#fff}.words .last{color:#333}</style>
+</head>
+<body>
+<main>
+<h1>Canvas many</h1>
+<p>One hundred words over one canvas. Only the hundredth cannot be read, so a pass that stops early stays green.</p>
+<div class="stage"><canvas width="640" height="300"></canvas><div class="words"></div></div>
+</main>
+<script>
+const c = document.querySelector('canvas').getContext('2d');
+c.fillStyle = '#222';
+c.fillRect(0, 0, 640, 300);
+const words = document.querySelector('.words');
+for (let i = 1; i <= 100; i++) {
+  const s = document.createElement('span');
+  s.textContent = `word ${i}`;
+  if (i === 100) s.className = 'last';
+  words.append(s);
+}
+</script>
+</body>
+</html>

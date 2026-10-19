@@ -1,0 +1,19 @@
+- main:
+  - heading "Mithagar" [level=1]
+  - paragraph
+  - img "A geometric grid of Goan salt pans at dawn in Ribandar, with shallow brine pools reflecting the sky, crystalline salt crusts, and pyramidal salt heaps."
+  - heading "The White Fields of Ribandar" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Slotted words" [checked]
+  - checkbox "Set progress"
+  - slider "Progress" [disabled]: "0.65"
+  - slider "Time of day": "0"
+  - button "A new morning"
+  - paragraph

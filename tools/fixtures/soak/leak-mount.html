@@ -1,0 +1,11 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soak fixture: leak on mount</title>
+<!-- Must FAIL a playlist soak (red first). Harmless on its own: it only reaches out of its frame, on load, and hands the host
+     its own window and 128 KB, so every mount leaves a document, its nodes and some heap behind after the frame is removed. -->
+<div id="n">leaks on mount</div>
+<script>
+  const host = parent;
+  (host.__mounted ||= []).push(window, Array.from({ length: 16384 }, Math.random));
+</script>

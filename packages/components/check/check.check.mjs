@@ -10,18 +10,15 @@
 // assistive tech, reduced motion adds no animation, forced colours bring back
 // the native checkbox, and the box sits level with Indic labels.
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/check/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, browser, check } = h;
 const demo = `${server.url}/packages/components/check/demo.html`;
 
 // ── no JavaScript ───────────────────────────────────────────────────────────
 {
-  const ctx = await browser.newContext({ javaScriptEnabled: false, reducedMotion: 'reduce' });
+  const ctx = await h.context({ javaScriptEnabled: false, reducedMotion: 'reduce' });
   const p = await ctx.newPage();
   await p.goto(demo);
   const look = await p.evaluate(() => {
@@ -47,7 +44,7 @@ const demo = `${server.url}/packages/components/check/demo.html`;
 
 // ── with JavaScript, every register ─────────────────────────────────────────
 for (const register of ['quiet', 'warm', 'playful']) {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -107,7 +104,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 
 // ── reduced motion: no animation on a tick ──────────────────────────────────
 for (const register of ['warm', 'playful']) {
-  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  const ctx = await h.context({ reducedMotion: 'reduce' });
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=${register}`);
   await p.waitForFunction(() => window.__ready && [...document.querySelectorAll('sg-check')].every(e => e.dataset.skin));
@@ -120,7 +117,7 @@ for (const register of ['warm', 'playful']) {
 
 // ── forced colours: the native checkbox, no drawing ─────────────────────────
 for (const register of ['quiet', 'playful']) {
-  const ctx = await browser.newContext({ forcedColors: 'active' });
+  const ctx = await h.context({ forcedColors: 'active' });
   const p = await ctx.newPage();
   await p.goto(`${demo}?register=${register}`);
   await p.waitForFunction(() => window.__ready);
@@ -137,7 +134,7 @@ for (const register of ['quiet', 'playful']) {
 // The select-all box ticked from script (focus stays on the body) and each child ticked by
 // hand: one complete cue each time the set becomes whole, never two, never on load.
 {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   await ctx.addInitScript(() => {
     localStorage.setItem('sg-sound', '1');
     window.__buzz = 0;
@@ -160,8 +157,4 @@ for (const register of ['quiet', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

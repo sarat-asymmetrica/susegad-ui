@@ -1,0 +1,19 @@
+- main:
+  - heading "Ferry" [level=1]
+  - paragraph
+  - img "How it goes"
+  - button "Pause animation"
+  - status
+  - list:
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - button "Previous step"
+  - button "Next step"
+  - button "No step"

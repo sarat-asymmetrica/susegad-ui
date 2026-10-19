@@ -4,17 +4,14 @@
 //
 //   node packages/player/player.check.mjs
 
-import { pickEngine } from '../../tools/lib/engine.mjs';
-import { startServer } from '../../tools/serve.mjs';
+import { harness } from '../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/player/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked (docs/DEBT.md row 48)" });
+const { server, check } = h;
 const url = `${server.url}/packages/player/demo.html`;
 
 async function open({ noWebgl = false } = {}) {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(String(e)));
@@ -195,7 +192,7 @@ async function open({ noWebgl = false } = {}) {
 
 // ── every register, reduced motion, no console errors ──
 for (const register of ['quiet', 'warm', 'playful']) {
-  const ctx = await browser.newContext({ reducedMotion: register === 'quiet' ? 'reduce' : 'no-preference' });
+  const ctx = await h.context({ reducedMotion: register === 'quiet' ? 'reduce' : 'no-preference' });
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(String(e)));
@@ -210,7 +207,4 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-console.log(`\n${results.filter(r => r.ok).length} of ${results.length} checks pass`);
-if (results.some(r => !r.ok)) process.exit(1);
+await h.done();

@@ -25,18 +25,15 @@
 // release only, never when the camera moves (2), a lens that sets the words in chips (3a), a lens button laid over the words (3b), a pot's
 // pane that keeps its blur while the camera moves (4).
 
-import { chromium } from 'playwright';
-import { startServer } from '../../../tools/serve.mjs';
-import { gpuOf } from '../../../tools/lib/gpu.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
+import { TIMERS_SCRIPT, stable } from '../../../tools/lib/wait.mjs';
 
 const BREAK = process.argv.includes('--break');
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
-const server = await startServer({ quiet: true });
-const browser = await chromium.launch({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] });
+const h = await harness({ args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'], axe: 'not axe-checked anywhere yet: this page is not in tools/smoke.mjs (docs/DEBT.md); this check asks about drawing and layout' });
+const { server, browser, check, results } = h;
 // The stall clause (4) measures GPU raster of two backdrop blurs; on a software renderer (a CI runner, or SG_FORCE_SOFTWARE_GL=1)
 // the CPU rasterises them, so a 250 ms ceiling says nothing about the product. It skips (`skip  <clause>  (no GPU: <renderer>)`, tools/lib/gpu.mjs).
-const gate = await gpuOf(browser);
+const gate = await h.gpu();
 
 const BREAKS = {
   ignoresOthers: [/stage-element\.js$/, s => s.replace('#others() { const flow', '#others() { return []; const flow')],
@@ -47,8 +44,9 @@ const BREAKS = {
 };
 
 async function open({ query = 'register=warm', hash = '#notes=window.1,door.3,lamp.2,pillar.0', patches = [], width = 1280 } = {}) {
-  const context = await browser.newContext({ viewport: { width, height: 900 }, deviceScaleFactor: 1 });
+  const context = await h.context({ viewport: { width, height: 900 }, deviceScaleFactor: 1 });
   const errors = [];
+  await context.addInitScript(TIMERS_SCRIPT); // the stage's debounces and settle timers are what 'at rest' means here
   for (const key of BREAK ? patches : []) {
     const [re, fn] = BREAKS[key];
     await context.route(u => re.test(u.pathname), async r => { const res = await r.fetch(); r.fulfill({ response: res, body: fn(await res.text()) }); });
@@ -59,7 +57,7 @@ async function open({ query = 'register=warm', hash = '#notes=window.1,door.3,la
   await page.goto(`${server.url}/packages/scenes/veranda/words.html?${query}${hash}`);
   await page.waitForFunction(() => window.__ready === true && !!window.__stage.matka?.pose, null, { timeout: 90000 });
   await page.addScriptTag({ content: PROBE });
-  await page.waitForTimeout(1200);
+  await atRest({ page });
   return { context, page, errors };
 }
 
@@ -97,7 +95,9 @@ window.__worst = async () => {
   return { worst: Math.max(0, ...shares), d, at: (r => [Math.round(r.x), Math.round(r.y)])(window.__lines().panel) };
 };`;
 
-const settle = p => p.page.waitForTimeout(900);
+/** At rest: none of the stage's short timers pending and every line box where it was for four frames. A slow machine waits longer, not less. */
+const atRest = async p => { const r = await stable(p.page, () => window.__lines(), { frames: 4, ms: 30000, timers: true }); if (!r.ok) console.log(`     (not at rest after 30 s: ${JSON.stringify(r.value).slice(0, 120)})`); return r; };
+const settle = atRest;
 // the walk's stops for four notes (walkPlan). A person walks in to the last stop, puts the words where they read there (a place at a
 // middle depth that is clear at that stop), and walks back out: what stands in front of the words grows on the way back.
 const DOLLIES = [0.71, 0.41, 0.12];
@@ -118,9 +118,9 @@ async function gather(patches) {
   await p.context.close();
   const q = await open({ patches });
   await q.page.evaluate(() => { window.__stage.depthPhoto.set({ dolly: 1 }); });
-  await q.page.waitForTimeout(900);
+  await atRest(q);
   await q.page.evaluate(() => { const s = window.__stage; window.__frozen = true; s.setAttribute('words-at', '0.4 0.15'); s.paneDepth = 0.45; });
-  await q.page.waitForTimeout(500);
+  await atRest(q);
   const prep = await q.page.evaluate(() => window.__worst());
   for (const dolly of DOLLIES) await state(`the walk at ${dolly.toFixed(2)}`, q, async q => { await q.page.evaluate(d => { window.__frozen = true; window.__stage.depthPhoto.set({ dolly: d }); }, dolly); });
   await q.context.close();
@@ -138,7 +138,9 @@ async function lens(patches) {
   const off = await read(), seen = [];
   for (const mood of ['monsoon', 'dusk']) {
     await p.page.evaluate(m => window.__stage.setAttribute('lens', m), mood);
-    await p.page.waitForTimeout(1300);
+    // the lens is really on (the glass wears it) before the lines are read, or 'in place' would be 'not yet moved'
+    await p.page.waitForFunction(() => window.__stage.pane.classList.contains('lens'), null, { timeout: 30000 }).catch(() => {});
+    await atRest(p);
     const on = await read();
     const same = on.lines.length === off.lines.length && on.lines.every((l, i) => ['x', 'y', 'w', 'h'].every(k => Math.abs(l[k] - off.lines[i][k]) <= 1.5));
     const hit = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
@@ -155,11 +157,14 @@ const detailLens = r => r.seen.map(s => `${s.mood}: ${s.n} of ${s.offN} lines ${
 /** Six seconds of camera movement on the words page, in a fresh context: the longest frame. */
 async function longestFrame(patches) {
   const p = await open({ hash: '', patches });
-  await p.page.evaluate(() => { window.__f = []; let q = -1; const t = n => { if (q >= 0) window.__f.push(n - q); q = n; requestAnimationFrame(t); }; requestAnimationFrame(t); const dp = window.__stage.depthPhoto, t0 = performance.now(); const f = n => { dp.set({ dolly: 0.5 + 0.5 * Math.sin((n - t0) / 1000) }); requestAnimationFrame(f); }; requestAnimationFrame(f); });
+  // sampling, kept: open() used to end with this 1.2 s dwell, and the 1.3 s stall of the plant showed only on a busy machine after it; the page-age wait the review suggested did not bring it back. The clause no longer rests on the stall alone: it reads the cause (backdrop blur on a card while the stage is moving) from the page
+  await p.page.waitForTimeout(1200);
+  await p.page.evaluate(() => { window.__f = []; let q = -1; const t = n => { if (q >= 0) window.__f.push(n - q); q = n; requestAnimationFrame(t); }; requestAnimationFrame(t); const dp = window.__stage.depthPhoto, t0 = performance.now(); window.__mv = { frames: 0, blurred: 0, cards: 0 }; const f = n => { dp.set({ dolly: 0.5 + 0.5 * Math.sin((n - t0) / 1000) }); const st = window.__stage, cs = [...st.querySelectorAll('.flow-card')]; if (st.hasAttribute('data-moving') && cs.length) { window.__mv.frames++; window.__mv.cards = cs.length; if (cs.some(c => { const b = getComputedStyle(c).backdropFilter; return b && b !== 'none'; })) window.__mv.blurred++; } requestAnimationFrame(f); }; requestAnimationFrame(f); });
+  // sampling, kept: six seconds of the real clock are the subject (the longest frame the camera's movement costs); nothing to wait for but the time
   await p.page.waitForTimeout(6500);
-  const worst = await p.page.evaluate(() => Math.max(...window.__f.slice(2)));
+  const worst = await p.page.evaluate(() => Math.max(...window.__f.slice(2))), mv = await p.page.evaluate(() => window.__mv);
   await p.context.close();
-  return Math.round(worst);
+  return { ms: Math.round(worst), ...mv };
 }
 for (const patches of BREAK ? [['ignoresOthers'], ['loadAndReleaseOnly'], ['chips'], ['buttonOver'], ['blurWhileMoving']] : [[]]) {
   const only = patches[0];
@@ -173,7 +178,10 @@ for (const patches of BREAK ? [['ignoresOthers'], ['loadAndReleaseOnly'], ['chip
   if ((!only || only === 'blurWhileMoving') && !gate.skip('no stall while the camera moves with both panes of glass on screen: six seconds of camera movement, three fresh contexts, no frame over 250 ms')) {
     const worst = [];
     for (let k = 0; k < 3; k++) worst.push(await longestFrame(patches));
-    check('no stall while the camera moves with both panes of glass on screen: six seconds of camera movement, three fresh contexts, no frame over 250 ms', worst.every(w => w <= 250), `longest frames ${worst.join(', ')} ms`);
+    // the stall itself is machine-dependent (the plant took 1.3 s frames on a busy machine and 33 ms on a quiet one, base and branch alike), so the clause also reads the cause
+    // from the page: in every frame the stage says it is moving, no flow card may still have a backdrop blur; and the sampler must have seen moving frames with cards (else it measured nothing)
+    const seen = worst.every(w => w.frames > 30 && w.cards > 0);
+    check('no stall while the camera moves with both panes of glass on screen: six seconds of camera movement, three fresh contexts, no frame over 250 ms', seen && worst.every(w => w.ms <= 250 && w.blurred === 0), `longest frames ${worst.map(w => w.ms).join(', ')} ms; moving frames with a blur on a card ${worst.map(w => `${w.blurred} of ${w.frames}`).join(', ')}`);
   }
   if (!only || only === 'chips' || only === 'buttonOver') {
     const r = await lens(patches);
@@ -181,7 +189,5 @@ for (const patches of BREAK ? [['ignoresOthers'], ['loadAndReleaseOnly'], ['chip
   }
 }
 
-await browser.close(); await server.close();
 const failed = results.filter(r => !r.ok).length;
-console.log(`\n${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`);
-process.exit(BREAK ? 0 : failed ? 1 : 0);
+await h.done({ summary: `${gate.finalLine(results.length - failed, results.length)}${BREAK ? ' (--break: the patched builds should FAIL their checks)' : ''}`, expectRed: BREAK, allRed: BREAK });

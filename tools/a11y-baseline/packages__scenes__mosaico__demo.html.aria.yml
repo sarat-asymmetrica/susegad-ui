@@ -1,0 +1,17 @@
+- main:
+  - heading "Mosaico" [level=1]
+  - paragraph
+  - img "An old cement-tile floor seen from above: chalk tiles with oxide-red bands that join into long winding ribbons, ochre dots where four tiles meet, late light falling across it through a barred window, and a small ant on one ribbon."
+  - heading "The balcão" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Words on it" [checked]
+  - button "Lay it again"
+  - button "New floor"
+  - paragraph

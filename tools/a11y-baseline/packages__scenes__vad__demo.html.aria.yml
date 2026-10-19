@@ -1,0 +1,21 @@
+- main:
+  - heading "Vad" [level=1]
+  - paragraph
+  - paragraph:
+    - link "Words in the world":
+      - /url: world.html
+  - img "Setting up your account"
+  - heading "Meet us under the banyan" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Words over the drawing" [checked]
+  - checkbox "Show progress"
+  - slider "Progress" [disabled]: "0.4"
+  - button "A new banyan"
+  - paragraph

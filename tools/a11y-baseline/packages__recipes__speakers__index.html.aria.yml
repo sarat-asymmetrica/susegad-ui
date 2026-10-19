@@ -1,0 +1,69 @@
+- main:
+  - heading "Makers’ Weekend, Panjim" [level=1]
+  - paragraph
+  - region "Speakers":
+    - heading "Speakers" [level=2]
+    - group "Track":
+      - checkbox "AI for Senior Citizens"
+      - checkbox "AI for Kids"
+      - checkbox "Tech for Good"
+      - checkbox "Builders Moving to Goa"
+      - checkbox "Workshops for Founders"
+    - status
+    - list:
+      - listitem:
+        - article "Priyanka Naik":
+          - heading "Priyanka Naik" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - link "A storybook that reads aloud, in Konkani":
+              - /url: ../agenda/index.html#storybook-reader
+      - listitem:
+        - article "Sarita Kamat":
+          - heading "Sarita Kamat" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - link "A voice calendar for people who would rather not look at a screen":
+              - /url: ../agenda/index.html#voice-calendar
+      - listitem:
+        - article "Melwyn Fernandes":
+          - heading "Melwyn Fernandes" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - link "A booking board for the village hall":
+              - /url: ../agenda/index.html#village-hall
+      - listitem:
+        - article "Deepa Shirodkar":
+          - heading "Deepa Shirodkar" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - link "One-page medicine reminders, in Konkani":
+              - /url: ../agenda/index.html#medicine-cards
+      - listitem:
+        - article "Fernanda D’Souza":
+          - heading "Fernanda D’Souza" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - 'link "Workshop: pricing for a one-oven bakery"':
+              - /url: ../agenda/index.html#bakery-pricing
+      - listitem:
+        - article "Aldrich Pinto":
+          - heading "Aldrich Pinto" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - 'link "Moving to Goa as a builder: what actually works"':
+              - /url: ../agenda/index.html#moving-to-goa
+      - listitem:
+        - article "Roque Barros":
+          - heading "Roque Barros" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - link "A tide and catch log the whole family can read":
+              - /url: ../agenda/index.html#tide-log

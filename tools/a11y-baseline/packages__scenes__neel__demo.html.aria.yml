@@ -1,0 +1,18 @@
+- main:
+  - heading "Neel" [level=1]
+  - paragraph
+  - img "Printing your order"
+  - heading "Printed to order" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Words over the cloth" [checked]
+  - checkbox "Show progress"
+  - slider "Progress" [disabled]: "0.4"
+  - button "A new block"
+  - paragraph

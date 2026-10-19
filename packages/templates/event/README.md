@@ -36,9 +36,10 @@ the page, but the scripts are modules and browsers load those only from a server
 | `strings.js` | **Every word**, by language, and the facts the pages share: the day, the sessions and their times, the speakers, the venue's coordinates, the site's address and the look it starts in. |
 | `KONKANI-FOR-READER.md` | Every Konkani key beside its English, with notes, for a native reader to check. |
 | `pages.mjs` | Writes the three pages from `strings.js`. Optional. |
-| `page.js` | The one script on the page: the components, "now on stage", the map links and the Play button. |
+| `page.js` | The one script on the page: the components, "now on stage", the map links, the Play button and the registration form's sample note. |
 | `look.js` | Lets the address pick a look: `?register=warm`, `?theme=dark`. |
 | `site.css` | The page's layout. The pieces bring their own styles. |
+| `sw.js`, `offline.html`, `gom-deva/offline.html`, `gom-latn/offline.html` | The offline worker and the page it shows when there is no connection (written by `pages.mjs`). |
 | `posters/hero.*` | The picture at the top, in three formats. It is the first thing painted. |
 | `susegad/` | The library pieces the page uses, copied by the CLI. They are yours to change; `npx @susegad/cli diff` shows what you changed. |
 | `susegad.json` | What the CLI copied, so it can tell your edits from its own files. |
@@ -56,7 +57,7 @@ The picture has one poster, the scene's own finished still, and there is no sepa
 
 1. Edit `strings.js`. The English is under `'en-IN'`; each Konkani block has the
    same keys.
-2. Run `node pages.mjs` in this folder. It writes the three pages again.
+2. Run `node pages.mjs` in this folder of a site `susegad create` made (it imports `./susegad/...`, so it does not run inside the library repo itself). It writes the three pages again.
 3. `node pages.mjs --check` says whether the pages on disk match `strings.js`.
 
 If you would rather edit the HTML by hand, do, and stop running `pages.mjs`: the
@@ -72,6 +73,33 @@ on purpose, so it cannot be published by mistake. The words the library itself
 shows (the switcher's name, the footer's label) are in
 `susegad/core/strings.table.js`, as a draft that a Konkani reader still has to
 check.
+
+The registration form (`#register`; markup in `pages.mjs`, handler at the end of `page.js`) sends nothing
+to any server. A valid send fires `sg-register` with `{ name, email }`, and `page.js` answers it by
+making the visitor's ticket: an id made on their own device, kept in that device's `localStorage` (the
+name, the event, the time and the id; no email address), and shown above the form as `<sg-ticket>`,
+with the QR code, a Save as picture button and one closing line said aloud. The ticket opens again on
+their next visit, offline too. To register people for real, send `{ name, email }` to your own server in
+that listener, then make the ticket from what it answers (`ticket.issue(name)`).
+
+Beside the fields the form carries the library's consent notice, written for India's DPDP Act in plain
+words. **Get a legal read of that notice before the site goes live.** Its contact, the site's name and
+the complaint line are left as visible [placeholders]: fill them in by adding `contact`, `site` and
+`complain` to `register.consent` in `strings.js`, then run `node pages.mjs`.
+
+**Offline.** `sw.js` is a small service worker that keeps the site's own pages and the files they need,
+and nothing else (decision 0028 in the Susegad UI repo says what, and what never): no response to a
+form, nothing from another address, no personal data. After one visit the pages open again with no
+connection, and a page never visited shows `offline.html` (one for each language, with the words in
+`susegad/recipes/offline/recipe.strings.js`). `pages.mjs` writes `sw.js` and the offline pages; if the
+site is served from a folder, change `SCOPE` in `strings.js`. The worker's version is a content hash of every file the
+worker keeps, computed by `node pages.mjs`: edit a kept file without running it again and returning visitors keep the old file, and `node pages.mjs --check` fails when you forgot. The offline pages say the event page and the ticket still open: keep that true.
+
+The days, months and the times on the Konkani pages come from
+`susegad/core/intl.kok.js`: a time reads "सांजे 7:00" (the part of the day, then the
+clock), a date "शेनवार 21 नोव्हेंबर". The words are the same in every browser. If
+you change the day or the date in `strings.js`, write the Konkani date the way the
+library does (`formatKonkani()` gives it) and run `node pages.mjs`.
 
 Two things are still English on a Konkani page: the words the agenda writes by
 itself ("Now on stage, until 11:15 am", "Next, at 2 pm"). They are marked as

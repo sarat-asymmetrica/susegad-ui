@@ -1,0 +1,27 @@
+/* The offline page. One quiet column that says it is not the visitor's fault, what still works and what has
+   to wait. Tokens only, in every register; nothing moves. The buttons are hidden until retry.js shows them. */
+
+.sg-offline { box-sizing: border-box; max-width: 40rem; margin-inline: auto; padding: var(--sg-space-6) 16px var(--sg-space-6); color: var(--sg-text); font: var(--sg-step-0) / var(--sg-leading-body) var(--sg-font-body); }
+body:has(.sg-offline) { margin: 0; background: var(--sg-surface); }
+.sg-offline h1 { margin: 0 0 var(--sg-space-3); font: 400 var(--sg-step-4) / var(--sg-leading-tight) var(--sg-font-display); }
+.sg-offline-lede { margin: 0 0 var(--sg-space-5); color: var(--sg-text-soft); text-wrap: pretty; }
+.sg-offline-lists { display: grid; gap: var(--sg-space-4); }
+.sg-offline h2 { margin: 0 0 var(--sg-space-2); font: var(--sg-weight-medium) var(--sg-step-0) / 1.3 var(--sg-font-body); }
+.sg-offline ul { margin: 0; padding-inline-start: 1.1rem; display: grid; gap: var(--sg-space-1); }
+.sg-offline-actions { display: flex; flex-wrap: wrap; gap: var(--sg-space-2) var(--sg-space-3); margin: var(--sg-space-5) 0 0; }
+.sg-offline-button { box-sizing: border-box; min-height: 2.75rem; padding-inline: var(--sg-space-4); font: inherit; font-weight: var(--sg-weight-medium); color: var(--sg-on-accent); background: var(--sg-accent); border: var(--sg-stroke) solid var(--sg-accent); border-radius: var(--sg-radius-2); cursor: pointer; }
+.sg-offline-button[hidden] { display: none; }
+.sg-offline-plain { color: var(--sg-accent-text); background: transparent; border-color: var(--sg-accent-text); }
+.sg-offline-button:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+
+/* pressed: down answers in the same frame with no transition; letting go eases back in under 150 ms */
+.sg-offline-button { transition: translate 120ms var(--sg-ease-out, ease-out), scale 120ms var(--sg-ease-out, ease-out), filter 100ms ease-out; }
+.sg-offline-button:active { transition: none; translate: 0 1px; filter: brightness(0.9); }
+:root[data-register="warm"] .sg-offline-button:active { translate: none; filter: brightness(0.82); }
+:root[data-register="playful"] .sg-offline-button { transition-timing-function: ease-out, var(--sg-ease-spring, ease-out), ease-out; }
+:root[data-register="playful"] .sg-offline-button:active { translate: none; scale: 0.97; filter: brightness(0.9); }
+@media (prefers-reduced-motion: reduce) {
+  .sg-offline-button { transition: none; }
+  .sg-offline-button:active { translate: none !important; scale: none !important; filter: brightness(0.82); }
+}
+:root[data-sg-input="key"] .sg-offline-button:active { translate: none !important; scale: none !important; }

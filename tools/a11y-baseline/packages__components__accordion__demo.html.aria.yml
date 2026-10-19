@@ -1,0 +1,44 @@
+- main:
+  - heading "Accordion" [level=1]
+  - paragraph
+  - 'region "Quiet: hairline rules, a thin chevron"':
+    - heading "Quiet: hairline rules, a thin chevron" [level=2]
+    - paragraph
+    - group:
+      - paragraph
+    - group
+    - group
+    - paragraph
+    - group
+    - group
+    - paragraph
+    - group:
+      - paragraph
+    - group
+  - 'region "Warm: the marker in the hand face"':
+    - heading "Warm: the marker in the hand face" [level=2]
+    - paragraph
+    - group
+    - group
+    - group
+    - paragraph
+    - group
+    - group
+    - paragraph
+    - group:
+      - paragraph
+    - group
+  - 'region "Playful: a glyph that flips"':
+    - heading "Playful: a glyph that flips" [level=2]
+    - paragraph
+    - group
+    - group
+    - group
+    - paragraph
+    - group
+    - group
+    - paragraph
+    - group:
+      - paragraph
+    - group
+  - paragraph:

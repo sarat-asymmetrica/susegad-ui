@@ -116,6 +116,11 @@ function snapshot({ props }) {
 }
 
 const frame = page => page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r()))));
+/** A frame for the page to take what was just done to it (a hover, a focus, a media change), then every CSS transition has run out. */
+const calm = async page => {
+  await frame(page);
+  await page.waitForFunction(() => !document.getAnimations().some(a => a instanceof CSSTransition && a.playState === 'running'), null, { timeout: 2500 }).catch(() => {});
+};
 
 /** Press one control and report what answered. */
 async function pressOne(page, n, tag) {
@@ -136,19 +141,31 @@ async function pressOne(page, n, tag) {
   if (!under) return { ok: false, why: 'something else covers the control at its centre, so it cannot be pressed' };
   await page.mouse.move(x, y);
   await target.evaluate(el => el.focus({ preventScroll: true })).catch(() => {});
-  await page.waitForTimeout(120);
+  await frame(page); // the hover and focus styles are applied, and their transitions (if any) have begun
   // hover and focus transitions settle, however slow, so the press is all that changes
   await page.waitForFunction(() => !document.querySelector('[data-touch-host]').getAnimations({ subtree: true }).some(a => a instanceof CSSTransition && a.playState === 'running'), null, { timeout: 2500 }).catch(() => {});
+  // WebKit can come back to a control still "pressed": after an earlier press released away from it, moving the mouse back over
+  // the control finds the whole chain from <html> down matching :active (seen on the good fixture's radio label, the last cell
+  // of a second context). A "before" taken in that state already shows the pressed look, so the press seems to change nothing.
+  // Release the mouse where nothing is, then come back, so the press starts from rest.
+  if (await page.evaluate(() => !!document.querySelector(':active'))) {
+    await page.mouse.move(0, 0); await page.mouse.down(); await page.mouse.up();
+    await page.mouse.move(x, y);
+    await frame(page);
+    await page.waitForFunction(() => !document.querySelector('[data-touch-host]').getAnimations({ subtree: true }).some(a => a instanceof CSSTransition && a.playState === 'running'), null, { timeout: 2500 }).catch(() => {});
+    say('released a stale :active before pressing', n);
+  }
   const before = await page.evaluate(snapshot, { props: WATCHED });
   return { before, x, y };
 }
 
-async function probeComponent(browser, serverUrl, c, problems, notes) {
+async function probeComponent(h, c, problems, notes) {
+  const serverUrl = h.server.url;
   const setup = PROBE_SETUP[c.name];
   const demoUrl = `${serverUrl}/${path.relative(REPO_ROOT, c.dir).replaceAll('\\', '/')}/${setup?.page ?? 'demo.html'}`;
   const results = { press: {}, focus: {}, keys: null };
   for (const register of REGISTERS) {
-    const ctx = await browser.newContext({ viewport: { width: 1100, height: 900 }, reducedMotion: 'no-preference' });
+    const ctx = await h.context({ viewport: { width: 1100, height: 900 }, reducedMotion: 'no-preference' });
     const page = await ctx.newPage();
     const errors = [];
     page.on('pageerror', e => errors.push(String(e)));
@@ -156,10 +173,10 @@ async function probeComponent(browser, serverUrl, c, problems, notes) {
       await page.goto(`${demoUrl}?register=${register}`);
       await page.waitForFunction(() => window.__ready === true, null, { timeout: 8000 });
       await page.waitForFunction(t => [...document.querySelectorAll(t)].every(e => e.dataset.skin || !Object.keys(e.constructor.skins ?? {}).length), c.tag, { timeout: 4000 }).catch(() => {});
-      await page.waitForTimeout(150);
+      await calm(page);
       for (const reduced of [false, true]) {
         await page.emulateMedia({ reducedMotion: reduced ? 'reduce' : 'no-preference' });
-        await page.waitForTimeout(50);
+        await frame(page); // the media change is applied
         if (setup?.script) await page.evaluate(setup.script);
         const picks = await page.evaluate(pickPressables, { tag: c.tag, selector: PRESSABLE });
         const key = `${register}${reduced ? '/reduced' : ''}`;
@@ -215,11 +232,11 @@ async function probeFocus(page, c, problems, results) {
     }, c.tag);
   }
   if (!landed) { results.focus = { skipped: 'Tab never reached a control inside it' }; return; }
-  await page.waitForTimeout(300);
+  await calm(page);
   const withFocus = await page.evaluate(snapshot, { props: WATCHED });
   const ring = await page.evaluate(() => { const a = document.activeElement; const s = getComputedStyle(a); return { outline: s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0, shadow: s.boxShadow !== 'none' }; });
   await page.evaluate(() => document.activeElement.blur());
-  await page.waitForTimeout(300);
+  await calm(page);
   const without = await page.evaluate(snapshot, { props: WATCHED });
   const d = diffSnapshots(without, withFocus);
   results.focus = { focusVisible: landed.focusVisible, ring, changed: d.changed.slice(0, 3) };
@@ -249,30 +266,28 @@ async function probeKeys(page, c, problems, results) {
 
 // ── the runner ──────────────────────────────────────────────────────────────
 
+// The browser probe's one harness (server, engine, slot), made on first use so --static never loads it, and closed once, by done(), at the end.
+let H = null;
+const probeHarness = async () => H ??= await (await import('./lib/component-check.mjs')).harness({
+  axe: "this check measures press, focus and held-key motion on each component's own demo and on deliberately broken fixtures, not accessibility; tools/smoke.mjs axes the registry demo pages once, at 1280 px in the default register and light theme, and the fixtures are in no axe check",
+});
+
 /** @param {string[]} dirs component folders @returns the verdict for each */
 async function run(dirs, { probe }) {
   const comps = dirs.map(d => staticPass(gather(d, path.basename(d))));
-  let browser = null, server = null;
-  if (probe) {
-    const { startServer } = await import('./serve.mjs');
-    const { pickEngine } = await import('./lib/engine.mjs');
-    server = await startServer({ quiet: true });
-    browser = await pickEngine().launch();
-  }
+  const h = probe ? await probeHarness() : null;
   const out = new Array(comps.length);
   const one = async i => {
     const c = comps[i];
     const problems = [...c.problems], notes = [];
     let probed = null;
-    if (c.interactive && probe && c.hasDemo) probed = await probeComponent(browser, server.url, c, problems, notes);
+    if (c.interactive && probe && c.hasDemo) probed = await probeComponent(h, c, problems, notes);
     else if (c.interactive && probe) problems.push('no demo.html to probe');
     out[i] = { name: c.name, tag: c.tag, staticProblems: c.problems, interactive: c.interactive, reasons: c.reasons, excluded: c.excluded, static: c.a, probed, problems, notes };
   };
-  try {
-    let next = 0;
-    const worker = async () => { while (next < comps.length) await one(next++); };
-    await Promise.all(Array.from({ length: probe ? 4 : 1 }, worker));
-  } finally { await browser?.close(); await server?.close(); }
+  let next = 0;
+  const worker = async () => { while (next < comps.length) await one(next++); };
+  await Promise.all(Array.from({ length: probe ? 4 : 1 }, worker));
   return out;
 }
 
@@ -342,4 +357,5 @@ if (!flag('fixtures')) {
   if (sum.failing.length) { exit = 1; console.log(`\n${sum.failing.length} of ${sum.interactive} interactive components miss the touch contract: ${sum.failing.join(', ')}`); }
   else console.log('\nEvery interactive component keeps the touch contract.');
 }
+if (H) await H.done({ summary: exit ? 'touch check: red (the FAIL lines above)' : 'touch check: green', exit });
 process.exit(exit);

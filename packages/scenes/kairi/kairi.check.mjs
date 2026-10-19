@@ -33,7 +33,7 @@ const done = page => page.evaluate(() => window.__piece.shadowRoot.querySelector
 async function grab(page) {
   return page.evaluate(() => {
     const cv = window.__piece.shadowRoot.querySelector('canvas'), g = cv.getContext('2d'), d = g.getImageData(0, 0, cv.width, cv.height).data;
-    const s = 4, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), out = new Array(w * hh * 3);
+    const s = 4, w = Math.floor(cv.width / s), hh = Math.floor(cv.height / s), out = new Uint8Array(w * hh * 3);
     for (let y = 0; y < hh; y++) for (let x = 0; x < w; x++) { const i = (y * s * cv.width + x * s) * 4, o = (y * w + x) * 3; out[o] = d[i]; out[o + 1] = d[i + 1]; out[o + 2] = d[i + 2]; }
     return { w, h: hh, kx: 1200 / w, ky: 760 / hh, px: out };
   });

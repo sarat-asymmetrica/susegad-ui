@@ -1,0 +1,31 @@
+- main:
+  - heading "Vaati" [level=1]
+  - paragraph:
+  - img "Your order"
+  - button "Pause animation"
+  - status
+  - paragraph
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - combobox "Pasta":
+    - option "ravioli" [selected]
+    - option "tortellini"
+    - option "gnocchi"
+    - option "farfalle"
+  - combobox "Sauce":
+    - option "tomato" [selected]
+    - option "pesto"
+    - option "cream"
+    - option "none"
+  - combobox "Topping":
+    - option "cheese" [selected]
+    - option "none"
+  - combobox "Garnish":
+    - option "basil" [selected]
+    - option "none"
+  - checkbox "Show progress"
+  - slider "Order made" [disabled]: "40"
+  - button "Make it again"

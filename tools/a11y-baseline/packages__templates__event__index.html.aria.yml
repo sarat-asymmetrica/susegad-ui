@@ -1,0 +1,196 @@
+- link "Skip to the content":
+  - /url: "#main"
+- region "Announcement":
+  - button "Dismiss this announcement"
+- banner:
+  - paragraph:
+    - link "Mandovi Conclave":
+      - /url: index.html
+  - navigation "Main navigation":
+    - link "Agenda":
+      - /url: "#agenda"
+    - link "Speakers":
+      - /url: "#speakers"
+    - link "Register":
+      - /url: "#register"
+    - link "The venue":
+      - /url: "#venue"
+  - navigation "Language":
+    - list:
+      - listitem:
+        - link "English":
+          - /url: index.html
+      - listitem:
+        - link "कोंकणी":
+          - /url: gom-deva/index.html
+      - listitem:
+        - link "Konknni":
+          - /url: gom-latn/index.html
+- main:
+  - region "AI for public services, in practice":
+    - paragraph
+    - heading "AI for public services, in practice" [level=1]
+    - paragraph
+    - paragraph:
+      - link "See the agenda":
+        - /url: "#agenda"
+      - link "Find the venue":
+        - /url: "#venue"
+    - figure:
+      - img "A desk at dawn in Goa: a laptop and a steel tumbler of tea below a barred window, with palms and a red-tiled house outside."
+      - button "Play the picture"
+  - region "Agenda":
+    - heading "Agenda" [level=2]
+    - paragraph
+    - paragraph
+    - region "Saturday 21 November":
+      - heading "Saturday 21 November" [level=3]:
+      - list:
+        - listitem:
+          - paragraph:
+          - heading "Doors open and registration" [level=4]
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Welcome, and why we are here" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Plain-language forms: a model that rewrites a form for the person filling it" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Reading handwritten records without losing the original" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Tea and a sit down" [level=4]
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "What a model should not decide: human review in benefit claims" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Lunch" [level=4]
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Open tools for a small office: what runs on one laptop" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Konkani on screen and by voice: where we are and what is missing" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "Questions, and closing" [level=4]
+          - paragraph
+          - paragraph
+  - region "Speakers":
+    - heading "Speakers" [level=2]
+    - list:
+      - listitem:
+        - article "Asha Naik":
+          - heading "Asha Naik" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - 'link "Plain-language forms: a model that rewrites a form for the person filling it"':
+              - /url: "#forms"
+      - listitem:
+        - article "Rohan Kamat":
+          - heading "Rohan Kamat" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - link "Reading handwritten records without losing the original":
+              - /url: "#records"
+      - listitem:
+        - article "Sneha Fernandes":
+          - heading "Sneha Fernandes" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - 'link "What a model should not decide: human review in benefit claims"':
+              - /url: "#review"
+      - listitem:
+        - article "Vivek Dessai":
+          - heading "Vivek Dessai" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - 'link "Open tools for a small office: what runs on one laptop"':
+              - /url: "#laptop"
+      - listitem:
+        - article "Maria D’Costa":
+          - heading "Maria D’Costa" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - 'link "Konkani on screen and by voice: where we are and what is missing"':
+              - /url: "#konkani"
+  - region "Register":
+    - heading "Register" [level=2]
+    - paragraph
+    - paragraph:
+      - textbox "Name"
+    - paragraph:
+      - textbox "Email address"
+    - group "What we do with your details":
+      - heading "What we do with your details" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - checkbox "I have read this, and I agree that [site name] may use my details in this way."
+    - paragraph:
+      - button "Register"
+    - status
+  - region "The venue":
+    - heading "The venue" [level=2]
+    - paragraph
+    - heading "Finding it" [level=3]
+    - paragraph
+    - paragraph:
+      - link "Open in a web map":
+        - /url: https://www.google.com/maps/search/?api=1&query=15.4989,73.8278
+    - region "Getting there":
+      - heading "Getting there" [level=3]
+      - list:
+        - listitem:
+        - listitem:
+        - listitem:
+    - region "Access":
+      - heading "Access" [level=3]
+      - term
+      - definition
+      - term
+      - definition
+      - term
+      - definition
+- contentinfo "Site footer":
+  - paragraph
+  - navigation "On this page":
+    - list:
+      - listitem:
+        - link "Agenda":
+          - /url: "#agenda"
+      - listitem:
+        - link "Speakers":
+          - /url: "#speakers"
+      - listitem:
+        - link "The venue":
+          - /url: "#venue"
+      - listitem:
+        - link "Back to the top":
+          - /url: "#main"
+  - paragraph:

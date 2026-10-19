@@ -229,6 +229,9 @@ export const beatOf = progress => lerp(P0, P1, clamp(progress));
  */
 const wrapT = x => { const r = x % T; return r < 0 ? r + T : r; };
 
+/**
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
+ */
 export function model({ time = 0, register = 'warm', params = {} } = {}) {
   const look = LOOKS[register] || LOOKS.warm;
   const held = params.progress != null;

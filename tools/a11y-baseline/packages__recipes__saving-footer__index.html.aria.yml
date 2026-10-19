@@ -1,0 +1,21 @@
+- main:
+  - heading "Saving footer" [level=1]
+  - paragraph
+  - form "Arrival notes for room 3":
+    - textbox "Guest name": Anjali Kamat
+    - textbox "Arriving": Friday, after 4 in the afternoon
+    - textbox "Notes for the house": Two adults and a small child. Please leave a kettle and a cot in the room.
+    - status
+    - button "Save now"
+  - button "Turn the network off"
+  - heading "Every state of the footer" [level=2]
+  - list:
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+    - listitem
+- status
+- alert

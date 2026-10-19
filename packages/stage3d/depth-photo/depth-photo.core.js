@@ -54,7 +54,7 @@ export const SEA_PERIOD = 3.2;
 
 /**
  * Everything a renderer needs for one frame, in one plain object. Pure.
- * @param {object} p params (coerced)
+ * @param {Record<string, any>} p params (coerced)
  * @param {{ register: string, va: number, pa: number, keep: number[], path: number[], pointer?: number[], fovY?: number }} view
  */
 export function frameState(p, { register = 'warm', va, pa, keep = [0.5, 0.5], path, pointer = [0, 0], fovY = 50, overscan = 0.92 }) {

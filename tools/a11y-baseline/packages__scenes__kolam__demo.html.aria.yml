@@ -1,0 +1,17 @@
+- main:
+  - heading "Kolam" [level=1]
+  - paragraph
+  - img "A kolam: one unbroken line looping around a grid of dots"
+  - heading "The door is open" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Show progress"
+  - slider "Progress" [disabled]: "0.4"
+  - button "Draw again"
+  - button "New kolam"

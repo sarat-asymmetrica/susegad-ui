@@ -1,0 +1,103 @@
+- main:
+  - heading "Site footer" [level=1]
+  - paragraph
+  - 'region "Quiet: a ruled footer"':
+    - heading "Quiet: a ruled footer" [level=2]
+    - paragraph
+    - navigation "Footer":
+      - list:
+        - listitem:
+          - link "Work":
+            - /url: "#page"
+        - listitem:
+          - link "Journal":
+            - /url: "#page"
+        - listitem:
+          - link "Workshops":
+            - /url: "#page"
+        - listitem:
+          - link "Visit":
+            - /url: "#page"
+        - listitem:
+          - link "Privacy":
+            - /url: "#page"
+    - paragraph:
+    - paragraph
+    - navigation "Footer":
+      - list:
+        - listitem:
+          - link "Work":
+            - /url: "#page"
+        - listitem:
+          - link "Contact":
+            - /url: "#page"
+    - paragraph:
+    - paragraph
+    - paragraph
+  - 'region "Warm: the hand and a pencil rule"':
+    - heading "Warm: the hand and a pencil rule" [level=2]
+    - paragraph
+    - navigation "Footer":
+      - list:
+        - listitem:
+          - link "Work":
+            - /url: "#page"
+        - listitem:
+          - link "Journal":
+            - /url: "#page"
+        - listitem:
+          - link "Workshops":
+            - /url: "#page"
+        - listitem:
+          - link "Visit":
+            - /url: "#page"
+        - listitem:
+          - link "Privacy":
+            - /url: "#page"
+    - paragraph:
+    - paragraph
+    - navigation "Footer":
+      - list:
+        - listitem:
+          - link "Work":
+            - /url: "#page"
+        - listitem:
+          - link "Contact":
+            - /url: "#page"
+    - paragraph:
+    - paragraph
+    - paragraph
+  - 'region "Playful: stamped chips"':
+    - heading "Playful: stamped chips" [level=2]
+    - paragraph
+    - navigation "Footer":
+      - list:
+        - listitem:
+          - link "Work":
+            - /url: "#page"
+        - listitem:
+          - link "Journal":
+            - /url: "#page"
+        - listitem:
+          - link "Workshops":
+            - /url: "#page"
+        - listitem:
+          - link "Visit":
+            - /url: "#page"
+        - listitem:
+          - link "Privacy":
+            - /url: "#page"
+    - paragraph:
+    - paragraph
+    - navigation "Footer":
+      - list:
+        - listitem:
+          - link "Work":
+            - /url: "#page"
+        - listitem:
+          - link "Contact":
+            - /url: "#page"
+    - paragraph:
+    - paragraph
+    - paragraph
+  - paragraph:

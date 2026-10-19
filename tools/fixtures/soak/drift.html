@@ -1,0 +1,16 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soak fixture: frame drift</title>
+<!-- Must FAIL the soak on p95 (red first), even on a busy machine. Smooth for 16 s, then every frame burns 35 ms of script, so
+     frame p95 goes from one vsync (16.7 ms) to about 50 ms: over x2, which no contention explains (soak.core.js loadedRatio). -->
+<style>html, body { margin: 0; background: #f4efe6; color: #2a2118; font: 16px system-ui }</style>
+<div>drift</div>
+<script>
+  const t0 = performance.now();
+  function frame() {
+    if (performance.now() - t0 > 16000) { const end = performance.now() + 35; while (performance.now() < end); }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+</script>

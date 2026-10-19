@@ -1,0 +1,37 @@
+- main:
+  - heading "Reach" [level=1]
+  - paragraph
+  - 'region "Quiet: plain lines"':
+    - heading "Quiet: plain lines" [level=2]
+    - paragraph:
+      - link "hello@casa-studio.example":
+        - /url: mailto:hello@casa-studio.example?subject=A%20project
+    - paragraph:
+      - link "+91 90000 12345":
+        - /url: https://wa.me/919000012345?text=Hello!%20I%20saw%20your%20site%20and%20have%20a%20project%20in%20mind.
+      - button "Copy number"
+    - paragraph
+    - status
+  - 'region "Warm: an inland letter"':
+    - heading "Warm: an inland letter" [level=2]
+    - paragraph:
+      - link "hello@casa-studio.example":
+        - /url: mailto:hello@casa-studio.example?subject=A%20project
+    - paragraph:
+      - link "+91 90000 12345":
+        - /url: https://wa.me/919000012345?text=Hello!%20I%20saw%20your%20site%20and%20have%20a%20project%20in%20mind.
+      - button "Copy number"
+    - paragraph
+    - status
+  - 'region "Playful: a rubber-stamped card"':
+    - heading "Playful: a rubber-stamped card" [level=2]
+    - paragraph:
+      - link "hello@casa-studio.example":
+        - /url: mailto:hello@casa-studio.example?subject=A%20project
+    - paragraph:
+      - link "+91 90000 12345":
+        - /url: https://wa.me/919000012345?text=Hello!%20I%20saw%20your%20site%20and%20have%20a%20project%20in%20mind.
+      - button "Copy number"
+    - paragraph
+    - status
+  - paragraph:

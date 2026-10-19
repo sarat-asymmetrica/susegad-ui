@@ -1,0 +1,18 @@
+- main:
+  - heading "Checkbox" [level=1]
+  - paragraph
+  - group "Extras for your stay":
+    - checkbox "All extras" [checked=mixed]
+    - checkbox "Breakfast on the balcão, ₹450 a person" [checked]
+    - checkbox "Pickup from Thivim station"
+    - checkbox "Late checkout, until 2 pm"
+    - paragraph
+  - group "In Marathi, Kannada and Konkani":
+    - checkbox "मला मराठीत पुष्टीकरण पाठवा"
+    - checkbox "ಕನ್ನಡದಲ್ಲಿ ದೃಢೀಕರಣ ಕಳುಹಿಸಿ"
+    - checkbox "Konknnint khatri dhadd"
+  - group "Before you book":
+    - checkbox "I have read the house rules: quiet after 10 pm, no parties, and please switch off the geyser when you leave the room."
+    - checkbox "Bring a pet (not at this house)" [disabled]
+  - button "Send"
+  - status

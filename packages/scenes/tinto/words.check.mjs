@@ -33,6 +33,8 @@
 import { readFileSync } from 'node:fs';
 import { harness } from '../../../tools/lib/component-check.mjs';
 import { sidewaysScroll } from '../../../tools/lib/overflow.mjs';
+import { loaded, stable } from '../../../tools/lib/wait.mjs';
+import { frames, openStepped, until, untilFrozen } from '../../../tools/lib/virtual-time.mjs';
 import { requiredSamples, samplePhases, assertDeclaration } from '../../../tools/lib/frame-schedule.mjs';
 import { COPY } from '../../type/fixtures/gate-copy.js';
 
@@ -43,41 +45,60 @@ const WORLD = '/packages/scenes/tinto/world.html?only=world';
 const DECLARED = ['Come for the rain', 'Our lowest rate', 'Mercado, Open 7 to 1', 'Padaria, Poi at 6 and 4', 'Taverna, Opens at 11', 'Two crows on the wire'];
 
 /**
- * Open `path` in a fresh context. `patch` maps a file in this folder to
- * [from, to] pairs; the page gets the patched source instead of the real one
- * (each `from` must be found, or the control would silently be the real build).
+ * The patched sources, as ctx.route pairs. `patch` maps a file in this folder to [from, to] pairs; the page gets the
+ * patched source instead of the real one (each `from` must be found, or the control would silently be the real build).
  */
-async function openAt(path, { width = 1280, height = 1000, reduced = false, patch = {}, root = null, requests = null, before = null } = {}) {
-  const errors = [];
-  const ctx = await browser.newContext({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference' });
-  for (const [file, pairs] of Object.entries(patch)) {
+function patchRoutes(patch) {
+  return Object.entries(patch).map(([file, pairs]) => {
     let body = src(file);
     for (const [from, to] of pairs) {
       if (!body.includes(from)) throw new Error(`patch for ${file} did not apply: ${from}`);
       body = body.replace(from, to);
     }
     const at = new URL(file, import.meta.url).pathname.replace(/^.*?\/packages\//, '/packages/'); // a file here, or ../../type/…
-    await ctx.route(`**${at}*`, r => r.fulfill({ contentType: 'text/javascript; charset=utf-8', body }));
-  }
-  if (requests) ctx.on('request', r => requests.push(r.url()));
-  if (before) await before(ctx);
+    return [`**${at}*`, r => r.fulfill({ contentType: 'text/javascript; charset=utf-8', body })];
+  });
+}
+/**
+ * Open `path` in a fresh context, on virtual frames (tools/lib/virtual-time.mjs): the scene's time is stepped, not waited for.
+ * `real: true` keeps the real clock, for what watches a timer or the network (a face held back for 2 s, the requests the
+ * page makes, how long the network takes to go quiet) and for axe.
+ */
+async function openAt(path, { width = 1280, height = 1000, reduced = false, patch = {}, root = null, requests = null, before = null, real = false } = {}) {
+  const routes = patchRoutes(patch);
+  const setup = async ctx => {
+    if (requests) ctx.on('request', r => requests.push(r.url()));
+    if (root) await ctx.addInitScript(r => { document.addEventListener('DOMContentLoaded', () => { document.documentElement.style.fontSize = r; }); }, root);
+    if (before) await before(ctx);
+  };
+  if (!real) return openStepped(h, path, { reduced, routes, setup, ms: 20000, view: { viewport: { width, height } } });
+  const errors = [];
+  const ctx = await browser.newContext({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference' });
+  for (const [url, handler] of routes) await ctx.route(url, handler);
+  await setup(ctx);
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(String(e)));
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
-  if (root) await page.addInitScript(r => { document.addEventListener('DOMContentLoaded', () => { document.documentElement.style.fontSize = r; }); }, root);
   await page.goto(`${server.url}${path}`);
   await page.waitForFunction(() => window.__ready === true, null, { timeout: 20000 }).catch(() => errors.push('never ready'));
   return { ctx, page, errors };
 }
-/** Wait until the words layer says where things are (the tier loads lazily), then two frames. */
+/** Wait until the words layer says where things are (the tier loads lazily), then two frames: stepped on a held page, real otherwise. */
 async function settled(page, want) {
-  const ok = await page.waitForFunction(w => {
+  const here = w => {
     const st = document.querySelector('sg-scene[words=world]')?.shadowRoot?.querySelector('.stage');
-    return st && (!w || (st.dataset.words === w.words && st.dataset.shops === w.shops));
-  }, want, { timeout: 15000 }).then(() => true, () => false);
+    return !!st && (!w || (st.dataset.words === w.words && st.dataset.shops === w.shops));
+  };
+  if (await page.evaluate(() => window.__tools?.held === true)) {
+    const ok = await until(page, here, { arg: want, ms: 15000 });
+    await frames(page, 2);
+    return ok;
+  }
+  const ok = await page.waitForFunction(here, want, { timeout: 15000 }).then(() => true, () => false);
   await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
   return ok;
 }
+
 const where = page => page.evaluate(() => { const st = document.querySelector('sg-scene[words=world]').shadowRoot.querySelector('.stage'); return `${st.dataset.words}/${st.dataset.shops}`; });
 
 // ── in-page probes ─────────────────────────────────────────────────────────
@@ -242,8 +263,9 @@ const probeContrast = page => page.evaluate(() => {
     ['({ body: 0.875 * rootPx, heading: 1.25 * rootPx, label: 0.75 * rootPx, target: 24 })', '({ body: 0.1 * rootPx, heading: 0.1 * rootPx, label: 0.1 * rootPx, target: 1 })'],
     ['export const PLAQUE_H = 36;', 'export const PLAQUE_H = 999;'],
   ] } });
-  await settled(broken.page);
-  await broken.page.waitForTimeout(800);
+  // the clause below asks for the board; if the build never puts the words there, the clause is red
+  await until(broken.page, () => document.querySelector('sg-scene[words=world]')?.shadowRoot?.querySelector('.stage')?.dataset.words === 'board', { ms: 15000 });
+  await frames(broken.page, 3);
   const b = await flatCheck(broken.page);
   check('control: a build whose minimum is zero keeps tiny words on the board at 390 px, and is caught', b.r.words === 'board' && b.small.length > 0, `${b.r.words}/${b.r.shops}; ${b.small.length} lines under the minimum (${b.r.lines.map(l => `${l.px.toFixed(1)}px`).join(', ')})`);
   await broken.ctx.close();
@@ -351,9 +373,10 @@ const probeContrast = page => page.evaluate(() => {
   /** The canvas at a frozen phase, and the line boxes and slate in canvas pixels. */
   const frozenAt = async (t, patch) => {
     const { ctx, page } = await openAt(scene(`freeze=${t}`), { patch });
-    await page.waitForFunction(() => window.__frozen === true, null, { timeout: 30000 });
-    await page.waitForFunction(() => window.__piece.shadowRoot.querySelector('.stage').dataset.words === 'board', null, { timeout: 15000 });
-    await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r)))));
+    // stepped to the frame that freezes the harness clock: the scene's seconds, drawn as fast as the page can draw them
+    if (!(await untilFrozen(page, { ms: 60000 }))) check(`calm: frozen at ${t} s`, false, 'never froze in 60 s');
+    await until(page, () => window.__piece.shadowRoot.querySelector('.stage').dataset.words === 'board', { ms: 15000 });
+    await frames(page, 3);
     const shot = await page.evaluate(() => {
       const sr = window.__piece.shadowRoot, cv = sr.querySelector('.stage canvas'), c = cv.getBoundingClientRect(), k = cv.width / c.width;
       const lines = [...sr.querySelectorAll('[data-line]')].map(s => { const r = s.getBoundingClientRect(); return { x: (r.left - c.left) * k, y: (r.top - c.top) * k, w: r.width * k, h: r.height * k }; });
@@ -366,12 +389,14 @@ const probeContrast = page => page.evaluate(() => {
     return { w: shot.w, h: shot.h, k: shot.k, lines: shot.lines, buf: Buffer.from(shot.px, 'base64') };
   };
   const inBox = (x, y, b) => x >= b.x && x < b.x + b.w && y >= b.y && y < b.y + b.h;
-  /** Share of pixels that changed, in the region `keep(x, y)` picks. */
-  const changed = (a, b, keep) => {
+  /** The region `keep(x, y)` picks, as a mask over a frame's pixels: laid once, then read for every pair of neighbouring phases. */
+  const region = (a, keep) => { const m = new Uint8Array(a.w * a.h); for (let y = 0; y < a.h; y++) for (let x = 0; x < a.w; x++) if (keep(x, y)) m[y * a.w + x] = 1; return m; };
+  /** Share of pixels that changed, in a region laid by `region`. */
+  const changed = (a, b, mask) => {
     let n = 0, c = 0;
-    for (let y = 0; y < a.h; y += 1) for (let x = 0; x < a.w; x += 1) {
-      if (!keep(x, y)) continue;
-      const i = (y * a.w + x) * 4; n++;
+    for (let k = 0; k < mask.length; k++) {
+      if (!mask[k]) continue;
+      const i = k * 4; n++;
       if (Math.abs(a.buf[i] - b.buf[i]) + Math.abs(a.buf[i + 1] - b.buf[i + 1]) + Math.abs(a.buf[i + 2] - b.buf[i + 2]) > 40) c++;
     }
     return n ? c / n : 0;
@@ -383,12 +408,14 @@ const probeContrast = page => page.evaluate(() => {
     const L = frames[0].lines, bb = { x: Math.min(...L.map(l => l.x)), y: Math.min(...L.map(l => l.y)), w: 0, h: 0 };
     bb.w = Math.max(...L.map(l => l.x + l.w)) - bb.x; bb.h = Math.max(...L.map(l => l.y + l.h)) - bb.y;
     let under = 0, beside = 0, elsewhere = 0;
+    const a0 = frames[0], inLines = region(a0, (x, y) => L.some(l => inBox(x, y, l)));
+    // beside the words: inside the lines' own rectangle, but in no line box (the gaps a whole-rectangle calm would freeze)
+    const inGaps = region(a0, (x, y) => inBox(x, y, bb) && !L.some(l => inBox(x, y, l))), inSquare = region(a0, (x, y) => y > 600 * a0.k);
     for (let i = 1; i < frames.length; i++) {
       const a = frames[i - 1], b = frames[i];
-      under = Math.max(under, changed(a, b, (x, y) => L.some(l => inBox(x, y, l))));
-      // beside the words: inside the lines' own rectangle, but in no line box (the gaps a whole-rectangle calm would freeze)
-      beside = Math.max(beside, changed(a, b, (x, y) => inBox(x, y, bb) && !L.some(l => inBox(x, y, l))));
-      elsewhere = Math.max(elsewhere, changed(a, b, (x, y) => y > 600 * a.k));
+      under = Math.max(under, changed(a, b, inLines));
+      beside = Math.max(beside, changed(a, b, inGaps));
+      elsewhere = Math.max(elsewhere, changed(a, b, inSquare));
     }
     return { under, beside, elsewhere, fmt: `under the words ${(under * 100).toFixed(2)}%, beside them ${(beside * 100).toFixed(2)}%, the square ${(elsewhere * 100).toFixed(1)}% over ${n} phases of ${PERIOD} s (${message})` };
   };
@@ -423,9 +450,10 @@ const probeContrast = page => page.evaluate(() => {
       // fetched first, then held: WebKit fails a request that is continued late, and that would test the browser, not the scene
       if (delay) await ctx.route('**/notosanskannada/**', async r => { const res = await r.fetch(); await new Promise(s => setTimeout(s, delay)); r.fulfill({ response: res }); });
     };
-    const { ctx, page } = await openAt(`${WORLD}&register=warm`, { before, patch });
+    const { ctx, page } = await openAt(`${WORLD}&register=warm`, { before, patch, real: true });
     await page.waitForFunction(() => window.__tl.some(t => t.lines && t.face), null, { timeout: 15000 }).catch(() => {});
-    await page.waitForTimeout(600);
+    // the laid size has stopped changing: thirty frames of the timeline with the same last laid size and face
+    await stable(page, () => { const laid = window.__tl.filter(t => t.lines); return [laid.at(-1)?.px ?? 0, laid.length > 0, window.__tl.at(-1)?.face]; }, { frames: 30, ms: 15000 });
     const tl = await page.evaluate(() => window.__tl);
     await ctx.close();
     const laid = tl.filter(t => t.lines);
@@ -445,7 +473,7 @@ const probeContrast = page => page.evaluate(() => {
 
 // ── Escape, lazy loading, requests, axe ─────────────────────────────────────
 {
-  const { ctx, page } = await openAt(`${WORLD}&register=warm`);
+  const { ctx, page } = await openAt(`${WORLD}&register=warm`, { real: true });
   await settled(page, { words: 'board', shops: 'plaques' });
   const b = page.getByRole('button', { name: 'Taverna, Opens at 11' });
   await b.focus(); await page.keyboard.press('Enter');
@@ -460,8 +488,8 @@ const probeContrast = page => page.evaluate(() => {
 {
   const load = async (path, want) => {
     const requests = [];
-    const { ctx, page } = await openAt(path, { requests });
-    if (want) await settled(page, want); else await page.waitForTimeout(2500);
+    const { ctx, page } = await openAt(path, { requests, real: true });
+    if (want) await settled(page, want); else await loaded(page, { quiet: 2500 }); // no words to wait for: the page is loaded and the network quiet
     await ctx.close();
     return { pretext: requests.some(u => u.includes('/type/vendor/pretext.js')), outside: requests.filter(u => !u.startsWith(server.url) && /^https?:/.test(u)) };
   };
@@ -473,7 +501,7 @@ const probeContrast = page => page.evaluate(() => {
   check('no request leaves the page (world)', !warm.outside.length && !quiet.outside.length, [...warm.outside, ...quiet.outside].join(', ') || 'none');
 }
 for (const register of ['quiet', 'warm', 'playful']) for (const theme of ['light', 'dark']) {
-  const { ctx, page, errors } = await openAt(`/packages/scenes/tinto/world.html?register=${register}&theme=${theme}`);
+  const { ctx, page, errors } = await openAt(`/packages/scenes/tinto/world.html?register=${register}&theme=${theme}`, { real: true });
   await settled(page, register === 'quiet' ? { words: 'panel', shops: 'list' } : { words: 'board', shops: 'plaques' });
   const v = await h.axe(page);
   check(`axe (world.html): ${register}, ${theme}`, v.length === 0, v.join('; ') || '0 violations');
@@ -481,7 +509,7 @@ for (const register of ['quiet', 'warm', 'playful']) for (const theme of ['light
   await ctx.close();
 }
 {
-  const { ctx, page } = await openAt(`/packages/scenes/tinto/world.html?register=warm`, { width: 390, height: 844 });
+  const { ctx, page } = await openAt(`/packages/scenes/tinto/world.html?register=warm`, { width: 390, height: 844, real: true });
   await settled(page, { words: 'panel', shops: 'list' });
   const v = await h.axe(page);
   check('axe (world.html): warm at 390 px', v.length === 0, v.join('; ') || '0 violations');

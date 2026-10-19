@@ -1,0 +1,19 @@
+- main:
+  - heading "Connecting" [level=1]
+  - paragraph
+  - heading "Every state" [level=2]
+  - list:
+    - listitem:
+      - status
+    - listitem:
+      - status
+    - listitem:
+      - status
+    - listitem:
+      - status
+  - heading "Try it" [level=2]
+  - paragraph
+  - status
+  - button "Connect"
+  - button "Drop the connection"
+  - button "Try again"

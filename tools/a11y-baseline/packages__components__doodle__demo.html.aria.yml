@@ -1,0 +1,64 @@
+- main:
+  - heading "Doodle" [level=1]
+  - paragraph:
+  - 'region "Quiet: a still hairline drawing"':
+    - heading "Quiet: a still hairline drawing" [level=2]
+    - paragraph
+    - list:
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+    - paragraph
+    - paragraph
+    - img "A fork lifting a twirl of spaghetti"
+    - heading "Spaghetti, slow tomato" [level=3]
+    - paragraph
+    - paragraph
+  - 'region "Warm: draws itself as it scrolls into view, then boils a little"':
+    - heading "Warm: draws itself as it scrolls into view, then boils a little" [level=2]
+    - paragraph
+    - list:
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+    - paragraph
+    - paragraph
+    - img "A fork lifting a twirl of spaghetti"
+    - heading "Spaghetti, slow tomato" [level=3]
+    - paragraph
+    - paragraph
+  - 'region "Playful: a bolder line, and a wiggle when you touch one"':
+    - heading "Playful: a bolder line, and a wiggle when you touch one" [level=2]
+    - paragraph
+    - list:
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+    - paragraph
+    - paragraph
+    - img "A fork lifting a twirl of spaghetti"
+    - heading "Spaghetti, slow tomato" [level=3]
+    - paragraph
+    - paragraph
+  - paragraph:

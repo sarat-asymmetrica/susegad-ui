@@ -181,6 +181,7 @@ export const inWorld = (register, words) => words === 'world' && register !== 'q
  * The per-frame description. Time is the square's own clock (scaled by the
  * register's pace, offset by the seed); `tick` changes only when the people
  * should be redrawn, so a renderer can skip every frame in between.
+ * @param {{ time?: number, seed?: number, register?: string, params?: Record<string, any>, W?: number, H?: number }} [args]
  */
 export function model({ time = 0, seed = 1, register = 'warm', params = {} } = {}) {
   const look = LOOKS[register] || LOOKS.warm;

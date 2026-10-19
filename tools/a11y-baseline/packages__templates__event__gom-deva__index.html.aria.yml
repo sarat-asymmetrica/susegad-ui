@@ -1,0 +1,196 @@
+- link "थेट मजकुराक वचचें":
+  - /url: "#main"
+- region "सूचना":
+  - button "ही सूचना बंद करचीं"
+- banner:
+  - paragraph:
+    - link "मांडवी कॉन्क्लेव्ह":
+      - /url: ../index.html
+  - navigation "मुखेल":
+    - link "वेळापत्रक":
+      - /url: "#agenda"
+    - link "उलोवपी":
+      - /url: "#speakers"
+    - link "नांव नोंद":
+      - /url: "#register"
+    - link "थळ":
+      - /url: "#venue"
+  - navigation "भास":
+    - list:
+      - listitem:
+        - link "English":
+          - /url: ../index.html
+      - listitem:
+        - link "कोंकणी":
+          - /url: index.html
+      - listitem:
+        - link "Konknni":
+          - /url: ../gom-latn/index.html
+- main:
+  - region "सरकारी सेवांखातीर एआय, प्रत्यक्ष वापरांत":
+    - paragraph
+    - heading "सरकारी सेवांखातीर एआय, प्रत्यक्ष वापरांत" [level=1]
+    - paragraph
+    - paragraph:
+      - link "वेळापत्रक पळोवचें":
+        - /url: "#agenda"
+      - link "थळ सोदचें":
+        - /url: "#venue"
+    - figure:
+      - img "गोंयांतल्या पहांटेचो एक टेबल: लोखणाच्या सळ्यांच्या खिडकेच्या सकयल एक लॅपटॉप आनी चाहाचो स्टीलाचो ग्लास, भायर माडां आनी कवलां घातिल्लें घर."
+      - button "चित्र चलोवचें"
+  - region "वेळापत्रक":
+    - heading "वेळापत्रक" [level=2]
+    - paragraph
+    - paragraph
+    - region "शेनवार 21 नोव्हेंबर":
+      - heading "शेनवार 21 नोव्हेंबर" [level=3]:
+      - list:
+        - listitem:
+          - paragraph:
+          - heading "दारां उगडतात आनी नांव नोंद" [level=4]
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "स्वागत, आनी आमी हांगा कित्याक" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "सोप्या भाशेंतले अर्ज: अर्ज भरपी मनशाखातीर तो परत बरोवपी एक मॉडेल" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "हातान बरयल्ल्यो नोंदी वाचप, मूळ पान जपून दवरून" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "चाह आनी विसांवो" [level=4]
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "मॉडेलान कितें थारावचें न्हय: लाभाच्या मागण्यांत मनशाची तपासणी" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "दनपारचें जेवण" [level=4]
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "ल्हान कार्यालयाखातीर मोकळीं साधनां: एका लॅपटॉपार कितें चलता" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "पडद्यार आनी आवाजांत कोंकणी: आमी खंय पावल्यात आनी कितें उणें आसा" [level=4]
+          - paragraph
+          - paragraph
+        - listitem:
+          - paragraph:
+          - heading "प्रस्न आनी समारोप" [level=4]
+          - paragraph
+          - paragraph
+  - region "उलोवपी":
+    - heading "उलोवपी" [level=2]
+    - list:
+      - listitem:
+        - article "आशा नाईक":
+          - heading "आशा नाईक" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - 'link "सोप्या भाशेंतले अर्ज: अर्ज भरपी मनशाखातीर तो परत बरोवपी एक मॉडेल"':
+              - /url: "#forms"
+      - listitem:
+        - article "रोहन कामत":
+          - heading "रोहन कामत" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - link "हातान बरयल्ल्यो नोंदी वाचप, मूळ पान जपून दवरून":
+              - /url: "#records"
+      - listitem:
+        - article "स्नेहा फर्नांडिस":
+          - heading "स्नेहा फर्नांडिस" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - 'link "मॉडेलान कितें थारावचें न्हय: लाभाच्या मागण्यांत मनशाची तपासणी"':
+              - /url: "#review"
+      - listitem:
+        - article "विवेक देसाय":
+          - heading "विवेक देसाय" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - 'link "ल्हान कार्यालयाखातीर मोकळीं साधनां: एका लॅपटॉपार कितें चलता"':
+              - /url: "#laptop"
+      - listitem:
+        - article "मारिया डिकॉस्ता":
+          - heading "मारिया डिकॉस्ता" [level=3]
+          - paragraph
+          - paragraph
+          - paragraph:
+            - 'link "पडद्यार आनी आवाजांत कोंकणी: आमी खंय पावल्यात आनी कितें उणें आसा"':
+              - /url: "#konkani"
+  - region "नांव नोंद":
+    - heading "नांव नोंद" [level=2]
+    - paragraph
+    - paragraph:
+      - textbox "नांव"
+    - paragraph:
+      - textbox "ई-मेल पत्तो"
+    - group "तुमच्या तपशीलांचें आमी कितें करतात":
+      - heading "तुमच्या तपशीलांचें आमी कितें करतात" [level=3]
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - paragraph
+      - checkbox "म्हज्या तपशीलांचो [site name] हांगा सांगिल्ल्या तरेन वापर करपाक म्हजी संमती आसा. हें हांव वाचलें."
+    - paragraph:
+      - button "नोंद करात"
+    - status
+  - region "थळ":
+    - heading "थळ" [level=2]
+    - paragraph
+    - heading "तें सोदप" [level=3]
+    - paragraph
+    - paragraph:
+      - link "वेब नकाशांत उगडचें":
+        - /url: https://www.google.com/maps/search/?api=1&query=15.4989,73.8278
+    - region "थळाक कशें पावचें":
+      - heading "थळाक कशें पावचें" [level=3]
+      - list:
+        - listitem:
+        - listitem:
+        - listitem:
+    - region "प्रवेशाच्यो सोयी":
+      - heading "प्रवेशाच्यो सोयी" [level=3]
+      - term
+      - definition
+      - term
+      - definition
+      - term
+      - definition
+- contentinfo "सायटीचो सकयलो भाग":
+  - paragraph
+  - navigation "ह्या पानांत":
+    - list:
+      - listitem:
+        - link "वेळापत्रक":
+          - /url: "#agenda"
+      - listitem:
+        - link "उलोवपी":
+          - /url: "#speakers"
+      - listitem:
+        - link "थळ":
+          - /url: "#venue"
+      - listitem:
+        - link "वयर वचचें":
+          - /url: "#main"
+  - paragraph:

@@ -1,0 +1,9 @@
+- main:
+  - heading "Popover" [level=1]
+  - paragraph:
+  - heading "Today's rate" [level=2]
+  - button "Today's rate"
+  - heading "In Kannada" [level=2]
+  - button "ಇಂದಿನ ದರ"
+  - heading "Near the bottom of the page (flips above)" [level=2]
+  - button "Open near the bottom"

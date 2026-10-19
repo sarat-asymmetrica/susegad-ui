@@ -1,0 +1,51 @@
+- main:
+  - heading "Room details" [level=1]
+  - paragraph
+  - article "Garden room":
+    - status
+    - heading "Garden room" [level=2]
+    - paragraph
+    - paragraph
+    - paragraph:
+    - heading "Included" [level=3]
+    - list:
+      - listitem
+      - listitem
+      - listitem
+      - listitem
+    - button "Choose your dates"
+  - button "Load it again"
+  - button "Make the next load fail"
+  - heading "Every state of the card" [level=2]
+  - list:
+    - listitem:
+      - article
+    - listitem:
+      - article "Balcão suite":
+        - heading "Balcão suite" [level=2]
+        - paragraph
+        - paragraph
+        - paragraph:
+        - heading "Included" [level=3]
+        - list:
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+        - button "Choose your dates"
+    - listitem:
+      - article "The whole house":
+        - heading "The whole house" [level=2]
+        - paragraph
+        - paragraph
+        - paragraph:
+        - heading "Included" [level=3]
+        - list:
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+        - button "Ask about other dates"
+    - listitem:
+      - article:
+        - button "Try again" [disabled]

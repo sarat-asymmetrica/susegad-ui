@@ -1,0 +1,33 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soak fixture: steady</title>
+<!-- Must pass the soak. Allocates garbage every frame and churns DOM nodes and listeners, but frees all of it, so a forced
+     collection brings the heap, node count and listener count back to the same place every time. -->
+<style>html, body { margin: 0; background: #f4efe6; color: #2a2118; font: 16px system-ui } #n { padding: 12px }</style>
+<canvas id="c" width="800" height="450" style="display:block"></canvas>
+<div id="n">steady</div>
+<script>
+  const ctx = document.getElementById('c').getContext('2d');
+  const label = document.getElementById('n');
+  const ring = new Array(64).fill(0); // a fixed-size history: bounded by construction
+  let frame = 0;
+  function draw(ts) {
+    const garbage = new Float64Array(2048); garbage[0] = ts; // short-lived, collected
+    ring[frame++ % ring.length] = garbage[0];
+    ctx.fillStyle = '#f4efe6'; ctx.fillRect(0, 0, 800, 450);
+    ctx.fillStyle = '#b3401f';
+    for (let i = 0; i < 12; i++) { ctx.beginPath(); ctx.arc(400 + Math.cos(ts / 900 + i) * 300, 225 + Math.sin(ts / 700 + i * 2) * 160, 14, 0, 7); ctx.fill(); }
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+  // A toast that comes and goes: nodes and a listener added, then removed.
+  setInterval(() => {
+    const el = document.createElement('div');
+    el.textContent = 'toast ' + frame;
+    const on = () => {};
+    el.addEventListener('click', on);
+    label.after(el);
+    setTimeout(() => { el.removeEventListener('click', on); el.remove(); }, 400);
+  }, 700);
+</script>

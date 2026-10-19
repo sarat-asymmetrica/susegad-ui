@@ -1,0 +1,75 @@
+/* Consent. The base rules are the quiet look and the no-JavaScript look: a plain block with a hairline
+   border, the heading, six short lines, and the box. The element sets data-skin when a skin is mounted
+   and data-incomplete while a [placeholder] is left in the words. Tokens only. */
+
+sg-consent {
+  --consent-ink: var(--sg-text);
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  max-inline-size: var(--sg-measure, 42rem);
+  padding: var(--sg-space-3) var(--sg-space-3) var(--sg-space-3);
+  border: var(--sg-hairline) solid var(--sg-rule-strong);
+  border-radius: var(--sg-radius-3);
+  background: var(--sg-surface-raised);
+  color: var(--consent-ink);
+  font: 400 var(--sg-step-0)/1.55 var(--sg-font-body);
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+}
+sg-consent > * { position: relative; }
+.sg-consent-heading { margin: 0 0 var(--sg-space-2); font: var(--sg-weight-medium) var(--sg-step-0)/1.35 var(--sg-font-body); letter-spacing: 0.01em; }
+.sg-consent-line { margin: 0 0 var(--sg-space-2); }
+.sg-consent-line[data-part="withdraw"], .sg-consent-line[data-part="complain"] { color: var(--sg-text-soft); }
+.sg-consent-tick { margin-block-start: var(--sg-space-3); padding-block-start: var(--sg-space-3); border-block-start: var(--sg-hairline) solid var(--sg-rule); }
+.sg-consent-tick sg-check { display: block; }
+.sg-consent-tick label { display: flex; gap: var(--sg-space-2); align-items: flex-start; cursor: pointer; }
+.sg-consent-words { min-width: 0; }
+.sg-consent-tick input[type="checkbox"] { flex: none; inline-size: 1.4rem; block-size: 1.4rem; margin: 0.15rem 0 0; accent-color: var(--sg-accent); }
+.sg-consent-tick input:focus-visible { outline: var(--sg-focus-width) solid var(--sg-focus); outline-offset: var(--sg-focus-offset); }
+/* a value the site has not filled in: visible, so it cannot be published by mistake */
+.sg-consent-blank { background: var(--sg-selection); border-radius: 0.2em; padding-inline: 0.2em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+sg-consent[data-incomplete] { border-style: dashed; }
+.sg-consent-deco { position: absolute; inset: calc(var(--sg-hairline, 1px) * -1); pointer-events: none; overflow: visible; } /* out to the border edge, so a drawing is as big as the notice */
+.sg-consent-deco > * { pointer-events: none; }
+
+/* ── warm: a notice on paper, boxed in pencil ── */
+sg-consent[data-skin="warm"] { border-color: transparent; background: var(--sg-paper-deep, var(--sg-surface-raised)); border-radius: var(--sg-radius-2); }
+sg-consent[data-skin="warm"][data-incomplete] { border-style: solid; }
+sg-consent[data-skin="warm"] .sg-consent-heading { font: 400 calc(var(--sg-step-1) * 1.02)/1.25 var(--sg-font-hand); }
+sg-consent[data-skin="warm"] .sg-consent-frame { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; color: var(--sg-pencil, var(--sg-text-soft)); }
+sg-consent[data-skin="warm"] .sg-consent-frame path { fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+
+/* ── playful: a ticket, notched at the sides, perforated under the words ── */
+sg-consent[data-skin="playful"] { border-color: transparent; background: color-mix(in oklab, var(--sg-mango, var(--sg-accent)) 12%, var(--sg-surface-raised)); border-radius: var(--sg-radius-2); padding-inline: calc(var(--sg-space-3) + 0.4rem); }
+sg-consent[data-skin="playful"] .sg-consent-heading { font: 600 var(--sg-step-0)/1.3 var(--sg-font-body); }
+sg-consent[data-skin="playful"] .sg-consent-tick { border-block-start: 0; }
+sg-consent[data-skin="playful"] .sg-consent-ticket { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
+sg-consent[data-skin="playful"] .sg-consent-ticket .edge { fill: none; stroke: var(--sg-ink-soft, currentColor); stroke-width: 1.3; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+sg-consent[data-skin="playful"] .sg-consent-ticket .perf { fill: none; stroke: var(--sg-ink-soft, currentColor); stroke-width: 1.6; stroke-dasharray: 0.1 7; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+
+@media (prefers-reduced-motion: reduce) {
+  sg-consent, sg-consent * { transition: none !important; }
+}
+@media (forced-colors: active) {
+  sg-consent { border: 1px solid CanvasText; }
+  .sg-consent-deco { display: none; }
+}
+
+/* ── the tick row, pressed (the touch contract) ─────────────────────────────
+   The box answers a press through <sg-check>; the row around it answers too, so the whole label
+   reads as the one thing being pressed. Down answers in the same frame with no transition and
+   letting go eases back in under 150 ms. Quiet washes the row, warm shades it toward the ink,
+   playful gives a little. The keyboard never moves it. */
+sg-consent .sg-consent-tick label {
+  border-radius: var(--sg-radius-2);
+  transition: scale 120ms var(--sg-ease-out, ease-out), background-color 100ms ease-out;
+}
+sg-consent .sg-consent-tick label:active { transition: none; background-color: color-mix(in oklab, var(--sg-text, CanvasText) 7%, transparent); }
+sg-consent[data-skin="warm"] .sg-consent-tick label:active { background-color: color-mix(in oklab, var(--sg-text) 14%, transparent); }
+sg-consent[data-skin="playful"] .sg-consent-tick label { transition-timing-function: var(--sg-ease-spring, ease-out), ease-out; }
+sg-consent[data-skin="playful"] .sg-consent-tick label:active { scale: 0.985; background-color: color-mix(in oklab, var(--sg-accent, Highlight) 16%, transparent); }
+@media (prefers-reduced-motion: reduce) {
+  sg-consent .sg-consent-tick label:active { scale: none !important; background-color: color-mix(in oklab, var(--sg-text) 14%, transparent); }
+}
+:root[data-sg-input="key"] sg-consent .sg-consent-tick label:active { scale: none !important; }

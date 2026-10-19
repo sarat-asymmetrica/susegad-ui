@@ -1,0 +1,31 @@
+- main:
+  - heading "Tumble" [level=1]
+  - paragraph:
+  - 'region "Quiet: nothing moves"':
+    - heading "Quiet: nothing moves" [level=2]
+    - paragraph
+    - heading "Life is short, eat good pasta" [level=2]
+    - paragraph
+    - heading "Fresh pasta, made on Thursdays" [level=3]
+    - paragraph
+    - heading "Supper club, first Saturday" [level=3]
+    - button "Play it again"
+  - 'region "Warm: lines slide in from alternate sides and settle"':
+    - heading "Warm: lines slide in from alternate sides and settle" [level=2]
+    - paragraph
+    - heading "Life is short, eat good pasta" [level=2]
+    - paragraph
+    - heading "Fresh pasta, made on Thursdays" [level=3]
+    - paragraph
+    - heading "Supper club, first Saturday" [level=3]
+    - button "Play it again"
+  - 'region "Playful: letters drop with a little spin, bounce once and settle"':
+    - heading "Playful: letters drop with a little spin, bounce once and settle" [level=2]
+    - paragraph
+    - heading "Life is short, eat good pasta" [level=2]
+    - paragraph
+    - heading "Fresh pasta, made on Thursdays" [level=3]
+    - paragraph
+    - heading "Supper club, first Saturday" [level=3]
+    - button "Play it again"
+  - paragraph:

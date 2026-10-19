@@ -1,0 +1,202 @@
+- main:
+  - heading "Event list" [level=1]
+  - paragraph
+  - 'region "Quiet: plain and ruled"':
+    - heading "Quiet: plain and ruled" [level=2]
+    - heading "Nothing coming up" [level=2]
+    - paragraph
+    - paragraph:
+      - link "Ask about a private session":
+        - /url: https://wa.me/919800000000?text=Hello%2C%20I%27d%20like%20to%20ask%20about%20a%20private%20session
+    - group
+    - heading "What's on" [level=2]
+    - list:
+      - listitem:
+        - article "Handmade pasta, from the dough up":
+          - paragraph
+          - heading "Handmade pasta, from the dough up" [level=3]
+          - paragraph:
+          - paragraph
+          - paragraph
+          - heading "What you'll do" [level=4]
+          - list:
+            - listitem
+            - listitem
+            - listitem
+          - heading "What you'll eat" [level=4]
+          - list:
+            - listitem
+            - listitem
+          - paragraph
+          - paragraph
+          - paragraph:
+            - link "Save my seat":
+              - /url: https://wa.me/919800000000?text=Hello%2C%20a%20seat%20on%20Sunday
+      - listitem:
+        - article "A long table, four courses":
+          - paragraph
+          - heading "A long table, four courses" [level=3]
+          - paragraph:
+          - paragraph
+          - paragraph
+          - heading "What you'll eat" [level=4]
+          - list:
+            - listitem
+            - listitem
+            - listitem
+          - paragraph
+          - paragraph:
+            - link "Ask for a place":
+              - /url: https://wa.me/919800000000?text=Hello%2C%20a%20place%20at%20the%20supper%20club
+      - listitem:
+        - article "An evening of tagliatelle":
+          - paragraph
+          - heading "An evening of tagliatelle" [level=3]
+          - paragraph:
+          - paragraph
+          - paragraph
+          - heading "What you'll do" [level=4]
+          - list:
+            - listitem
+            - listitem
+          - heading "What you'll eat" [level=4]
+          - list:
+            - listitem
+          - paragraph
+          - paragraph:
+            - link "Save my seat":
+              - /url: https://wa.me/919800000000?text=Hello%2C%20a%20seat%20on%2018%20October
+    - group
+  - 'region "Warm: tickets, and an empty ticket"':
+    - heading "Warm: tickets, and an empty ticket" [level=2]
+    - heading "Nothing coming up" [level=2]
+    - paragraph
+    - paragraph:
+      - link "Ask about a private session":
+        - /url: https://wa.me/919800000000?text=Hello%2C%20I%27d%20like%20to%20ask%20about%20a%20private%20session
+    - group
+    - heading "What's on" [level=2]
+    - list:
+      - listitem:
+        - article "Handmade pasta, from the dough up":
+          - paragraph
+          - heading "Handmade pasta, from the dough up" [level=3]
+          - paragraph:
+          - paragraph
+          - paragraph
+          - heading "What you'll do" [level=4]
+          - list:
+            - listitem
+            - listitem
+            - listitem
+          - heading "What you'll eat" [level=4]
+          - list:
+            - listitem
+            - listitem
+          - paragraph
+          - paragraph
+          - paragraph:
+            - link "Save my seat":
+              - /url: https://wa.me/919800000000?text=Hello%2C%20a%20seat%20on%20Sunday
+      - listitem:
+        - article "A long table, four courses":
+          - paragraph
+          - heading "A long table, four courses" [level=3]
+          - paragraph:
+          - paragraph
+          - paragraph
+          - heading "What you'll eat" [level=4]
+          - list:
+            - listitem
+            - listitem
+            - listitem
+          - paragraph
+          - paragraph:
+            - link "Ask for a place":
+              - /url: https://wa.me/919800000000?text=Hello%2C%20a%20place%20at%20the%20supper%20club
+      - listitem:
+        - article "An evening of tagliatelle":
+          - paragraph
+          - heading "An evening of tagliatelle" [level=3]
+          - paragraph:
+          - paragraph
+          - paragraph
+          - heading "What you'll do" [level=4]
+          - list:
+            - listitem
+            - listitem
+          - heading "What you'll eat" [level=4]
+          - list:
+            - listitem
+          - paragraph
+          - paragraph:
+            - link "Save my seat":
+              - /url: https://wa.me/919800000000?text=Hello%2C%20a%20seat%20on%2018%20October
+    - group
+  - 'region "Playful: the hand shows"':
+    - heading "Playful: the hand shows" [level=2]
+    - heading "Nothing coming up" [level=2]
+    - paragraph
+    - paragraph:
+      - link "Ask about a private session":
+        - /url: https://wa.me/919800000000?text=Hello%2C%20I%27d%20like%20to%20ask%20about%20a%20private%20session
+    - group
+    - heading "What's on" [level=2]
+    - list:
+      - listitem:
+        - article "Handmade pasta, from the dough up":
+          - paragraph
+          - heading "Handmade pasta, from the dough up" [level=3]
+          - paragraph:
+          - paragraph
+          - paragraph
+          - heading "What you'll do" [level=4]
+          - list:
+            - listitem
+            - listitem
+            - listitem
+          - heading "What you'll eat" [level=4]
+          - list:
+            - listitem
+            - listitem
+          - paragraph
+          - paragraph
+          - paragraph:
+            - link "Save my seat":
+              - /url: https://wa.me/919800000000?text=Hello%2C%20a%20seat%20on%20Sunday
+      - listitem:
+        - article "A long table, four courses":
+          - paragraph
+          - heading "A long table, four courses" [level=3]
+          - paragraph:
+          - paragraph
+          - paragraph
+          - heading "What you'll eat" [level=4]
+          - list:
+            - listitem
+            - listitem
+            - listitem
+          - paragraph
+          - paragraph:
+            - link "Ask for a place":
+              - /url: https://wa.me/919800000000?text=Hello%2C%20a%20place%20at%20the%20supper%20club
+      - listitem:
+        - article "An evening of tagliatelle":
+          - paragraph
+          - heading "An evening of tagliatelle" [level=3]
+          - paragraph:
+          - paragraph
+          - paragraph
+          - heading "What you'll do" [level=4]
+          - list:
+            - listitem
+            - listitem
+          - heading "What you'll eat" [level=4]
+          - list:
+            - listitem
+          - paragraph
+          - paragraph:
+            - link "Save my seat":
+              - /url: https://wa.me/919800000000?text=Hello%2C%20a%20seat%20on%2018%20October
+    - group
+  - paragraph:

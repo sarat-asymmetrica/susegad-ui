@@ -1,0 +1,7 @@
+- main:
+  - heading "Drawer" [level=1]
+  - paragraph
+  - paragraph
+  - link "The rooms":
+    - /url: ./no-js.html
+  - button "The rooms, no script needed"

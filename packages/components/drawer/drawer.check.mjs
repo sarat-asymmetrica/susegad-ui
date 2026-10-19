@@ -6,13 +6,10 @@
 //
 //   node packages/components/drawer/drawer.check.mjs
 
-import { pickEngine } from '../../../tools/lib/engine.mjs';
-import { startServer } from '../../../tools/serve.mjs';
+import { harness } from '../../../tools/lib/component-check.mjs';
 
-const server = await startServer({ quiet: true });
-const browser = await pickEngine().launch();
-const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? 'pass' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`); };
+const h = await harness({ axe: "tools/smoke.mjs axes /packages/components/drawer/demo.html once, at 1280 px in the default register and light theme; the other registers, the dark theme and the states this check opens are not axe-checked, and no-js.html is in no axe check (docs/DEBT.md row 48)" });
+const { server, browser, check } = h;
 
 /** See dialog.check.mjs: focus() on a background element silently fails
  *  while it is blocked by an open modal dialog (the HTML spec's own words),
@@ -75,7 +72,7 @@ function edgeCorrelation(a, b) {
 }
 
 async function page({ register = 'warm' } = {}) {
-  const ctx = await browser.newContext();
+  const ctx = await h.context();
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(String(e)));
@@ -156,7 +153,7 @@ for (const register of ['quiet', 'warm', 'playful']) {
 }
 
 {
-  const ctx = await browser.newContext({ javaScriptEnabled: false });
+  const ctx = await h.context({ javaScriptEnabled: false });
   const p = await ctx.newPage();
   await p.goto(`${server.url}/packages/components/drawer/demo.html`);
   await p.click('a[data-sg-drawer="rooms"]');
@@ -165,8 +162,4 @@ for (const register of ['quiet', 'warm', 'playful']) {
   await ctx.close();
 }
 
-await browser.close();
-await server.close();
-const failed = results.filter(r => !r.ok).length;
-console.log(failed ? `\n${failed} check(s) failed` : `\nall ${results.length} checks pass`);
-process.exitCode = failed ? 1 : 0;
+await h.done();

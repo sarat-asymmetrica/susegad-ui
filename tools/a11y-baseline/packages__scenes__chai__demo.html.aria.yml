@@ -1,0 +1,16 @@
+- main:
+  - heading "Chai" [level=1]
+  - paragraph
+  - img "Tea, a lamp and a creeper"
+  - heading "Chai at four" [level=2]
+  - paragraph
+  - button "Pause animation"
+  - status
+  - group "Register":
+    - radio "Quiet"
+    - radio "Warm" [checked]
+    - radio "Playful"
+  - checkbox "Dark"
+  - checkbox "Words over the sheet" [checked]
+  - checkbox "The lamp is lit" [checked]
+  - paragraph

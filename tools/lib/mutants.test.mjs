@@ -4,39 +4,18 @@
 // each needle, and asserts it still occurs in its target as often as the mutation expects; mutations it can't read
 // statically must be on tools/lib/mutants.allow.json with a reason, so that list can't grow silently.
 //
-//   MUTANTS_ROOT=<a copy of the repo> node --test tools/lib/mutants.test.mjs    the same guard over another tree
+// The reader is tested here on fixtures. The guard over the real tree is a whole-repo step: tools/lib/mutants.guard.mjs,
+// run by tools/repo-check.mjs (MUTANTS_ROOT=<a copy of the repo> points it at another tree).
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { lex, findMutations, countNeedle, resolveTargets, judge, audit, packageRoot } from './mutants.core.js';
-
-const ROOT = process.env.MUTANTS_ROOT ? path.resolve(process.env.MUTANTS_ROOT) : path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const ALLOW = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/lib/mutants.allow.json'), 'utf8'));
-const SKIP = new Set(['node_modules', '.git', '.worktrees', '.shots', '.playwright-mcp', 'graphify-out']);
-
-function* walk(dir, rel = '') {
-  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (SKIP.has(e.name)) continue;
-    const r = rel ? `${rel}/${e.name}` : e.name;
-    if (e.isDirectory()) yield* walk(path.join(dir, e.name), r);
-    else yield r;
-  }
-}
-
-/** The tree as the guard sees it: the checks, and the files a check may serve (code, not checks or tests). */
-function tree(root) {
-  const all = [...walk(root)];
-  const cache = new Map();
-  const read = f => { if (!cache.has(f)) cache.set(f, fs.readFileSync(path.join(root, f), 'utf8')); return cache.get(f); };
-  return {
-    checks: all.filter(f => f.endsWith('.check.mjs')).sort(),
-    files: all.filter(f => /\.(m?js|css|html|svg)$/.test(f) && !/\.check\.mjs$|\.test\.m?js$/.test(f)),
-    read,
-  };
-}
+import { guard } from './mutants.guard.mjs';
 
 // ── the reader ─────────────────────────────────────────────────────────────
 
@@ -131,14 +110,19 @@ test('it bites: an unlisted computed mutation, a stale allowlist entry, and a ro
   assert.match(audit({ ...base, allow: { ...listed, rotted: [{ check, needle: 'alpha', reason: '' }] } }).problems.join('\n'), /bites again/);
 });
 
-// ── the real tree ──────────────────────────────────────────────────────────
-
-test('every planted fault in every check still has its needle in its target', () => {
-  const t = tree(ROOT);
-  const r = audit({ ...t, allow: ALLOW });
-  const files = new Set(r.covered.map(m => m.check));
-  console.log(`mutant guard over ${t.checks.length} checks in ${ROOT}: ${r.covered.length} needles checked in ${files.size} checks; ${r.computed.length} computed and ${r.exempt.length} exempt on the allowlist; ${r.rotted.length} known rotted`);
-  for (const m of r.rotted) console.log(`  rotted: ${m.check}:${m.line} ${JSON.stringify(m.needle.value).slice(0, 80)}`);
-  assert.deepEqual(r.problems, []);
-  assert.ok(r.covered.length >= 100, `the guard should see the repo's needles, saw ${r.covered.length}`);
+// The guard over a tree, red first: a tiny tree whose check plants a fault with a needle its target does not hold.
+test('guard: a tree whose needle has rotted fails, and the same tree with the needle back passes', t => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'mutant-guard-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const put = (f, body) => { fs.mkdirSync(path.dirname(path.join(root, f)), { recursive: true }); fs.writeFileSync(path.join(root, f), body); };
+  put('tools/lib/mutants.allow.json', '{}');
+  put('packages/x/x.check.mjs', "const BREAKS = { slow: ['packages/x/x.js', 'duration: 300', 'duration: 0'] };\n");
+  put('packages/x/x.js', 'export const style = "duration: 600";\n');
+  const rotted = guard(root);
+  assert.equal(rotted.problems.length, 1, rotted.problems.join('; '));
+  put('packages/x/x.js', 'export const style = "duration: 300";\n');
+  assert.deepEqual(guard(root).problems, []);
+  const cli = [path.join(path.dirname(fileURLToPath(import.meta.url)), 'mutants.guard.mjs')];
+  put('packages/x/x.js', 'export const style = "duration: 600";\n');
+  assert.throws(() => execFileSync(process.execPath, cli, { env: { ...process.env, MUTANTS_ROOT: root }, stdio: 'pipe' }), /status 1|Command failed/);
 });
